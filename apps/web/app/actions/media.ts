@@ -23,8 +23,8 @@ export async function uploadImage(formData: FormData) {
     return { success: false, error: "Dosya seçilmedi." };
   }
 
-  if (file.size > 5 * 1024 * 1024) {
-    return { success: false, error: "Dosya boyutu 5MB'dan büyük olamaz." };
+  if (file.size > 4.5 * 1024 * 1024) {
+    return { success: false, error: "Dosya boyutu Vercel limiti olan 4.5MB'dan büyük olamaz." };
   }
 
   const result = await processAndSaveImage(file, { type });

@@ -18,7 +18,7 @@ export async function processAndSaveImage(
 ): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
     const bytes = await file.arrayBuffer();
-    let buffer = Buffer.from(bytes);
+    const buffer = Buffer.from(bytes);
 
     // Sharp ile işle (WebP dönüşümü ve Boyutlandırma)
     let sharpInstance = sharp(buffer).webp({ quality: 80 });
@@ -50,9 +50,11 @@ export async function processAndSaveImage(
     });
 
     return { success: true, url };
-  } catch (error) {
-    console.error("Vercel Blob yükleme hatası:", error);
-    return { success: false, error: "Görsel yüklenirken bir hata oluştu." };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Bilinmeyen hata";
+    // Vercel Serverless Logs'da detaylı hatayı görebilmek için:
+    console.error("Vercel Blob / Sharp yükleme hatası detayları:", error);
+    return { success: false, error: `Görsel yüklenirken bir hata oluştu: ${message}` };
   }
 }
 
