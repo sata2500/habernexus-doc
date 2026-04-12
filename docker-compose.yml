@@ -1,0 +1,29 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: habernexus-web
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=file:./dev.db
+      # Diğer .env değişkenleri buraya veya .env dosyasına eklenecek
+    volumes:
+      - ./apps/web/public/uploads:/app/apps/web/public/uploads
+      - ./data:/app/apps/web/prisma # SQLite veritabanı için kalıcı alan
+    restart: always
+
+  # Opsiyonel: Nginx Reverse Proxy & SSL (Domain hazır olduğunda aktif edilebilir)
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: habernexus-nginx
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx/conf:/etc/nginx/conf.d
+  #     - ./nginx/certs:/etc/letsencrypt
+  #   depends_on:
+  #     - web
