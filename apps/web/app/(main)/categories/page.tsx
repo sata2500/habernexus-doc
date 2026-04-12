@@ -26,7 +26,7 @@ export default async function CategoriesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {categories.map((cat) => (
+        {categories.map((cat: any) => (
           <Link key={cat.slug} href={`/category/${cat.slug}`} className="group">
             <Card variant="interactive" className="h-full flex flex-col p-6 hover:shadow-glow transition-all">
               <div className="flex items-center justify-between mb-4">
