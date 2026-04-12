@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prisma:generate": "prisma generate",
-    "build": "prisma generate && next build",
+    "prisma:generate": "PRISMA_CLIENT_ENGINE_TYPE=library prisma generate",
+    "build": "PRISMA_CLIENT_ENGINE_TYPE=library prisma generate && PRISMA_CLIENT_ENGINE_TYPE=library next build",
     "start": "next start",
     "lint": "eslint",
     "db:migrate": "prisma migrate dev",
