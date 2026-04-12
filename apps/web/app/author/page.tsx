@@ -49,7 +49,7 @@ export default async function AuthorDashboardPage() {
           { icon: Newspaper, label: "Toplam Makale", value: articles.length, color: "text-blue-500 bg-blue-500/10" },
           { icon: TrendingUp, label: "Toplam Görüntülenme", value: totalViews.toLocaleString("tr-TR"), color: "text-green-500 bg-green-500/10" },
           { icon: FileText, label: "Taslak", value: drafts.length, color: "text-amber-500 bg-amber-500/10" },
-        ].map((stat) => (
+        ].map((stat: any) => (
           <div key={stat.label} className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-center gap-4">
             <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
               <stat.icon className="h-6 w-6" />
@@ -77,7 +77,7 @@ export default async function AuthorDashboardPage() {
           </div>
         ) : (
           <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
-            {articles.slice(0, 5).map((article) => {
+            {articles.slice(0, 5).map((article: any) => {
               const { label, variant } = getStatusLabel(article.status);
               return (
                 <div key={article.id} className="flex items-center justify-between gap-4 p-4 bg-background hover:bg-muted/40 transition-colors">

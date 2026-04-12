@@ -46,7 +46,7 @@ export default async function AuthorArticlesPage() {
         </div>
       ) : (
         <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
-          {articles.map((article) => {
+          {articles.map((article: any) => {
             const { label, variant } = getStatusLabel(article.status);
             return (
               <div key={article.id} className="flex items-center justify-between gap-4 p-4 bg-background hover:bg-muted/40 transition-colors">

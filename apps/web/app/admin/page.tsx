@@ -29,7 +29,7 @@ export default async function AdminDashboardPage() {
 
       {/* İstatistik Kartları */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {statCards.map((card) => (
+        {statCards.map((card: any) => (
           <div key={card.label} className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-start gap-4">
             <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${card.color}`}>
               <card.icon className="h-6 w-6" />
@@ -50,7 +50,7 @@ export default async function AdminDashboardPage() {
           <TrendingUp className="h-4 w-4 text-muted-foreground" />
         </div>
         <div className="divide-y divide-border">
-          {stats.categories.map((cat) => {
+          {stats.categories.map((cat: any) => {
             const count = cat._count.articles;
             const pct = stats.publishedArticles > 0 ? Math.round((count / stats.publishedArticles) * 100) : 0;
             return (

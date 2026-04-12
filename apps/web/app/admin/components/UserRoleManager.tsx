@@ -54,7 +54,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
 
   return (
     <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
-      {users.map((user) => {
+      {users.map((user: any) => {
         const currentRole = (user.role as Role) ?? "USER";
         const roleInfo = ROLES.find((r) => r.value === currentRole) ?? ROLES[0];
         const isChanging = changingId === user.id;
@@ -79,7 +79,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
                     onChange={(e) => handleRoleChange(user.id, e.target.value)}
                     className="text-xs px-2.5 py-1.5 rounded-lg border border-border bg-background text-foreground cursor-pointer focus:ring-2 focus:ring-primary-500 outline-none"
                   >
-                    {ROLES.map((r) => (
+                    {ROLES.map((r: any) => (
                       <option key={r.value} value={r.value}>{r.label}</option>
                     ))}
                   </select>

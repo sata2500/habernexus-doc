@@ -33,7 +33,7 @@ export default async function BookmarksPage() {
 
       {bookmarks.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {bookmarks.map((bookmark) => {
+          {bookmarks.map((bookmark: any) => {
             const article = bookmark.article;
             return (
               <Link key={bookmark.id} href={`/article/${article.slug}`} className="group h-full">

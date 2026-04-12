@@ -221,7 +221,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                  <Bookmark className="h-10 w-10 mb-3 opacity-20" />
                  <p>Henüz kategori eklenmemiş.</p>
              </div>
-          ) : categories.map((cat) => {
+          ) : (categories as any).map((cat: any) => {
             const isLoading = actionId?.startsWith(cat.id);
             const isDeleting = actionId === cat.id + "-delete";
 

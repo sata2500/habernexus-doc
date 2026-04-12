@@ -50,7 +50,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
 
       {query && articles.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((article) => (
+          {articles.map((article: any) => (
             <Link key={article.id} href={`/article/${article.slug}`} className="group">
               <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
                 <div

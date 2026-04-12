@@ -41,7 +41,7 @@ export default async function AuthorStatsPage() {
 
       {/* ── Özet Kartları ────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((item) => {
+        {stats.map((item: any) => {
           const Icon = item.icon;
           return (
             <Card key={item.label} className="p-5 border-none shadow-sm relative overflow-hidden group">
@@ -76,7 +76,7 @@ export default async function AuthorStatsPage() {
           </div>
 
           <div className="space-y-4">
-            {topArticles.map((article, index) => (
+            {topArticles.map((article: any, index: number) => (
               <div key={article.id} className="flex items-center gap-4 group">
                 <div className="h-10 w-10 shrink-0 font-black text-xl text-muted-foreground/20 italic flex items-center justify-center group-hover:text-primary-500/30 transition-colors">
                   {index + 1}

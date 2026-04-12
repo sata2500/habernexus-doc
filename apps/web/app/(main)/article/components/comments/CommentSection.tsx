@@ -72,7 +72,7 @@ export function CommentSection({ articleId, userId }: Props) {
             ))}
           </div>
         ) : comments.length > 0 ? (
-          comments.map((comment) => (
+          comments.map((comment: any) => (
             <CommentItem 
               key={comment.id} 
               comment={comment} 

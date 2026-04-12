@@ -45,7 +45,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
 
   return (
     <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
-      {articles.map((article) => {
+      {articles.map((article: any) => {
         const { label, variant } = getStatusInfo(article.status);
         const isLoading = actionId?.startsWith(article.id);
 
