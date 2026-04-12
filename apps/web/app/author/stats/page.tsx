@@ -16,13 +16,13 @@ export default async function AuthorStatsPage() {
 
   // Hesaplamalar
   const totalArticles = articles.length;
-  const publishedArticles = articles.filter(a => a.status === "PUBLISHED").length;
-  const draftArticles = articles.filter(a => a.status === "DRAFT").length;
-  const totalViews = articles.reduce((acc, curr) => acc + (curr.viewCount || 0), 0);
+  const publishedArticles = articles.filter((a: any) => a.status === "PUBLISHED").length;
+  const draftArticles = articles.filter((a: any) => a.status === "DRAFT").length;
+  const totalViews = articles.reduce((acc: number, curr: any) => acc + (curr.viewCount || 0), 0);
   const avgViews = totalArticles > 0 ? Math.round(totalViews / totalArticles) : 0;
 
   const topArticles = [...articles]
-    .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
+    .sort((a: any, b: any) => (b.viewCount || 0) - (a.viewCount || 0))
     .slice(0, 5);
 
   const stats = [

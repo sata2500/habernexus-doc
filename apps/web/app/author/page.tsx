@@ -23,7 +23,7 @@ export default async function AuthorDashboardPage() {
 
   const published = articles.filter((a: any) => a.status === "PUBLISHED");
   const drafts = articles.filter((a: any) => a.status === "DRAFT");
-  const totalViews = published.reduce((sum, a) => sum + a.viewCount, 0);
+  const totalViews = published.reduce((sum: number, a: any) => sum + a.viewCount, 0);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
