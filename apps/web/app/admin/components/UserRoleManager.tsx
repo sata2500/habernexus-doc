@@ -56,7 +56,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
     <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
       {users.map((user: any) => {
         const currentRole = (user.role as Role) ?? "USER";
-        const roleInfo = ROLES.find((r) => r.value === currentRole) ?? ROLES[0];
+        const roleInfo = ROLES.find((r: any) => r.value === currentRole) ?? ROLES[0];
         const isChanging = changingId === user.id;
 
         return (

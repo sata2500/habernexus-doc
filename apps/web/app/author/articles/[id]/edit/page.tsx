@@ -149,7 +149,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
               Yayın Durumu
             </h3>
             <div className="flex gap-2">
-              {(["DRAFT", "PUBLISHED"] as const).map((s) => (
+              {(["DRAFT", "PUBLISHED"] as const).map((s: any) => (
                 <button
                   key={s}
                   type="button"
@@ -172,7 +172,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
           <Card className="p-5 space-y-3">
             <h3 className="text-sm font-semibold">Kategori</h3>
             <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
+              {categories.map((cat: any) => (
                 <button
                   key={cat.id}
                   type="button"

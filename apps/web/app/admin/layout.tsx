@@ -35,7 +35,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
           </div>
 
           <nav className="flex flex-col gap-1.5">
-            {navItems.map((item) => {
+            {navItems.map((item: any) => {
               const Icon = item.icon;
               return (
                 <Link

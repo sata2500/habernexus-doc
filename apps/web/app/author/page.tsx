@@ -21,8 +21,8 @@ export default async function AuthorDashboardPage() {
   const session = await auth.api.getSession({ headers: reqHeaders });
   const articles = await getAuthorArticles();
 
-  const published = articles.filter((a) => a.status === "PUBLISHED");
-  const drafts = articles.filter((a) => a.status === "DRAFT");
+  const published = articles.filter((a: any) => a.status === "PUBLISHED");
+  const drafts = articles.filter((a: any) => a.status === "DRAFT");
   const totalViews = published.reduce((sum, a) => sum + a.viewCount, 0);
 
   return (

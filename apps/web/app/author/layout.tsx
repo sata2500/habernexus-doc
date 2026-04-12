@@ -46,7 +46,7 @@ export default async function AuthorLayout({ children }: { children: React.React
           </div>
           
           <nav className="flex flex-col gap-1.5">
-            {navItems.map((item) => {
+            {navItems.map((item: any) => {
               const Icon = item.icon;
               return (
                 <Link
