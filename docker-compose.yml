@@ -15,15 +15,12 @@ services:
       - ./data:/app/apps/web/prisma # SQLite veritabanı için kalıcı alan
     restart: always
 
-  # Opsiyonel: Nginx Reverse Proxy & SSL (Domain hazır olduğunda aktif edilebilir)
-  # nginx:
-  #   image: nginx:alpine
-  #   container_name: habernexus-nginx
-  #   ports:
-  #     - "80:80"
-  #     - "443:443"
-  #   volumes:
-  #     - ./nginx/conf:/etc/nginx/conf.d
-  #     - ./nginx/certs:/etc/letsencrypt
-  #   depends_on:
-  #     - web
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: habernexus-tunnel
+    restart: always
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    command: tunnel run
+    depends_on:
+      - web
