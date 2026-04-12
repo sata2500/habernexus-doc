@@ -1,8 +1,13 @@
 import { cache } from "react";
 import { prisma } from "./prisma";
 
-// Kapak haberi (Şimdilik direkt en son yayınlanan haber olarak ayarlandı)
+// Vercel build sürecinde veritabanı bağlantısı olmayabilir.
+// Bu durumda Prisma'yı çağırmadan boş veri dönmek için kontrol ekliyoruz.
+const isMissingDb = !process.env.DATABASE_URL;
+
+// Kapak haberi
 export const getHeroArticle = cache(async () => {
+  if (isMissingDb) return null;
   return await prisma.article.findFirst({
     where: { status: "PUBLISHED" },
     orderBy: { publishedAt: "desc" },
@@ -13,8 +18,9 @@ export const getHeroArticle = cache(async () => {
   });
 });
 
-// Trend haberler (Okunma sayısına göre)
+// Trend haberler
 export const getTrendingArticles = cache(async (limit: number = 4) => {
+  if (isMissingDb) return [];
   return await prisma.article.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { viewCount: "desc" },
@@ -26,8 +32,9 @@ export const getTrendingArticles = cache(async (limit: number = 4) => {
   });
 });
 
-// Son haberler (Yayınlanma zamanına göre)
+// Son haberler
 export const getLatestArticles = cache(async (limit: number = 6) => {
+  if (isMissingDb) return [];
   return await prisma.article.findMany({
     where: { status: "PUBLISHED" },
     orderBy: { publishedAt: "desc" },
@@ -41,6 +48,7 @@ export const getLatestArticles = cache(async (limit: number = 6) => {
 
 // Kategoriler ve onlara ait yayınlanmış makale sayısı
 export const getCategoriesWithCount = cache(async () => {
+  if (isMissingDb) return [];
   return await prisma.category.findMany({
     include: {
       _count: {
@@ -53,8 +61,9 @@ export const getCategoriesWithCount = cache(async () => {
   });
 });
 
-// Tekil Makale Detayı Çekimi (Slug Bazlı)
+// Tekil Makale Detayı Çekimi
 export const getArticleBySlug = cache(async (slug: string) => {
+  if (isMissingDb) return null;
   return await prisma.article.findUnique({
     where: { slug, status: "PUBLISHED" },
     include: {
@@ -67,6 +76,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
 
 // Tekil Kategori ve İlgili Güncel Haberleri Çekimi
 export const getCategoryWithArticles = cache(async (slug: string) => {
+  if (isMissingDb) return null;
   return await prisma.category.findUnique({
     where: { slug },
     include: {
@@ -79,8 +89,9 @@ export const getCategoryWithArticles = cache(async (slug: string) => {
   });
 });
 
-// Arama Motoru (Metin bazlı basit arama)
+// Arama Motoru
 export const searchArticles = cache(async (query: string) => {
+  if (isMissingDb) return [];
   return await prisma.article.findMany({
     where: {
       status: "PUBLISHED",
