@@ -145,7 +145,7 @@ export default async function HomePage() {
             </div>
             {trendingArticles.length > 0 ? (
               <div className="space-y-4">
-                {trendingArticles.map((article, index) => (
+                {trendingArticles.map((article: any, index: number) => (
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
@@ -202,7 +202,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-          {categories.map((cat) => {
+          {categories.map((cat: any) => {
             const IconComponent = cat.icon && IconMap[cat.icon] ? IconMap[cat.icon] : Newspaper;
             return (
               <Link key={cat.slug} href={`/category/${cat.slug}`}>
@@ -245,7 +245,7 @@ export default async function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {latestArticles.map((article) => (
+          {latestArticles.map((article: any) => (
             <Link key={article.id} href={`/article/${article.slug}`} className="group">
               <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
                 <div

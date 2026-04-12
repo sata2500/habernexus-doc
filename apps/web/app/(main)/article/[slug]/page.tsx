@@ -171,7 +171,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
         <div className="flex items-center gap-2 border-t border-border pt-6 mt-8">
           <span className="font-semibold font-(family-name:--font-outfit)">Etiketler:</span>
           <div className="flex flex-wrap gap-2">
-            {article.tags.map((tagRel) => (
+            {article.tags.map((tagRel: any) => (
               <Badge key={tagRel.tag.id} variant="default" className="hover:bg-primary-500 hover:text-white transition-colors cursor-pointer">
                 #{tagRel.tag.name}
               </Badge>

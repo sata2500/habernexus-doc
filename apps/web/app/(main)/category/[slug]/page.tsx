@@ -55,7 +55,7 @@ export default async function CategoryPage({ params }: { params: Params }) {
       {/* ── Haber Grid (Listeleme) ────────────────────────── */}
       {category.articles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {category.articles.map((article) => (
+          {category.articles.map((article: any) => (
             <Link key={article.id} href={`/article/${article.slug}`} className="group">
               <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
                 <div
