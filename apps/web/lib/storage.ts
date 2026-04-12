@@ -1,9 +1,5 @@
+import { put, del } from "@vercel/blob";
 import sharp from "sharp";
-import { promises as fs } from "fs";
-import path from "path";
-import crypto from "crypto";
-
-const UPLOAD_BASE_DIR = path.join(process.cwd(), "public/uploads");
 
 export type UploadType = "profile" | "article";
 
@@ -13,21 +9,16 @@ interface UploadOptions {
   maxHeight?: number;
 }
 
+/**
+ * Görseli işler (isteğe bağlı) ve Vercel Blob üzerine kaydeder.
+ */
 export async function processAndSaveImage(
   file: File,
   options: UploadOptions
 ): Promise<{ success: boolean; url?: string; error?: string }> {
   try {
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-
-    // Dizinleri oluştur
-    const targetDir = path.join(UPLOAD_BASE_DIR, options.type === "profile" ? "profiles" : "articles");
-    await fs.mkdir(targetDir, { recursive: true });
-
-    // Benzersiz dosya adı oluştur (.webp formatında)
-    const fileName = `${crypto.randomUUID()}.webp`;
-    const filePath = path.join(targetDir, fileName);
+    let buffer = Buffer.from(bytes);
 
     // Sharp ile işle (WebP dönüşümü ve Boyutlandırma)
     let sharpInstance = sharp(buffer).webp({ quality: 80 });
@@ -46,30 +37,35 @@ export async function processAndSaveImage(
       });
     }
 
-    await sharpInstance.toFile(filePath);
+    // İşlenmiş buffer'ı al
+    const processedBuffer = await sharpInstance.toBuffer();
 
-    // Public URL döndür
-    const publicUrl = `/uploads/${options.type === "profile" ? "profiles" : "articles"}/${fileName}`;
+    // Vercel Blob'a yükle
+    const filename = `${options.type}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}.webp`;
+    
+    const { url } = await put(filename, processedBuffer, {
+      access: "public",
+      addRandomSuffix: true,
+      contentType: "image/webp",
+    });
 
-    return { success: true, url: publicUrl };
+    return { success: true, url };
   } catch (error) {
-    console.error("Görsel işleme hatası:", error);
-    return { success: false, error: "Görsel işlenirken bir hata oluştu." };
+    console.error("Vercel Blob yükleme hatası:", error);
+    return { success: false, error: "Görsel yüklenirken bir hata oluştu." };
   }
 }
 
 /**
- * Eski bir görseli siler (yer açmak için)
+ * Vercel Blob üzerinden bir görseli siler.
  * @param url Silinecek görselin URL adresi
  */
 export async function deleteOldImage(url: string | null | undefined) {
-  if (!url || !url.startsWith("/uploads/")) return;
+  if (!url || !url.includes("blob.vercel-storage.com")) return;
   
   try {
-    const absolutePath = path.join(process.cwd(), "public", url);
-    await fs.unlink(absolutePath);
+    await del(url);
   } catch (error) {
-    // Dosya yoksa veya silinemezse sessizce devam et
-    console.warn(`Görsel silinemedi: ${url}`, error);
+    console.warn(`Görsel silinemedi (Vercel Blob): ${url}`, error);
   }
 }
