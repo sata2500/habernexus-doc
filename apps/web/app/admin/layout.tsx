@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image } from "lucide-react";
+import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image, Home, PenTool } from "lucide-react";
 import { SignOutButton } from "../dashboard/components/SignOutButton";
 
 const navItems = [
