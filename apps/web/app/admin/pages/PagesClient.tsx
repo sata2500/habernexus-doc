@@ -104,11 +104,10 @@ export function PagesClient({ initialPages }: { initialPages: any[] }) {
             <div className="p-6 border-b border-border flex items-center justify-between bg-muted/30">
               <div className="flex items-center gap-3">
                 <div className="h-8 w-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
-                  {editingPage.slug && ICON_MAP[editingPage.slug] ? (
-                    <editingPage.slug_icon className="h-4 w-4 text-primary-500" />
-                  ) : (
-                    <FileText className="h-4 w-4 text-primary-500" />
-                  )}
+                  {(() => {
+                    const Icon = (editingPage.slug && ICON_MAP[editingPage.slug]) || FileText;
+                    return <Icon className="h-4 w-4 text-primary-500" />;
+                  })()}
                 </div>
                 <h2 className="text-xl font-bold">{editingPage.title} Düzenle</h2>
               </div>
