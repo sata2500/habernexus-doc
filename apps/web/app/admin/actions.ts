@@ -66,7 +66,7 @@ export async function getAllUsers() {
       image: true,
       role: true,
       createdAt: true,
-      _count: { select: { articles: true } },
+      _count: { select: { articles: true, comments: true } },
     },
   });
 }
@@ -107,8 +107,8 @@ export async function getAllArticles() {
   return prisma.article.findMany({
     orderBy: { createdAt: "desc" },
     include: {
-      author: { select: { name: true, email: true } },
-      category: { select: { name: true, color: true } },
+      author: { select: { name: true, email: true, image: true } },
+      category: { select: { name: true, color: true, id: true } },
     },
   });
 }

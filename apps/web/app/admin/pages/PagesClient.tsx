@@ -58,12 +58,12 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
       const result = await updateStaticPage(editingPage.id, {
         title: editingPage.title,
         content: editingPage.content,
-        description: editingPage.description,
+        description: editingPage.description || undefined,
         extraData: editingPage.extraData,
       });
 
-      if (result.success) {
-        setPages(pages.map(p => p.id === editingPage.id ? result.page : p));
+      if (result.success && result.page) {
+        setPages(pages.map(p => p.id === editingPage.id ? (result.page as StaticPageWithData) : p));
         setSuccess(true);
         setTimeout(() => {
           setEditingPage(null);

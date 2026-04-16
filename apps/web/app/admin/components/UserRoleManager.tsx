@@ -57,7 +57,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
 
         return (
           <div key={user.id} className="flex items-center gap-4 p-4 bg-background hover:bg-muted/30 transition-colors">
-            <Avatar src={user.image || undefined} fallback={user.name} size="sm" />
+            <Avatar src={user.image ?? undefined} fallback={user.name ?? undefined} size="sm" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium truncate">{user.name}</p>
               <p className="text-xs text-muted-foreground truncate">{user.email}</p>
@@ -80,7 +80,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
                     ))}
                   </select>
                   <button
-                    onClick={() => handleDeleteUser(user.id, user.name)}
+                    onClick={() => handleDeleteUser(user.id, user.name ?? "İsimsiz")}
                     className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
                     title="Kullanıcıyı Sil"
                   >

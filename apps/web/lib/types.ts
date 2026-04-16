@@ -11,7 +11,7 @@ import {
  * StaticPage with JSON extraData type safety
  */
 export interface StaticPageWithData extends Omit<StaticPage, "extraData"> {
-  extraData: Record<string, any>;
+  extraData: any;
 }
 
 /**
@@ -26,7 +26,13 @@ export interface CategoryWithCount extends Category {
 /**
  * User with role and basic info
  */
-export interface UserWithInfo extends User {
+export interface UserWithInfo {
+  id: string;
+  name?: string | null;
+  role: string;
+  createdAt: Date;
+  email: string | null;
+  image?: string | null;
   _count?: {
     articles: number;
     comments: number;
@@ -37,10 +43,11 @@ export interface UserWithInfo extends User {
  * Article with relations for admin/author lists
  */
 export interface ArticleWithRelations extends Article {
-  category: Category | null;
+  category: Pick<Category, "name" | "color" | "id"> | null;
   author: {
     name: string | null;
-    image: string | null;
+    email?: string | null;
+    image?: string | null;
   };
 }
 
@@ -50,7 +57,8 @@ export interface ArticleWithRelations extends Article {
 export interface CommentWithRelations extends Comment {
   user: {
     name: string | null;
-    image: string | null;
+    image?: string | null;
+    email?: string | null;
   };
   article: {
     title: string;
