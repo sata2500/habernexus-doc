@@ -31,14 +31,29 @@ export async function deleteMedia(id: string) {
   const media = await prisma.media.findUnique({ where: { id } });
 
   if (media) {
+    const deletedUrl = media.url;
     try {
-      await del(media.url);
+      await del(deletedUrl);
     } catch (e) {
       console.warn("Blob silinemedi:", e);
     }
+
+    // İlişkili tabloları temizle
+    await prisma.article.updateMany({
+      where: { coverImage: deletedUrl },
+      data: { coverImage: null }
+    });
+
+    await prisma.user.updateMany({
+      where: { image: deletedUrl },
+      data: { image: null }
+    });
+
     await prisma.media.delete({ where: { id } });
   }
 
   revalidatePath("/admin/media");
+  revalidatePath("/admin/articles");
+  revalidatePath("/");
   return { success: true };
 }

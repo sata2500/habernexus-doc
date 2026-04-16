@@ -2,11 +2,12 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare } from "lucide-react";
+import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image } from "lucide-react";
 import { SignOutButton } from "../dashboard/components/SignOutButton";
 
 const navItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Medya Kütüphanesi", href: "/admin/media", icon: Image },
   { name: "Kategoriler", href: "/admin/categories", icon: Bookmark },
   { name: "Kullanıcılar", href: "/admin/users", icon: Users },
   { name: "Makaleler", href: "/admin/articles", icon: FileText },
