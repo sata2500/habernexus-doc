@@ -82,3 +82,17 @@ export async function optimizeMedia(mediaId: string) {
     throw error;
   }
 }
+/**
+ * URL üzerinden medya kaydını bulur ve optimize eder.
+ */
+export async function optimizeMediaByUrl(url: string) {
+  const media = await prisma.media.findUnique({
+    where: { url },
+  });
+
+  if (!media) {
+    throw new Error("Bu URL'ye sahip bir medya kaydı bulunamadı.");
+  }
+
+  return await optimizeMedia(media.id);
+}

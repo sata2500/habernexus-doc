@@ -99,6 +99,7 @@ export default function ProfilePage() {
                  onChange={setAvatarUrl}
                  type="profile"
                  aspectRatio="square"
+                 autoOptimize={true}
                  className="w-32 h-32"
                />
             </div>

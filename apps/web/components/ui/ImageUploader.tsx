@@ -11,6 +11,7 @@ interface ImageUploaderProps {
   type: "profile" | "article";
   className?: string;
   aspectRatio?: "square" | "video";
+  autoOptimize?: boolean;
 }
 
 export function ImageUploader({
@@ -19,6 +20,7 @@ export function ImageUploader({
   type,
   className,
   aspectRatio = "video",
+  autoOptimize = false,
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,15 +34,32 @@ export function ImageUploader({
     setUploading(true);
 
     try {
-      // Doğrudan Vercel Blob'a yükleme (Client-side)
-      // Bu işlem /api/upload rotasını otomatik olarak token almak için kullanır
+      // 1. Doğrudan Vercel Blob'a yükleme (Client-side)
       const newBlob = await upload(file.name, file, {
         access: "public",
         handleUploadUrl: "/api/upload",
-        clientPayload: JSON.stringify({ type }), // Opsiyonel ek veri
+        clientPayload: JSON.stringify({ type }),
       });
 
-      onChange(newBlob.url);
+      let finalUrl = newBlob.url;
+
+      // 2. Eğer otomatik optimizasyon istenmişse sunucuyu tetikle
+      if (autoOptimize) {
+         try {
+           const optResp = await fetch("/api/media/optimize-by-url", {
+             method: "POST",
+             body: JSON.stringify({ url: finalUrl }),
+           });
+           const optResult = await optResp.json();
+           if (optResult.success && optResult.url) {
+             finalUrl = optResult.url;
+           }
+         } catch (optErr) {
+           console.warn("Otomatik optimizasyon başarısız, ham görsel kullanılacak.");
+         }
+      }
+
+      onChange(finalUrl);
     } catch (err: any) {
       console.error("Yükleme hatası:", err);
       setError(err.message || "Görsel yüklenemedi. Lütfen tekrar deneyin.");
