@@ -53,6 +53,12 @@ export default async function AdminLayout({ children }: { children: React.ReactN
 
           <div className="mt-8 pt-6 border-t border-neutral-800 px-2 space-y-1">
             <Link
+              href="/"
+              className="flex items-center gap-2 w-full px-2 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
+            >
+              Ana Sayfaya Dön
+            </Link>
+            <Link
               href="/author"
               className="flex items-center gap-2 w-full px-2 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors"
             >
