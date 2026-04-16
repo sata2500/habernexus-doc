@@ -249,32 +249,88 @@ export function Navbar({ categories = [] }: { categories?: Category[] }) {
         id="navbar-mobile-menu"
       >
         <div className="flex flex-col h-full overflow-y-auto">
-          {/* Mobile Auth */}
-          <div className="p-4 border-b border-border flex gap-2 flex-col sm:hidden">
+          {/* Mobile Auth & Profile */}
+          <div className="p-5 border-b border-border space-y-4">
             {isPending ? (
-              <div className="h-9 w-full bg-muted animate-pulse rounded-md" />
+              <div className="h-16 w-full bg-muted animate-pulse rounded-2xl" />
             ) : session ? (
               <>
-                 <div className="mb-2 p-2 bg-muted/50 rounded-lg">
-                   <p className="text-sm font-medium text-foreground">{session.user.name}</p>
-                   <p className="text-xs text-muted-foreground">{session.user.email}</p>
-                 </div>
-                 <Button variant="outline" size="sm" className="w-full" onClick={async () => { await signOut(); setIsMobileMenuOpen(false); window.location.reload(); }}>
-                   Çıkış Yap
-                 </Button>
+                {/* Profile Header */}
+                <Link 
+                  href="/dashboard/profile" 
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center gap-3 p-3 bg-muted/30 rounded-2xl hover:bg-muted/50 transition-colors border border-border/50"
+                 >
+                  <Avatar 
+                    src={session.user.image || undefined} 
+                    fallback={session.user.name} 
+                    size="lg" 
+                    className="ring-2 ring-primary-500/20"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-foreground truncate">{session.user.name}</p>
+                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-1">
+                      {(session.user as any).role === "ADMIN" ? "🛡️ Admin" : (session.user as any).role === "AUTHOR" ? "✍️ Yazar" : "👤 Okur"}
+                    </p>
+                  </div>
+                </Link>
+
+                {/* Dashboard Quick Links */}
+                <div className="grid grid-cols-1 gap-2">
+                  <Link href="/dashboard/profile" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="ghost" size="sm" className="w-full justify-start gap-2 h-10 px-4 rounded-xl">
+                      <Avatar size="xs" src={session.user.image || undefined} fallback={session.user.name} />
+                      Profilim
+                    </Button>
+                  </Link>
+                  
+                  {((session.user as any).role === "ADMIN" || (session.user as any).role === "AUTHOR") && (
+                    <Link href="/author" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="ghost" size="sm" className="w-full justify-start gap-2 h-10 px-4 rounded-xl">
+                        ✍️ Yazar Masası
+                      </Button>
+                    </Link>
+                  )}
+
+                  {(session.user as any).role === "ADMIN" && (
+                    <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="ghost" size="sm" className="w-full justify-start gap-2 h-10 px-4 rounded-xl text-red-500 hover:text-red-600 hover:bg-red-500/10">
+                        🛡️ Admin Paneli
+                      </Button>
+                    </Link>
+                  )}
+
+                  <hr className="border-border my-1" />
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="w-full justify-start gap-2 h-10 px-4 rounded-xl text-muted-foreground hover:text-foreground"
+                    onClick={async () => { 
+                      await signOut(); 
+                      setIsMobileMenuOpen(false); 
+                      window.location.reload(); 
+                    }}
+                  >
+                    🚪 Çıkış Yap
+                  </Button>
+                </div>
               </>
             ) : (
-              <div className="flex gap-2 w-full">
-                <Link href="/login" className="flex-1" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button variant="outline" size="sm" className="w-full">
-                    Giriş Yap
-                  </Button>
-                </Link>
-                <Link href="/register" className="flex-1" onClick={() => setIsMobileMenuOpen(false)}>
-                  <Button variant="primary" size="sm" className="w-full">
-                    Kayıt Ol
-                  </Button>
-                </Link>
+              <div className="space-y-3">
+                <div className="flex gap-2 w-full">
+                  <Link href="/login" className="flex-1" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="outline" size="sm" className="w-full h-11 rounded-xl">
+                      Giriş Yap
+                    </Button>
+                  </Link>
+                  <Link href="/register" className="flex-1" onClick={() => setIsMobileMenuOpen(false)}>
+                    <Button variant="primary" size="sm" className="w-full h-11 rounded-xl">
+                      Kayıt Ol
+                    </Button>
+                  </Link>
+                </div>
+                <p className="text-[10px] text-center text-muted-foreground">Kayıt olarak tüm haberlerden anında haberdar olabilirsiniz.</p>
               </div>
             )}
           </div>
