@@ -19,7 +19,7 @@ import { deleteMedia } from "@/app/actions/admin-media";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-interface MediaItem {
+export interface MediaItem {
   id: string;
   url: string;
   filename: string;
@@ -96,8 +96,9 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
     try {
       await deleteMedia(id);
       router.refresh();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Silme işlemi başarısız.";
+      alert(message);
     }
   };
 

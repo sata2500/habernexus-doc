@@ -15,9 +15,8 @@ export async function POST(
   }
 
   // Sadece ADMIN veya AUTHOR optimize edebilir
-  const user = session.user as any;
-  if (user.role !== "ADMIN" && user.role !== "AUTHOR") {
-    return NextResponse.json({ error: "Forbidden" }, { status: 0 }); // Better Auth usually handles roles, but we check manually for safety
+  if (session.user.role !== "ADMIN" && session.user.role !== "AUTHOR") {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
   const { id } = await params;
@@ -25,9 +24,10 @@ export async function POST(
   try {
     const result = await optimizeMedia(id);
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Optimization failed";
     return NextResponse.json(
-      { error: error.message || "Optimization failed" },
+      { error: message },
       { status: 500 }
     );
   }

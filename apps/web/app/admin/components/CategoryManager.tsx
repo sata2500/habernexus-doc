@@ -5,15 +5,9 @@ import { createCategory, updateCategory, deleteCategoryAdmin } from "../actions"
 import { Loader2, Trash2, Edit2, Bookmark, CheckCircle2, AlertCircle } from "lucide-react";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
-interface Category {
-  id: string;
-  name: string;
-  slug: string;
-  color: string | null;
-  icon: string | null;
-  order: number;
-  _count: { articles: number };
-}
+import { CategoryWithCount } from "@/lib/types";
+
+type Category = CategoryWithCount;
 
 export function CategoryManager({ categories }: { categories: Category[] }) {
   const [pending, startTransition] = useTransition();
@@ -221,7 +215,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                  <Bookmark className="h-10 w-10 mb-3 opacity-20" />
                  <p>Henüz kategori eklenmemiş.</p>
              </div>
-          ) : (categories as any).map((cat: any) => {
+          ) : categories.map((cat) => {
             const isLoading = actionId?.startsWith(cat.id);
             const isDeleting = actionId === cat.id + "-delete";
 

@@ -115,7 +115,7 @@ export default function NewArticlePage() {
               Yayın Durumu
             </h3>
             <div className="flex gap-2">
-              {(["DRAFT", "PUBLISHED"] as const).map((s: any) => (
+              {(["DRAFT", "PUBLISHED"] as const).map((s) => (
                 <button
                   key={s}
                   type="button"
@@ -138,7 +138,7 @@ export default function NewArticlePage() {
           <Card className="p-5 space-y-3">
             <h3 className="text-sm font-semibold">Kategori</h3>
             <div className="flex flex-wrap gap-2">
-              {categories.map((cat: any) => (
+              {categories.map((cat) => (
                 <button
                   key={cat.id}
                   type="button"

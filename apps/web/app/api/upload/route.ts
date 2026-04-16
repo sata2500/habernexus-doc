@@ -12,7 +12,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       body,
       request,
       onBeforeGenerateToken: async (
-        pathname,
+        _pathname,
         /* clientPayload */
       ) => {
         // Oturum kontrolü
@@ -24,8 +24,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         }
 
         // Sadece AUTHOR veya ADMIN yükleme yapabilir (isteğe bağlı kısıtlama)
-        const user = session.user as any;
-        if (user.role !== "ADMIN" && user.role !== "AUTHOR") {
+        if (session.user.role !== "ADMIN" && session.user.role !== "AUTHOR") {
           throw new Error("Görsel yükleme yetkiniz yok.");
         }
 
@@ -51,7 +50,7 @@ export async function POST(request: Request): Promise<NextResponse> {
               userId: userId,
             },
           });
-        } catch (error) {
+        } catch {
           throw new Error("Medya kaydı veritabanına işlenemedi.");
         }
       },

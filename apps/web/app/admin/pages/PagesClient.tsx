@@ -22,8 +22,10 @@ import {
   Sparkles
 } from "lucide-react";
 import { updateStaticPage } from "@/app/actions/static-pages";
+import { StaticPageWithData } from "@/lib/types";
+import { LucideIcon } from "lucide-react";
 
-const ICON_MAP: Record<string, any> = {
+const ICON_MAP: Record<string, LucideIcon> = {
   about: Info,
   contact: Mail,
   careers: Briefcase,
@@ -34,13 +36,13 @@ const ICON_MAP: Record<string, any> = {
   kvkk: Shield,
 };
 
-export function PagesClient({ initialPages }: { initialPages: any[] }) {
-  const [pages, setPages] = useState(initialPages);
-  const [editingPage, setEditingPage] = useState<any | null>(null);
+export function PagesClient({ initialPages }: { initialPages: StaticPageWithData[] }) {
+  const [pages, setPages] = useState<StaticPageWithData[]>(initialPages);
+  const [editingPage, setEditingPage] = useState<StaticPageWithData | null>(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleEdit = (page: any) => {
+  const handleEdit = (page: StaticPageWithData) => {
     setEditingPage({ 
       ...page, 
       extraData: page.extraData || {} 

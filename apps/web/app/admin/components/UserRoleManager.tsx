@@ -14,15 +14,11 @@ const ROLES: { value: Role; label: string; variant: "default" | "primary" | "err
   { value: "ADMIN",  label: "Admin",     variant: "error" },
 ];
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  image: string | null;
-  role: string | null;
-  createdAt: Date;
-  _count: { articles: number };
-}
+import { UserWithInfo } from "@/lib/types";
+
+type User = UserWithInfo & {
+  _count: { articles: number; comments: number };
+};
 
 export function UserRoleManager({ users }: { users: User[] }) {
   const [pending, startTransition] = useTransition();
@@ -54,9 +50,9 @@ export function UserRoleManager({ users }: { users: User[] }) {
 
   return (
     <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
-      {users.map((user: any) => {
+      {users.map((user) => {
         const currentRole = (user.role as Role) ?? "USER";
-        const roleInfo = ROLES.find((r: any) => r.value === currentRole) ?? ROLES[0];
+        const roleInfo = ROLES.find((r) => r.value === currentRole) ?? ROLES[0];
         const isChanging = changingId === user.id;
 
         return (
@@ -79,7 +75,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
                     onChange={(e) => handleRoleChange(user.id, e.target.value)}
                     className="text-xs px-2.5 py-1.5 rounded-lg border border-border bg-background text-foreground cursor-pointer focus:ring-2 focus:ring-primary-500 outline-none"
                   >
-                    {ROLES.map((r: any) => (
+                    {ROLES.map((r) => (
                       <option key={r.value} value={r.value}>{r.label}</option>
                     ))}
                   </select>

@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { User, Bookmark, Settings, LogOut, LayoutDashboard, Home, MessageSquare } from "lucide-react";
+import { User, Bookmark, Settings, LayoutDashboard, Home, MessageSquare } from "lucide-react";
 import { SignOutButton } from "./components/SignOutButton";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -40,7 +40,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           </div>
           
           <nav className="flex flex-col gap-1.5">
-            {navItems.map((item: any) => {
+            {navItems.map((item) => {
               const Icon = item.icon;
               return (
                 <Link

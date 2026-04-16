@@ -5,16 +5,9 @@ import { updateArticleStatus, deleteArticle } from "../actions";
 import { Badge } from "@/components/ui/Badge";
 import { Loader2, Trash2, Eye, EyeOff } from "lucide-react";
 
-interface Article {
-  id: string;
-  title: string;
-  status: string;
-  viewCount: number;
-  createdAt: Date;
-  publishedAt: Date | null;
-  author: { name: string; email: string };
-  category: { name: string; color: string | null } | null;
-}
+import { ArticleWithRelations } from "@/lib/types";
+
+type Article = ArticleWithRelations;
 
 function getStatusInfo(status: string) {
   if (status === "PUBLISHED") return { label: "Yayında", variant: "success" as const };
@@ -45,7 +38,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
 
   return (
     <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
-      {articles.map((article: any) => {
+      {articles.map((article) => {
         const { label, variant } = getStatusInfo(article.status);
         const isLoading = actionId?.startsWith(article.id);
 

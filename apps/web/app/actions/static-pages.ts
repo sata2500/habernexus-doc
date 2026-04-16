@@ -69,7 +69,8 @@ export async function getStaticPageBySlug(slug: string) {
   }
 }
 
-export async function updateStaticPage(id: string, data: { title: string; content: string; description?: string; extraData?: Record<string, any> }) {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function updateStaticPage(id: string, data: { title: string; content: string; description?: string; extraData?: any }) {
   try {
     const reqHeaders = await headers();
     const session = await auth.api.getSession({ headers: reqHeaders });

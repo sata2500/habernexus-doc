@@ -19,9 +19,10 @@ export async function POST(request: NextRequest) {
 
     const result = await optimizeMediaByUrl(url);
     return NextResponse.json(result);
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Auto-optimization failed";
     return NextResponse.json(
-      { error: error.message || "Auto-optimization failed" },
+      { error: message },
       { status: 500 }
     );
   }

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { ActionResponse } from "@/lib/types";
 
 // Basit Türkçe karakter destekli SLUG üretici
 function generateSlug(title: string) {
@@ -27,7 +28,7 @@ export async function createArticle(data: {
   coverImage?: string;
   categoryId: string;
   status: "DRAFT" | "PUBLISHED";
-}) {
+}): Promise<ActionResponse> {
   try {
     const reqHeaders = await headers();
     const session = await auth.api.getSession({ headers: reqHeaders });
@@ -58,9 +59,10 @@ export async function createArticle(data: {
     revalidatePath("/");
     
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Veritabanına kaydedilirken hata oluştu.";
     console.error("Haber oluşturma hatası:", error);
-    return { success: false, error: "Veritabanına kaydedilirken hata oluştu." };
+    return { success: false, error: message };
   }
 }
 
@@ -119,7 +121,7 @@ export async function updateArticle(id: string, data: {
   coverImage?: string;
   categoryId: string;
   status: "DRAFT" | "PUBLISHED";
-}) {
+}): Promise<ActionResponse> {
   try {
     const reqHeaders = await headers();
     const session = await auth.api.getSession({ headers: reqHeaders });

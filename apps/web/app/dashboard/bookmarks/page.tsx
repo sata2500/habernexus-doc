@@ -21,6 +21,7 @@ export default async function BookmarksPage() {
   if (!session) return null;
 
   const bookmarks = await getUserBookmarks(session.user.id);
+  type BookmarkItem = Awaited<ReturnType<typeof getUserBookmarks>>[number];
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -33,7 +34,7 @@ export default async function BookmarksPage() {
 
       {bookmarks.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {bookmarks.map((bookmark: any) => {
+          {(bookmarks as BookmarkItem[]).map((bookmark) => {
             const article = bookmark.article;
             return (
               <Link key={bookmark.id} href={`/article/${article.slug}`} className="group h-full">

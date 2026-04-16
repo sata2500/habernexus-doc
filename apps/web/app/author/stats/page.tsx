@@ -13,16 +13,17 @@ import {
 
 export default async function AuthorStatsPage() {
   const articles = await getAuthorArticles();
+  type AuthorArticle = Awaited<ReturnType<typeof getAuthorArticles>>[number];
 
   // Hesaplamalar
   const totalArticles = articles.length;
-  const publishedArticles = articles.filter((a: any) => a.status === "PUBLISHED").length;
-  const draftArticles = articles.filter((a: any) => a.status === "DRAFT").length;
-  const totalViews = articles.reduce((acc: number, curr: any) => acc + (curr.viewCount || 0), 0);
+  const publishedArticles = (articles as AuthorArticle[]).filter((a) => a.status === "PUBLISHED").length;
+  const draftArticles = (articles as AuthorArticle[]).filter((a) => a.status === "DRAFT").length;
+  const totalViews = (articles as AuthorArticle[]).reduce((acc, curr) => acc + (curr.viewCount || 0), 0);
   const avgViews = totalArticles > 0 ? Math.round(totalViews / totalArticles) : 0;
 
-  const topArticles = [...articles]
-    .sort((a: any, b: any) => (b.viewCount || 0) - (a.viewCount || 0))
+  const topArticles = [...(articles as AuthorArticle[])]
+    .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
     .slice(0, 5);
 
   const stats = [
@@ -41,7 +42,7 @@ export default async function AuthorStatsPage() {
 
       {/* ── Özet Kartları ────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((item: any) => {
+        {stats.map((item) => {
           const Icon = item.icon;
           return (
             <Card key={item.label} className="p-5 border-none shadow-sm relative overflow-hidden group">
@@ -76,7 +77,7 @@ export default async function AuthorStatsPage() {
           </div>
 
           <div className="space-y-4">
-            {topArticles.map((article: any, index: number) => (
+            {topArticles.map((article, index) => (
               <div key={article.id} className="flex items-center gap-4 group">
                 <div className="h-10 w-10 shrink-0 font-black text-xl text-muted-foreground/20 italic flex items-center justify-center group-hover:text-primary-500/30 transition-colors">
                   {index + 1}

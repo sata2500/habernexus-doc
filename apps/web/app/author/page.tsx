@@ -20,10 +20,11 @@ export default async function AuthorDashboardPage() {
   const reqHeaders = await headers();
   const session = await auth.api.getSession({ headers: reqHeaders });
   const articles = await getAuthorArticles();
+  type AuthorArticle = Awaited<ReturnType<typeof getAuthorArticles>>[number];
 
-  const published = articles.filter((a: any) => a.status === "PUBLISHED");
-  const drafts = articles.filter((a: any) => a.status === "DRAFT");
-  const totalViews = published.reduce((sum: number, a: any) => sum + a.viewCount, 0);
+  const published = (articles as AuthorArticle[]).filter((a) => a.status === "PUBLISHED");
+  const drafts = (articles as AuthorArticle[]).filter((a) => a.status === "DRAFT");
+  const totalViews = published.reduce((sum, a) => sum + a.viewCount, 0);
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -49,7 +50,7 @@ export default async function AuthorDashboardPage() {
           { icon: Newspaper, label: "Toplam Makale", value: articles.length, color: "text-blue-500 bg-blue-500/10" },
           { icon: TrendingUp, label: "Toplam Görüntülenme", value: totalViews.toLocaleString("tr-TR"), color: "text-green-500 bg-green-500/10" },
           { icon: FileText, label: "Taslak", value: drafts.length, color: "text-amber-500 bg-amber-500/10" },
-        ].map((stat: any) => (
+        ].map((stat) => (
           <div key={stat.label} className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-center gap-4">
             <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
               <stat.icon className="h-6 w-6" />
@@ -73,11 +74,11 @@ export default async function AuthorDashboardPage() {
           <div className="text-center py-16 bg-muted/30 rounded-2xl border border-dashed border-border">
             <Newspaper className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
             <p className="font-medium text-foreground">Henüz hiç makale yok</p>
-            <p className="text-sm text-muted-foreground mt-1">İlk haberinizi eklemek için "Yeni Haber Yaz" butonunu kullanın.</p>
+            <p className="text-sm text-muted-foreground mt-1">İlk haberinizi eklemek için &quot;Yeni Haber Yaz&quot; butonunu kullanın.</p>
           </div>
         ) : (
           <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
-            {articles.slice(0, 5).map((article: any) => {
+            {(articles as AuthorArticle[]).slice(0, 5).map((article) => {
               const { label, variant } = getStatusLabel(article.status);
               return (
                 <div key={article.id} className="flex items-center justify-between gap-4 p-4 bg-background hover:bg-muted/40 transition-colors">

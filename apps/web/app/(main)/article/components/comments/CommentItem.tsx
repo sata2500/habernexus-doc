@@ -11,7 +11,7 @@ interface CommentDetail {
   content: string;
   createdAt: Date | string;
   userId: string;
-  user: { name: string; image?: string | null };
+  user?: { name: string; image?: string | null };
   replies?: CommentDetail[];
 }
 
@@ -48,19 +48,22 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
     }
   };
 
+  const userName = comment.user?.name || "Anonim";
+  const userImage = comment.user?.image || undefined;
+
   return (
     <div className={`group animate-in fade-in slide-in-from-left-2 duration-300 ${isReply ? "ml-8 sm:ml-12 border-l-2 border-border pl-6 py-2" : ""}`}>
       <div className="flex gap-4">
         <Avatar 
-          src={comment.user.image || undefined} 
-          fallback={comment.user.name} 
+          src={userImage} 
+          fallback={userName} 
           size="sm" 
           className="shrink-0 ring-2 ring-background shadow-sm"
         />
         <div className="flex-1 min-w-0 space-y-1.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-sm font-bold font-(family-name:--font-outfit) hover:text-primary-600 transition-colors cursor-pointer">{comment.user.name}</span>
+              <span className="text-sm font-bold font-(family-name:--font-outfit) hover:text-primary-600 transition-colors cursor-pointer">{userName}</span>
               <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded leading-none">{createdAt}</span>
             </div>
             
@@ -124,7 +127,7 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
       {/* Alt Yanıtlar (Recursive) */}
       {comment.replies && comment.replies.length > 0 && (
         <div className="mt-4 space-y-4">
-          {comment.replies.map((reply: { id: string }) => (
+          {comment.replies.map((reply) => (
             <CommentItem 
               key={reply.id} 
               comment={reply} 
