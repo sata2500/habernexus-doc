@@ -15,7 +15,9 @@ import {
   X,
   Save,
   Loader2,
-  CheckCircle2
+  CheckCircle2,
+  Phone,
+  MapPin
 } from "lucide-react";
 import { updateStaticPage } from "@/app/actions/static-pages";
 
@@ -37,7 +39,10 @@ export function PagesClient({ initialPages }: { initialPages: any[] }) {
   const [success, setSuccess] = useState(false);
 
   const handleEdit = (page: any) => {
-    setEditingPage({ ...page });
+    setEditingPage({ 
+      ...page, 
+      extraData: page.extraData || {} 
+    });
     setSuccess(false);
   };
 
@@ -50,6 +55,7 @@ export function PagesClient({ initialPages }: { initialPages: any[] }) {
         title: editingPage.title,
         content: editingPage.content,
         description: editingPage.description,
+        extraData: editingPage.extraData,
       });
 
       if (result.success) {
@@ -66,6 +72,17 @@ export function PagesClient({ initialPages }: { initialPages: any[] }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  const updateExtraData = (key: string, value: string) => {
+    if (!editingPage) return;
+    setEditingPage({
+      ...editingPage,
+      extraData: {
+        ...editingPage.extraData,
+        [key]: value
+      }
+    });
   };
 
   return (
@@ -120,45 +137,124 @@ export function PagesClient({ initialPages }: { initialPages: any[] }) {
               </button>
             </div>
 
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-semibold text-muted-foreground">Sayfa Başlığı</label>
-                <input 
-                  type="text"
-                  value={editingPage.title}
-                  onChange={(e) => setEditingPage({...editingPage, title: e.target.value})}
-                  className="w-full h-12 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                />
+            {/* Content Area */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-8">
+              {/* Sayfa Ayarları */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Sayfa Başlığı</label>
+                  <input 
+                    type="text"
+                    value={editingPage.title}
+                    onChange={(e) => setEditingPage({...editingPage, title: e.target.value})}
+                    className="w-full h-11 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">SEO Açıklaması (Opsiyonel)</label>
+                  <input 
+                    type="text"
+                    value={editingPage.description || ""}
+                    onChange={(e) => setEditingPage({...editingPage, description: e.target.value})}
+                    placeholder="Arama motorları için kısa özet..."
+                    className="w-full h-11 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                  />
+                </div>
               </div>
 
+              {/* Ekstra Veriler (İletişim / Reklam) */}
+              {(editingPage.slug === "contact" || editingPage.slug === "advertise") && (
+                <div className="p-6 rounded-2xl bg-primary-500/5 border border-primary-500/10 space-y-4">
+                  <h3 className="text-sm font-bold flex items-center gap-2 text-primary-600">
+                    <Settings className="h-4 w-4" /> Sayfaya Özel Bilgiler (Kartlar)
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {editingPage.slug === "contact" && (
+                      <>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
+                            <Phone className="h-3 w-3" /> Telefon Numarası
+                          </label>
+                          <input 
+                            type="text" 
+                            value={editingPage.extraData.phone || ""} 
+                            onChange={(e) => updateExtraData("phone", e.target.value)}
+                            className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background focus:ring-1 focus:ring-primary-500 outline-none"
+                            placeholder="+90 (212) 000 00 00"
+                          />
+                        </div>
+                        <div className="space-y-1.5">
+                          <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
+                            <Mail className="h-3 w-3" /> E-Posta Adresi
+                          </label>
+                          <input 
+                            type="text" 
+                            value={editingPage.extraData.email || ""} 
+                            onChange={(e) => updateExtraData("email", e.target.value)}
+                            className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background focus:ring-1 focus:ring-primary-500 outline-none"
+                            placeholder="info@habernexus.com"
+                          />
+                        </div>
+                        <div className="md:col-span-2 space-y-1.5">
+                          <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
+                            <MapPin className="h-3 w-3" /> Ofis Adresi
+                          </label>
+                          <input 
+                            type="text" 
+                            value={editingPage.extraData.address || ""} 
+                            onChange={(e) => updateExtraData("address", e.target.value)}
+                            className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background focus:ring-1 focus:ring-primary-500 outline-none"
+                            placeholder="Levent Mah. Medya Sk. No: 1, Beşiktaş / İstanbul"
+                          />
+                        </div>
+                      </>
+                    )}
+                    {editingPage.slug === "advertise" && (
+                      <div className="md:col-span-2 space-y-1.5">
+                        <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
+                          <Mail className="h-3 w-3" /> Reklam İletişim E-Postası
+                        </label>
+                        <input 
+                          type="text" 
+                          value={editingPage.extraData.email || ""} 
+                          onChange={(e) => updateExtraData("email", e.target.value)}
+                          className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background focus:ring-1 focus:ring-primary-500 outline-none"
+                          placeholder="ads@habernexus.com"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Ana İçerik */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm font-semibold text-muted-foreground">Sayfa İçeriği (HTML Destekli)</label>
+                  <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Sayfa İçeriği (HTML)</label>
                   <span className="text-[10px] text-muted-foreground italic">* prose stili otomatik uygulanır</span>
                 </div>
                 <textarea 
                   value={editingPage.content}
                   onChange={(e) => setEditingPage({...editingPage, content: e.target.value})}
-                  className="w-full h-[400px] p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all font-mono text-sm leading-relaxed"
-                  placeholder="<p>Hakkımızda içeriği buraya gelecek...</p>"
+                  className="w-full h-[350px] p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all font-mono text-sm leading-relaxed"
+                  placeholder="<p>Sayfa içeriğini buraya girin...</p>"
                 />
               </div>
             </div>
 
             {/* Footer */}
             <div className="p-6 border-t border-border flex items-center justify-between bg-muted/30">
-              <p className="text-xs text-muted-foreground font-mono">/{editingPage.slug}</p>
+              <p className="text-xs text-muted-foreground font-mono">slug: /{editingPage.slug}</p>
               <div className="flex items-center gap-3">
                 {success && (
                   <span className="text-sm text-green-500 font-medium flex items-center gap-1 animate-in fade-in zoom-in">
-                    <CheckCircle2 className="h-4 w-4" /> Başarıyla kaydedildi
+                    <CheckCircle2 className="h-4 w-4" /> Değişiklikler başarıyla kaydedildi
                   </span>
                 )}
                 <Button 
                   onClick={handleSave} 
                   disabled={loading}
-                  className="min-w-[140px] gap-2 rounded-xl"
+                  className="min-w-[160px] gap-2 rounded-xl h-11"
                 >
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

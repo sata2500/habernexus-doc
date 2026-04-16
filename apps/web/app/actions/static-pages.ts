@@ -7,9 +7,9 @@ import { revalidatePath } from "next/cache";
 
 const REQUIRED_PAGES = [
   { slug: "about", title: "Hakkımızda" },
-  { slug: "contact", title: "İletişim" },
+  { slug: "contact", title: "İletişim", defaults: { email: "info@habernexus.com", phone: "+90 (212) 000 00 00", address: "Levent Mah. Medya Sk. No: 1, Beşiktaş / İstanbul" } },
   { slug: "careers", title: "Kariyer" },
-  { slug: "advertise", title: "Reklam" },
+  { slug: "advertise", title: "Reklam", defaults: { email: "ads@habernexus.com" } },
   { slug: "privacy", title: "Gizlilik Politikası" },
   { slug: "terms", title: "Kullanım Şartları" },
   { slug: "cookies", title: "Çerez Politikası" },
@@ -29,12 +29,12 @@ export async function seedStaticPages() {
           slug: page.slug,
           title: page.title,
           content: `<h1>${page.title}</h1><p>İçerik yakında eklenecektir...</p>`,
+          extraData: page.defaults || {},
         },
       });
     }
   } catch (error) {
     console.error("Critical: Error during seeding static pages. Table might be missing.", error);
-    // Hata fırlatmıyoruz ki uygulama tamamen çökmesin
   }
 }
 
@@ -47,7 +47,6 @@ export async function getStaticPages() {
       throw new Error("Unauthorized");
     }
 
-    // İlk çalıştırmada sayfaları oluştur (Eğer tablo yoksa burası log basıp devam edecek)
     await seedStaticPages();
 
     return await prisma.staticPage.findMany({
@@ -70,7 +69,7 @@ export async function getStaticPageBySlug(slug: string) {
   }
 }
 
-export async function updateStaticPage(id: string, data: { title: string; content: string; description?: string }) {
+export async function updateStaticPage(id: string, data: { title: string; content: string; description?: string; extraData?: any }) {
   try {
     const reqHeaders = await headers();
     const session = await auth.api.getSession({ headers: reqHeaders });
@@ -85,6 +84,7 @@ export async function updateStaticPage(id: string, data: { title: string; conten
         title: data.title,
         content: data.content,
         description: data.description,
+        extraData: data.extraData,
       },
     });
 

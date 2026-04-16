@@ -224,6 +224,7 @@ model StaticPage {
   title       String
   description String?
   content     String   // DB Text
+  extraData   Json?    // Ekstra alanlar (e-posta, tel, adres vb.)
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
 

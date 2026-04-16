@@ -12,6 +12,10 @@ export async function generateMetadata() {
 
 export default async function AdvertisePage() {
   const page = await getStaticPageBySlug("advertise");
+  
+  // Reklam iletişim mailini extraData'dan çekiyoruz
+  const adsData = (page?.extraData as any) || {};
+  const adsEmail = adsData.email || "ads@habernexus.com";
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -42,8 +46,8 @@ export default async function AdvertisePage() {
          <div className="space-y-4">
            <div className="p-4 bg-background rounded-xl border border-border">
              <p className="text-sm text-muted-foreground mb-1">Kurumsal Reklam İletişimi</p>
-             <a href="mailto:reklam@habernexus.com" className="text-lg font-semibold text-primary-600 hover:text-primary-700 transition-colors">
-               reklam@habernexus.com
+             <a href={`mailto:${adsEmail}`} className="text-lg font-semibold text-primary-600 hover:text-primary-700 transition-colors">
+               {adsEmail}
              </a>
            </div>
          </div>

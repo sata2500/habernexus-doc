@@ -12,6 +12,12 @@ export async function generateMetadata() {
 
 export default async function ContactPage() {
   const page = await getStaticPageBySlug("contact");
+  
+  // Tip güvenliği için extraData dökümü
+  const contactData = (page?.extraData as any) || {};
+  const email = contactData.email || "info@habernexus.com";
+  const phone = contactData.phone || "+90 (212) 000 00 00";
+  const address = contactData.address || "Levent Mah. Medya Sk. No: 1, Beşiktaş / İstanbul";
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -40,8 +46,8 @@ export default async function ContactPage() {
           <p className="text-muted-foreground text-sm mb-6 flex-1">
             Genel sorularınız, haber bülteni üyelikleri ve dijital destek için 7/24 e-posta gönderin.
           </p>
-          <a href="mailto:info@habernexus.com" className="text-primary-600 font-medium hover:underline flex items-center gap-1.5">
-            info@habernexus.com <ExternalLink className="h-4 w-4" />
+          <a href={`mailto:${email}`} className="text-primary-600 font-medium hover:underline flex items-center gap-1.5">
+            {email} <ExternalLink className="h-4 w-4" />
           </a>
         </Card>
 
@@ -53,8 +59,8 @@ export default async function ContactPage() {
           <p className="text-muted-foreground text-sm mb-6 flex-1">
             Önemli haber ihbarları, basın bülteni gönderimleri veya kurumsal iletişim için ofisimizi arayabilirsiniz.
           </p>
-          <a href="tel:+902120000000" className="text-primary-600 font-medium hover:underline">
-            +90 (212) 000 00 00
+          <a href={`tel:${phone.replace(/\s/g, "")}`} className="text-primary-600 font-medium hover:underline">
+            {phone}
           </a>
         </Card>
 
@@ -64,8 +70,12 @@ export default async function ContactPage() {
           </div>
           <h3 className="text-xl font-bold mb-3">Ofis</h3>
           <p className="text-muted-foreground text-sm mb-6 flex-1">
-            Haber Nexus Medya A.Ş.<br />
-            Levent Mah. Medya Sk. No: 1, 34330 <br /> Beşiktaş / İstanbul
+            {address.split(",").map((line: string, i: number) => (
+              <span key={i}>
+                {line}
+                {i < address.split(",").length - 1 && <br />}
+              </span>
+            ))}
           </p>
           <button className="text-primary-600 font-medium hover:underline flex items-center gap-1.5 cursor-pointer">
             Haritada Gör <ExternalLink className="h-4 w-4" />
@@ -73,7 +83,7 @@ export default async function ContactPage() {
         </Card>
       </div>
 
-      <div className="pt-12 text-center">
+      <div className="pt-12 text-center border-t border-border/40">
         <p className="text-sm text-muted-foreground">
           Online bir iletişim formu kullanmak yerine, hızlı çözüm için doğrudan e-posta veya telefon ile bize ulaşmayı tercih edebilirsiniz.
         </p>
