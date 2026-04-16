@@ -43,7 +43,8 @@ export async function optimizeMedia(mediaId: string) {
     });
 
     // 5. Eski dosyayı Vercel Blob'dan sil
-    await del(media.url);
+    const oldUrl = media.url;
+    await del(oldUrl);
 
     // 6. DB Kaydını güncelle
     await prisma.media.update({
@@ -56,6 +57,19 @@ export async function optimizeMedia(mediaId: string) {
         height: metadata.height,
         size: processedBuffer.length,
       },
+    });
+
+    // 7. Diğer tablolardaki eski URL'leri yeni URL ile güncelle
+    // Article kapak görselleri
+    await prisma.article.updateMany({
+      where: { coverImage: oldUrl },
+      data: { coverImage: newUrl },
+    });
+
+    // Kullanıcı profil resimleri
+    await prisma.user.updateMany({
+      where: { image: oldUrl },
+      data: { image: newUrl },
     });
 
     return { success: true, url: newUrl };
