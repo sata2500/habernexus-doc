@@ -12,7 +12,8 @@ import {
   AlertCircle,
   Loader2,
   FileIcon,
-  Maximize2
+  Maximize2,
+  Image as ImageIcon
 } from "lucide-react";
 import { deleteMedia } from "@/app/actions/admin-media";
 import { useRouter } from "next/navigation";
