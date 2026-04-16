@@ -1,5 +1,6 @@
 import { searchArticles, estimateReadingTime } from "@/lib/data";
 import Link from "next/link";
+import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
@@ -46,7 +47,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
         </h1>
         {query ? (
           <p className="text-muted-foreground text-lg max-w-2xl">
-            "<span className="font-semibold text-foreground">{query}</span>" kelimesi için toplam {articles.length} makale bulundu.
+            &quot;<span className="font-semibold text-foreground">{query}</span>&quot; kelimesi için toplam {articles.length} makale bulundu.
           </p>
         ) : (
           <p className="text-muted-foreground text-lg max-w-2xl">
@@ -57,17 +58,26 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
 
       {query && articles.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {articles.map((article: any) => (
+          {articles.map((article) => (
             <Link key={article.id} href={`/article/${article.slug}`} className="group">
               <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
-                <div
-                  className="h-48 relative overflow-hidden"
-                  style={
-                    article.coverImage
-                      ? { backgroundImage: `url(${article.coverImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-                      : { background: `linear-gradient(135deg, ${article.category?.color || "#888"}25, ${article.category?.color || "#888"}08)` }
-                  }
-                >
+                <div className="h-48 relative overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                  {article.coverImage ? (
+                    <Image
+                      src={article.coverImage}
+                      alt={article.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background: `linear-gradient(135deg, ${article.category?.color || "#888"}25, ${article.category?.color || "#888"}08)`,
+                      }}
+                    />
+                  )}
                   {!article.coverImage && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Newspaper className="h-12 w-12 text-muted-foreground/20" />

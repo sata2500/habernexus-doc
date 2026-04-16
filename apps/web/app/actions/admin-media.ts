@@ -10,7 +10,7 @@ export async function getAdminMedia() {
   const reqHeaders = await headers();
   const session = await auth.api.getSession({ headers: reqHeaders });
 
-  if (!session || (session.user as any).role !== "ADMIN" && (session.user as any).role !== "AUTHOR") {
+  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "AUTHOR")) {
     throw new Error("Unauthorized");
   }
 
@@ -24,7 +24,7 @@ export async function deleteMedia(id: string) {
   const reqHeaders = await headers();
   const session = await auth.api.getSession({ headers: reqHeaders });
 
-  if (!session || (session.user as any).role !== "ADMIN") {
+  if (!session || session.user.role !== "ADMIN") {
     throw new Error("Sadece adminler medya silebilir.");
   }
 

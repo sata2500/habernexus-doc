@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { MessageSquare, Send, LogIn } from "lucide-react";
 import { CommentForm } from "./CommentForm";
 import { CommentItem } from "./CommentItem";
@@ -13,19 +13,24 @@ interface Props {
 }
 
 export function CommentSection({ articleId, userId }: Props) {
-  const [comments, setComments] = useState<any[]>([]);
+  const [comments, setComments] = useState<any[]>([]); // TODO: Prisma tipine çevrilebilir
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchComments = async () => {
+  const fetchComments = useCallback(async () => {
     setIsLoading(true);
-    const data = await getComments(articleId);
-    setComments(data);
-    setIsLoading(false);
-  };
+    try {
+      const data = await getComments(articleId);
+      setComments(data);
+    } catch (err) {
+      console.error("Yorumlar yüklenirken hata oluştu:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [articleId]);
 
   useEffect(() => {
     fetchComments();
-  }, [articleId]);
+  }, [fetchComments]);
 
   return (
     <section className="mt-16 border-t border-border pt-12 animate-in fade-in duration-700">

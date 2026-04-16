@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { Clock, Eye, Newspaper } from "lucide-react";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
+import Image from "next/image";
 
 // Async Params Arayüzü
 type Params = Promise<{ slug: string }>;
@@ -64,17 +65,26 @@ export default async function CategoryPage({ params }: { params: Params }) {
       {/* ── Haber Grid (Listeleme) ────────────────────────── */}
       {category.articles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {category.articles.map((article: any) => (
+          {category.articles.map((article) => (
             <Link key={article.id} href={`/article/${article.slug}`} className="group">
               <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
-                <div
-                  className="h-48 relative overflow-hidden"
-                  style={
-                    article.coverImage
-                      ? { backgroundImage: `url(${article.coverImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-                      : { background: `linear-gradient(135deg, ${category.color || "#888"}25, ${category.color || "#888"}08)` }
-                  }
-                >
+                <div className="h-48 relative overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                  {article.coverImage ? (
+                    <Image
+                      src={article.coverImage}
+                      alt={article.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background: `linear-gradient(135deg, ${category.color || "#888"}25, ${category.color || "#888"}08)`,
+                      }}
+                    />
+                  )}
                   {!article.coverImage && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Newspaper className="h-12 w-12 text-muted-foreground/20" />

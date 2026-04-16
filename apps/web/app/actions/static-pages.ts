@@ -43,7 +43,7 @@ export async function getStaticPages() {
     const reqHeaders = await headers();
     const session = await auth.api.getSession({ headers: reqHeaders });
 
-    if (!session || (session.user as any).role !== "ADMIN") {
+    if (!session || session.user.role !== "ADMIN") {
       throw new Error("Unauthorized");
     }
 
@@ -69,12 +69,12 @@ export async function getStaticPageBySlug(slug: string) {
   }
 }
 
-export async function updateStaticPage(id: string, data: { title: string; content: string; description?: string; extraData?: any }) {
+export async function updateStaticPage(id: string, data: { title: string; content: string; description?: string; extraData?: Record<string, any> }) {
   try {
     const reqHeaders = await headers();
     const session = await auth.api.getSession({ headers: reqHeaders });
 
-    if (!session || (session.user as any).role !== "ADMIN") {
+    if (!session || session.user.role !== "ADMIN") {
       throw new Error("Unauthorized");
     }
 

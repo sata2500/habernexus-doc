@@ -14,7 +14,7 @@ export default async function AdvertisePage() {
   const page = await getStaticPageBySlug("advertise");
   
   // Reklam iletişim mailini extraData'dan çekiyoruz
-  const adsData = (page?.extraData as any) || {};
+  const adsData = (page?.extraData as Record<string, any>) || {};
   const adsEmail = adsData.email || "ads@habernexus.com";
 
   return (

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { getArticleBySlug, estimateReadingTime } from "@/lib/data";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
-import { Clock, Eye, Calendar, Share2, MessageSquare, Info } from "lucide-react";
+import { Clock, Eye, Calendar } from "lucide-react";
 import { NewsArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { BookmarkButton } from "../components/BookmarkButton";
 import { ViewTracker } from "../components/ViewTracker";
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Params }) {
       publishedTime: article.publishedAt?.toISOString(),
       modifiedTime: article.updatedAt?.toISOString(),
       section: article.category?.name,
-      tags: article.tags?.map((t: any) => t.tag.name),
+      tags: article.tags?.map((t) => t.tag.name),
     },
   };
 }
@@ -84,7 +84,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
         authorName={article.author.name}
         authorImage={article.author.image}
         categoryName={article.category?.name}
-        tags={article.tags?.map((t: any) => t.tag.name)}
+        tags={article.tags?.map((t) => t.tag.name)}
         wordCount={wordCount}
       />
       <BreadcrumbJsonLd
@@ -223,7 +223,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
         <div className="flex items-center gap-2 border-t border-border pt-6 mt-8">
           <span className="font-semibold font-(family-name:--font-outfit)">Etiketler:</span>
           <div className="flex flex-wrap gap-2">
-            {article.tags.map((tagRel: any) => (
+            {article.tags.map((tagRel) => (
               <Badge key={tagRel.tag.id} variant="default" className="hover:bg-primary-500 hover:text-white transition-colors cursor-pointer">
                 #{tagRel.tag.name}
               </Badge>

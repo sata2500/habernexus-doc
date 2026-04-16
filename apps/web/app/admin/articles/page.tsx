@@ -7,8 +7,8 @@ export default async function AdminArticlesPage() {
   const articles = await getAllArticles().catch(() => null);
   if (!articles) redirect("/");
 
-  const published = articles.filter((a: any) => a.status === "PUBLISHED").length;
-  const drafts = articles.filter((a: any) => a.status === "DRAFT").length;
+  const published = articles.filter((a) => a.status === "PUBLISHED").length;
+  const drafts = articles.filter((a) => a.status === "DRAFT").length;
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

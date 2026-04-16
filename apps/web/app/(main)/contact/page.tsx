@@ -14,7 +14,7 @@ export default async function ContactPage() {
   const page = await getStaticPageBySlug("contact");
   
   // Tip güvenliği için extraData dökümü
-  const contactData = (page?.extraData as any) || {};
+  const contactData = (page?.extraData as Record<string, any>) || {};
   const email = contactData.email || "info@habernexus.com";
   const phone = contactData.phone || "+90 (212) 000 00 00";
   const address = contactData.address || "Levent Mah. Medya Sk. No: 1, Beşiktaş / İstanbul";

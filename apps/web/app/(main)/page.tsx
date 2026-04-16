@@ -24,6 +24,7 @@ import {
   getCategoriesWithCount,
   estimateReadingTime,
 } from "@/lib/data";
+import Image from "next/image";
 
 const IconMap: Record<string, LucideIcon> = {
   Newspaper,
@@ -74,10 +75,16 @@ export default async function HomePage() {
           {heroArticle ? (
             <Link href={`/article/${heroArticle.slug}`} className="group block h-full">
               <Card variant="interactive" noPadding className="overflow-hidden h-full">
-                <div
-                  className="relative h-full min-h-[300px] md:min-h-[400px] bg-linear-to-br from-primary-500/20 via-accent-500/10 to-primary-700/20 flex items-end"
-                  style={heroArticle.coverImage ? { backgroundImage: `url(${heroArticle.coverImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}}
-                >
+                <div className="relative h-full min-h-[300px] md:min-h-[400px] bg-linear-to-br from-primary-500/20 via-accent-500/10 to-primary-700/20 flex items-end">
+                  {heroArticle.coverImage && (
+                    <Image
+                      src={heroArticle.coverImage}
+                      alt={heroArticle.title}
+                      fill
+                      priority
+                      className="object-cover group-hover:scale-105 transition-transform duration-700"
+                    />
+                  )}
                   <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
                   <div className="absolute top-4 left-4 z-10">
                     <Badge variant="error" className="animate-pulse-glow">
@@ -95,9 +102,9 @@ export default async function HomePage() {
                         {heroArticle.category.name}
                       </Badge>
                     )}
-                    <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold font-(family-name:--font-outfit) leading-tight group-hover:text-primary-200 transition-colors">
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-(family-name:--font-outfit) leading-tight group-hover:text-primary-200 transition-colors">
                       {heroArticle.title}
-                    </h1>
+                    </h2>
                     {heroArticle.excerpt && (
                       <p className="text-white/80 text-sm md:text-base line-clamp-2 max-w-2xl">
                         {heroArticle.excerpt}
@@ -145,7 +152,7 @@ export default async function HomePage() {
             </div>
             {trendingArticles.length > 0 ? (
               <div className="space-y-4">
-                {trendingArticles.map((article: any, index: number) => (
+                {trendingArticles.map((article, index: number) => (
                   <Link
                     key={article.id}
                     href={`/article/${article.slug}`}
@@ -202,7 +209,7 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
-          {categories.map((cat: any) => {
+          {categories.map((cat) => {
             const IconComponent = cat.icon && IconMap[cat.icon] ? IconMap[cat.icon] : Newspaper;
             return (
               <Link key={cat.slug} href={`/category/${cat.slug}`}>
@@ -245,17 +252,26 @@ export default async function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {latestArticles.map((article: any) => (
+          {latestArticles.map((article) => (
             <Link key={article.id} href={`/article/${article.slug}`} className="group">
               <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
-                <div
-                  className="h-48 relative overflow-hidden"
-                  style={
-                    article.coverImage
-                      ? { backgroundImage: `url(${article.coverImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-                      : { background: `linear-gradient(135deg, ${article.category?.color || "#888"}25, ${article.category?.color || "#888"}08)` }
-                  }
-                >
+                <div className="h-48 relative overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                  {article.coverImage ? (
+                    <Image
+                      src={article.coverImage}
+                      alt={article.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    />
+                  ) : (
+                    <div
+                      className="absolute inset-0"
+                      style={{
+                        background: `linear-gradient(135deg, ${article.category?.color || "#888"}25, ${article.category?.color || "#888"}08)`,
+                      }}
+                    />
+                  )}
                   {!article.coverImage && (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Newspaper className="h-12 w-12 text-muted-foreground/20" />

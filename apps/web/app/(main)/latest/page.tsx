@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
 import { Clock, Newspaper, TrendingUp } from "lucide-react";
+import Image from "next/image";
 
 export const metadata = {
   title: "Son Haberler",
@@ -41,17 +42,26 @@ export default async function LatestArticlesPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {latestArticles.map((article: any) => (
+        {latestArticles.map((article) => (
           <Link key={article.id} href={`/article/${article.slug}`} className="group">
             <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col hover:shadow-glow transition-all">
-              <div
-                className="h-56 relative overflow-hidden bg-muted flex items-center justify-center"
-                style={
-                  article.coverImage
-                    ? { backgroundImage: `url(${article.coverImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-                    : { background: `linear-gradient(135deg, ${article.category?.color || "#888"}25, ${article.category?.color || "#888"}08)` }
-                }
-              >
+              <div className="h-56 relative overflow-hidden bg-muted flex items-center justify-center">
+                {article.coverImage ? (
+                  <Image
+                    src={article.coverImage}
+                    alt={article.title}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
+                ) : (
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `linear-gradient(135deg, ${article.category?.color || "#888"}25, ${article.category?.color || "#888"}08)`,
+                    }}
+                  />
+                )}
                 {!article.coverImage && (
                   <Newspaper className="h-16 w-16 text-muted-foreground/20" />
                 )}
