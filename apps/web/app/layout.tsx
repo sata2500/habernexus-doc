@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { WebSiteJsonLd, OrganizationJsonLd } from "@/components/seo/JsonLd";
 import "./globals.css";
 
 const inter = Inter({
@@ -37,6 +38,16 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
   ),
+  alternates: {
+    types: {
+      "application/rss+xml": [
+        {
+          url: "/rss.xml",
+          title: "Haber Nexus RSS Akışı",
+        },
+      ],
+    },
+  },
   openGraph: {
     type: "website",
     locale: "tr_TR",
@@ -68,6 +79,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col antialiased">
+        <WebSiteJsonLd />
+        <OrganizationJsonLd />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

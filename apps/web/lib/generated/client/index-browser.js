@@ -232,9 +232,39 @@ exports.Prisma.SubscriberScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.MediaScalarFieldEnum = {
+  id: 'id',
+  url: 'url',
+  filename: 'filename',
+  size: 'size',
+  mimeType: 'mimeType',
+  status: 'status',
+  width: 'width',
+  height: 'height',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.StaticPageScalarFieldEnum = {
+  id: 'id',
+  slug: 'slug',
+  title: 'title',
+  description: 'description',
+  content: 'content',
+  extraData: 'extraData',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -247,6 +277,17 @@ exports.Prisma.NullsOrder = {
   last: 'last'
 };
 
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
+};
+exports.MediaStatus = exports.$Enums.MediaStatus = {
+  RAW: 'RAW',
+  PROCESSING: 'PROCESSING',
+  OPTIMIZED: 'OPTIMIZED',
+  FAILED: 'FAILED'
+};
 
 exports.Prisma.ModelName = {
   User: 'User',
@@ -259,7 +300,9 @@ exports.Prisma.ModelName = {
   TagOnArticle: 'TagOnArticle',
   Comment: 'Comment',
   Bookmark: 'Bookmark',
-  Subscriber: 'Subscriber'
+  Subscriber: 'Subscriber',
+  Media: 'Media',
+  StaticPage: 'StaticPage'
 };
 
 /**

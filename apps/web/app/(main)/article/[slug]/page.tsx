@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import Image from "next/image";
 import { getArticleBySlug, estimateReadingTime } from "@/lib/data";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Clock, Eye, Calendar, Share2, MessageSquare, Info } from "lucide-react";
+import { NewsArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { BookmarkButton } from "../components/BookmarkButton";
 import { ViewTracker } from "../components/ViewTracker";
 import { ShareButtons } from "../components/ShareButtons";
@@ -21,10 +23,20 @@ export async function generateMetadata({ params }: { params: Params }) {
   if (!article) return { title: "Makale Bulunamadı | Haber Nexus" };
 
   return {
-    title: `${article.title} | Haber Nexus`,
+    title: article.title,
     description: article.excerpt || article.title,
+    alternates: {
+      canonical: `/article/${slug}`,
+    },
     openGraph: {
+      type: "article",
+      title: article.title,
+      description: article.excerpt || article.title,
       images: article.coverImage ? [article.coverImage] : [],
+      publishedTime: article.publishedAt?.toISOString(),
+      modifiedTime: article.updatedAt?.toISOString(),
+      section: article.category?.name,
+      tags: article.tags?.map((t: any) => t.tag.name),
     },
   };
 }
@@ -56,8 +68,39 @@ export default async function ArticlePage({ params }: { params: Params }) {
   const userId = session?.user?.id || null;
   const isBookmarked = userId ? await checkIsBookmarked(userId, article.id) : false;
 
+  // Kelime sayısını hesapla (JSON-LD wordCount için)
+  const wordCount = article.content ? article.content.trim().split(/\s+/).length : 0;
+
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* ── SEO: Structured Data ────────────────────────── */}
+      <NewsArticleJsonLd
+        title={article.title}
+        description={article.excerpt || article.title}
+        slug={article.slug}
+        coverImage={article.coverImage}
+        datePublished={article.publishedAt}
+        dateModified={article.updatedAt}
+        authorName={article.author.name}
+        authorImage={article.author.image}
+        categoryName={article.category?.name}
+        tags={article.tags?.map((t: any) => t.tag.name)}
+        wordCount={wordCount}
+      />
+      <BreadcrumbJsonLd
+        items={[
+          ...(article.category
+            ? [
+                {
+                  name: article.category.name,
+                  href: `/category/${article.category.slug}`,
+                },
+              ]
+            : []),
+          { name: article.title, href: `/article/${article.slug}` },
+        ]}
+      />
+
       <ViewTracker articleId={article.id} />
       {/* ── Üst Bilgi ve Başlık Alanı ────────────────────────── */}
       <header className="mb-10 space-y-6 text-center lg:text-left">
@@ -75,7 +118,13 @@ export default async function ArticlePage({ params }: { params: Params }) {
           )}
           <span className="text-sm text-muted-foreground flex items-center gap-1">
             <Calendar className="h-4 w-4" />
-            {article.publishedAt ? formatDate(article.publishedAt) : "Belirsiz"}
+            {article.publishedAt ? (
+              <time dateTime={article.publishedAt.toISOString()}>
+                {formatDate(article.publishedAt)}
+              </time>
+            ) : (
+              "Belirsiz"
+            )}
           </span>
           <span className="text-sm text-muted-foreground flex items-center gap-1">
             <Clock className="h-4 w-4" />
@@ -123,10 +172,13 @@ export default async function ArticlePage({ params }: { params: Params }) {
       {/* ── Kapak Resmi Görüntüleyicisi ────────────────────────── */}
       {article.coverImage && (
         <div className="w-full aspect-video md:aspect-21/9 bg-neutral-100 dark:bg-neutral-800 rounded-2xl overflow-hidden mb-12 relative shadow-lg">
-          <img
+          <Image
             src={article.coverImage}
             alt={article.title}
-            className="w-full h-full object-cover"
+            fill
+            className="object-cover"
+            priority
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
           />
         </div>
       )}

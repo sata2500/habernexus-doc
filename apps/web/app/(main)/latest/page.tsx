@@ -7,7 +7,10 @@ import { Clock, Newspaper, TrendingUp } from "lucide-react";
 
 export const metadata = {
   title: "Son Haberler",
-  description: "En son eklenen güncel haberler ve gelişmeler.",
+  description: "En son eklenen güncel haberler ve gelişmeler. Tüm kategorilerdeki en yeni haberleri takip edin.",
+  alternates: {
+    canonical: "/latest",
+  },
 };
 
 

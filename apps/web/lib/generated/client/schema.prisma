@@ -2,11 +2,10 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  output          = "../lib/generated/client"
-  previewFeatures = ["driverAdapters"]
-  engineType      = "library"
-  binaryTargets   = ["native", "rhel-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  output        = "../lib/generated/client"
+  engineType    = "library"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {
@@ -36,6 +35,7 @@ model User {
   articles  Article[]
   comments  Comment[]
   bookmarks Bookmark[]
+  media     Media[]
 }
 
 model Session {
@@ -186,4 +186,47 @@ model Subscriber {
   email     String   @unique
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
+}
+
+// ============================================
+// Medya Yönetimi
+// ============================================
+
+enum MediaStatus {
+  RAW
+  PROCESSING
+  OPTIMIZED
+  FAILED
+}
+
+model Media {
+  id        String      @id @default(cuid())
+  url       String      @unique
+  filename  String
+  size      Int // Byte cinsinden
+  mimeType  String
+  status    MediaStatus @default(RAW)
+  width     Int?
+  height    Int?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model StaticPage {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?
+  content     String // DB Text
+  extraData   Json? // Ekstra alanlar (e-posta, tel, adres vb.)
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@index([slug])
 }

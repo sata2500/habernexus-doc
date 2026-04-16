@@ -68,7 +68,7 @@ export default async function HomePage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
       {/* ── Hero Section ────────────────────────── */}
-      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6" id="hero-section">
+      <section className="grid grid-cols-1 lg:grid-cols-3 gap-6" id="hero-section" aria-label="Öne Çıkan Haberler">
         {/* Main Hero */}
         <div className="lg:col-span-2">
           {heroArticle ? (
@@ -191,7 +191,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Categories Bar ────────────────────────── */}
-      <section id="categories-section">
+      <section id="categories-section" aria-label="Kategoriler">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold font-(family-name:--font-outfit)">Kategoriler</h2>
           <Link
@@ -228,7 +228,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── Latest Articles Grid ────────────────────────── */}
-      <section id="latest-articles-section">
+      <section id="latest-articles-section" aria-label="Son Haberler">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
@@ -310,7 +310,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── CTA Section ────────────────────────── */}
-      <section id="cta-section">
+      <section id="cta-section" aria-label="Kayıt Çağrısı">
         <Card
           variant="glass"
           className="bg-gradient-hero text-center py-12 px-6 md:px-16 relative overflow-hidden"

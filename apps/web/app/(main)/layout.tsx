@@ -2,7 +2,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getCategoriesWithCount } from "@/lib/data";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60; // ISR: sayfa her 60 saniyede bir arka planda yenilenir
 
 export default async function MainLayout({
   children,

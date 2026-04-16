@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
 import { Avatar } from "@/components/ui/Avatar";
 import { Clock, Eye, Newspaper } from "lucide-react";
+import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 
 // Async Params Arayüzü
 type Params = Promise<{ slug: string }>;
@@ -16,8 +17,11 @@ export async function generateMetadata({ params }: { params: Params }) {
   if (!category) return { title: "Kategori Bulunamadı | Haber Nexus" };
 
   return {
-    title: `${category.name} Haberleri | Haber Nexus`,
+    title: `${category.name} Haberleri`,
     description: category.description || `${category.name} kategorisindeki en güncel gelişmeler Haber Nexus'ta.`,
+    alternates: {
+      canonical: `/category/${slug}`,
+    },
   };
 }
 
@@ -36,6 +40,11 @@ export default async function CategoryPage({ params }: { params: Params }) {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* SEO: Breadcrumb Structured Data */}
+      <BreadcrumbJsonLd
+        items={[{ name: `${category.name} Haberleri`, href: `/category/${category.slug}` }]}
+      />
+
       {/* ── Kategori Başlığı ────────────────────────── */}
       <div className="flex flex-col items-center justify-center text-center mb-16 mt-8">
         <div

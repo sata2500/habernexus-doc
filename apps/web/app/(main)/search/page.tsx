@@ -13,7 +13,14 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
   const q = typeof resolvedParams.q === "string" ? resolvedParams.q : "";
 
   return {
-    title: q ? `"${q}" için arama sonuçları | Haber Nexus` : "Arama | Haber Nexus",
+    title: q ? `"${q}" için arama sonuçları` : "Arama",
+    description: q
+      ? `"${q}" anahtar kelimesi için Haber Nexus arama sonuçları.`
+      : "Haber Nexus'ta haber, analiz ve içerik arayın.",
+    robots: {
+      index: false,
+      follow: true,
+    },
   };
 }
 
