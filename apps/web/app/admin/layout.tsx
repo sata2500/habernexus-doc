@@ -11,6 +11,7 @@ const navItems = [
   { name: "Kategoriler", href: "/admin/categories", icon: Bookmark },
   { name: "Kullanıcılar", href: "/admin/users", icon: Users },
   { name: "Makaleler", href: "/admin/articles", icon: FileText },
+  { name: "Sayfa Yönetimi", href: "/admin/pages", icon: FileText },
   { name: "Yorum Yönetimi", href: "/admin/comments", icon: MessageSquare },
 ];
 
