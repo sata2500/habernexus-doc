@@ -275,33 +275,8 @@ export function Navbar({ categories = [] }: { categories?: Category[] }) {
                   </div>
                 </Link>
 
-                {/* Dashboard Quick Links */}
-                <div className="grid grid-cols-1 gap-2">
-                  <Link href="/dashboard/profile" onClick={() => setIsMobileMenuOpen(false)}>
-                    <Button variant="ghost" size="sm" className="w-full justify-start gap-2 h-10 px-4 rounded-xl">
-                      <Avatar size="xs" src={session.user.image || undefined} fallback={session.user.name} />
-                      Profilim
-                    </Button>
-                  </Link>
-                  
-                  {((session.user as any).role === "ADMIN" || (session.user as any).role === "AUTHOR") && (
-                    <Link href="/author" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full justify-start gap-2 h-10 px-4 rounded-xl">
-                        ✍️ Yazar Masası
-                      </Button>
-                    </Link>
-                  )}
-
-                  {(session.user as any).role === "ADMIN" && (
-                    <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="ghost" size="sm" className="w-full justify-start gap-2 h-10 px-4 rounded-xl text-red-500 hover:text-red-600 hover:bg-red-500/10">
-                        🛡️ Admin Paneli
-                      </Button>
-                    </Link>
-                  )}
-
-                  <hr className="border-border my-1" />
-                  
+                {/* Simplified Quick Actions */}
+                <div className="grid grid-cols-1 gap-2 pt-2">
                   <Button 
                     variant="ghost" 
                     size="sm" 
