@@ -1,5 +1,4 @@
 import { getStaticPageBySlug } from "@/app/actions/static-pages";
-import { notFound } from "next/navigation";
 
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("about");

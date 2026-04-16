@@ -69,7 +69,7 @@ export async function deleteComment(commentId: string, userId: string) {
 
     revalidatePath(`/article/[slug]`, "page");
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false, error: "Silme işlemi sırasında hata oluştu." };
   }
 }

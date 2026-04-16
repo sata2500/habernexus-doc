@@ -2,12 +2,21 @@
 
 import { useState } from "react";
 import { Avatar } from "@/components/ui/Avatar";
-import { MessageSquare, Trash2, Reply, MoreHorizontal } from "lucide-react";
+import { Trash2, Reply } from "lucide-react";
 import { CommentForm } from "./CommentForm";
 import { deleteComment } from "../../actions";
 
+interface CommentDetail {
+  id: string;
+  content: string;
+  createdAt: Date | string;
+  userId: string;
+  user: { name: string; image?: string | null };
+  replies?: CommentDetail[];
+}
+
 interface Props {
-  comment: any;
+  comment: CommentDetail;
   userId?: string | null;
   articleId: string;
   onUpdate: () => void;
@@ -115,7 +124,7 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
       {/* Alt Yanıtlar (Recursive) */}
       {comment.replies && comment.replies.length > 0 && (
         <div className="mt-4 space-y-4">
-          {comment.replies.map((reply: any) => (
+          {comment.replies.map((reply: { id: string }) => (
             <CommentItem 
               key={reply.id} 
               comment={reply} 

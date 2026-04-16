@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { MessageSquare, Send, LogIn } from "lucide-react";
+import { MessageSquare, LogIn } from "lucide-react";
 import { CommentForm } from "./CommentForm";
 import { CommentItem } from "./CommentItem";
 import { getComments } from "../../actions";
 import Link from "next/link";
+
+type CommentWithReplies = Awaited<ReturnType<typeof getComments>>[number];
 
 interface Props {
   articleId: string;
@@ -13,7 +15,7 @@ interface Props {
 }
 
 export function CommentSection({ articleId, userId }: Props) {
-  const [comments, setComments] = useState<any[]>([]); // TODO: Prisma tipine çevrilebilir
+  const [comments, setComments] = useState<CommentWithReplies[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchComments = useCallback(async () => {
@@ -77,7 +79,7 @@ export function CommentSection({ articleId, userId }: Props) {
             ))}
           </div>
         ) : comments.length > 0 ? (
-          comments.map((comment: any) => (
+          comments.map((comment) => (
             <CommentItem 
               key={comment.id} 
               comment={comment} 

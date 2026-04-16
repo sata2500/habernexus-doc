@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Send, Loader2 } from "lucide-react";
-import { Avatar } from "@/components/ui/Avatar";
 import { addComment } from "../../actions";
 
 interface Props {

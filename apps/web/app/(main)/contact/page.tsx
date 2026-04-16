@@ -14,10 +14,10 @@ export default async function ContactPage() {
   const page = await getStaticPageBySlug("contact");
   
   // Tip güvenliği için extraData dökümü
-  const contactData = (page?.extraData as Record<string, any>) || {};
-  const email = contactData.email || "info@habernexus.com";
-  const phone = contactData.phone || "+90 (212) 000 00 00";
-  const address = contactData.address || "Levent Mah. Medya Sk. No: 1, Beşiktaş / İstanbul";
+  const contactData = (page?.extraData as Record<string, unknown>) || {};
+  const email = (contactData.email as string) || "info@habernexus.com";
+  const phone = (contactData.phone as string) || "+90 (212) 000 00 00";
+  const address = (contactData.address as string) || "Levent Mah. Medya Sk. No: 1, Beşiktaş / İstanbul";
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">

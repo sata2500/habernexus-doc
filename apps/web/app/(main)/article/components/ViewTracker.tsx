@@ -18,8 +18,8 @@ export function ViewTracker({ articleId }: Props) {
       try {
         await incrementViewCount(articleId);
         tracked.current = true;
-      } catch (err) {
-        // Hata durumunda ses çıkarma
+      } catch {
+        // Sessiz hata - uygulama akışını bozma
       }
     };
 
