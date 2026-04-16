@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { Upload, X, ImageIcon, Loader2 } from "lucide-react";
-import { uploadImage } from "@/app/actions/media";
+import { upload } from "@vercel/blob/client";
 import { cn } from "@/lib/utils";
 
 interface ImageUploaderProps {
@@ -31,19 +31,19 @@ export function ImageUploader({
     setError(null);
     setUploading(true);
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("type", type);
-
     try {
-      const result = await uploadImage(formData);
-      if (result.success && result.url) {
-        onChange(result.url);
-      } else {
-        setError(result.error || "Yükleme başarısız oldu.");
-      }
-    } catch (err) {
-      setError("Bir ağ hatası oluştu.");
+      // Doğrudan Vercel Blob'a yükleme (Client-side)
+      // Bu işlem /api/upload rotasını otomatik olarak token almak için kullanır
+      const newBlob = await upload(file.name, file, {
+        access: "public",
+        handleUploadUrl: "/api/upload",
+        clientPayload: JSON.stringify({ type }), // Opsiyonel ek veri
+      });
+
+      onChange(newBlob.url);
+    } catch (err: any) {
+      console.error("Yükleme hatası:", err);
+      setError(err.message || "Görsel yüklenemedi. Lütfen tekrar deneyin.");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
