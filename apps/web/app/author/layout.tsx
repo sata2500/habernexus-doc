@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { PenTool, FileText, PlusCircle, LayoutDashboard, BarChart3, Home, MessageSquare } from "lucide-react";
+import { PenTool, FileText, PlusCircle, LayoutDashboard, BarChart3, Home, MessageSquare, UserCircle } from "lucide-react";
 import { SignOutButton } from "../dashboard/components/SignOutButton";
 
 export default async function AuthorLayout({ children }: { children: React.ReactNode }) {
@@ -70,9 +70,9 @@ export default async function AuthorLayout({ children }: { children: React.React
             </Link>
             <Link
               href="/dashboard/profile"
-              className="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors cursor-pointer group"
             >
-               Profil Ayarlarına Dön
+               <UserCircle className="h-4 w-4 group-hover:scale-110 transition-transform" /> Profil Ayarlarına Dön
             </Link>
           </div>
         </div>

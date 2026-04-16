@@ -1,25 +1,38 @@
+import { getStaticPageBySlug } from "@/app/actions/static-pages";
 import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 
-export const metadata = {
-  title: "İletişim",
-  description: "Haber Nexus iletişim bilgileri ve bize ulaşma yöntemleri.",
-};
+export async function generateMetadata() {
+  const page = await getStaticPageBySlug("contact");
+  return {
+    title: page?.title || "İletişim",
+    description: page?.description || "Haber Nexus iletişim bilgileri ve bize ulaşma yöntemleri.",
+  };
+}
 
-export default function ContactPage() {
+export default async function ContactPage() {
+  const page = await getStaticPageBySlug("contact");
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
-      <div className="text-center space-y-4 max-w-2xl mx-auto mb-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="text-center space-y-4 max-w-3xl mx-auto mb-12">
         <h1 className="text-4xl md:text-5xl font-bold font-(family-name:--font-outfit)">
-          Bize Ulaşın
+          {page?.title || "Bize Ulaşın"}
         </h1>
-        <p className="text-lg text-muted-foreground">
-          Soru, görüş ve haber ihbarlarınız için iletişim kanallarımız üzerinden bizimle kolayca irtibata geçebilirsiniz.
-        </p>
+        {page?.content ? (
+          <div 
+            className="prose dark:prose-invert mx-auto text-lg text-muted-foreground"
+            dangerouslySetInnerHTML={{ __html: page.content }} 
+          />
+        ) : (
+          <p className="text-lg text-muted-foreground">
+            Soru, görüş ve haber ihbarlarınız için iletişim kanallarımız üzerinden bizimle kolayca irtibata geçebilirsiniz.
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <Card className="flex flex-col items-center text-center p-8 hover:border-primary-500/50 transition-colors">
+        <Card className="flex flex-col items-center text-center p-8 hover:border-primary-500/50 transition-colors bg-muted/20">
           <div className="h-14 w-14 rounded-full bg-primary-500/10 text-primary-600 flex items-center justify-center mb-6">
             <Mail className="h-6 w-6" />
           </div>
@@ -32,7 +45,7 @@ export default function ContactPage() {
           </a>
         </Card>
 
-        <Card className="flex flex-col items-center text-center p-8 hover:border-primary-500/50 transition-colors">
+        <Card className="flex flex-col items-center text-center p-8 hover:border-primary-500/50 transition-colors bg-muted/20">
           <div className="h-14 w-14 rounded-full bg-primary-500/10 text-primary-600 flex items-center justify-center mb-6">
             <Phone className="h-6 w-6" />
           </div>
@@ -45,7 +58,7 @@ export default function ContactPage() {
           </a>
         </Card>
 
-        <Card className="flex flex-col items-center text-center p-8 hover:border-primary-500/50 transition-colors">
+        <Card className="flex flex-col items-center text-center p-8 hover:border-primary-500/50 transition-colors bg-muted/20">
           <div className="h-14 w-14 rounded-full bg-primary-500/10 text-primary-600 flex items-center justify-center mb-6">
             <MapPin className="h-6 w-6" />
           </div>

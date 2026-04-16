@@ -1,38 +1,22 @@
-import { Megaphone, Mail } from "lucide-react";
-import { Card } from "@/components/ui/Card";
+import { getStaticPageBySlug } from "@/app/actions/static-pages";
 
-export const metadata = {
-  title: "Reklam ve Sponsorluk",
-};
+export async function generateMetadata() {
+  const page = await getStaticPageBySlug("advertise");
+  return {
+    title: page?.title || "Reklam Verin",
+    description: page?.description || "Haber Nexus reklam ve sponsorluk fırsatları.",
+  };
+}
 
-export default function AdvertisePage() {
+export default async function AdvertisePage() {
+  const page = await getStaticPageBySlug("advertise");
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-12">
-      <div className="text-center space-y-4 max-w-3xl mx-auto mb-12">
-        <h1 className="text-4xl md:text-5xl font-bold font-(family-name:--font-outfit)">
-          Reklam ve Sponsorluk
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
+      <div className="prose prose-lg dark:prose-invert prose-primary mx-auto">
+        <h1 className="text-4xl md:text-5xl font-bold font-(family-name:--font-outfit) mb-8">
+          {page?.title || "Reklam Verin"}
         </h1>
-        <p className="text-lg text-muted-foreground">
-          Hedef kitlenize en etkili şekilde ulaşmak için Haber Nexus’un özgün dijital vizyonunu ve geniş okuyucu havuzunu kullanın.
-        </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-        <Card className="p-8">
-           <Megaphone className="h-10 w-10 text-primary-500 mb-6" />
-           <h3 className="text-2xl font-bold mb-4 font-(family-name:--font-outfit)">Neden Haber Nexus?</h3>
-           <ul className="space-y-3 text-muted-foreground">
-             <li className="flex items-start gap-2">
-               <span className="h-1.5 w-1.5 rounded-full bg-primary-500 mt-2 shrink-0" />
-               Aylık yüz binlerce organik ziyaretçiye ve çok yüksek sayfa okuma oranlarına sahibiz.
-             </li>
-             <li className="flex items-start gap-2">
-               <span className="h-1.5 w-1.5 rounded-full bg-primary-500 mt-2 shrink-0" />
-               Modern ve kullanıcı dostu arayüz sayesinde reklamlarınız &quot;Görünmezlik Algısına&quot; takılmaz, akış ile bütünleşik gösterilir.
-             </li>
-             <li className="flex items-start gap-2">
-               <span className="h-1.5 w-1.5 rounded-full bg-primary-500 mt-2 shrink-0" />
-               Advertorial (özel içerik/röportaj) çalışmaları ile markanızı, okuyucunun aradığı güven ile doğrudan hikayeleştiriyoruz.
              </li>
            </ul>
         </Card>

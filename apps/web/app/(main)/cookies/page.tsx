@@ -1,32 +1,33 @@
-export const metadata = {
-  title: "Çerez Politikası",
-};
+import { getStaticPageBySlug } from "@/app/actions/static-pages";
+import { notFound } from "next/navigation";
 
-export default function CookiesPage() {
+export async function generateMetadata() {
+  const page = await getStaticPageBySlug("cookies");
+  return {
+    title: page?.title || "Çerez Politikası",
+    description: page?.description || "Haber Nexus çerez politikası ve çerez kullanımı hakkında bilgiler.",
+  };
+}
+
+export default async function CookiesPage() {
+  const page = await getStaticPageBySlug("cookies");
+
+  if (!page) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-16 text-center">
+        <h1 className="text-2xl font-bold">Çerez Politikası</h1>
+        <p className="mt-4 text-muted-foreground">İçerik hazırlanıyor...</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
       <div className="prose prose-lg dark:prose-invert prose-primary mx-auto">
-        <h1 className="font-(family-name:--font-outfit)">Çerez (Cookie) Politikası</h1>
+        <h1 className="text-4xl md:text-5xl font-bold font-(family-name:--font-outfit) mb-8">
+          {page.title}
+        </h1>
         
-        <p>
-          Haber Nexus olarak sitelerimizden daha verimli faydalanabilmeniz ve kullanıcı deneyiminizi geliştirebilmemiz için çeşitli çerezler (cookie) kullanmaktayız. Çerez kullanılmasını tercih etmezseniz tarayıcınızın ayarlarından siltebilir veya devre dışı bırakabilirsiniz ancak bunun sitenin tam fonksiyonlu çalışmasını engelleyebileceğini hatırlatırız.
-        </p>
-
-        <h2>Çerez (Cookie) Nedir?</h2>
-        <p>
-          Çerezler, ziyaret ettiğiniz internet siteleri tarafından tarayıcılar aracılığıyla cihazınıza veya ağ sunucusuna depolanan küçük metin (veri) dosyalarıdır.
-        </p>
-
-        <h2>Hangi Çerezleri Neden Kullanıyoruz?</h2>
-        <ul>
-          <li><strong>Zorunlu Çerezler:</strong> Siteye giriş yapabilmeniz, formları doldurabilmeniz ve karanlık/açık mod tercihlerinizi hafızada tutmamız için elzemdir.</li>
-          <li><strong>Performans Çerezleri:</strong> Sitemizin nasıl kullanıldığını analiz ederek, sayfaları ne kadar hızla yüklediğimizi test edebilmek için isimsiz tıklama haritaları çıkartır.</li>
-          <li><strong>Fonksiyonel Çerezler:</strong> Size en uygun haber dökümünü listelemek ve sık arattığınız kategorileri ön plana çıkarmak için kullanılır.</li>
-        </ul>
-
-        <h2>Çerezleri Nasıl Kontrol Edebilirsiniz?</h2>
-        <p>
-          Çoğu internet tarayıcısı çerezleri otomatik olarak kabul eder. Farklı bir tercih isterseniz Chrome, Firefox, Safari gibi tüm popüler tarayıcıların &quot;Ayarlar/Gizlilik&quot; bölümünden çerez kullanımını kısıtlayabilirsiniz. Detaylı bilgi için tarayıcınızın yardım dosyalarını inceleyebilirsiniz.
         </p>
       </div>
     </div>

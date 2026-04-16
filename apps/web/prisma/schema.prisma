@@ -10,6 +10,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // ============================================
@@ -216,4 +217,16 @@ model Media {
 
   @@index([userId])
   @@index([status])
+}
+
+model StaticPage {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  title       String
+  description String?
+  content     String   // DB Text
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+
+  @@index([slug])
 }
