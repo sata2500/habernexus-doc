@@ -180,6 +180,7 @@ exports.Prisma.ArticleScalarFieldEnum = {
   authorId: 'authorId',
   categoryId: 'categoryId',
   publishedAt: 'publishedAt',
+  lang: 'lang',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -192,6 +193,7 @@ exports.Prisma.CategoryScalarFieldEnum = {
   color: 'color',
   icon: 'icon',
   order: 'order',
+  lang: 'lang',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -200,6 +202,7 @@ exports.Prisma.TagScalarFieldEnum = {
   id: 'id',
   name: 'name',
   slug: 'slug',
+  lang: 'lang',
   createdAt: 'createdAt'
 };
 
@@ -253,6 +256,7 @@ exports.Prisma.StaticPageScalarFieldEnum = {
   description: 'description',
   content: 'content',
   extraData: 'extraData',
+  lang: 'lang',
   updatedAt: 'updatedAt',
   createdAt: 'createdAt'
 };

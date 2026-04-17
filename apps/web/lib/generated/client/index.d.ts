@@ -6775,6 +6775,7 @@ export namespace Prisma {
     authorId: string | null
     categoryId: string | null
     publishedAt: Date | null
+    lang: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6791,6 +6792,7 @@ export namespace Prisma {
     authorId: string | null
     categoryId: string | null
     publishedAt: Date | null
+    lang: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -6807,6 +6809,7 @@ export namespace Prisma {
     authorId: number
     categoryId: number
     publishedAt: number
+    lang: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -6833,6 +6836,7 @@ export namespace Prisma {
     authorId?: true
     categoryId?: true
     publishedAt?: true
+    lang?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6849,6 +6853,7 @@ export namespace Prisma {
     authorId?: true
     categoryId?: true
     publishedAt?: true
+    lang?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -6865,6 +6870,7 @@ export namespace Prisma {
     authorId?: true
     categoryId?: true
     publishedAt?: true
+    lang?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -6968,6 +6974,7 @@ export namespace Prisma {
     authorId: string
     categoryId: string | null
     publishedAt: Date | null
+    lang: string
     createdAt: Date
     updatedAt: Date
     _count: ArticleCountAggregateOutputType | null
@@ -7003,6 +7010,7 @@ export namespace Prisma {
     authorId?: boolean
     categoryId?: boolean
     publishedAt?: boolean
+    lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -7025,6 +7033,7 @@ export namespace Prisma {
     authorId?: boolean
     categoryId?: boolean
     publishedAt?: boolean
+    lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -7043,6 +7052,7 @@ export namespace Prisma {
     authorId?: boolean
     categoryId?: boolean
     publishedAt?: boolean
+    lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -7061,11 +7071,12 @@ export namespace Prisma {
     authorId?: boolean
     categoryId?: boolean
     publishedAt?: boolean
+    lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "content" | "excerpt" | "coverImage" | "status" | "viewCount" | "authorId" | "categoryId" | "publishedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
+  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "content" | "excerpt" | "coverImage" | "status" | "viewCount" | "authorId" | "categoryId" | "publishedAt" | "lang" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
   export type ArticleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
@@ -7104,6 +7115,7 @@ export namespace Prisma {
       authorId: string
       categoryId: string | null
       publishedAt: Date | null
+      lang: string
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["article"]>
@@ -7545,6 +7557,7 @@ export namespace Prisma {
     readonly authorId: FieldRef<"Article", 'String'>
     readonly categoryId: FieldRef<"Article", 'String'>
     readonly publishedAt: FieldRef<"Article", 'DateTime'>
+    readonly lang: FieldRef<"Article", 'String'>
     readonly createdAt: FieldRef<"Article", 'DateTime'>
     readonly updatedAt: FieldRef<"Article", 'DateTime'>
   }
@@ -8085,6 +8098,7 @@ export namespace Prisma {
     color: string | null
     icon: string | null
     order: number | null
+    lang: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -8097,6 +8111,7 @@ export namespace Prisma {
     color: string | null
     icon: string | null
     order: number | null
+    lang: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -8109,6 +8124,7 @@ export namespace Prisma {
     color: number
     icon: number
     order: number
+    lang: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -8131,6 +8147,7 @@ export namespace Prisma {
     color?: true
     icon?: true
     order?: true
+    lang?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8143,6 +8160,7 @@ export namespace Prisma {
     color?: true
     icon?: true
     order?: true
+    lang?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8155,6 +8173,7 @@ export namespace Prisma {
     color?: true
     icon?: true
     order?: true
+    lang?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -8254,6 +8273,7 @@ export namespace Prisma {
     color: string | null
     icon: string | null
     order: number
+    lang: string
     createdAt: Date
     updatedAt: Date
     _count: CategoryCountAggregateOutputType | null
@@ -8285,6 +8305,7 @@ export namespace Prisma {
     color?: boolean
     icon?: boolean
     order?: boolean
+    lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     articles?: boolean | Category$articlesArgs<ExtArgs>
@@ -8299,6 +8320,7 @@ export namespace Prisma {
     color?: boolean
     icon?: boolean
     order?: boolean
+    lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["category"]>
@@ -8311,6 +8333,7 @@ export namespace Prisma {
     color?: boolean
     icon?: boolean
     order?: boolean
+    lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["category"]>
@@ -8323,11 +8346,12 @@ export namespace Prisma {
     color?: boolean
     icon?: boolean
     order?: boolean
+    lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "description" | "color" | "icon" | "order" | "createdAt" | "updatedAt", ExtArgs["result"]["category"]>
+  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "description" | "color" | "icon" | "order" | "lang" | "createdAt" | "updatedAt", ExtArgs["result"]["category"]>
   export type CategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     articles?: boolean | Category$articlesArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
@@ -8348,6 +8372,7 @@ export namespace Prisma {
       color: string | null
       icon: string | null
       order: number
+      lang: string
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["category"]>
@@ -8781,6 +8806,7 @@ export namespace Prisma {
     readonly color: FieldRef<"Category", 'String'>
     readonly icon: FieldRef<"Category", 'String'>
     readonly order: FieldRef<"Category", 'Int'>
+    readonly lang: FieldRef<"Category", 'String'>
     readonly createdAt: FieldRef<"Category", 'DateTime'>
     readonly updatedAt: FieldRef<"Category", 'DateTime'>
   }
@@ -9232,6 +9258,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     slug: string | null
+    lang: string | null
     createdAt: Date | null
   }
 
@@ -9239,6 +9266,7 @@ export namespace Prisma {
     id: string | null
     name: string | null
     slug: string | null
+    lang: string | null
     createdAt: Date | null
   }
 
@@ -9246,6 +9274,7 @@ export namespace Prisma {
     id: number
     name: number
     slug: number
+    lang: number
     createdAt: number
     _all: number
   }
@@ -9255,6 +9284,7 @@ export namespace Prisma {
     id?: true
     name?: true
     slug?: true
+    lang?: true
     createdAt?: true
   }
 
@@ -9262,6 +9292,7 @@ export namespace Prisma {
     id?: true
     name?: true
     slug?: true
+    lang?: true
     createdAt?: true
   }
 
@@ -9269,6 +9300,7 @@ export namespace Prisma {
     id?: true
     name?: true
     slug?: true
+    lang?: true
     createdAt?: true
     _all?: true
   }
@@ -9349,6 +9381,7 @@ export namespace Prisma {
     id: string
     name: string
     slug: string
+    lang: string
     createdAt: Date
     _count: TagCountAggregateOutputType | null
     _min: TagMinAggregateOutputType | null
@@ -9373,6 +9406,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    lang?: boolean
     createdAt?: boolean
     articles?: boolean | Tag$articlesArgs<ExtArgs>
     _count?: boolean | TagCountOutputTypeDefaultArgs<ExtArgs>
@@ -9382,6 +9416,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    lang?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["tag"]>
 
@@ -9389,6 +9424,7 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    lang?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["tag"]>
 
@@ -9396,10 +9432,11 @@ export namespace Prisma {
     id?: boolean
     name?: boolean
     slug?: boolean
+    lang?: boolean
     createdAt?: boolean
   }
 
-  export type TagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "createdAt", ExtArgs["result"]["tag"]>
+  export type TagOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "lang" | "createdAt", ExtArgs["result"]["tag"]>
   export type TagInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     articles?: boolean | Tag$articlesArgs<ExtArgs>
     _count?: boolean | TagCountOutputTypeDefaultArgs<ExtArgs>
@@ -9416,6 +9453,7 @@ export namespace Prisma {
       id: string
       name: string
       slug: string
+      lang: string
       createdAt: Date
     }, ExtArgs["result"]["tag"]>
     composites: {}
@@ -9844,6 +9882,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Tag", 'String'>
     readonly name: FieldRef<"Tag", 'String'>
     readonly slug: FieldRef<"Tag", 'String'>
+    readonly lang: FieldRef<"Tag", 'String'>
     readonly createdAt: FieldRef<"Tag", 'DateTime'>
   }
     
@@ -15710,6 +15749,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     content: string | null
+    lang: string | null
     updatedAt: Date | null
     createdAt: Date | null
   }
@@ -15720,6 +15760,7 @@ export namespace Prisma {
     title: string | null
     description: string | null
     content: string | null
+    lang: string | null
     updatedAt: Date | null
     createdAt: Date | null
   }
@@ -15731,6 +15772,7 @@ export namespace Prisma {
     description: number
     content: number
     extraData: number
+    lang: number
     updatedAt: number
     createdAt: number
     _all: number
@@ -15743,6 +15785,7 @@ export namespace Prisma {
     title?: true
     description?: true
     content?: true
+    lang?: true
     updatedAt?: true
     createdAt?: true
   }
@@ -15753,6 +15796,7 @@ export namespace Prisma {
     title?: true
     description?: true
     content?: true
+    lang?: true
     updatedAt?: true
     createdAt?: true
   }
@@ -15764,6 +15808,7 @@ export namespace Prisma {
     description?: true
     content?: true
     extraData?: true
+    lang?: true
     updatedAt?: true
     createdAt?: true
     _all?: true
@@ -15848,6 +15893,7 @@ export namespace Prisma {
     description: string | null
     content: string
     extraData: JsonValue | null
+    lang: string
     updatedAt: Date
     createdAt: Date
     _count: StaticPageCountAggregateOutputType | null
@@ -15876,6 +15922,7 @@ export namespace Prisma {
     description?: boolean
     content?: boolean
     extraData?: boolean
+    lang?: boolean
     updatedAt?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["staticPage"]>
@@ -15887,6 +15934,7 @@ export namespace Prisma {
     description?: boolean
     content?: boolean
     extraData?: boolean
+    lang?: boolean
     updatedAt?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["staticPage"]>
@@ -15898,6 +15946,7 @@ export namespace Prisma {
     description?: boolean
     content?: boolean
     extraData?: boolean
+    lang?: boolean
     updatedAt?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["staticPage"]>
@@ -15909,11 +15958,12 @@ export namespace Prisma {
     description?: boolean
     content?: boolean
     extraData?: boolean
+    lang?: boolean
     updatedAt?: boolean
     createdAt?: boolean
   }
 
-  export type StaticPageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "slug" | "title" | "description" | "content" | "extraData" | "updatedAt" | "createdAt", ExtArgs["result"]["staticPage"]>
+  export type StaticPageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "slug" | "title" | "description" | "content" | "extraData" | "lang" | "updatedAt" | "createdAt", ExtArgs["result"]["staticPage"]>
 
   export type $StaticPagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "StaticPage"
@@ -15925,6 +15975,7 @@ export namespace Prisma {
       description: string | null
       content: string
       extraData: Prisma.JsonValue | null
+      lang: string
       updatedAt: Date
       createdAt: Date
     }, ExtArgs["result"]["staticPage"]>
@@ -16356,6 +16407,7 @@ export namespace Prisma {
     readonly description: FieldRef<"StaticPage", 'String'>
     readonly content: FieldRef<"StaticPage", 'String'>
     readonly extraData: FieldRef<"StaticPage", 'Json'>
+    readonly lang: FieldRef<"StaticPage", 'String'>
     readonly updatedAt: FieldRef<"StaticPage", 'DateTime'>
     readonly createdAt: FieldRef<"StaticPage", 'DateTime'>
   }
@@ -16815,6 +16867,7 @@ export namespace Prisma {
     authorId: 'authorId',
     categoryId: 'categoryId',
     publishedAt: 'publishedAt',
+    lang: 'lang',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -16830,6 +16883,7 @@ export namespace Prisma {
     color: 'color',
     icon: 'icon',
     order: 'order',
+    lang: 'lang',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -16841,6 +16895,7 @@ export namespace Prisma {
     id: 'id',
     name: 'name',
     slug: 'slug',
+    lang: 'lang',
     createdAt: 'createdAt'
   };
 
@@ -16912,6 +16967,7 @@ export namespace Prisma {
     description: 'description',
     content: 'content',
     extraData: 'extraData',
+    lang: 'lang',
     updatedAt: 'updatedAt',
     createdAt: 'createdAt'
   };
@@ -17386,6 +17442,7 @@ export namespace Prisma {
     authorId?: StringFilter<"Article"> | string
     categoryId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
+    lang?: StringFilter<"Article"> | string
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -17407,6 +17464,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     author?: UserOrderByWithRelationInput
@@ -17431,6 +17489,7 @@ export namespace Prisma {
     authorId?: StringFilter<"Article"> | string
     categoryId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
+    lang?: StringFilter<"Article"> | string
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -17452,6 +17511,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ArticleCountOrderByAggregateInput
@@ -17476,6 +17536,7 @@ export namespace Prisma {
     authorId?: StringWithAggregatesFilter<"Article"> | string
     categoryId?: StringNullableWithAggregatesFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableWithAggregatesFilter<"Article"> | Date | string | null
+    lang?: StringWithAggregatesFilter<"Article"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Article"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Article"> | Date | string
   }
@@ -17491,6 +17552,7 @@ export namespace Prisma {
     color?: StringNullableFilter<"Category"> | string | null
     icon?: StringNullableFilter<"Category"> | string | null
     order?: IntFilter<"Category"> | number
+    lang?: StringFilter<"Category"> | string
     createdAt?: DateTimeFilter<"Category"> | Date | string
     updatedAt?: DateTimeFilter<"Category"> | Date | string
     articles?: ArticleListRelationFilter
@@ -17504,6 +17566,7 @@ export namespace Prisma {
     color?: SortOrderInput | SortOrder
     icon?: SortOrderInput | SortOrder
     order?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     articles?: ArticleOrderByRelationAggregateInput
@@ -17520,6 +17583,7 @@ export namespace Prisma {
     color?: StringNullableFilter<"Category"> | string | null
     icon?: StringNullableFilter<"Category"> | string | null
     order?: IntFilter<"Category"> | number
+    lang?: StringFilter<"Category"> | string
     createdAt?: DateTimeFilter<"Category"> | Date | string
     updatedAt?: DateTimeFilter<"Category"> | Date | string
     articles?: ArticleListRelationFilter
@@ -17533,6 +17597,7 @@ export namespace Prisma {
     color?: SortOrderInput | SortOrder
     icon?: SortOrderInput | SortOrder
     order?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: CategoryCountOrderByAggregateInput
@@ -17553,6 +17618,7 @@ export namespace Prisma {
     color?: StringNullableWithAggregatesFilter<"Category"> | string | null
     icon?: StringNullableWithAggregatesFilter<"Category"> | string | null
     order?: IntWithAggregatesFilter<"Category"> | number
+    lang?: StringWithAggregatesFilter<"Category"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
   }
@@ -17564,6 +17630,7 @@ export namespace Prisma {
     id?: StringFilter<"Tag"> | string
     name?: StringFilter<"Tag"> | string
     slug?: StringFilter<"Tag"> | string
+    lang?: StringFilter<"Tag"> | string
     createdAt?: DateTimeFilter<"Tag"> | Date | string
     articles?: TagOnArticleListRelationFilter
   }
@@ -17572,6 +17639,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     articles?: TagOnArticleOrderByRelationAggregateInput
   }
@@ -17583,6 +17651,7 @@ export namespace Prisma {
     AND?: TagWhereInput | TagWhereInput[]
     OR?: TagWhereInput[]
     NOT?: TagWhereInput | TagWhereInput[]
+    lang?: StringFilter<"Tag"> | string
     createdAt?: DateTimeFilter<"Tag"> | Date | string
     articles?: TagOnArticleListRelationFilter
   }, "id" | "name" | "slug">
@@ -17591,6 +17660,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     _count?: TagCountOrderByAggregateInput
     _max?: TagMaxOrderByAggregateInput
@@ -17604,6 +17674,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Tag"> | string
     name?: StringWithAggregatesFilter<"Tag"> | string
     slug?: StringWithAggregatesFilter<"Tag"> | string
+    lang?: StringWithAggregatesFilter<"Tag"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Tag"> | Date | string
   }
 
@@ -17923,6 +17994,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"StaticPage"> | string | null
     content?: StringFilter<"StaticPage"> | string
     extraData?: JsonNullableFilter<"StaticPage">
+    lang?: StringFilter<"StaticPage"> | string
     updatedAt?: DateTimeFilter<"StaticPage"> | Date | string
     createdAt?: DateTimeFilter<"StaticPage"> | Date | string
   }
@@ -17934,6 +18006,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     content?: SortOrder
     extraData?: SortOrderInput | SortOrder
+    lang?: SortOrder
     updatedAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -17948,6 +18021,7 @@ export namespace Prisma {
     description?: StringNullableFilter<"StaticPage"> | string | null
     content?: StringFilter<"StaticPage"> | string
     extraData?: JsonNullableFilter<"StaticPage">
+    lang?: StringFilter<"StaticPage"> | string
     updatedAt?: DateTimeFilter<"StaticPage"> | Date | string
     createdAt?: DateTimeFilter<"StaticPage"> | Date | string
   }, "id" | "slug">
@@ -17959,6 +18033,7 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     content?: SortOrder
     extraData?: SortOrderInput | SortOrder
+    lang?: SortOrder
     updatedAt?: SortOrder
     createdAt?: SortOrder
     _count?: StaticPageCountOrderByAggregateInput
@@ -17976,6 +18051,7 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"StaticPage"> | string | null
     content?: StringWithAggregatesFilter<"StaticPage"> | string
     extraData?: JsonNullableWithAggregatesFilter<"StaticPage">
+    lang?: StringWithAggregatesFilter<"StaticPage"> | string
     updatedAt?: DateTimeWithAggregatesFilter<"StaticPage"> | Date | string
     createdAt?: DateTimeWithAggregatesFilter<"StaticPage"> | Date | string
   }
@@ -18348,6 +18424,7 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -18369,6 +18446,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
@@ -18386,6 +18464,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -18407,6 +18486,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
@@ -18426,6 +18506,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18440,6 +18521,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18456,6 +18538,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18468,6 +18551,7 @@ export namespace Prisma {
     color?: string | null
     icon?: string | null
     order?: number
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     articles?: ArticleCreateNestedManyWithoutCategoryInput
@@ -18481,6 +18565,7 @@ export namespace Prisma {
     color?: string | null
     icon?: string | null
     order?: number
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     articles?: ArticleUncheckedCreateNestedManyWithoutCategoryInput
@@ -18494,6 +18579,7 @@ export namespace Prisma {
     color?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     articles?: ArticleUpdateManyWithoutCategoryNestedInput
@@ -18507,6 +18593,7 @@ export namespace Prisma {
     color?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     articles?: ArticleUncheckedUpdateManyWithoutCategoryNestedInput
@@ -18520,6 +18607,7 @@ export namespace Prisma {
     color?: string | null
     icon?: string | null
     order?: number
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18532,6 +18620,7 @@ export namespace Prisma {
     color?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18544,6 +18633,7 @@ export namespace Prisma {
     color?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18552,6 +18642,7 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
+    lang?: string
     createdAt?: Date | string
     articles?: TagOnArticleCreateNestedManyWithoutTagInput
   }
@@ -18560,6 +18651,7 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
+    lang?: string
     createdAt?: Date | string
     articles?: TagOnArticleUncheckedCreateNestedManyWithoutTagInput
   }
@@ -18568,6 +18660,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     articles?: TagOnArticleUpdateManyWithoutTagNestedInput
   }
@@ -18576,6 +18669,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     articles?: TagOnArticleUncheckedUpdateManyWithoutTagNestedInput
   }
@@ -18584,6 +18678,7 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
+    lang?: string
     createdAt?: Date | string
   }
 
@@ -18591,6 +18686,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -18598,6 +18694,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -18906,6 +19003,7 @@ export namespace Prisma {
     description?: string | null
     content: string
     extraData?: NullableJsonNullValueInput | InputJsonValue
+    lang?: string
     updatedAt?: Date | string
     createdAt?: Date | string
   }
@@ -18917,6 +19015,7 @@ export namespace Prisma {
     description?: string | null
     content: string
     extraData?: NullableJsonNullValueInput | InputJsonValue
+    lang?: string
     updatedAt?: Date | string
     createdAt?: Date | string
   }
@@ -18928,6 +19027,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
     extraData?: NullableJsonNullValueInput | InputJsonValue
+    lang?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18939,6 +19039,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
     extraData?: NullableJsonNullValueInput | InputJsonValue
+    lang?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18950,6 +19051,7 @@ export namespace Prisma {
     description?: string | null
     content: string
     extraData?: NullableJsonNullValueInput | InputJsonValue
+    lang?: string
     updatedAt?: Date | string
     createdAt?: Date | string
   }
@@ -18961,6 +19063,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
     extraData?: NullableJsonNullValueInput | InputJsonValue
+    lang?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18972,6 +19075,7 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     content?: StringFieldUpdateOperationsInput | string
     extraData?: NullableJsonNullValueInput | InputJsonValue
+    lang?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19357,6 +19461,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrder
     publishedAt?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -19377,6 +19482,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrder
     publishedAt?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -19393,6 +19499,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrder
     publishedAt?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -19425,6 +19532,7 @@ export namespace Prisma {
     color?: SortOrder
     icon?: SortOrder
     order?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -19441,6 +19549,7 @@ export namespace Prisma {
     color?: SortOrder
     icon?: SortOrder
     order?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -19453,6 +19562,7 @@ export namespace Prisma {
     color?: SortOrder
     icon?: SortOrder
     order?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -19465,6 +19575,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -19472,6 +19583,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -19479,6 +19591,7 @@ export namespace Prisma {
     id?: SortOrder
     name?: SortOrder
     slug?: SortOrder
+    lang?: SortOrder
     createdAt?: SortOrder
   }
 
@@ -19722,6 +19835,7 @@ export namespace Prisma {
     description?: SortOrder
     content?: SortOrder
     extraData?: SortOrder
+    lang?: SortOrder
     updatedAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -19732,6 +19846,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     content?: SortOrder
+    lang?: SortOrder
     updatedAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -19742,6 +19857,7 @@ export namespace Prisma {
     title?: SortOrder
     description?: SortOrder
     content?: SortOrder
+    lang?: SortOrder
     updatedAt?: SortOrder
     createdAt?: SortOrder
   }
@@ -20809,6 +20925,7 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     category?: CategoryCreateNestedOneWithoutArticlesInput
@@ -20828,6 +20945,7 @@ export namespace Prisma {
     viewCount?: number
     categoryId?: string | null
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
@@ -21029,6 +21147,7 @@ export namespace Prisma {
     authorId?: StringFilter<"Article"> | string
     categoryId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
+    lang?: StringFilter<"Article"> | string
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
   }
@@ -21336,6 +21455,7 @@ export namespace Prisma {
     color?: string | null
     icon?: string | null
     order?: number
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -21348,6 +21468,7 @@ export namespace Prisma {
     color?: string | null
     icon?: string | null
     order?: number
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -21491,6 +21612,7 @@ export namespace Prisma {
     color?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21503,6 +21625,7 @@ export namespace Prisma {
     color?: NullableStringFieldUpdateOperationsInput | string | null
     icon?: NullableStringFieldUpdateOperationsInput | string | null
     order?: IntFieldUpdateOperationsInput | number
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -21573,6 +21696,7 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -21592,6 +21716,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
@@ -21669,6 +21794,7 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -21689,6 +21815,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
@@ -21704,6 +21831,7 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
+    lang?: string
     createdAt?: Date | string
   }
 
@@ -21711,6 +21839,7 @@ export namespace Prisma {
     id?: string
     name: string
     slug: string
+    lang?: string
     createdAt?: Date | string
   }
 
@@ -21740,6 +21869,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -21760,6 +21890,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
@@ -21781,6 +21912,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -21788,6 +21920,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -21840,6 +21973,7 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -21860,6 +21994,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
@@ -21992,6 +22127,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -22012,6 +22148,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
@@ -22114,6 +22251,7 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -22134,6 +22272,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
@@ -22211,6 +22350,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -22231,6 +22371,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
@@ -22357,6 +22498,7 @@ export namespace Prisma {
     viewCount?: number
     categoryId?: string | null
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22474,6 +22616,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneWithoutArticlesNestedInput
@@ -22493,6 +22636,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
@@ -22511,6 +22655,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22690,6 +22835,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     publishedAt?: Date | string | null
+    lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22704,6 +22850,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -22723,6 +22870,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
@@ -22741,6 +22889,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -1,3 +1,5 @@
+import { 
+  StaticPage,
   Category, 
   Article, 
   Comment 
@@ -7,7 +9,8 @@
  * StaticPage with JSON extraData type safety
  */
 export interface StaticPageWithData extends Omit<StaticPage, "extraData"> {
-  extraData: unknown;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  extraData: any;
 }
 
 /**
@@ -65,7 +68,8 @@ export interface CommentWithRelations extends Comment {
 /**
  * Server Action Response generic type
  */
-export type ActionResponse<T = unknown> = {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ActionResponse<T = any> = {
   success: boolean;
   error?: string;
   data?: T;

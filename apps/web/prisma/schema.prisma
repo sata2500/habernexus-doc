@@ -94,6 +94,7 @@ model Article {
   authorId    String
   categoryId  String?
   publishedAt DateTime?
+  lang        String   @default("tr") // tr | en
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -109,6 +110,7 @@ model Article {
   @@index([status])
   @@index([publishedAt])
   @@index([slug])
+  @@index([lang])
 }
 
 model Category {
@@ -119,6 +121,7 @@ model Category {
   color       String?
   icon        String?
   order       Int       @default(0)
+  lang        String    @default("tr")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
@@ -129,6 +132,7 @@ model Tag {
   id       String         @id @default(cuid())
   name     String         @unique
   slug     String         @unique
+  lang     String         @default("tr")
   createdAt DateTime      @default(now())
 
   articles TagOnArticle[]
@@ -225,6 +229,7 @@ model StaticPage {
   description String?
   content     String   // DB Text
   extraData   Json?    // Ekstra alanlar (e-posta, tel, adres vb.)
+  lang        String   @default("tr")
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
 

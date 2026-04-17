@@ -43,7 +43,15 @@ export const metadata: Metadata = {
       "application/rss+xml": [
         {
           url: "/rss.xml",
-          title: "Haber Nexus RSS Akışı",
+          title: "Haber Nexus RSS Akışı (Genel)",
+        },
+        {
+          url: "/rss/tr",
+          title: "Haber Nexus RSS Akışı (Türkçe)",
+        },
+        {
+          url: "/rss/en",
+          title: "Haber Nexus RSS Feed (English)",
         },
       ],
     },
