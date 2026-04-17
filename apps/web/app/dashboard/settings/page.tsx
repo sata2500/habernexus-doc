@@ -1,32 +1,27 @@
-"use client";
-
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { deleteAccount } from "../actions";
-import { Loader2 } from "lucide-react";
+import { NewsletterToggle } from "../components/NewsletterToggle";
+import { DeleteAccountButton } from "../components/DeleteAccountButton";
+import { redirect } from "next/navigation";
 
-export default function SettingsPage() {
-  const router = useRouter();
-  const [isDeleting, setIsDeleting] = useState(false);
+export default async function SettingsPage() {
+  const reqHeaders = await headers();
+  const session = await auth.api.getSession({ headers: reqHeaders });
 
-  const handleDeleteAccount = async () => {
-    if (!confirm("Hesabınızı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz (makaleler, yorumlar, kaydedilenler) silinecektir.")) {
-      return;
-    }
+  if (!session?.user) {
+    redirect("/login");
+  }
 
-    setIsDeleting(true);
-    const result = await deleteAccount();
+  // Fetch current database state to ensure accuracy
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { newsletterSubscribed: true }
+  });
 
-    if (result.success) {
-      // Sayfayı yenilemek veya ana sayfaya yönlendirmek oturumu sonlandıracaktır (cookie DB'den silindiği için)
-      window.location.href = "/";
-    } else {
-      alert(result.error || "Hesap silinirken bir hata oluştu.");
-      setIsDeleting(false);
-    }
-  };
+  const isSubscribed = user?.newsletterSubscribed ?? true;
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -38,6 +33,7 @@ export default function SettingsPage() {
       <Card className="p-6 md:p-8">
         <div className="space-y-8">
           
+          {/* Theme Selection */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-border">
             <div>
               <h3 className="font-semibold text-foreground">Tema Seçimi</h3>
@@ -48,29 +44,16 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-border">
-            <div>
-              <h3 className="font-semibold text-foreground">E-posta Bildirimleri</h3>
-              <p className="text-sm text-muted-foreground mt-1">Önemli son dakika haberlerini mail ile alın.</p>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input type="checkbox" className="sr-only peer" defaultChecked />
-              <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-500/30 rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:inset-s-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
-            </label>
-          </div>
+          {/* Newsletter Toggle */}
+          <NewsletterToggle initialSubscribed={isSubscribed} />
 
+          {/* Danger Zone */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
              <div>
               <h3 className="font-semibold text-red-600 dark:text-red-400">Hesabı Sil</h3>
               <p className="text-sm text-muted-foreground mt-1">Tüm verilerinizi, yorumlarınızı ve kaydedilenlerinizi kalıcı olarak siler.</p>
             </div>
-              <button 
-                onClick={handleDeleteAccount}
-                disabled={isDeleting}
-                className="px-4 py-2 rounded-xl text-red-600 border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors text-sm font-medium cursor-pointer disabled:opacity-50 flex items-center gap-2"
-              >
-                {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Hesabımı Kalıcı Olarak Sil"}
-              </button>
+            <DeleteAccountButton />
           </div>
 
         </div>

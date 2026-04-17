@@ -24,6 +24,7 @@ model User {
   image         String?
   role          String    @default("USER") // USER | AUTHOR | ADMIN
   bio           String?
+  newsletterSubscribed Boolean @default(true)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
@@ -189,6 +190,7 @@ model Subscriber {
   id        String   @id @default(cuid())
   email     String   @unique
   isActive  Boolean  @default(true)
+  unsubscribeToken String @unique @default(cuid())
   createdAt DateTime @default(now())
 }
 

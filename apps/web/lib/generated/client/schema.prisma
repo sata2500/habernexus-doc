@@ -17,15 +17,16 @@ datasource db {
 // ============================================
 
 model User {
-  id            String   @id @default(cuid())
-  name          String
-  email         String   @unique
-  emailVerified Boolean  @default(false)
-  image         String?
-  role          String   @default("USER") // USER | AUTHOR | ADMIN
-  bio           String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id                   String   @id @default(cuid())
+  name                 String
+  email                String   @unique
+  emailVerified        Boolean  @default(false)
+  image                String?
+  role                 String   @default("USER") // USER | AUTHOR | ADMIN
+  bio                  String?
+  newsletterSubscribed Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
 
   // Better Auth ilişkileri
   sessions Session[]
@@ -186,10 +187,11 @@ model Bookmark {
 // ============================================
 
 model Subscriber {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
+  id               String   @id @default(cuid())
+  email            String   @unique
+  isActive         Boolean  @default(true)
+  unsubscribeToken String   @unique @default(cuid())
+  createdAt        DateTime @default(now())
 }
 
 // ============================================

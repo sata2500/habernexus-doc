@@ -206,3 +206,31 @@ export async function deleteUserComment(id: string) {
     return { success: false, error: "Yorum silinirken bir hata oluştu." };
   }
 }
+
+/**
+ * Toggles the user's newsletter subscription status.
+ */
+export async function updateNewsletterSubscription(subscribed: boolean) {
+  try {
+    const { headers } = await import("next/headers");
+    const { auth } = await import("@/lib/auth");
+    
+    const reqHeaders = await headers();
+    const session = await auth.api.getSession({ headers: reqHeaders });
+
+    if (!session?.user) {
+      return { success: false, error: "Oturum bulunamadı." };
+    }
+
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { newsletterSubscribed: subscribed },
+    });
+
+    revalidatePath("/dashboard/settings");
+    return { success: true };
+  } catch (error) {
+    console.error("Error updating newsletter preference:", error);
+    return { success: false, error: "Abonelik tercihi güncellenemedi." };
+  }
+}

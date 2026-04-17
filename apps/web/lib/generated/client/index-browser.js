@@ -128,6 +128,7 @@ exports.Prisma.UserScalarFieldEnum = {
   image: 'image',
   role: 'role',
   bio: 'bio',
+  newsletterSubscribed: 'newsletterSubscribed',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -232,6 +233,7 @@ exports.Prisma.SubscriberScalarFieldEnum = {
   id: 'id',
   email: 'email',
   isActive: 'isActive',
+  unsubscribeToken: 'unsubscribeToken',
   createdAt: 'createdAt'
 };
 
