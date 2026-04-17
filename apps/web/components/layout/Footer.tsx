@@ -44,6 +44,7 @@ const footerLinks = {
     { label: "İletişim", href: "/contact" },
     { label: "Kariyer", href: "/careers" },
     { label: "Reklam", href: "/advertise" },
+    { label: "RSS Kaynakları", href: "/rss-feeds" },
   ],
   legal: [
     { label: "Gizlilik Politikası", href: "/privacy" },
