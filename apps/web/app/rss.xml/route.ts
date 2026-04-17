@@ -16,6 +16,7 @@ export async function GET() {
     title: string;
     slug: string;
     excerpt: string | null;
+    coverImage: string | null;
     publishedAt: Date | null;
     updatedAt: Date;
     category: { name: string } | null;
@@ -31,6 +32,7 @@ export async function GET() {
         title: true,
         slug: true,
         excerpt: true,
+        coverImage: true,
         publishedAt: true,
         updatedAt: true,
         category: { select: { name: true } },
@@ -58,10 +60,14 @@ export async function GET() {
         ? article.publishedAt.toUTCString()
         : article.updatedAt.toUTCString();
 
+      const imageTag = article.coverImage 
+        ? `\n      <media:content url="${article.coverImage}" medium="image" />`
+        : "";
+
       return `    <item>
       <title>${escapeXml(article.title)}</title>
       <link>${link}</link>
-      <description>${escapeXml(article.excerpt || article.title)}</description>
+      <description>${escapeXml(article.excerpt || article.title)}</description>${imageTag}
       <pubDate>${pubDate}</pubDate>
       <guid isPermaLink="true">${link}</guid>
       <dc:creator>${escapeXml(article.author.name)}</dc:creator>${
@@ -77,6 +83,7 @@ export async function GET() {
 <rss version="2.0"
   xmlns:dc="http://purl.org/dc/elements/1.1/"
   xmlns:atom="http://www.w3.org/2005/Atom"
+  xmlns:media="http://search.yahoo.com/mrss/"
 >
   <channel>
     <title>${escapeXml(SITE_NAME)}</title>

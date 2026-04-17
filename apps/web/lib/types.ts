@@ -1,17 +1,13 @@
-import { 
-  StaticPage, 
   Category, 
   Article, 
-  User, 
-  Comment, 
-  Media 
+  Comment 
 } from "./generated/client";
 
 /**
  * StaticPage with JSON extraData type safety
  */
 export interface StaticPageWithData extends Omit<StaticPage, "extraData"> {
-  extraData: any;
+  extraData: unknown;
 }
 
 /**
@@ -69,7 +65,7 @@ export interface CommentWithRelations extends Comment {
 /**
  * Server Action Response generic type
  */
-export type ActionResponse<T = any> = {
+export type ActionResponse<T = unknown> = {
   success: boolean;
   error?: string;
   data?: T;

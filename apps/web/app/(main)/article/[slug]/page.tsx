@@ -12,9 +12,30 @@ import { CommentSection } from "../components/comments/CommentSection";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { checkIsBookmarked } from "@/app/dashboard/actions";
+import { prisma } from "@/lib/prisma";
+
+export const revalidate = 3600; // 1 saatte bir arka planda yenile (ISR)
 
 // Async Params Arayüzü (Next.js 15 Zorunluluğu)
 type Params = Promise<{ slug: string }>;
+
+export async function generateStaticParams() {
+  try {
+    const articles = await prisma.article.findMany({
+      where: { status: "PUBLISHED" },
+      select: { slug: true },
+      orderBy: { publishedAt: "desc" },
+      take: 100, // En güncel 100 haberi build anında üret
+    });
+
+    return articles.map((article) => ({
+      slug: article.slug,
+    }));
+  } catch (error) {
+    console.error("Error generating static params:", error);
+    return [];
+  }
+}
 
 export async function generateMetadata({ params }: { params: Params }) {
   const { slug } = await params;
@@ -22,12 +43,15 @@ export async function generateMetadata({ params }: { params: Params }) {
 
   if (!article) return { title: "Makale Bulunamadı | Haber Nexus" };
 
+  const isPublished = article.status === "PUBLISHED";
+
   return {
     title: article.title,
     description: article.excerpt || article.title,
     alternates: {
       canonical: `/article/${slug}`,
     },
+    robots: isPublished ? "index, follow" : "noindex, nofollow",
     openGraph: {
       type: "article",
       title: article.title,
@@ -36,7 +60,14 @@ export async function generateMetadata({ params }: { params: Params }) {
       publishedTime: article.publishedAt?.toISOString(),
       modifiedTime: article.updatedAt?.toISOString(),
       section: article.category?.name,
+      authors: [article.author.name],
       tags: article.tags?.map((t) => t.tag.name),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description: article.excerpt || article.title,
+      images: article.coverImage ? [article.coverImage] : [],
     },
   };
 }

@@ -127,13 +127,24 @@ export function NewsArticleJsonLd({
     publisher: {
       "@type": "NewsMediaOrganization",
       name: SITE_NAME,
+      url: BASE_URL,
       logo: {
         "@type": "ImageObject",
         url: `${BASE_URL}/logo.png`,
         width: 600,
         height: 60,
       },
+      sameAs: [
+        "https://twitter.com/habernexus",
+        "https://instagram.com/habernexus"
+      ]
     },
+    isAccessibleForFree: "True",
+    hasPart: {
+      "@type": "WebPageElement",
+      "isAccessibleForFree": "True",
+      "cssSelector": ".prose"
+    }
   };
 
   if (coverImage) {

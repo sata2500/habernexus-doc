@@ -9,10 +9,16 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: "*",
         allow: "/",
         disallow: [
+          "/admin",
           "/admin/",
+          "/author",
+          "/author/",
+          "/dashboard",
           "/dashboard/",
+          "/api/auth",
           "/api/auth/",
-          "/api/upload/",
+          "/api/upload",
+          "/api/media",
           "/api/media/",
         ],
       },
@@ -21,11 +27,15 @@ export default function robots(): MetadataRoute.Robots {
         allow: "/",
         disallow: [
           "/admin/",
+          "/author/",
           "/dashboard/",
-          "/api/auth/",
+          "/api/",
         ],
       },
     ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: [
+      `${BASE_URL}/sitemap.xml`,
+      `${BASE_URL}/news-sitemap.xml`,
+    ],
   };
 }
