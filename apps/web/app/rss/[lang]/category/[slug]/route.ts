@@ -1,7 +1,8 @@
+import { NextRequest } from "next/server";
 import { generateRssXml } from "@/lib/rss-utils";
 
 export async function GET(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ lang: string; slug: string }> }
 ) {
   const { lang, slug } = await params;

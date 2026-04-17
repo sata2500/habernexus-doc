@@ -16,7 +16,7 @@ interface GenerateRssOptions {
  */
 export async function generateRssXml({ lang = "tr", categoryId, categorySlug }: GenerateRssOptions) {
   // Veri çekme kriterleri
-  const where: any = {
+  const where: Record<string, unknown> = {
     status: "PUBLISHED",
     lang: lang,
   };
