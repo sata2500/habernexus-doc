@@ -4,6 +4,7 @@ import { useState, useTransition, FormEvent } from "react";
 import { createCategory, updateCategory, deleteCategoryAdmin } from "../actions";
 import { Loader2, Trash2, Edit2, Bookmark, CheckCircle2, AlertCircle } from "lucide-react";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
+import { IconPicker } from "@/components/ui/IconPicker";
 
 import { CategoryWithCount } from "@/lib/types";
 
@@ -152,15 +153,9 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Simge (Lucide İkon Adı)</label>
-              <input
-                type="text"
-                value={icon}
-                onChange={(e) => setIcon(e.target.value)}
-                placeholder="Örn: Newspaper, Cpu, Zap..."
-                className="w-full px-3 py-2 rounded-xl bg-background border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm"
-              />
-              <p className="text-xs text-muted-foreground mt-1">Lucide ikon isimlerini (örn: Newspaper) kullanabilirsiniz.</p>
+              <label className="text-sm font-medium">Kategori Simgesi</label>
+              <IconPicker value={icon} onChange={setIcon} />
+              <p className="text-xs text-muted-foreground mt-1">Sitede görünecek modern Lucide simgesini yukarıdan seçebilirsiniz.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
