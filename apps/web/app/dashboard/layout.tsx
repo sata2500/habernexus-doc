@@ -5,6 +5,8 @@ import Link from "next/link";
 import { User, Bookmark, Settings, LayoutDashboard, Home, MessageSquare } from "lucide-react";
 import { SignOutButton } from "./components/SignOutButton";
 
+export const dynamic = "force-dynamic";
+
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   // Better Auth Sunucu Tarafı (Server-Side) Oturum Kontrolü (Next.js 15)
   const reqHeaders = await headers();
