@@ -17,7 +17,13 @@ interface Message {
   sender: string;
   direction: string;
   content: string;
-  createdAt: string; // Serileştirilmiş tarih
+  createdAt: string;
+  attachments?: {
+    name: string;
+    url: string;
+    contentType: string;
+    size: number;
+  }[];
 }
 
 interface Props {
@@ -119,6 +125,37 @@ export function SupportChat({ ticket }: Props) {
                 )}
               >
                 {msg.content}
+                
+                {/* Attachments */}
+                {msg.attachments && msg.attachments.length > 0 && (
+                  <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
+                    {msg.attachments.map((att, idx) => {
+                      const isImage = att.contentType.startsWith("image/");
+                      return (
+                        <div key={idx} className="flex flex-col gap-2">
+                          {isImage ? (
+                            <a href={att.url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-lg border border-white/20 hover:border-white/40 transition-all">
+                              <img src={att.url} alt={att.name} className="max-w-full h-auto max-h-[300px] object-cover" />
+                            </a>
+                          ) : (
+                            <a 
+                              href={att.url} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[11px] font-medium"
+                            >
+                              <div className="h-6 w-6 rounded bg-white/10 flex items-center justify-center">
+                                <Mail className="h-3 w-3" />
+                              </div>
+                              <span className="truncate flex-1">{att.name}</span>
+                              <span className="opacity-50">{(att.size / 1024).toFixed(0)} KB</span>
+                            </a>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
               
               <span className="text-[10px] text-muted-foreground mt-1.5 px-1">

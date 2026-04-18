@@ -82,12 +82,41 @@ export async function POST(req: NextRequest) {
       }
 
       // 4. Mesajı bilete ekle
+      // Ekleri işle (Eğer varsa)
+      const attachments = (fullEmail as any).attachments || [];
+      const uploadedAttachments = [];
+
+      if (attachments.length > 0) {
+        const { put } = require("@vercel/blob");
+        for (const att of attachments) {
+          try {
+            // Base64 içeriği Buffer'a çevir ve Vercel Blob'a yükle
+            const buffer = Buffer.from(att.content, 'base64');
+            const blob = await put(`support/${ticket.id}/${att.name}`, buffer, {
+              contentType: att.content_type,
+              access: 'public',
+              token: process.env.BLOB_READ_WRITE_TOKEN // Vercel otomatik sağlar ama açıkça yazalım
+            });
+            
+            uploadedAttachments.push({
+              name: att.name,
+              url: blob.url,
+              contentType: att.content_type,
+              size: att.size
+            });
+          } catch (uploadError) {
+            console.error(`Ek yükleme hatası (${att.name}):`, uploadError);
+          }
+        }
+      }
+
       await prisma.supportMessage.create({
         data: {
           ticketId: ticket.id,
           sender: userEmail,
           direction: "INBOUND",
           content: text || html || "(İçerik yok)",
+          attachments: uploadedAttachments.length > 0 ? uploadedAttachments : undefined,
         },
       });
 
