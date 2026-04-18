@@ -6,8 +6,9 @@ import { ArrowLeft } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
-export default async function TicketDetailPage({ params }: { params: { id: string } }) {
-  const ticket = await getTicketDetails(params.id);
+export default async function TicketDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const ticket = await getTicketDetails(id);
 
   if (!ticket) {
     notFound();
