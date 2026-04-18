@@ -211,7 +211,6 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                  <p>Henüz kategori eklenmemiş.</p>
              </div>
           ) : categories.map((cat) => {
-            const isLoading = actionId?.startsWith(cat.id);
             const isDeleting = actionId === cat.id + "-delete";
 
             return (

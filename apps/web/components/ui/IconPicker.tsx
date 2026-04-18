@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import * as LucideIcons from "lucide-react";
 import { Search, X, Check } from "lucide-react";
 import { DynamicIcon } from "./DynamicIcon";
 import { clsx, type ClassValue } from "clsx";

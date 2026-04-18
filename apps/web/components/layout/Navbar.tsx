@@ -9,13 +9,6 @@ import {
   Menu,
   X,
   Newspaper,
-  TrendingUp,
-  Globe,
-  Cpu,
-  Trophy,
-  Briefcase,
-  Heart,
-  Clapperboard,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
@@ -23,7 +16,6 @@ import { Avatar } from "@/components/ui/Avatar";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
-import { LucideIcon } from "lucide-react";
 
 interface Category {
   id: string;
@@ -32,17 +24,6 @@ interface Category {
   color?: string | null;
   icon?: string | null;
 }
-
-const iconMap: Record<string, LucideIcon> = {
-  gundem: Newspaper,
-  dunya: Globe,
-  ekonomi: TrendingUp,
-  teknoloji: Cpu,
-  spor: Trophy,
-  saglik: Heart,
-  kultur: Clapperboard,
-  "is-dunyasi": Briefcase,
-};
 
 export function Navbar({ categories = [] }: { categories?: Category[] }) {
   const pathname = usePathname();

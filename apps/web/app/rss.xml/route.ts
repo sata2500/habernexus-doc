@@ -1,16 +1,3 @@
-import { prisma } from "@/lib/prisma";
-
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-const SITE_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Haber Nexus";
-
-/**
- * RSS 2.0 Feed Route Handler
- *
- * Google News ve içerik aggregator'ları için
- * makine-okunabilir haber akışı sağlar.
- *
- * @see https://www.rssboard.org/rss-specification
- */
 import { generateRssXml } from "@/lib/rss-utils";
 
 /**

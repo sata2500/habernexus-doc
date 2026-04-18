@@ -6,15 +6,18 @@ import { CommentForm } from "./CommentForm";
 import { CommentItem } from "./CommentItem";
 import { getComments } from "../../actions";
 import Link from "next/link";
+import { authClient } from "@/lib/auth-client";
 
 type CommentWithReplies = Awaited<ReturnType<typeof getComments>>[number];
 
 interface Props {
   articleId: string;
-  userId?: string | null;
 }
 
-export function CommentSection({ articleId, userId }: Props) {
+export function CommentSection({ articleId }: Props) {
+  const { data: session, isPending: isSessionLoading } = authClient.useSession();
+  const userId = session?.user?.id;
+  
   const [comments, setComments] = useState<CommentWithReplies[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -44,7 +47,9 @@ export function CommentSection({ articleId, userId }: Props) {
         </h2>
       </div>
 
-      {userId ? (
+      {isSessionLoading ? (
+         <div className="h-24 bg-muted animate-pulse rounded-2xl mb-12" />
+      ) : userId ? (
         <div className="mb-12">
           <CommentForm 
             articleId={articleId} 

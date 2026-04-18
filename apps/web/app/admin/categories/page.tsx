@@ -1,7 +1,7 @@
 import { getAllCategoriesAdmin } from "../actions";
 import { redirect } from "next/navigation";
 import { CategoryManager } from "../components/CategoryManager";
-import { Bookmark, LayoutList } from "lucide-react";
+import { LayoutList } from "lucide-react";
 
 export default async function AdminCategoriesPage() {
   const categories = await getAllCategoriesAdmin().catch(() => null);

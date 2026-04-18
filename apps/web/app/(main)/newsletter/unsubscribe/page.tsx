@@ -1,6 +1,6 @@
 import { unsubscribeByToken } from "@/app/actions/newsletter";
 import { Card } from "@/components/ui/Card";
-import { CheckCircle2, XCircle, Mail, ArrowRight } from "lucide-react";
+import { CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 interface UnsubscribePageProps {

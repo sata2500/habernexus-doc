@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { Upload, X, ImageIcon, Loader2 } from "lucide-react";
 import { upload } from "@vercel/blob/client";
 import { cn } from "@/lib/utils";
@@ -54,7 +55,7 @@ export function ImageUploader({
            if (optResult.success && optResult.url) {
              finalUrl = optResult.url;
            }
-         } catch (optErr) {
+         } catch {
            console.warn("Otomatik optimizasyon başarısız, ham görsel kullanılacak.");
          }
       }
@@ -89,10 +90,11 @@ export function ImageUploader({
       >
         {value ? (
           <>
-            <img 
+            <Image 
               src={value} 
               alt="Yüklenen görsel" 
-              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
+              fill
+              className="object-cover transition-transform duration-500 group-hover:scale-105" 
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <button

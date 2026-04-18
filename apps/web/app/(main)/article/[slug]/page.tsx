@@ -9,9 +9,6 @@ import { BookmarkButton } from "../components/BookmarkButton";
 import { ViewTracker } from "../components/ViewTracker";
 import { ShareButtons } from "../components/ShareButtons";
 import { CommentSection } from "../components/comments/CommentSection";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { checkIsBookmarked } from "@/app/dashboard/actions";
 import { prisma } from "@/lib/prisma";
 
 export const revalidate = 3600; // 1 saatte bir arka planda yenile (ISR)
@@ -93,11 +90,6 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
   const readTime = estimateReadingTime(article.content);
 
-  // Oturum ve Kaydedilenler Kontrolü
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-  const userId = session?.user?.id || null;
-  const isBookmarked = userId ? await checkIsBookmarked(article.id) : false;
 
   // Kelime sayısını hesapla (JSON-LD wordCount için)
   const wordCount = article.content ? article.content.trim().split(/\s+/).length : 0;
@@ -191,11 +183,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
           </div>
           <div className="flex items-center gap-2">
             <ShareButtons title={article.title} url={""} />
-            <BookmarkButton
-              articleId={article.id}
-              userId={userId}
-              initialIsBookmarked={isBookmarked}
-            />
+            <BookmarkButton articleId={article.id} />
           </div>
         </div>
       </header>
@@ -264,7 +252,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
       )}
 
       {/* ── Yorum Sistemi ────────────────────────── */}
-      <CommentSection articleId={article.id} userId={userId} />
+      <CommentSection articleId={article.id} />
     </div>
   );
 }

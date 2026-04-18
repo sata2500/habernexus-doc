@@ -20,7 +20,7 @@ interface Props {
 }
 
 export function CommentTable({ comments, onDelete, isAdmin }: Props) {
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const handleDelete = (id: string) => {

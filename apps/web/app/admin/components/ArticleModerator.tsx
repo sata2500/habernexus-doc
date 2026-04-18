@@ -16,7 +16,7 @@ function getStatusInfo(status: string) {
 }
 
 export function ArticleModerator({ articles }: { articles: Article[] }) {
-  const [pending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [actionId, setActionId] = useState<string | null>(null);
 
   const handleStatus = (id: string, newStatus: string) => {

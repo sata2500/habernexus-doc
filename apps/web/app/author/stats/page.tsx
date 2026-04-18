@@ -4,11 +4,9 @@ import {
   BarChart3, 
   TrendingUp, 
   Eye, 
-  Newspaper, 
   CheckCircle2, 
   Clock,
   ArrowUpRight,
-  TrendingDown
 } from "lucide-react";
 
 export default async function AuthorStatsPage() {
