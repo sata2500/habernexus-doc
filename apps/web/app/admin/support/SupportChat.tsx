@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { sendSupportReply, updateTicketStatus } from "./actions";
-import { Loader2, Send, CheckCircle2, User, ShieldCheck, Mail } from "lucide-react";
+import { sendSupportReply, updateTicketStatus, deleteSupportTicket } from "./actions";
+import { Loader2, Send, CheckCircle2, User, ShieldCheck, Mail, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { clsx, type ClassValue } from "clsx";
@@ -42,6 +43,8 @@ export function SupportChat({ ticket }: Props) {
   const [reply, setReply] = useState("");
   const [isPending, startTransition] = useTransition();
   const [statusPending, startStatusTransition] = useTransition();
+  const [deletePending, startDeleteTransition] = useTransition();
+  const router = useRouter();
 
   const handleSend = async () => {
     if (!reply.trim() || isPending) return;
@@ -57,6 +60,17 @@ export function SupportChat({ ticket }: Props) {
   const handleStatusUpdate = (status: "OPEN" | "PENDING" | "CLOSED") => {
     startStatusTransition(async () => {
       await updateTicketStatus(ticket.id, status);
+    });
+  };
+  
+  const handleDelete = () => {
+    if (!confirm("Bu bileti ve tüm mesajları/ekleri kalıcı olarak silmek istediğinize emin misiniz?")) return;
+    
+    startDeleteTransition(async () => {
+      const result = await deleteSupportTicket(ticket.id);
+      if (result.success) {
+        router.push("/admin/support");
+      }
     });
   };
 
@@ -93,6 +107,15 @@ export function SupportChat({ ticket }: Props) {
               Tekrar Aç
             </button>
           )}
+
+          <button
+            onClick={handleDelete}
+            disabled={deletePending}
+            className="p-2 rounded-xl bg-red-500/10 text-red-600 hover:bg-red-500/20 transition-all border border-red-500/20 disabled:opacity-50 cursor-pointer"
+            title="Bileti Sil"
+          >
+            {deletePending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+          </button>
         </div>
       </div>
 

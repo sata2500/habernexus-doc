@@ -124,3 +124,51 @@ export async function updateTicketStatus(id: string, status: "OPEN" | "PENDING" 
   revalidatePath(`/admin/support/${id}`);
   return { success: true };
 }
+/**
+ * Bir bileti ve tüm eklerini siler
+ */
+export async function deleteSupportTicket(id: string) {
+  const reqHeaders = await headers();
+  const session = await auth.api.getSession({ headers: reqHeaders });
+
+  if (!session || session.user.role !== "ADMIN") {
+    throw new Error("Unauthorized");
+  }
+
+  // 1. Bilete ait tüm mesajları ve eklerini bul
+  const messages = await prisma.supportMessage.findMany({
+    where: { ticketId: id },
+    select: { attachments: true }
+  });
+
+  // 2. Blob'ları sil
+  const { del } = require("@vercel/blob");
+  const urlsToDelete: string[] = [];
+  
+  messages.forEach((msg) => {
+    if (msg.attachments && Array.isArray(msg.attachments)) {
+      (msg.attachments as any[]).forEach((att) => {
+        if (att.url) urlsToDelete.push(att.url);
+      });
+    }
+  });
+
+  if (urlsToDelete.length > 0) {
+    try {
+      await del(urlsToDelete, {
+        token: process.env.BLOB_READ_WRITE_TOKEN
+      });
+    } catch (err) {
+      console.error("Blob silme hatası:", err);
+      // Kritik değil, DB silme işlemine devam et
+    }
+  }
+
+  // 3. Veritabanından sil
+  await prisma.supportTicket.delete({
+    where: { id }
+  });
+
+  revalidatePath("/admin/support");
+  return { success: true };
+}
