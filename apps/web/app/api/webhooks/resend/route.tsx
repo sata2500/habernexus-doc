@@ -30,37 +30,28 @@ export async function POST(req: NextRequest) {
   const wh = new Webhook(secret);
   let event: any;
 
-  const logs: string[] = [];
-  logs.push("Resend Webhook tetiklendi...");
-
   try {
     event = wh.verify(payload, headers) as any;
-    logs.push(`Webhook dogrulandi. Event Type: ${event.type}`);
   } catch (err) {
-    console.error("Webhook doğrulama başarısız:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
   if (event.type === "email.received") {
     const emailId = event.data.email_id;
-    logs.push(`Mail ID alindi: ${emailId}`);
     
     try {
       const { data: fullEmail, error: fetchError } = await resendClient.emails.receiving.get(emailId);
       
       if (fetchError || !fullEmail) {
-        logs.push(`Resend API Hatasi: ${JSON.stringify(fetchError)}`);
-        console.error(logs.join("\n"));
         return NextResponse.json({ error: "Failed to fetch email" }, { status: 500 });
       }
 
       const emailData = fullEmail as any;
-      logs.push(`Full Email Keys: ${Object.keys(emailData).join(", ")}`);
-      
       const { from, subject, text, html } = emailData;
       const emailMatch = from.match(/<([^>]+)>/) || [null, from];
       const userEmail = emailMatch[1] || from;
 
+      // Bilet bul veya oluştur
       let ticket = await prisma.supportTicket.findFirst({
         where: { userEmail, status: { in: ["OPEN", "PENDING"] } },
         orderBy: { updatedAt: "desc" },
@@ -70,70 +61,37 @@ export async function POST(req: NextRequest) {
         ticket = await prisma.supportTicket.create({
           data: { subject: subject || "Konusuz Mesaj", userEmail, status: "OPEN", priority: "NORMAL" },
         });
-        logs.push(`Yeni bilet: ${ticket.id}`);
       }
 
-      // GELİŞMİŞ EK YAKALAMA MANTIĞI
+      // Ekleri meta veri olarak kaydet (İçerik çekme işlemi ileride eklenebilir)
       const rawAttachments = emailData.attachments || [];
-      const uploadedAttachments = [];
-      
-      logs.push(`Tespit edilen ek sayisi: ${rawAttachments.length}`);
+      const attachmentsMetadata = rawAttachments.map((att: any) => ({
+        name: att.name || att.filename || "dosya",
+        contentType: att.content_type || "application/octet-stream",
+        size: att.size || 0,
+        status: "METADATA_ONLY" // İçeriğin henüz parse edilmediğini belirtmek için
+      }));
 
-      if (rawAttachments.length > 0) {
-        // İlk ekin anahtarlarını dökerek Resend'in ne gönderdiğini kesinleştirelim
-        logs.push(`Ilk ek objesi anahtarlari: ${Object.keys(rawAttachments[0]).join(", ")}`);
-
-        const { put } = require("@vercel/blob");
-        for (const att of rawAttachments) {
-          // Resend veya diğer sağlayıcılarda isim/içerik farklı keylerde olabilir
-          const fileName = att.name || att.filename || att.fileName || "adsiz_dosya";
-          const fileContent = att.content || att.data || att.contentBytes;
-          const contentType = att.content_type || att.contentType || "application/octet-stream";
-
-          if (fileContent) {
-            try {
-              logs.push(`Yukleniyor: ${fileName} (${contentType})`);
-              const buffer = Buffer.from(fileContent, 'base64');
-              const blob = await put(`support/${ticket.id}/${fileName}`, buffer, {
-                contentType: contentType,
-                access: 'public',
-                token: process.env.BLOB_READ_WRITE_TOKEN
-              });
-              
-              logs.push(`Yuklendi: ${blob.url}`);
-              uploadedAttachments.push({
-                name: fileName,
-                url: blob.url,
-                contentType: contentType,
-                size: att.size || 0
-              });
-            } catch (uploadError) {
-              logs.push(`Yukleme hatasi (${fileName}): ${uploadError}`);
-            }
-          } else {
-            logs.push(`HATA: ${fileName} icin icerik bulunamadi (content/data bos)`);
-          }
-        }
-      }
-
+      // Mesajı kaydet
       await prisma.supportMessage.create({
         data: {
           ticketId: ticket.id,
           sender: userEmail,
           direction: "INBOUND",
           content: text || html || "(İçerik yok)",
-          attachments: uploadedAttachments.length > 0 ? uploadedAttachments : undefined,
+          attachments: attachmentsMetadata.length > 0 ? attachmentsMetadata : undefined,
         },
       });
 
+      // Bilet güncelle
       await prisma.supportTicket.update({
         where: { id: ticket.id },
         data: { updatedAt: new Date() },
       });
 
-      // BİLDİRİMLERİ GERİ GETİR
+      // Bildirimler
       try {
-        const isNewTicket = (ticket as any).createdAt.getTime() === (ticket as any).updatedAt.getTime();
+        const isNewTicket = ticket.createdAt.getTime() === new Date().getTime(); // Yaklaşık kontrol
         if (isNewTicket) {
           await sendEmail({
             to: userEmail,
@@ -141,7 +99,6 @@ export async function POST(req: NextRequest) {
             subject: "Mesajınız Alındı - #" + ticket.id,
             react: <SupportReceiptTemplate ticketId={ticket.id} subject={subject || ""} />
           });
-          logs.push("Kullaniciya teyit maili gonderildi.");
         }
 
         await sendEmail({
@@ -150,28 +107,26 @@ export async function POST(req: NextRequest) {
           subject: "Yeni Destek Mesajı: " + (subject || "Konusuz"),
           react: (
             <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-              <h2 style={{ color: '#3b82f6' }}>Yeni Mesaj!</h2>
+              <h2 style={{ color: '#3b82f6' }}>Yeni Destek Mesajı</h2>
               <p><b>Gönderen:</b> {userEmail}</p>
               <p><b>Konu:</b> {subject}</p>
-              <hr />
-              <p>{text || "(İçerik yok)"}</p>
+              <hr style={{ border: 'none', borderTop: '1px solid #eee', margin: '20px 0' }} />
+              <p style={{ whiteSpace: 'pre-wrap' }}>{text || "(İçerik yok)"}</p>
               <a href={`${process.env.NEXT_PUBLIC_APP_URL}/admin/support/${ticket.id}`} style={{
-                display: 'inline-block', padding: '10px 20px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '8px', marginTop: '20px'
+                display: 'inline-block', padding: '12px 24px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '8px', marginTop: '20px', fontWeight: 'bold'
               }}>Panelden Yanıtla</a>
             </div>
           )
         });
-        logs.push("Admine bildirim gonderildi.");
       } catch (mailErr) {
-        logs.push(`Mail gonderim hatasi: ${mailErr}`);
+        console.error("Notification Error:", mailErr);
       }
 
-      logs.push("Islem basariyla tamamlandi.");
     } catch (error) {
-      logs.push(`Kritik Islem Hatasi: ${error}`);
+      console.error("Webhook Processing Error:", error);
+      return NextResponse.json({ error: "Internal error" }, { status: 500 });
     }
   }
 
-  console.error(logs.join("\n"));
   return NextResponse.json({ received: true });
 }
