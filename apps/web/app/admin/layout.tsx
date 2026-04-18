@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image, Home, PenTool } from "lucide-react";
+import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image, Home, PenTool, Mail } from "lucide-react";
 import { SignOutButton } from "../dashboard/components/SignOutButton";
 
 const navItems = [
@@ -13,6 +13,7 @@ const navItems = [
   { name: "Makaleler", href: "/admin/articles", icon: FileText },
   { name: "Sayfa Yönetimi", href: "/admin/pages", icon: FileText },
   { name: "Yorum Yönetimi", href: "/admin/comments", icon: MessageSquare },
+  { name: "Destek Merkezi", href: "/admin/support", icon: Mail },
 ];
 
 export const dynamic = "force-dynamic";
