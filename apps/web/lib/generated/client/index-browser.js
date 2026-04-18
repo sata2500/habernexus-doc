@@ -263,6 +263,27 @@ exports.Prisma.StaticPageScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.SupportTicketScalarFieldEnum = {
+  id: 'id',
+  subject: 'subject',
+  userEmail: 'userEmail',
+  userName: 'userName',
+  status: 'status',
+  priority: 'priority',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SupportMessageScalarFieldEnum = {
+  id: 'id',
+  ticketId: 'ticketId',
+  sender: 'sender',
+  direction: 'direction',
+  content: 'content',
+  attachments: 'attachments',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -308,7 +329,9 @@ exports.Prisma.ModelName = {
   Bookmark: 'Bookmark',
   Subscriber: 'Subscriber',
   Media: 'Media',
-  StaticPage: 'StaticPage'
+  StaticPage: 'StaticPage',
+  SupportTicket: 'SupportTicket',
+  SupportMessage: 'SupportMessage'
 };
 
 /**

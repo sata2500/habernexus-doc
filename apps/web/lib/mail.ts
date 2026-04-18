@@ -13,12 +13,14 @@ interface SendMailOptions {
   to: string | string[];
   subject: string;
   react: React.ReactElement;
+  from?: string;
+  replyTo?: string;
 }
 
 /**
  * Merkezi Mail Gönderim Fonksiyonu
  */
-export async function sendEmail({ to, subject, react }: SendMailOptions) {
+export async function sendEmail({ to, subject, react, from, replyTo }: SendMailOptions) {
   if (!process.env.RESEND_API_KEY) {
     console.warn("RESEND_API_KEY bulunamadı. Mail gönderimi atlanıyor.");
     return { success: false, error: "API Key missing" };
@@ -28,9 +30,10 @@ export async function sendEmail({ to, subject, react }: SendMailOptions) {
 
   try {
     const { data, error } = await resend.emails.send({
-      from: FROM_EMAIL,
+      from: from || FROM_EMAIL,
       to,
       subject,
+      replyTo: replyTo,
       react,
     });
 
