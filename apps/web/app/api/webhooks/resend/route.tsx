@@ -41,7 +41,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  // Sadece gelen mail (email.received) olaylarını işle
   if (event.type === "email.received") {
     const emailId = event.data.email_id;
     logs.push(`Mail ID alindi: ${emailId}`);
@@ -58,66 +57,61 @@ export async function POST(req: NextRequest) {
       const emailData = fullEmail as any;
       logs.push(`Full Email Keys: ${Object.keys(emailData).join(", ")}`);
       
-      const from = emailData.from;
-      const subject = emailData.subject;
-      const text = emailData.text;
-      const html = emailData.html;
-
+      const { from, subject, text, html } = emailData;
       const emailMatch = from.match(/<([^>]+)>/) || [null, from];
       const userEmail = emailMatch[1] || from;
 
       let ticket = await prisma.supportTicket.findFirst({
-        where: {
-          userEmail: userEmail,
-          status: { in: ["OPEN", "PENDING"] },
-        },
+        where: { userEmail, status: { in: ["OPEN", "PENDING"] } },
         orderBy: { updatedAt: "desc" },
       });
 
       if (!ticket) {
         ticket = await prisma.supportTicket.create({
-          data: {
-            subject: subject || "Konusuz Mesaj",
-            userEmail: userEmail,
-            status: "OPEN",
-            priority: "NORMAL",
-          },
+          data: { subject: subject || "Konusuz Mesaj", userEmail, status: "OPEN", priority: "NORMAL" },
         });
-        logs.push(`Yeni bilet olusturuldu: ${ticket.id}`);
-      } else {
-        logs.push(`Mevcut bilet bulundu: ${ticket.id}`);
+        logs.push(`Yeni bilet: ${ticket.id}`);
       }
 
-      // EK KONTROLÜ
-      const attachments = emailData.attachments || [];
+      // GELİŞMİŞ EK YAKALAMA MANTIĞI
+      const rawAttachments = emailData.attachments || [];
       const uploadedAttachments = [];
       
-      logs.push(`Ek sayisi: ${attachments.length}`);
-      if (attachments.length > 0) {
-        logs.push(`Ek detaylari: ${JSON.stringify(attachments.map((a: any) => ({ name: a.name, type: a.content_type, hasContent: !!a.content })))}`);
-      }
+      logs.push(`Tespit edilen ek sayisi: ${rawAttachments.length}`);
 
-      if (attachments.length > 0) {
+      if (rawAttachments.length > 0) {
+        // İlk ekin anahtarlarını dökerek Resend'in ne gönderdiğini kesinleştirelim
+        logs.push(`Ilk ek objesi anahtarlari: ${Object.keys(rawAttachments[0]).join(", ")}`);
+
         const { put } = require("@vercel/blob");
-        for (const att of attachments) {
-          try {
-            logs.push(`Yukleniyor: ${att.name}`);
-            const buffer = Buffer.from(att.content, 'base64');
-            const blob = await put(`support/${ticket.id}/${att.name}`, buffer, {
-              contentType: att.content_type,
-              access: 'public',
-              token: process.env.BLOB_READ_WRITE_TOKEN
-            });
-            
-            logs.push(`Yuklendi: ${blob.url}`);
-            uploadedAttachments.push({
-              name: att.name,
-              url: blob.url,
-              contentType: att.content_type,
-              size: att.size
-            });
-          } catch (uploadError) {
-            logs.push(`Yukleme hatasi (${att.name}): ${uploadError}`);
+        for (const att of rawAttachments) {
+          // Resend veya diğer sağlayıcılarda isim/içerik farklı keylerde olabilir
+          const fileName = att.name || att.filename || att.fileName || "adsiz_dosya";
+          const fileContent = att.content || att.data || att.contentBytes;
+          const contentType = att.content_type || att.contentType || "application/octet-stream";
+
+          if (fileContent) {
+            try {
+              logs.push(`Yukleniyor: ${fileName} (${contentType})`);
+              const buffer = Buffer.from(fileContent, 'base64');
+              const blob = await put(`support/${ticket.id}/${fileName}`, buffer, {
+                contentType: contentType,
+                access: 'public',
+                token: process.env.BLOB_READ_WRITE_TOKEN
+              });
+              
+              logs.push(`Yuklendi: ${blob.url}`);
+              uploadedAttachments.push({
+                name: fileName,
+                url: blob.url,
+                contentType: contentType,
+                size: att.size || 0
+              });
+            } catch (uploadError) {
+              logs.push(`Yukleme hatasi (${fileName}): ${uploadError}`);
+            }
+          } else {
+            logs.push(`HATA: ${fileName} icin icerik bulunamadi (content/data bos)`);
           }
         }
       }
@@ -137,15 +131,47 @@ export async function POST(req: NextRequest) {
         data: { updatedAt: new Date() },
       });
 
-      // E-posta gönderim kısımlarını loglara eklemiyorum (zaten çalışıyor)
-      logs.push("Mesaj basariyla kaydedildi.");
+      // BİLDİRİMLERİ GERİ GETİR
+      try {
+        const isNewTicket = (ticket as any).createdAt.getTime() === (ticket as any).updatedAt.getTime();
+        if (isNewTicket) {
+          await sendEmail({
+            to: userEmail,
+            from: "Haber Nexus Destek <support@habernexus.com>",
+            subject: "Mesajınız Alındı - #" + ticket.id,
+            react: <SupportReceiptTemplate ticketId={ticket.id} subject={subject || ""} />
+          });
+          logs.push("Kullaniciya teyit maili gonderildi.");
+        }
 
+        await sendEmail({
+          to: "salihtanriseven25@gmail.com",
+          from: "Haber Nexus Sistem <system@habernexus.com>",
+          subject: "Yeni Destek Mesajı: " + (subject || "Konusuz"),
+          react: (
+            <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+              <h2 style={{ color: '#3b82f6' }}>Yeni Mesaj!</h2>
+              <p><b>Gönderen:</b> {userEmail}</p>
+              <p><b>Konu:</b> {subject}</p>
+              <hr />
+              <p>{text || "(İçerik yok)"}</p>
+              <a href={`${process.env.NEXT_PUBLIC_APP_URL}/admin/support/${ticket.id}`} style={{
+                display: 'inline-block', padding: '10px 20px', backgroundColor: '#3b82f6', color: 'white', textDecoration: 'none', borderRadius: '8px', marginTop: '20px'
+              }}>Panelden Yanıtla</a>
+            </div>
+          )
+        });
+        logs.push("Admine bildirim gonderildi.");
+      } catch (mailErr) {
+        logs.push(`Mail gonderim hatasi: ${mailErr}`);
+      }
+
+      logs.push("Islem basariyla tamamlandi.");
     } catch (error) {
-      logs.push(`Islem Hatasi: ${error}`);
+      logs.push(`Kritik Islem Hatasi: ${error}`);
     }
   }
 
-  // TÜM LOGLARI TEK SEFERDE YAZDIR
   console.error(logs.join("\n"));
   return NextResponse.json({ received: true });
 }
