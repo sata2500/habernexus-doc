@@ -17,7 +17,7 @@ interface Message {
   sender: string;
   direction: string;
   content: string;
-  createdAt: Date;
+  createdAt: string; // Serileştirilmiş tarih
 }
 
 interface Props {
@@ -27,6 +27,8 @@ interface Props {
     userEmail: string;
     status: string;
     messages: Message[];
+    createdAt: string;
+    updatedAt: string;
   };
 }
 

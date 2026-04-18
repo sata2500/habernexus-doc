@@ -13,6 +13,17 @@ export default async function TicketDetailPage({ params }: { params: { id: strin
     notFound();
   }
 
+  // Veriyi Client Component'e göndermeden önce serileştiriyoruz (Date -> String vb.)
+  const serializedTicket = {
+    ...ticket,
+    createdAt: ticket.createdAt.toISOString(),
+    updatedAt: ticket.updatedAt.toISOString(),
+    messages: ticket.messages.map((msg) => ({
+      ...msg,
+      createdAt: msg.createdAt.toISOString(),
+    })),
+  };
+
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center justify-between">
@@ -25,7 +36,7 @@ export default async function TicketDetailPage({ params }: { params: { id: strin
         </Link>
       </div>
 
-      <SupportChat ticket={ticket as any} />
+      <SupportChat ticket={serializedTicket as any} />
     </div>
   );
 }
