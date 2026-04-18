@@ -32,8 +32,8 @@ export async function POST(req: NextRequest) {
 
   try {
     event = wh.verify(payload, headers) as any;
-    console.log("Webhook dogrulandi. Event Type:", event.type);
-    console.log("Event Data Payload:", JSON.stringify(event.data, null, 2));
+    console.error("Webhook dogrulandi. Event Type:", event.type);
+    console.error("Event Data Payload:", JSON.stringify(event.data));
   } catch (err) {
     console.error("Webhook doğrulama başarısız:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
   // Sadece gelen mail (email.received) olaylarını işle
   if (event.type === "email.received") {
     const emailId = event.data.email_id;
-    console.log("Mail ID alindi (email.received):", emailId);
+    console.error("Mail ID alindi (email.received):", emailId);
     
     // 1. Resend API üzerinden mailin TAM içeriğini çek (Webhook sadece meta veri gönderir)
     try {
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
         }, { status: 500 });
       }
 
-      console.log("Full Email Keys:", Object.keys(fullEmail));
+      console.error("Full Email Keys:", Object.keys(fullEmail));
       const { from, subject, text, html } = fullEmail as any;
 
       // "Ad Soyad <email@example.com>" formatından sadece email'i ayıkla
@@ -89,16 +89,16 @@ export async function POST(req: NextRequest) {
       const attachments = (fullEmail as any).attachments || [];
       const uploadedAttachments = [];
       
-      console.log(`Mail icerigi alindi. Ek sayisi: ${attachments.length}`);
+      console.error(`Mail icerigi alindi. Ek sayisi: ${attachments.length}`);
       if (attachments.length > 0) {
-        console.log("Ek isimleri:", attachments.map((a: any) => a.name).join(", "));
+        console.error("Ek isimleri:", attachments.map((a: any) => a.name).join(", "));
       }
 
       if (attachments.length > 0) {
         const { put } = require("@vercel/blob");
         for (const att of attachments) {
           try {
-            console.log(`Ek yukleniyor: ${att.name} (${att.content_type})`);
+            console.error(`Ek yukleniyor: ${att.name} (${att.content_type})`);
             // Base64 içeriği Buffer'a çevir ve Vercel Blob'a yükle
             const buffer = Buffer.from(att.content, 'base64');
             const blob = await put(`support/${ticket.id}/${att.name}`, buffer, {
@@ -107,7 +107,7 @@ export async function POST(req: NextRequest) {
               token: process.env.BLOB_READ_WRITE_TOKEN
             });
             
-            console.log(`Ek yuklendi: ${blob.url}`);
+            console.error(`Ek yuklendi: ${blob.url}`);
             uploadedAttachments.push({
               name: att.name,
               url: blob.url,
@@ -172,7 +172,7 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      console.log(`Yeni mesaj kaydedildi: Ticket ID ${ticket.id}`);
+      console.error(`Yeni mesaj kaydedildi: Ticket ID ${ticket.id}`);
 
     } catch (error) {
       console.error("Webhook işlem hatası:", error);
