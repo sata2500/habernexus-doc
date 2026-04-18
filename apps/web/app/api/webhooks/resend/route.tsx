@@ -85,19 +85,26 @@ export async function POST(req: NextRequest) {
       // Ekleri işle (Eğer varsa)
       const attachments = (fullEmail as any).attachments || [];
       const uploadedAttachments = [];
+      
+      console.log(`Mail icerigi alindi. Ek sayisi: ${attachments.length}`);
+      if (attachments.length > 0) {
+        console.log("Ek isimleri:", attachments.map((a: any) => a.name).join(", "));
+      }
 
       if (attachments.length > 0) {
         const { put } = require("@vercel/blob");
         for (const att of attachments) {
           try {
+            console.log(`Ek yukleniyor: ${att.name} (${att.content_type})`);
             // Base64 içeriği Buffer'a çevir ve Vercel Blob'a yükle
             const buffer = Buffer.from(att.content, 'base64');
             const blob = await put(`support/${ticket.id}/${att.name}`, buffer, {
               contentType: att.content_type,
               access: 'public',
-              token: process.env.BLOB_READ_WRITE_TOKEN // Vercel otomatik sağlar ama açıkça yazalım
+              token: process.env.BLOB_READ_WRITE_TOKEN
             });
             
+            console.log(`Ek yuklendi: ${blob.url}`);
             uploadedAttachments.push({
               name: att.name,
               url: blob.url,
@@ -105,7 +112,7 @@ export async function POST(req: NextRequest) {
               size: att.size
             });
           } catch (uploadError) {
-            console.error(`Ek yükleme hatası (${att.name}):`, uploadError);
+            console.error(`Ek yukleme hatasi (${att.name}):`, uploadError);
           }
         }
       }

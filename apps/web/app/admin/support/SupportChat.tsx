@@ -153,7 +153,8 @@ export function SupportChat({ ticket }: Props) {
                 {msg.attachments && msg.attachments.length > 0 && (
                   <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
                     {msg.attachments.map((att, idx) => {
-                      const isImage = att.contentType.startsWith("image/");
+                      const isImage = att.contentType.startsWith("image/") || 
+                                    /\.(jpg|jpeg|png|gif|webp)$/i.test(att.name);
                       return (
                         <div key={idx} className="flex flex-col gap-2">
                           {isImage ? (
