@@ -1,14 +1,18 @@
+import { Resend } from "resend";
 import { Webhook } from "svix";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { sendEmail } from "@/lib/mail";
 import { SupportReceiptTemplate } from "@/components/mail/SupportReceiptTemplate";
 
+const resendClient = new Resend(process.env.RESEND_API_KEY);
+
 /**
  * Resend Inbound Email Webhook Handler
  * support@habernexus.com gibi adreslere gelen mailleri yakalar.
  */
 export async function POST(req: NextRequest) {
+  console.log("Resend Webhook tetiklendi...");
   const payload = await req.text();
   const headers = {
     "svix-id": req.headers.get("svix-id") || "",
@@ -36,28 +40,27 @@ export async function POST(req: NextRequest) {
   // Sadece gelen mail (email.received) olaylarını işle
   if (event.type === "email.received") {
     const emailId = event.data.email_id;
+    console.log("Mail ID alindi:", emailId);
     
     // 1. Resend API üzerinden mailin TAM içeriğini çek (Webhook sadece meta veri gönderir)
-    // Not: sendEmail içinde kullandığımız mantığı burada da kullanabiliriz
-    const { Resend } = require("resend");
-    const resendClient = new Resend(process.env.RESEND_API_KEY);
-    
-    const { data: fullEmail, error: fetchError } = await resendClient.emails.receiving.get(emailId);
-    
-    if (fetchError || !fullEmail) {
-      console.error("Email içeriği Resend'den alınamadı:", fetchError);
-      return NextResponse.json({ error: "Failed to fetch email content" }, { status: 500 });
-    }
-
-    const { from, subject, text, html } = fullEmail as any;
-
-    // "Ad Soyad <email@example.com>" formatından sadece email'i ayıkla
-    const emailMatch = from.match(/<([^>]+)>/) || [null, from];
-    const userEmail = emailMatch[1] || from;
-
     try {
-      // 1. Mevcut bir açık bilet var mı bak (Aynı kullanıcı + Benzer konu + OPEN/PENDING durumu)
-      // Basitlik için sadece mail adresi ve durum üzerinden gidiyoruz.
+      const { data: fullEmail, error: fetchError } = await resendClient.emails.receiving.get(emailId);
+      
+      if (fetchError || !fullEmail) {
+        console.error("Resend API Hatasi:", fetchError);
+        return NextResponse.json({ 
+            error: "Failed to fetch email content", 
+            details: fetchError || "Email data is empty" 
+        }, { status: 500 });
+      }
+
+      const { from, subject, text, html } = fullEmail as any;
+
+      // "Ad Soyad <email@example.com>" formatından sadece email'i ayıkla
+      const emailMatch = from.match(/<([^>]+)>/) || [null, from];
+      const userEmail = emailMatch[1] || from;
+
+      // 2. Mevcut bir açık bilet var mı bak (Aynı kullanıcı + Benzer konu + OPEN/PENDING durumu)
       let ticket = await prisma.supportTicket.findFirst({
         where: {
           userEmail: userEmail,
@@ -66,7 +69,7 @@ export async function POST(req: NextRequest) {
         orderBy: { updatedAt: "desc" },
       });
 
-      // 2. Bilet yoksa yeni oluştur
+      // 3. Bilet yoksa yeni oluştur
       if (!ticket) {
         ticket = await prisma.supportTicket.create({
           data: {
@@ -78,7 +81,7 @@ export async function POST(req: NextRequest) {
         });
       }
 
-      // 3. Mesajı bilete ekle
+      // 4. Mesajı bilete ekle
       await prisma.supportMessage.create({
         data: {
           ticketId: ticket.id,
@@ -88,13 +91,13 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // 4. Bileti güncelle (son işlem zamanı için)
+      // 5. Bileti güncelle (son işlem zamanı için)
       await prisma.supportTicket.update({
         where: { id: ticket.id },
         data: { updatedAt: new Date() },
       });
 
-      // 5. Otomatik Teyit Mesajı (Sadece yeni bilet açıldığında)
+      // 6. Otomatik Teyit Mesajı (Sadece yeni bilet açıldığında)
       const isNewTicket = (ticket as any).createdAt === (ticket as any).updatedAt;
       if (isNewTicket) {
         await sendEmail({
@@ -104,7 +107,7 @@ export async function POST(req: NextRequest) {
           react: <SupportReceiptTemplate ticketId={ticket.id} subject={subject || ""} />
         });
 
-        // 6. Admin Bildirimi
+        // 7. Admin Bildirimi
         await sendEmail({
           to: "salihtanriseven25@gmail.com", // Sizin adresiniz
           from: "Haber Nexus Sistem <system@habernexus.com>",
@@ -132,9 +135,9 @@ export async function POST(req: NextRequest) {
 
       console.log(`Yeni mesaj kaydedildi: Ticket ID ${ticket.id}`);
 
-    } catch (dbError) {
-      console.error("Veritabanı kayıt hatası:", dbError);
-      return NextResponse.json({ error: "Database error" }, { status: 500 });
+    } catch (error) {
+      console.error("Webhook işlem hatası:", error);
+      return NextResponse.json({ error: "Internal processing error", details: (error as Error).message }, { status: 500 });
     }
   }
 
