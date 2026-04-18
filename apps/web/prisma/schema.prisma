@@ -1,42 +1,31 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider      = "prisma-client-js"
   output        = "../lib/generated/client"
-  engineType    = "library"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
+  engineType    = "library"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-// ============================================
-// Better Auth Tabloları (Auth sistemi için gerekli)
-// ============================================
-
 model User {
-  id            String    @id @default(cuid())
-  name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
-  image         String?
-  role          String    @default("USER") // USER | AUTHOR | ADMIN
-  bio           String?
-  newsletterSubscribed Boolean @default(true)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  // Better Auth ilişkileri
-  sessions Session[]
-  accounts Account[]
-
-  // Uygulama ilişkileri
-  articles  Article[]
-  comments  Comment[]
-  bookmarks Bookmark[]
-  media     Media[]
+  id                   String     @id @default(cuid())
+  name                 String
+  email                String     @unique
+  emailVerified        Boolean    @default(false)
+  image                String?
+  role                 String     @default("USER")
+  bio                  String?
+  newsletterSubscribed Boolean    @default(true)
+  createdAt            DateTime   @default(now())
+  updatedAt            DateTime   @updatedAt
+  accounts             Account[]
+  articles             Article[]
+  bookmarks            Bookmark[]
+  comments             Comment[]
+  media                Media[]
+  sessions             Session[]
 }
 
 model Session {
@@ -48,26 +37,24 @@ model Session {
   userAgent String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  userId            String
-  accountId         String
-  providerId        String
-  accessToken       String?
-  refreshToken      String?
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
-  scope             String?
-  idToken           String?
-  password          String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Verification {
@@ -79,32 +66,26 @@ model Verification {
   updatedAt  DateTime @updatedAt
 }
 
-// ============================================
-// Uygulama Tabloları
-// ============================================
-
 model Article {
-  id          String   @id @default(cuid())
+  id          String         @id @default(cuid())
   title       String
-  slug        String   @unique
-  content     String   // SQLite'da TEXT otomatik
+  slug        String         @unique
+  content     String
   excerpt     String?
   coverImage  String?
-  status      String   @default("DRAFT") // DRAFT | PUBLISHED | ARCHIVED
-  viewCount   Int      @default(0)
+  status      String         @default("DRAFT")
+  viewCount   Int            @default(0)
   authorId    String
   categoryId  String?
   publishedAt DateTime?
-  lang        String   @default("tr") // tr | en
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  // İlişkiler
-  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  category  Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  tags      TagOnArticle[]
-  comments  Comment[]
-  bookmarks Bookmark[]
+  lang        String         @default("tr")
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category    Category?      @relation(fields: [categoryId], references: [id])
+  bookmarks   Bookmark[]
+  comments    Comment[]
+  tags        TagOnArticle[]
 
   @@index([authorId])
   @@index([categoryId])
@@ -125,44 +106,40 @@ model Category {
   lang        String    @default("tr")
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
-
-  articles Article[]
+  articles    Article[]
 }
 
 model Tag {
-  id       String         @id @default(cuid())
-  name     String         @unique
-  slug     String         @unique
-  lang     String         @default("tr")
-  createdAt DateTime      @default(now())
-
-  articles TagOnArticle[]
+  id        String         @id @default(cuid())
+  name      String         @unique
+  slug      String         @unique
+  lang      String         @default("tr")
+  createdAt DateTime       @default(now())
+  articles  TagOnArticle[]
 }
 
 model TagOnArticle {
   articleId String
   tagId     String
-
-  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
 
   @@id([articleId, tagId])
   @@index([tagId])
 }
 
 model Comment {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   content   String
   userId    String
   articleId String
   parentId  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  article Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
-  parent  Comment?  @relation("CommentReplies", fields: [parentId], references: [id], onDelete: SetNull)
-  replies Comment[] @relation("CommentReplies")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  article   Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  parent    Comment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   Comment[] @relation("CommentReplies")
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([articleId])
   @@index([userId])
@@ -174,49 +151,32 @@ model Bookmark {
   userId    String
   articleId String
   createdAt DateTime @default(now())
-
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  article Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, articleId])
   @@index([userId])
 }
 
-// ============================================
-// Bülten Tabloları
-// ============================================
-
 model Subscriber {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  isActive  Boolean  @default(true)
-  unsubscribeToken String @unique @default(cuid())
-  createdAt DateTime @default(now())
-}
-
-// ============================================
-// Medya Yönetimi
-// ============================================
-
-enum MediaStatus {
-  RAW
-  PROCESSING
-  OPTIMIZED
-  FAILED
+  id               String   @id @default(cuid())
+  email            String   @unique
+  isActive         Boolean  @default(true)
+  unsubscribeToken String   @unique @default(cuid())
+  createdAt        DateTime @default(now())
 }
 
 model Media {
   id        String      @id @default(cuid())
   url       String      @unique
   filename  String
-  size      Int         // Byte cinsinden
+  size      Int
   mimeType  String
   status    MediaStatus @default(RAW)
   width     Int?
   height    Int?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  
   userId    String
   user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -229,8 +189,8 @@ model StaticPage {
   slug        String   @unique
   title       String
   description String?
-  content     String   // DB Text
-  extraData   Json?    // Ekstra alanlar (e-posta, tel, adres vb.)
+  content     String
+  extraData   Json?
   lang        String   @default("tr")
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
@@ -238,21 +198,16 @@ model StaticPage {
   @@index([slug])
 }
 
-// ============================================
-// Destek ve İletişim (Support Center)
-// ============================================
-
 model SupportTicket {
-  id          String   @id @default(cuid())
-  subject     String
-  userEmail   String
-  userName    String?
-  status      String   @default("OPEN") // OPEN | PENDING | CLOSED
-  priority    String   @default("NORMAL") // LOW | NORMAL | HIGH
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  messages    SupportMessage[]
+  id        String           @id @default(cuid())
+  subject   String
+  userEmail String
+  userName  String?
+  status    String           @default("OPEN")
+  priority  String           @default("NORMAL")
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  messages  SupportMessage[]
 
   @@index([userEmail])
   @@index([status])
@@ -260,16 +215,22 @@ model SupportTicket {
 }
 
 model SupportMessage {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   ticketId    String
-  sender      String   // Email adresi
-  direction   String   // INBOUND (gelen) | OUTBOUND (admin cevabı)
-  content     String   @db.Text
-  attachments Json?    // Eklerin URL listesi (opsiyonel)
-  createdAt   DateTime @default(now())
-
+  sender      String
+  direction   String
+  content     String
+  attachments Json?
+  createdAt   DateTime      @default(now())
   ticket      SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
-  
+
   @@index([ticketId])
   @@index([createdAt])
+}
+
+enum MediaStatus {
+  RAW
+  PROCESSING
+  OPTIMIZED
+  FAILED
 }

@@ -35,15 +35,32 @@ export async function POST(req: NextRequest) {
 
   // Sadece gelen mail (email.received) olaylarını işle
   if (event.type === "email.received") {
-    const emailData = event.data;
-    const { from, subject, text, html, to } = emailData;
+    const emailId = event.data.email_id;
+    
+    // 1. Resend API üzerinden mailin TAM içeriğini çek (Webhook sadece meta veri gönderir)
+    // Not: sendEmail içinde kullandığımız mantığı burada da kullanabiliriz
+    const { Resend } = require("resend");
+    const resendClient = new Resend(process.env.RESEND_API_KEY);
+    
+    const { data: fullEmail, error: fetchError } = await resendClient.emails.receiving.get(emailId);
+    
+    if (fetchError || !fullEmail) {
+      console.error("Email içeriği Resend'den alınamadı:", fetchError);
+      return NextResponse.json({ error: "Failed to fetch email content" }, { status: 500 });
+    }
+
+    const { from, subject, text, html } = fullEmail as any;
+
+    // "Ad Soyad <email@example.com>" formatından sadece email'i ayıkla
+    const emailMatch = from.match(/<([^>]+)>/) || [null, from];
+    const userEmail = emailMatch[1] || from;
 
     try {
       // 1. Mevcut bir açık bilet var mı bak (Aynı kullanıcı + Benzer konu + OPEN/PENDING durumu)
       // Basitlik için sadece mail adresi ve durum üzerinden gidiyoruz.
       let ticket = await prisma.supportTicket.findFirst({
         where: {
-          userEmail: from,
+          userEmail: userEmail,
           status: { in: ["OPEN", "PENDING"] },
         },
         orderBy: { updatedAt: "desc" },
@@ -54,7 +71,7 @@ export async function POST(req: NextRequest) {
         ticket = await prisma.supportTicket.create({
           data: {
             subject: subject || "Konusuz Mesaj",
-            userEmail: from,
+            userEmail: userEmail,
             status: "OPEN",
             priority: "NORMAL",
           },
@@ -65,7 +82,7 @@ export async function POST(req: NextRequest) {
       await prisma.supportMessage.create({
         data: {
           ticketId: ticket.id,
-          sender: from,
+          sender: userEmail,
           direction: "INBOUND",
           content: text || html || "(İçerik yok)",
         },
@@ -81,7 +98,7 @@ export async function POST(req: NextRequest) {
       const isNewTicket = (ticket as any).createdAt === (ticket as any).updatedAt;
       if (isNewTicket) {
         await sendEmail({
-          to: from,
+          to: userEmail,
           from: "Haber Nexus Destek <support@habernexus.com>",
           subject: "Mesajınız Alındı - #" + ticket.id,
           react: <SupportReceiptTemplate ticketId={ticket.id} subject={subject || ""} />
@@ -95,7 +112,7 @@ export async function POST(req: NextRequest) {
           react: (
             <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
                 <h2 style={{ color: '#3b82f6' }}>Yeni Destek Mesajı!</h2>
-                <p><b>Gönderen:</b> {from}</p>
+                <p><b>Gönderen:</b> {userEmail}</p>
                 <p><b>Konu:</b> {subject}</p>
                 <hr />
                 <p>{text || "(İçerik yok)"}</p>
