@@ -32,6 +32,8 @@ export async function POST(req: NextRequest) {
 
   try {
     event = wh.verify(payload, headers) as any;
+    console.log("Webhook dogrulandi. Event Type:", event.type);
+    console.log("Event Data Payload:", JSON.stringify(event.data, null, 2));
   } catch (err) {
     console.error("Webhook doğrulama başarısız:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
@@ -40,7 +42,7 @@ export async function POST(req: NextRequest) {
   // Sadece gelen mail (email.received) olaylarını işle
   if (event.type === "email.received") {
     const emailId = event.data.email_id;
-    console.log("Mail ID alindi:", emailId);
+    console.log("Mail ID alindi (email.received):", emailId);
     
     // 1. Resend API üzerinden mailin TAM içeriğini çek (Webhook sadece meta veri gönderir)
     try {
@@ -54,6 +56,7 @@ export async function POST(req: NextRequest) {
         }, { status: 500 });
       }
 
+      console.log("Full Email Keys:", Object.keys(fullEmail));
       const { from, subject, text, html } = fullEmail as any;
 
       // "Ad Soyad <email@example.com>" formatından sadece email'i ayıkla
