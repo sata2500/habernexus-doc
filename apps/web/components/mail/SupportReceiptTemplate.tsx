@@ -32,7 +32,7 @@ export const SupportReceiptTemplate: React.FC<SupportReceiptTemplateProps> = ({
       </p>
       
       <p style={{ fontSize: "16px", lineHeight: "1.6", marginBottom: "24px" }}>
-        Haber Nexus Destek ekibine ulaştığınız için teşekkür ederiz. <b>"{subject}"</b> konulu talebiniz başarıyla kaydedildi.
+        Haber Nexus Destek ekibine ulaştığınız için teşekkür ederiz. <b>&quot;{subject}&quot;</b> konulu talebiniz başarıyla kaydedildi.
       </p>
 
       <div style={{

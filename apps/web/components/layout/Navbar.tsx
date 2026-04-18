@@ -270,7 +270,7 @@ export function Navbar({ categories = [] }: { categories?: Category[] }) {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-foreground truncate">{session.user.name}</p>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-semibold flex items-center gap-1">
-                      {(session.user as any).role === "ADMIN" ? "🛡️ Admin" : (session.user as any).role === "AUTHOR" ? "✍️ Yazar" : "👤 Okur"}
+                      {session.user.role === "ADMIN" ? "🛡️ Admin" : session.user.role === "AUTHOR" ? "✍️ Yazar" : "👤 Okur"}
                     </p>
                   </div>
                 </Link>

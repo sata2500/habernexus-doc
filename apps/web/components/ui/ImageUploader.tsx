@@ -60,9 +60,9 @@ export function ImageUploader({
       }
 
       onChange(finalUrl);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Yükleme hatası:", err);
-      setError(err.message || "Görsel yüklenemedi. Lütfen tekrar deneyin.");
+      setError(err instanceof Error ? err.message : "Görsel yüklenemedi. Lütfen tekrar deneyin.");
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

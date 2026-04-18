@@ -10,7 +10,7 @@ interface Props {
 export function DynamicIcon({ name, className, fallback: Fallback = Bookmark }: Props) {
   if (!name) return <Fallback className={className} />;
   
-  // @ts-ignore
+  // @ts-expect-error — LucideIcons is a dynamic import, key access is intentional
   const Icon = LucideIcons[name] || LucideIcons[name.charAt(0).toUpperCase() + name.slice(1)];
   
   if (!Icon) return <Fallback className={className} />;

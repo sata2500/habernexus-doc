@@ -24,7 +24,9 @@ export function BookmarkButton({ articleId, userId, initialIsBookmarked }: Props
 
     setLoading(true);
     try {
-      const res = await toggleBookmark(userId, articleId);
+      // Güvenlik: toggleBookmark artık userId'yi session'dan alıyor,
+      // client'tan sadece hangi makale olduğunu bildiriyoruz.
+      const res = await toggleBookmark(articleId);
       if (res.success) {
         setIsBookmarked(res.isBookmarked!);
       } else {

@@ -5,21 +5,8 @@ import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { ActionResponse } from "@/lib/types";
+import { slugify } from "@/lib/utils";
 
-// Basit Türkçe karakter destekli SLUG üretici
-function generateSlug(title: string) {
-  return title
-    .toLowerCase()
-    .replace(/ğ/g, "g")
-    .replace(/ü/g, "u")
-    .replace(/ş/g, "s")
-    .replace(/ı/g, "i")
-    .replace(/ö/g, "o")
-    .replace(/ç/g, "c")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-");
-}
 
 export async function createArticle(data: {
   title: string;
@@ -37,7 +24,7 @@ export async function createArticle(data: {
       return { success: false, error: "Yetkisiz işlem." };
     }
 
-    const baseSlug = generateSlug(data.title);
+    const baseSlug = slugify(data.title);
     const uniqueHash = Math.random().toString(36).substring(2, 6);
     const slug = `${baseSlug}-${uniqueHash}`;
 
@@ -59,9 +46,9 @@ export async function createArticle(data: {
     revalidatePath("/");
     
     return { success: true };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Veritabanına kaydedilirken hata oluştu.";
-    console.error("Haber oluşturma hatası:", error);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Veritabanına kaydedilirken hata oluştu.";
+    console.error("Haber oluşturma hatası:", err);
     return { success: false, error: message };
   }
 }
@@ -80,7 +67,7 @@ export async function getAuthorArticles() {
       orderBy: { createdAt: "desc" },
       include: { category: true },
     });
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -109,7 +96,8 @@ export async function getArticleToEdit(id: string) {
     }
 
     return { success: true, article };
-  } catch (error) {
+  } catch (err) {
+    console.error("Makale yükleme hatası:", err);
     return { success: false, error: "Makale yüklenirken hata oluştu." };
   }
 }
@@ -162,8 +150,8 @@ export async function updateArticle(id: string, data: {
     revalidatePath("/");
 
     return { success: true };
-  } catch (error) {
-    console.error("Haber güncelleme hatası:", error);
+  } catch (err) {
+    console.error("Haber güncelleme hatası:", err);
     return { success: false, error: "Güncelleme sırasında hata oluştu." };
   }
 }
@@ -174,7 +162,7 @@ export async function getCategories() {
       orderBy: { order: "asc" },
       select: { id: true, name: true },
     });
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -208,8 +196,8 @@ export async function deleteArticle(id: string) {
     revalidatePath("/");
 
     return { success: true };
-  } catch (error) {
-    console.error("Haber silme hatası:", error);
+  } catch (err) {
+    console.error("Haber silme hatası:", err);
     return { success: false, error: "Silme işlemi sırasında hata oluştu." };
   }
 }
@@ -221,7 +209,7 @@ export async function incrementViewCount(id: string) {
       data: { viewCount: { increment: 1 } },
     });
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false };
   }
 }
@@ -248,7 +236,7 @@ export async function getAuthorComments() {
         article: { select: { title: true, slug: true } },
       },
     });
-  } catch (error) {
+  } catch {
     return [];
   }
 }
@@ -283,7 +271,7 @@ export async function deleteCommentByAuthor(id: string) {
 
     revalidatePath("/author/comments");
     return { success: true };
-  } catch (error) {
+  } catch {
     return { success: false, error: "Yorum silinirken bir hata oluştu." };
   }
 }

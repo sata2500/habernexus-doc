@@ -42,7 +42,7 @@ export default function ProfilePage() {
         name,
         image: avatarUrl || undefined,
       });
-      await updateUserBio(session.user.id, bio);
+      await updateUserBio(bio);
       setSuccessMsg("Profiliniz başarıyla güncellendi.");
       setTimeout(() => setSuccessMsg(""), 3000);
     } catch (error) {

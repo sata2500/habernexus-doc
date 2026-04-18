@@ -6,12 +6,7 @@ import { Loader2, Send, CheckCircle2, User, ShieldCheck, Mail, Trash2 } from "lu
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
+import { cn } from "@/lib/utils";
 
 interface Message {
   id: string;

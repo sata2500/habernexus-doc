@@ -224,12 +224,16 @@ export async function getAllCommentsAdmin() {
   });
 }
 
-// Admin tarafından yorum silme
 export async function deleteCommentAdmin(id: string) {
   await assertAdmin();
-  await prisma.comment.delete({
+  const comment = await prisma.comment.findUnique({
     where: { id },
+    include: { article: { select: { slug: true } } },
   });
+  await prisma.comment.delete({ where: { id } });
   revalidatePath("/admin/comments");
+  if (comment?.article?.slug) {
+    revalidatePath(`/article/${comment.article.slug}`);
+  }
   return { success: true };
 }

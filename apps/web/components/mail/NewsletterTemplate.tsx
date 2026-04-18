@@ -72,7 +72,7 @@ export const NewsletterTemplate = ({
                 📰 Bugün Bilmeniz Gerekenler
               </Heading>
               
-              {articles.map((article, index) => (
+              {articles.map((article) => (
                 <Section key={article.slug} className="mb-8 p-4 rounded-2xl hover:bg-[#f8fafc] border border-transparent hover:border-[#f1f5f9] transition-all">
                   {article.coverImage && (
                     <Link href={`${BASE_URL}/article/${article.slug}`}>
@@ -115,7 +115,7 @@ export const NewsletterTemplate = ({
             <Section className="text-center pb-10">
               <Text className="text-[#94a3b8] text-[11px] leading-relaxed">
                 Bu bülten, Haber Nexus aboneliğiniz kapsamında gönderilmiştir.<br />
-                Her sabah saat 08:30'da en önemli gelişmeleri sizinle paylaşıyoruz.
+                Her sabah saat 08:30&apos;da en önemli gelişmeleri sizinle paylaşıyoruz.
               </Text>
               <div className="mt-4 flex justify-center gap-4">
                 <Link href={`${BASE_URL}/about`} className="text-[#64748b] text-[11px] font-medium border-r border-[#eaeaea] pr-4">Hakkımızda</Link>

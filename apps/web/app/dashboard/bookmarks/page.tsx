@@ -20,7 +20,7 @@ export default async function BookmarksPage() {
 
   if (!session) return null;
 
-  const bookmarks = await getUserBookmarks(session.user.id);
+  const bookmarks = await getUserBookmarks();
   type BookmarkItem = Awaited<ReturnType<typeof getUserBookmarks>>[number];
 
   return (

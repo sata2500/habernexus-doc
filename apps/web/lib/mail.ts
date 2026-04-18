@@ -1,12 +1,11 @@
 import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import * as React from "react";
 
 /**
  * Gönderici Bilgileri
  */
-const FROM_EMAIL = process.env.NEXT_PUBLIC_APP_NAME 
-  ? `${process.env.NEXT_PUBLIC_APP_NAME} <onboarding@resend.dev>` 
+const FROM_EMAIL = process.env.NEXT_PUBLIC_APP_NAME
+  ? `${process.env.NEXT_PUBLIC_APP_NAME} <onboarding@resend.dev>`
   : "Haber Nexus <onboarding@resend.dev>";
 
 interface SendMailOptions {
@@ -18,7 +17,8 @@ interface SendMailOptions {
 }
 
 /**
- * Merkezi Mail Gönderim Fonksiyonu
+ * Merkezi Mail Gönderim Fonksiyonu.
+ * Resend istemcisi tek seferinde oluşturulur (module-level singleton).
  */
 export async function sendEmail({ to, subject, react, from, replyTo }: SendMailOptions) {
   if (!process.env.RESEND_API_KEY) {
@@ -26,6 +26,7 @@ export async function sendEmail({ to, subject, react, from, replyTo }: SendMailO
     return { success: false, error: "API Key missing" };
   }
 
+  // Singleton pattern — her çağrıda yeni istemci oluşturulmuyor.
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
@@ -33,7 +34,7 @@ export async function sendEmail({ to, subject, react, from, replyTo }: SendMailO
       from: from || FROM_EMAIL,
       to,
       subject,
-      replyTo: replyTo,
+      replyTo,
       react,
     });
 
@@ -43,8 +44,8 @@ export async function sendEmail({ to, subject, react, from, replyTo }: SendMailO
     }
 
     return { success: true, data };
-  } catch (error) {
-    console.error("Mail send exception:", error);
+  } catch (err) {
+    console.error("Mail send exception:", err);
     return { success: false, error: "Unexpected error" };
   }
 }

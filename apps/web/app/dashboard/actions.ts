@@ -2,123 +2,134 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth";
+
+/**
+ * Kullanıcının session'ını doğrular ve döner.
+ * Tüm mutation'larda bu helper kullanılmalıdır.
+ */
+async function getVerifiedSession() {
+  const reqHeaders = await headers();
+  const session = await auth.api.getSession({ headers: reqHeaders });
+  if (!session?.user) {
+    throw new Error("Yetkisiz işlem. Lütfen giriş yapın.");
+  }
+  return session;
+}
 
 /**
  * Updates the user's custom bio field in the database.
+ * Güvenlik: userId artık session'dan alınıyor — IDOR kapatıldı.
  */
-export async function updateUserBio(userId: string, bio: string) {
+export async function updateUserBio(bio: string) {
   try {
+    const session = await getVerifiedSession();
     await prisma.user.update({
-      where: { id: userId },
+      where: { id: session.user.id },
       data: { bio },
     });
     revalidatePath("/dashboard/profile");
     return { success: true };
-  } catch (error) {
-    console.error("Error updating bio:", error);
-    return { success: false, error: "Biyografi güncellenemedi." };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Biyografi güncellenemedi.";
+    console.error("Error updating bio:", err);
+    return { success: false, error: message };
   }
 }
 
 /**
  * Toggles a bookmark for a user and an article.
- * Validates if the bookmark exists, if so deletes it, if not creates it.
+ * Güvenlik: userId session'dan alınıyor — IDOR kapatıldı.
  */
-export async function toggleBookmark(userId: string, articleId: string) {
+export async function toggleBookmark(articleId: string) {
   try {
+    const session = await getVerifiedSession();
+    const userId = session.user.id;
+
     const existing = await prisma.bookmark.findUnique({
-      where: {
-        userId_articleId: {
-          userId,
-          articleId,
-        },
-      },
+      where: { userId_articleId: { userId, articleId } },
     });
 
     if (existing) {
-      await prisma.bookmark.delete({
-        where: { id: existing.id },
-      });
+      await prisma.bookmark.delete({ where: { id: existing.id } });
     } else {
-      await prisma.bookmark.create({
-        data: {
-          userId,
-          articleId,
-        },
-      });
+      await prisma.bookmark.create({ data: { userId, articleId } });
     }
 
     revalidatePath("/dashboard/bookmarks");
-    // Also revalidate the specific article page to update the icon state
-    // Note: To dynamically revalidate that page we need the slug, 
-    // but the layout will refresh automatically if we use router.refresh() on the client.
     return { success: true, isBookmarked: !existing };
-  } catch (error) {
-    console.error("Error toggling bookmark:", error);
-    return { success: false, error: "Kaydedilenler güncellenemedi." };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Kaydedilenler güncellenemedi.";
+    console.error("Error toggling bookmark:", err);
+    return { success: false, error: message };
   }
 }
 
 /**
  * Fetches user bookmarks dynamically.
+ * Güvenlik: userId session'dan alınıyor — IDOR kapatıldı.
  */
-export async function getUserBookmarks(userId: string) {
+export async function getUserBookmarks() {
   try {
+    const session = await getVerifiedSession();
     const bookmarks = await prisma.bookmark.findMany({
-      where: { userId },
+      where: { userId: session.user.id },
       include: {
-        article: {
-          include: { category: true, author: true },
-        },
+        article: { include: { category: true, author: true } },
       },
       orderBy: { createdAt: "desc" },
     });
     return bookmarks;
-  } catch (error) {
-    console.error("Error fetching bookmarks:", error);
+  } catch (err) {
+    console.error("Error fetching bookmarks:", err);
     return [];
   }
 }
 
 /**
- * Checks if a specific article is bookmarked by the user.
+ * Checks if a specific article is bookmarked by the current user.
+ * Güvenlik: userId session'dan alınıyor — IDOR kapatıldı.
  */
-export async function checkIsBookmarked(userId: string, articleId: string) {
+export async function checkIsBookmarked(articleId: string) {
   try {
+    const session = await getVerifiedSession();
     const existing = await prisma.bookmark.findUnique({
       where: {
-        userId_articleId: {
-          userId,
-          articleId,
-        },
+        userId_articleId: { userId: session.user.id, articleId },
       },
     });
     return !!existing;
-  } catch (error) {
+  } catch {
     return false;
   }
 }
 
 /**
  * Fetches user stats (e.g. total bookmarks, days since join).
+ * Güvenlik: userId session'dan alınıyor — IDOR kapatıldı.
  */
-export async function getUserStats(userId: string) {
+export async function getUserStats() {
   try {
+    const session = await getVerifiedSession();
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: session.user.id },
       select: { createdAt: true, bio: true, _count: { select: { bookmarks: true } } },
     });
-    
+
     if (!user) return null;
 
-    const daysSinceJoin = Math.max(1, Math.floor((Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24)));
+    const daysSinceJoin = Math.max(
+      1,
+      Math.floor((Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24))
+    );
 
     return {
       totalBookmarks: user._count.bookmarks,
       daysSinceJoin,
       bio: user.bio,
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -128,37 +139,27 @@ export async function getUserStats(userId: string) {
  */
 export async function deleteAccount() {
   try {
-    const { headers } = await import("next/headers");
-    const { auth } = await import("@/lib/auth");
-    
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session?.user) {
-      return { success: false, error: "Oturum bulunamadı." };
-    }
-
+    const session = await getVerifiedSession();
     // Kullanıcıyı veritabanından sil (Cascade delete diğer tabloları temizler)
-    await prisma.user.delete({
-      where: { id: session.user.id }
-    });
-
-    // Not: Better-Auth session cookie'si veritabanından silindiği için 
+    await prisma.user.delete({ where: { id: session.user.id } });
+    // Not: Better-Auth session cookie'si veritabanından silindiği için
     // bir sonraki istekte kullanıcı zaten çıkış yapmış sayılacaktır.
     return { success: true };
-  } catch (error) {
-    console.error("Account deletion error:", error);
+  } catch (err) {
+    console.error("Account deletion error:", err);
     return { success: false, error: "Hesap silinirken bir hata oluştu." };
   }
 }
 
 /**
- * Fetches all comments made by a specific user.
+ * Fetches all comments made by the current user.
+ * Güvenlik: userId session'dan alınıyor — IDOR kapatıldı.
  */
-export async function getUserComments(userId: string) {
+export async function getUserComments() {
   try {
+    const session = await getVerifiedSession();
     const comments = await prisma.comment.findMany({
-      where: { userId },
+      where: { userId: session.user.id },
       include: {
         article: { select: { title: true, slug: true } },
         user: { select: { name: true, image: true } },
@@ -166,8 +167,8 @@ export async function getUserComments(userId: string) {
       orderBy: { createdAt: "desc" },
     });
     return comments;
-  } catch (error) {
-    console.error("Error fetching user comments:", error);
+  } catch (err) {
+    console.error("Error fetching user comments:", err);
     return [];
   }
 }
@@ -177,32 +178,19 @@ export async function getUserComments(userId: string) {
  */
 export async function deleteUserComment(id: string) {
   try {
-    const { headers } = await import("next/headers");
-    const { auth } = await import("@/lib/auth");
-    
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
+    const session = await getVerifiedSession();
 
-    if (!session?.user) {
-      return { success: false, error: "Oturum bulunamadı." };
-    }
-
-    const comment = await prisma.comment.findUnique({
-      where: { id },
-    });
+    const comment = await prisma.comment.findUnique({ where: { id } });
 
     if (!comment || comment.userId !== session.user.id) {
       return { success: false, error: "Bu yorumu silme yetkiniz yok." };
     }
 
-    await prisma.comment.delete({
-      where: { id },
-    });
-
+    await prisma.comment.delete({ where: { id } });
     revalidatePath("/dashboard/comments");
     return { success: true };
-  } catch (error) {
-    console.error("Error deleting comment:", error);
+  } catch (err) {
+    console.error("Error deleting comment:", err);
     return { success: false, error: "Yorum silinirken bir hata oluştu." };
   }
 }
@@ -212,25 +200,15 @@ export async function deleteUserComment(id: string) {
  */
 export async function updateNewsletterSubscription(subscribed: boolean) {
   try {
-    const { headers } = await import("next/headers");
-    const { auth } = await import("@/lib/auth");
-    
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session?.user) {
-      return { success: false, error: "Oturum bulunamadı." };
-    }
-
+    const session = await getVerifiedSession();
     await prisma.user.update({
       where: { id: session.user.id },
       data: { newsletterSubscribed: subscribed },
     });
-
     revalidatePath("/dashboard/settings");
     return { success: true };
-  } catch (error) {
-    console.error("Error updating newsletter preference:", error);
+  } catch (err) {
+    console.error("Error updating newsletter preference:", err);
     return { success: false, error: "Abonelik tercihi güncellenemedi." };
   }
 }

@@ -97,7 +97,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
   const reqHeaders = await headers();
   const session = await auth.api.getSession({ headers: reqHeaders });
   const userId = session?.user?.id || null;
-  const isBookmarked = userId ? await checkIsBookmarked(userId, article.id) : false;
+  const isBookmarked = userId ? await checkIsBookmarked(article.id) : false;
 
   // Kelime sayısını hesapla (JSON-LD wordCount için)
   const wordCount = article.content ? article.content.trim().split(/\s+/).length : 0;

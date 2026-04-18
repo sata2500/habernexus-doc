@@ -5,13 +5,19 @@ import nextTs from "eslint-config-next/typescript";
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
-  // Override default ignores of eslint-config-next.
+  // Ignore: build output, generated files, and seed scripts
   globalIgnores([
-    // Default ignores of eslint-config-next:
+    // Build outputs
     ".next/**",
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Prisma generated client (auto-generated, not our code)
+    "lib/generated/**",
+    // Database seed (dev-only utility, not production code)
+    "prisma/seed.ts",
+    // Scratch / temp files
+    "scratch/**",
   ]),
 ]);
 

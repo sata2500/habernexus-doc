@@ -34,7 +34,7 @@ export function NewsletterToggle({ initialSubscribed }: NewsletterToggleProps) {
       <div className="flex-1">
         <h3 className="font-semibold text-foreground">Günlük Haber Bülteni</h3>
         <p className="text-sm text-muted-foreground mt-1">
-          Her sabah saat 08:30'da en önemli gelişmeleri e-posta ile alın.
+          Her sabah saat 08:30&apos;da en önemli gelişmeleri e-posta ile alın.
         </p>
       </div>
       <div className="flex items-center gap-3">

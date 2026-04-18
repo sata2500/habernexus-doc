@@ -79,7 +79,7 @@ export default async function RSSFeedsPage() {
             <h2 className="text-lg font-bold text-foreground">RSS Nedir?</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
               RSS (Really Simple Syndication), favori web sitelerinizden güncellemeleri standart bir formatta almanızı sağlayan bir teknolojidir. 
-              Feedly, Inoreader veya NetNewsWire gibi bir "Haber Okuyucu" (RSS Reader) kullanarak, Haber Nexus'u sosyal medya kirliliğinden 
+              Feedly, Inoreader veya NetNewsWire gibi bir &quot;Haber Okuyucu&quot; (RSS Reader) kullanarak, Haber Nexus&apos;u sosyal medya kirliliğinden 
               uzak bir şekilde takip edebilirsiniz.
             </p>
           </div>

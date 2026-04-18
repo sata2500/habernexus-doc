@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image, Home, PenTool, Mail } from "lucide-react";
+import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image, Home, PenTool, Mail, LayoutTemplate } from "lucide-react";
 import { SignOutButton } from "../dashboard/components/SignOutButton";
 
 const navItems = [
@@ -11,7 +11,7 @@ const navItems = [
   { name: "Kategoriler", href: "/admin/categories", icon: Bookmark },
   { name: "Kullanıcılar", href: "/admin/users", icon: Users },
   { name: "Makaleler", href: "/admin/articles", icon: FileText },
-  { name: "Sayfa Yönetimi", href: "/admin/pages", icon: FileText },
+  { name: "Sayfa Yönetimi", href: "/admin/pages", icon: LayoutTemplate },
   { name: "Yorum Yönetimi", href: "/admin/comments", icon: MessageSquare },
   { name: "Destek Merkezi", href: "/admin/support", icon: Mail },
 ];
