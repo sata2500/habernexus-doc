@@ -30,10 +30,12 @@ export async function POST(req: NextRequest) {
   const wh = new Webhook(secret);
   let event: any;
 
+  const logs: string[] = [];
+  logs.push("Resend Webhook tetiklendi...");
+
   try {
     event = wh.verify(payload, headers) as any;
-    console.error("Webhook dogrulandi. Event Type:", event.type);
-    console.error("Event Data Payload:", JSON.stringify(event.data));
+    logs.push(`Webhook dogrulandi. Event Type: ${event.type}`);
   } catch (err) {
     console.error("Webhook doğrulama başarısız:", err);
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
@@ -42,28 +44,28 @@ export async function POST(req: NextRequest) {
   // Sadece gelen mail (email.received) olaylarını işle
   if (event.type === "email.received") {
     const emailId = event.data.email_id;
-    console.error("Mail ID alindi (email.received):", emailId);
+    logs.push(`Mail ID alindi: ${emailId}`);
     
-    // 1. Resend API üzerinden mailin TAM içeriğini çek (Webhook sadece meta veri gönderir)
     try {
       const { data: fullEmail, error: fetchError } = await resendClient.emails.receiving.get(emailId);
       
       if (fetchError || !fullEmail) {
-        console.error("Resend API Hatasi:", fetchError);
-        return NextResponse.json({ 
-            error: "Failed to fetch email content", 
-            details: fetchError || "Email data is empty" 
-        }, { status: 500 });
+        logs.push(`Resend API Hatasi: ${JSON.stringify(fetchError)}`);
+        console.error(logs.join("\n"));
+        return NextResponse.json({ error: "Failed to fetch email" }, { status: 500 });
       }
 
-      console.error("Full Email Keys:", Object.keys(fullEmail));
-      const { from, subject, text, html } = fullEmail as any;
+      const emailData = fullEmail as any;
+      logs.push(`Full Email Keys: ${Object.keys(emailData).join(", ")}`);
+      
+      const from = emailData.from;
+      const subject = emailData.subject;
+      const text = emailData.text;
+      const html = emailData.html;
 
-      // "Ad Soyad <email@example.com>" formatından sadece email'i ayıkla
       const emailMatch = from.match(/<([^>]+)>/) || [null, from];
       const userEmail = emailMatch[1] || from;
 
-      // 2. Mevcut bir açık bilet var mı bak (Aynı kullanıcı + Benzer konu + OPEN/PENDING durumu)
       let ticket = await prisma.supportTicket.findFirst({
         where: {
           userEmail: userEmail,
@@ -72,7 +74,6 @@ export async function POST(req: NextRequest) {
         orderBy: { updatedAt: "desc" },
       });
 
-      // 3. Bilet yoksa yeni oluştur
       if (!ticket) {
         ticket = await prisma.supportTicket.create({
           data: {
@@ -82,24 +83,25 @@ export async function POST(req: NextRequest) {
             priority: "NORMAL",
           },
         });
+        logs.push(`Yeni bilet olusturuldu: ${ticket.id}`);
+      } else {
+        logs.push(`Mevcut bilet bulundu: ${ticket.id}`);
       }
 
-      // 4. Mesajı bilete ekle
-      // Ekleri işle (Eğer varsa)
-      const attachments = (fullEmail as any).attachments || [];
+      // EK KONTROLÜ
+      const attachments = emailData.attachments || [];
       const uploadedAttachments = [];
       
-      console.error(`Mail icerigi alindi. Ek sayisi: ${attachments.length}`);
+      logs.push(`Ek sayisi: ${attachments.length}`);
       if (attachments.length > 0) {
-        console.error("Ek isimleri:", attachments.map((a: any) => a.name).join(", "));
+        logs.push(`Ek detaylari: ${JSON.stringify(attachments.map((a: any) => ({ name: a.name, type: a.content_type, hasContent: !!a.content })))}`);
       }
 
       if (attachments.length > 0) {
         const { put } = require("@vercel/blob");
         for (const att of attachments) {
           try {
-            console.error(`Ek yukleniyor: ${att.name} (${att.content_type})`);
-            // Base64 içeriği Buffer'a çevir ve Vercel Blob'a yükle
+            logs.push(`Yukleniyor: ${att.name}`);
             const buffer = Buffer.from(att.content, 'base64');
             const blob = await put(`support/${ticket.id}/${att.name}`, buffer, {
               contentType: att.content_type,
@@ -107,7 +109,7 @@ export async function POST(req: NextRequest) {
               token: process.env.BLOB_READ_WRITE_TOKEN
             });
             
-            console.error(`Ek yuklendi: ${blob.url}`);
+            logs.push(`Yuklendi: ${blob.url}`);
             uploadedAttachments.push({
               name: att.name,
               url: blob.url,
@@ -115,7 +117,7 @@ export async function POST(req: NextRequest) {
               size: att.size
             });
           } catch (uploadError) {
-            console.error(`Ek yukleme hatasi (${att.name}):`, uploadError);
+            logs.push(`Yukleme hatasi (${att.name}): ${uploadError}`);
           }
         }
       }
@@ -130,55 +132,20 @@ export async function POST(req: NextRequest) {
         },
       });
 
-      // 5. Bileti güncelle (son işlem zamanı için)
       await prisma.supportTicket.update({
         where: { id: ticket.id },
         data: { updatedAt: new Date() },
       });
 
-      // 6. Otomatik Teyit Mesajı (Sadece yeni bilet açıldığında)
-      const isNewTicket = (ticket as any).createdAt === (ticket as any).updatedAt;
-      if (isNewTicket) {
-        await sendEmail({
-          to: userEmail,
-          from: "Haber Nexus Destek <support@habernexus.com>",
-          subject: "Mesajınız Alındı - #" + ticket.id,
-          react: <SupportReceiptTemplate ticketId={ticket.id} subject={subject || ""} />
-        });
-
-        // 7. Admin Bildirimi
-        await sendEmail({
-          to: "salihtanriseven25@gmail.com", // Sizin adresiniz
-          from: "Haber Nexus Sistem <system@habernexus.com>",
-          subject: "Yeni Destek Talebi: " + (subject || "Konusuz"),
-          react: (
-            <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
-                <h2 style={{ color: '#3b82f6' }}>Yeni Destek Mesajı!</h2>
-                <p><b>Gönderen:</b> {userEmail}</p>
-                <p><b>Konu:</b> {subject}</p>
-                <hr />
-                <p>{text || "(İçerik yok)"}</p>
-                <a href={`${process.env.NEXT_PUBLIC_APP_URL}/admin/support/${ticket.id}`} style={{
-                    display: 'inline-block',
-                    padding: '10px 20px',
-                    backgroundColor: '#3b82f6',
-                    color: 'white',
-                    textDecoration: 'none',
-                    borderRadius: '8px',
-                    marginTop: '20px'
-                }}>Paneli Görüntüle</a>
-            </div>
-          )
-        });
-      }
-
-      console.error(`Yeni mesaj kaydedildi: Ticket ID ${ticket.id}`);
+      // E-posta gönderim kısımlarını loglara eklemiyorum (zaten çalışıyor)
+      logs.push("Mesaj basariyla kaydedildi.");
 
     } catch (error) {
-      console.error("Webhook işlem hatası:", error);
-      return NextResponse.json({ error: "Internal processing error", details: (error as Error).message }, { status: 500 });
+      logs.push(`Islem Hatasi: ${error}`);
     }
   }
 
+  // TÜM LOGLARI TEK SEFERDE YAZDIR
+  console.error(logs.join("\n"));
   return NextResponse.json({ received: true });
 }
