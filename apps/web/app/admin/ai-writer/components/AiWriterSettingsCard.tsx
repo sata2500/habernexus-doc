@@ -20,32 +20,26 @@ const TEXT_MODELS = [
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (Ücretli - En Zeki)", type: "paid" },
 ];
 
-// ── Görsel Üretim Modelleri (Imagen & Nano Banana) ─────────────────────────
-// Kaynak: https://ai.google.dev/gemini-api/docs/image-generation
+// ── Görsel Üretim Modelleri (Pollinations.ai) ─────────────────────────
+// Kaynak: Tamamen ücretsiz, açık kaynak modeller
 const IMAGE_MODELS = [
   {
-    id: "imagen-3.0-generate-002",
-    name: "🖼️ Imagen 3.0 (Önerilen)",
-    desc: "Ücretsiz Katman • AI Studio'da Imagen Requests olarak listelenir",
+    id: "flux",
+    name: "🎨 Flux (Önerilen)",
+    desc: "Ücretsiz • En yüksek kalite ve gerçekçilik (Sınırsız)",
     type: "free",
   },
   {
-    id: "imagen-4.0-fast-generate-001",
-    name: "🖼️ Imagen 4.0 Fast (Ücretli)",
-    desc: "Ücretli • Çok daha hızlı ve gerçekçi (Paid/Billing gerektirir)",
-    type: "paid",
-  },
-  {
-    id: "gemini-2.5-flash-image",
-    name: "🍌 Nano Banana (Gemini 2.5 Image)",
-    desc: "Ücretsiz • Multimodal altyapı kullanır",
+    id: "turbo",
+    name: "⚡ Turbo (Hızlı)",
+    desc: "Ücretsiz • Çok hızlı üretim, iyi kalite (Sınırsız)",
     type: "free",
   },
   {
-    id: "gemini-3.1-flash-image-preview",
-    name: "🍌🍌 Nano Banana 2 (Gemini 3.1 Image)",
-    desc: "Ücretli • Pro seviye zeka + Flash hızı",
-    type: "paid",
+    id: "default",
+    name: "🌟 Pollinations Default",
+    desc: "Ücretsiz • Standart dengeli üretim (Sınırsız)",
+    type: "free",
   },
 ];
 
@@ -123,7 +117,7 @@ export function AiWriterSettingsCard({
         <div className="space-y-2">
           <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
             <ImageIcon className="h-3.5 w-3.5 text-blue-500" />
-            Görsel Üretim Modeli (Nano Banana Serisi)
+            Görsel Üretim Modeli (Pollinations.ai)
           </label>
           <div className="grid grid-cols-1 gap-2">
             {IMAGE_MODELS.map((m) => (
@@ -157,7 +151,7 @@ export function AiWriterSettingsCard({
           <div className="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-3 flex items-start gap-2 text-xs text-muted-foreground">
             <AlertCircle className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
             <span>
-              <strong>Nano Banana (Ücretsiz):</strong> Günde ~1500 istek, dakikada 15 istek limiti. Kota dolduğunda sistem RSS'ten gelen orijinal görseli kullanacak.
+              <strong>Limitsiz Üretim:</strong> Pollinations.ai API Key gerektirmez ve tamamen ücretsizdir. Kotalara takılmadan yüksek çözünürlüklü kapak görselleri üretebilirsiniz.
             </span>
           </div>
         )}

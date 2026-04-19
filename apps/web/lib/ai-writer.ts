@@ -10,49 +10,46 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * Resmi @google/genai SDK ile görsel üretir (AI Studio'da Imagen Requests olarak görünür).
+ * Pollinations.ai kullanarak tamamen ücretsiz görsel üretir.
+ * Kredi kartı veya API Key gerektirmez. Kotalara takılmaz.
  */
-async function generateImageWithImagen(
+async function generateImageWithPollinations(
   modelName: string,
   prompt: string,
   retries = 3
 ): Promise<string | null> {
   for (let i = 0; i < retries; i++) {
     try {
-      console.log(`[AI Writer] Görsel üretimi deneniyor: model=${modelName}, deneme=${i + 1}`);
+      console.log(`[AI Writer] Görsel üretimi deneniyor (Pollinations): model=${modelName}, deneme=${i + 1}`);
+      
+      const seed = Math.floor(Math.random() * 1000000);
+      const encodedPrompt = encodeURIComponent(prompt);
+      // modelName parametresi "flux", "turbo" veya "default" olabilir
+      const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1280&height=720&nologo=true&seed=${seed}&model=${modelName === 'default' ? '' : modelName}`;
 
-      const response = await ai.models.generateImages({
-        model: modelName,
-        prompt: prompt,
-        config: {
-          numberOfImages: 1,
-          outputMimeType: "image/png",
-        },
-      });
-
-      const image = response.generatedImages?.[0];
-      if (image?.image?.imageBytes) {
-        const buffer = Buffer.from(image.image.imageBytes, "base64");
-        const { url } = await put(`articles/ai-${Date.now()}.png`, buffer, {
-          access: "public",
-          contentType: "image/png",
-        });
-        console.log("[AI Writer] Görsel başarıyla üretildi:", url);
-        return url;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        throw new Error(`Pollinations API hatası: ${response.status}`);
       }
 
-      console.warn("[AI Writer] Model görsel döndürmedi.");
-      return null;
+      const buffer = Buffer.from(await response.arrayBuffer());
+      
+      const { url: blobUrl } = await put(`articles/ai-${Date.now()}.png`, buffer, {
+        access: "public",
+        contentType: "image/png",
+      });
+      
+      console.log("[AI Writer] Görsel başarıyla üretildi (Pollinations):", blobUrl);
+      return blobUrl;
+
     } catch (error: any) {
-      const isQuota = error.message?.includes("429") || error.message?.includes("quota") || error.message?.includes("Too Many Requests");
-      if (isQuota && i < retries - 1) {
-        // Kota hatalarında (Too Many Requests) daha uzun bekleme (Exponential Backoff)
-        const waitMs = Math.pow(2, i + 1) * 5000; // 10s, 20s, 40s...
-        console.warn(`[AI Writer] Kota hatası, Imagen limitlerine takıldı. ${waitMs}ms bekleniyor...`);
-        await sleep(waitMs);
+      console.warn(`[AI Writer] Görsel üretim hatası, 3 saniye bekleniyor... (${error.message})`);
+      if (i < retries - 1) {
+        await sleep(3000);
         continue;
       }
-      console.error(`[AI Writer] Görsel üretim hatası:`, error.message);
+      console.error(`[AI Writer] Pollinations görsel üretimi tamamen başarısız oldu:`, error.message);
       return null; // Görsel hatası makaleyi patlatmasın
     }
   }
@@ -111,7 +108,7 @@ export async function writeArticleWithAI(suggestionId: string) {
 
     if (!content) throw new Error("Yapay zeka metin üretemedi.");
 
-    // 3. Görsel Üret - @google/genai generateImages ile
+    // 3. Görsel Üret - Pollinations.ai ile tamamen ücretsiz
     const imagePrompt = `
       ${imagePromptBase}
       News headline: "${suggestion.title}"
@@ -121,7 +118,7 @@ export async function writeArticleWithAI(suggestionId: string) {
     `;
 
     let imageUrl: string | null | undefined = suggestion.imageUrl;
-    const generatedImageUrl = await generateImageWithImagen(imageModelName, imagePrompt);
+    const generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
     if (generatedImageUrl) {
       imageUrl = generatedImageUrl;
     }
