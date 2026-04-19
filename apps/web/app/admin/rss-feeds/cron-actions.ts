@@ -68,3 +68,39 @@ export async function updateCronSchedule(type: "scan" | "analyze", cronExpressio
     return { success: false, error: String(err) };
   }
 }
+
+export async function setupNewsletterCron() {
+  if (!QSTASH_ENABLED) {
+    return { success: false, error: "QSTASH_TOKEN tanımlı değil." };
+  }
+
+  try {
+    const settings = await getSystemSettings();
+    const endpoint = `${APP_URL}/api/cron/newsletter`;
+
+    // Eski zamanlamayı sil (varsa)
+    if (settings.qStashNewsletterId) {
+      try {
+        await qstashClient.schedules.delete(settings.qStashNewsletterId);
+      } catch (err) {
+        console.error("Eski bülten QStash schedule silinirken hata:", err);
+      }
+    }
+
+    // Yeni zamanlamayı oluştur (Her saat başı)
+    const schedule = await qstashClient.schedules.create({
+      destination: endpoint,
+      cron: "0 * * * *",
+    });
+
+    await prisma.systemSettings.update({
+      where: { id: "global" },
+      data: { qStashNewsletterId: schedule.scheduleId },
+    });
+
+    revalidatePath("/admin/rss-feeds");
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}

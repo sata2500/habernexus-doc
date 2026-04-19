@@ -21943,6 +21943,7 @@ export namespace Prisma {
     rssAnalyzeCron: string | null
     qStashScanId: string | null
     qStashAnalyzeId: string | null
+    qStashNewsletterId: string | null
     updatedAt: Date | null
   }
 
@@ -21952,6 +21953,7 @@ export namespace Prisma {
     rssAnalyzeCron: string | null
     qStashScanId: string | null
     qStashAnalyzeId: string | null
+    qStashNewsletterId: string | null
     updatedAt: Date | null
   }
 
@@ -21961,6 +21963,7 @@ export namespace Prisma {
     rssAnalyzeCron: number
     qStashScanId: number
     qStashAnalyzeId: number
+    qStashNewsletterId: number
     updatedAt: number
     _all: number
   }
@@ -21972,6 +21975,7 @@ export namespace Prisma {
     rssAnalyzeCron?: true
     qStashScanId?: true
     qStashAnalyzeId?: true
+    qStashNewsletterId?: true
     updatedAt?: true
   }
 
@@ -21981,6 +21985,7 @@ export namespace Prisma {
     rssAnalyzeCron?: true
     qStashScanId?: true
     qStashAnalyzeId?: true
+    qStashNewsletterId?: true
     updatedAt?: true
   }
 
@@ -21990,6 +21995,7 @@ export namespace Prisma {
     rssAnalyzeCron?: true
     qStashScanId?: true
     qStashAnalyzeId?: true
+    qStashNewsletterId?: true
     updatedAt?: true
     _all?: true
   }
@@ -22072,6 +22078,7 @@ export namespace Prisma {
     rssAnalyzeCron: string
     qStashScanId: string | null
     qStashAnalyzeId: string | null
+    qStashNewsletterId: string | null
     updatedAt: Date
     _count: SystemSettingsCountAggregateOutputType | null
     _min: SystemSettingsMinAggregateOutputType | null
@@ -22098,6 +22105,7 @@ export namespace Prisma {
     rssAnalyzeCron?: boolean
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
+    qStashNewsletterId?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22107,6 +22115,7 @@ export namespace Prisma {
     rssAnalyzeCron?: boolean
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
+    qStashNewsletterId?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22116,6 +22125,7 @@ export namespace Prisma {
     rssAnalyzeCron?: boolean
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
+    qStashNewsletterId?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22125,10 +22135,11 @@ export namespace Prisma {
     rssAnalyzeCron?: boolean
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
+    qStashNewsletterId?: boolean
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "qStashScanId" | "qStashAnalyzeId" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -22139,6 +22150,7 @@ export namespace Prisma {
       rssAnalyzeCron: string
       qStashScanId: string | null
       qStashAnalyzeId: string | null
+      qStashNewsletterId: string | null
       updatedAt: Date
     }, ExtArgs["result"]["systemSettings"]>
     composites: {}
@@ -22568,6 +22580,7 @@ export namespace Prisma {
     readonly rssAnalyzeCron: FieldRef<"SystemSettings", 'String'>
     readonly qStashScanId: FieldRef<"SystemSettings", 'String'>
     readonly qStashAnalyzeId: FieldRef<"SystemSettings", 'String'>
+    readonly qStashNewsletterId: FieldRef<"SystemSettings", 'String'>
     readonly updatedAt: FieldRef<"SystemSettings", 'DateTime'>
   }
     
@@ -23208,6 +23221,7 @@ export namespace Prisma {
     rssAnalyzeCron: 'rssAnalyzeCron',
     qStashScanId: 'qStashScanId',
     qStashAnalyzeId: 'qStashAnalyzeId',
+    qStashNewsletterId: 'qStashNewsletterId',
     updatedAt: 'updatedAt'
   };
 
@@ -24660,6 +24674,7 @@ export namespace Prisma {
     rssAnalyzeCron?: StringFilter<"SystemSettings"> | string
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
+    qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }
 
@@ -24669,6 +24684,7 @@ export namespace Prisma {
     rssAnalyzeCron?: SortOrder
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
+    qStashNewsletterId?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
   }
 
@@ -24681,6 +24697,7 @@ export namespace Prisma {
     rssAnalyzeCron?: StringFilter<"SystemSettings"> | string
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
+    qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }, "id">
 
@@ -24690,6 +24707,7 @@ export namespace Prisma {
     rssAnalyzeCron?: SortOrder
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
+    qStashNewsletterId?: SortOrderInput | SortOrder
     updatedAt?: SortOrder
     _count?: SystemSettingsCountOrderByAggregateInput
     _max?: SystemSettingsMaxOrderByAggregateInput
@@ -24705,6 +24723,7 @@ export namespace Prisma {
     rssAnalyzeCron?: StringWithAggregatesFilter<"SystemSettings"> | string
     qStashScanId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
+    qStashNewsletterId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     updatedAt?: DateTimeWithAggregatesFilter<"SystemSettings"> | Date | string
   }
 
@@ -26136,6 +26155,7 @@ export namespace Prisma {
     rssAnalyzeCron?: string
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
+    qStashNewsletterId?: string | null
     updatedAt?: Date | string
   }
 
@@ -26145,6 +26165,7 @@ export namespace Prisma {
     rssAnalyzeCron?: string
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
+    qStashNewsletterId?: string | null
     updatedAt?: Date | string
   }
 
@@ -26154,6 +26175,7 @@ export namespace Prisma {
     rssAnalyzeCron?: StringFieldUpdateOperationsInput | string
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
+    qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26163,6 +26185,7 @@ export namespace Prisma {
     rssAnalyzeCron?: StringFieldUpdateOperationsInput | string
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
+    qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26172,6 +26195,7 @@ export namespace Prisma {
     rssAnalyzeCron?: string
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
+    qStashNewsletterId?: string | null
     updatedAt?: Date | string
   }
 
@@ -26181,6 +26205,7 @@ export namespace Prisma {
     rssAnalyzeCron?: StringFieldUpdateOperationsInput | string
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
+    qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26190,6 +26215,7 @@ export namespace Prisma {
     rssAnalyzeCron?: StringFieldUpdateOperationsInput | string
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
+    qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -27226,6 +27252,7 @@ export namespace Prisma {
     rssAnalyzeCron?: SortOrder
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
+    qStashNewsletterId?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -27235,6 +27262,7 @@ export namespace Prisma {
     rssAnalyzeCron?: SortOrder
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
+    qStashNewsletterId?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -27244,6 +27272,7 @@ export namespace Prisma {
     rssAnalyzeCron?: SortOrder
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
+    qStashNewsletterId?: SortOrder
     updatedAt?: SortOrder
   }
 

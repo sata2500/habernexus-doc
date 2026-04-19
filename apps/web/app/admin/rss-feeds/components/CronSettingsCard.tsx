@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { Clock, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
-import { updateCronSchedule } from "../cron-actions";
+import { updateCronSchedule, setupNewsletterCron } from "../cron-actions";
 
 type Props = {
   scanCron: string;
   analyzeCron: string;
+  hasNewsletter: boolean;
 };
 
 const SCHEDULE_OPTIONS = [
@@ -18,11 +19,27 @@ const SCHEDULE_OPTIONS = [
   { label: "Günde 1 Kez", value: "0 6 * * *" },
 ];
 
-export function CronSettingsCard({ scanCron: initialScan, analyzeCron: initialAnalyze }: Props) {
+export function CronSettingsCard({ scanCron: initialScan, analyzeCron: initialAnalyze, hasNewsletter: initialHasNewsletter }: Props) {
   const [scanCron, setScanCron] = useState(initialScan);
   const [analyzeCron, setAnalyzeCron] = useState(initialAnalyze);
-  const [loadingType, setLoadingType] = useState<"scan" | "analyze" | null>(null);
+  const [hasNewsletter, setHasNewsletter] = useState(initialHasNewsletter);
+  const [loadingType, setLoadingType] = useState<"scan" | "analyze" | "newsletter" | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  const handleNewsletterSetup = async () => {
+    setLoadingType("newsletter");
+    setMessage(null);
+
+    const res = await setupNewsletterCron();
+    if (res.success) {
+      setHasNewsletter(true);
+      setMessage({ type: "success", text: "Bülten otomasyonu başarıyla başlatıldı." });
+    } else {
+      setMessage({ type: "error", text: res.error || "Bülten otomasyonu başlatılamadı." });
+    }
+    setLoadingType(null);
+    setTimeout(() => setMessage(null), 5000);
+  };
 
   const handleUpdate = async (type: "scan" | "analyze", expression: string) => {
     setLoadingType(type);
@@ -112,6 +129,31 @@ export function CronSettingsCard({ scanCron: initialScan, analyzeCron: initialAn
                 <option value={analyzeCron}>Özel: {analyzeCron}</option>
               )}
             </select>
+          </div>
+
+          {/* Newsletter Setup */}
+          <div className="space-y-2 md:col-span-2 pt-4 border-t border-border">
+            <label className="text-sm font-semibold flex items-center justify-between">
+              Bülten Otomasyonu (Saatlik)
+            </label>
+            <p className="text-xs text-muted-foreground mb-3">
+              Kullanıcıların seçtiği saatlerde e-posta alabilmesi için bu otomasyonun başlatılması gerekir (her saat başı tetiklenir).
+            </p>
+            {hasNewsletter ? (
+              <div className="flex items-center gap-2 text-sm font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-3 py-2.5 rounded-xl">
+                <CheckCircle2 className="h-4 w-4" />
+                Sistem Aktif ve Ayarlandı
+              </div>
+            ) : (
+              <button
+                onClick={handleNewsletterSetup}
+                disabled={loadingType === "newsletter"}
+                className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
+              >
+                {loadingType === "newsletter" && <Loader2 className="h-4 w-4 animate-spin" />}
+                Otomasyonu Başlat
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -296,5 +296,6 @@ model SystemSettings {
   rssAnalyzeCron  String   @default("30 */4 * * *") // 4 saatte bir
   qStashScanId    String?  // QStash üzerindeki görev ID'si
   qStashAnalyzeId String?
+  qStashNewsletterId String? // Bülten QStash ID'si
   updatedAt       DateTime @updatedAt
 }

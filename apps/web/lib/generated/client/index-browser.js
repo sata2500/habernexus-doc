@@ -323,6 +323,7 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   rssAnalyzeCron: 'rssAnalyzeCron',
   qStashScanId: 'qStashScanId',
   qStashAnalyzeId: 'qStashAnalyzeId',
+  qStashNewsletterId: 'qStashNewsletterId',
   updatedAt: 'updatedAt'
 };
 

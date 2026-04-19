@@ -60,6 +60,7 @@ export default async function AdminRssFeedsPage() {
         <CronSettingsCard 
           scanCron={systemSettings.rssScanCron} 
           analyzeCron={systemSettings.rssAnalyzeCron} 
+          hasNewsletter={!!systemSettings.qStashNewsletterId}
         />
       </section>
 
