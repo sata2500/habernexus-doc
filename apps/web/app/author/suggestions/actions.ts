@@ -11,7 +11,7 @@ export async function getAuthorSuggestions() {
       usedForArticle: false,
     },
     orderBy: [
-      { status: "asc" }, // APPROVED comes before ANALYZED alphabetically, but we might want explicit logic.
+      { status: "desc" }, // APPROVED (Ap) comes before ANALYZED (An) in descending order.
       { aiScore: "desc" }
     ],
     take: 20,
