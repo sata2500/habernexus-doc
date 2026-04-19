@@ -18,6 +18,7 @@ model User {
   role                 String     @default("USER")
   bio                  String?
   newsletterSubscribed Boolean    @default(true)
+  newsletterTime       String     @default("08:00")
   createdAt            DateTime   @default(now())
   updatedAt            DateTime   @updatedAt
   accounts             Account[]
@@ -162,6 +163,7 @@ model Subscriber {
   id               String   @id @default(cuid())
   email            String   @unique
   isActive         Boolean  @default(true)
+  newsletterTime   String   @default("08:00")
   unsubscribeToken String   @unique @default(cuid())
   createdAt        DateTime @default(now())
 }

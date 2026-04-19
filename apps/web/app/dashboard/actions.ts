@@ -195,9 +195,6 @@ export async function deleteUserComment(id: string) {
   }
 }
 
-/**
- * Toggles the user's newsletter subscription status.
- */
 export async function updateNewsletterSubscription(subscribed: boolean) {
   try {
     const session = await getVerifiedSession();
@@ -210,5 +207,61 @@ export async function updateNewsletterSubscription(subscribed: boolean) {
   } catch (err) {
     console.error("Error updating newsletter preference:", err);
     return { success: false, error: "Abonelik tercihi güncellenemedi." };
+  }
+}
+
+/**
+ * Kullanıcının bülten maili alma saatini günceller.
+ */
+export async function updateNewsletterTime(time: string) {
+  try {
+    const session = await getVerifiedSession();
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { newsletterTime: time },
+    });
+    revalidatePath("/dashboard/settings");
+    return { success: true };
+  } catch (err) {
+    console.error("Error updating newsletter time:", err);
+    return { success: false, error: "Saat tercihi güncellenemedi." };
+  }
+}
+
+/**
+ * Kullanıcıya hemen anında bir test maili gönderir.
+ */
+import { sendEmail } from "@/lib/mail";
+import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
+
+export async function testNewsletterEmail() {
+  try {
+    const session = await getVerifiedSession();
+    
+    // Test için son 3 haberi alalım
+    const latestArticles = await prisma.article.findMany({
+      where: { status: "PUBLISHED" },
+      take: 3,
+      orderBy: { createdAt: "desc" },
+      include: { category: { select: { name: true } } },
+    });
+
+    const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+    const unsubscribeUrl = `${BASE_URL}/dashboard/settings`;
+
+    const result = await sendEmail({
+      to: session.user.email,
+      subject: `Haber Nexus — Test Bülteni`,
+      react: NewsletterTemplate({ articles: latestArticles, unsubscribeUrl }),
+    });
+
+    if (result.success) {
+      return { success: true, message: "Test e-postası başarıyla gönderildi." };
+    } else {
+      return { success: false, error: "Resend hatası: " + (result.error || "Bilinmeyen hata") };
+    }
+  } catch (err) {
+    console.error("Test email error:", err);
+    return { success: false, error: "E-posta gönderimi başarısız oldu." };
   }
 }

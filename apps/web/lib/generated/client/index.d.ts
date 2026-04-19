@@ -2745,6 +2745,7 @@ export namespace Prisma {
     role: string | null
     bio: string | null
     newsletterSubscribed: boolean | null
+    newsletterTime: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2758,6 +2759,7 @@ export namespace Prisma {
     role: string | null
     bio: string | null
     newsletterSubscribed: boolean | null
+    newsletterTime: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2771,6 +2773,7 @@ export namespace Prisma {
     role: number
     bio: number
     newsletterSubscribed: number
+    newsletterTime: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2786,6 +2789,7 @@ export namespace Prisma {
     role?: true
     bio?: true
     newsletterSubscribed?: true
+    newsletterTime?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2799,6 +2803,7 @@ export namespace Prisma {
     role?: true
     bio?: true
     newsletterSubscribed?: true
+    newsletterTime?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2812,6 +2817,7 @@ export namespace Prisma {
     role?: true
     bio?: true
     newsletterSubscribed?: true
+    newsletterTime?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2898,6 +2904,7 @@ export namespace Prisma {
     role: string
     bio: string | null
     newsletterSubscribed: boolean
+    newsletterTime: string
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2928,6 +2935,7 @@ export namespace Prisma {
     role?: boolean
     bio?: boolean
     newsletterSubscribed?: boolean
+    newsletterTime?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     accounts?: boolean | User$accountsArgs<ExtArgs>
@@ -2948,6 +2956,7 @@ export namespace Prisma {
     role?: boolean
     bio?: boolean
     newsletterSubscribed?: boolean
+    newsletterTime?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2961,6 +2970,7 @@ export namespace Prisma {
     role?: boolean
     bio?: boolean
     newsletterSubscribed?: boolean
+    newsletterTime?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2974,11 +2984,12 @@ export namespace Prisma {
     role?: boolean
     bio?: boolean
     newsletterSubscribed?: boolean
+    newsletterTime?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "role" | "bio" | "newsletterSubscribed" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "email" | "emailVerified" | "image" | "role" | "bio" | "newsletterSubscribed" | "newsletterTime" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     accounts?: boolean | User$accountsArgs<ExtArgs>
     articles?: boolean | User$articlesArgs<ExtArgs>
@@ -3010,6 +3021,7 @@ export namespace Prisma {
       role: string
       bio: string | null
       newsletterSubscribed: boolean
+      newsletterTime: string
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -3449,6 +3461,7 @@ export namespace Prisma {
     readonly role: FieldRef<"User", 'String'>
     readonly bio: FieldRef<"User", 'String'>
     readonly newsletterSubscribed: FieldRef<"User", 'Boolean'>
+    readonly newsletterTime: FieldRef<"User", 'String'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -14122,6 +14135,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     isActive: boolean | null
+    newsletterTime: string | null
     unsubscribeToken: string | null
     createdAt: Date | null
   }
@@ -14130,6 +14144,7 @@ export namespace Prisma {
     id: string | null
     email: string | null
     isActive: boolean | null
+    newsletterTime: string | null
     unsubscribeToken: string | null
     createdAt: Date | null
   }
@@ -14138,6 +14153,7 @@ export namespace Prisma {
     id: number
     email: number
     isActive: number
+    newsletterTime: number
     unsubscribeToken: number
     createdAt: number
     _all: number
@@ -14148,6 +14164,7 @@ export namespace Prisma {
     id?: true
     email?: true
     isActive?: true
+    newsletterTime?: true
     unsubscribeToken?: true
     createdAt?: true
   }
@@ -14156,6 +14173,7 @@ export namespace Prisma {
     id?: true
     email?: true
     isActive?: true
+    newsletterTime?: true
     unsubscribeToken?: true
     createdAt?: true
   }
@@ -14164,6 +14182,7 @@ export namespace Prisma {
     id?: true
     email?: true
     isActive?: true
+    newsletterTime?: true
     unsubscribeToken?: true
     createdAt?: true
     _all?: true
@@ -14245,6 +14264,7 @@ export namespace Prisma {
     id: string
     email: string
     isActive: boolean
+    newsletterTime: string
     unsubscribeToken: string
     createdAt: Date
     _count: SubscriberCountAggregateOutputType | null
@@ -14270,6 +14290,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     isActive?: boolean
+    newsletterTime?: boolean
     unsubscribeToken?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["subscriber"]>
@@ -14278,6 +14299,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     isActive?: boolean
+    newsletterTime?: boolean
     unsubscribeToken?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["subscriber"]>
@@ -14286,6 +14308,7 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     isActive?: boolean
+    newsletterTime?: boolean
     unsubscribeToken?: boolean
     createdAt?: boolean
   }, ExtArgs["result"]["subscriber"]>
@@ -14294,11 +14317,12 @@ export namespace Prisma {
     id?: boolean
     email?: boolean
     isActive?: boolean
+    newsletterTime?: boolean
     unsubscribeToken?: boolean
     createdAt?: boolean
   }
 
-  export type SubscriberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "isActive" | "unsubscribeToken" | "createdAt", ExtArgs["result"]["subscriber"]>
+  export type SubscriberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "isActive" | "newsletterTime" | "unsubscribeToken" | "createdAt", ExtArgs["result"]["subscriber"]>
 
   export type $SubscriberPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Subscriber"
@@ -14307,6 +14331,7 @@ export namespace Prisma {
       id: string
       email: string
       isActive: boolean
+      newsletterTime: string
       unsubscribeToken: string
       createdAt: Date
     }, ExtArgs["result"]["subscriber"]>
@@ -14735,6 +14760,7 @@ export namespace Prisma {
     readonly id: FieldRef<"Subscriber", 'String'>
     readonly email: FieldRef<"Subscriber", 'String'>
     readonly isActive: FieldRef<"Subscriber", 'Boolean'>
+    readonly newsletterTime: FieldRef<"Subscriber", 'String'>
     readonly unsubscribeToken: FieldRef<"Subscriber", 'String'>
     readonly createdAt: FieldRef<"Subscriber", 'DateTime'>
   }
@@ -22937,6 +22963,7 @@ export namespace Prisma {
     role: 'role',
     bio: 'bio',
     newsletterSubscribed: 'newsletterSubscribed',
+    newsletterTime: 'newsletterTime',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -23071,6 +23098,7 @@ export namespace Prisma {
     id: 'id',
     email: 'email',
     isActive: 'isActive',
+    newsletterTime: 'newsletterTime',
     unsubscribeToken: 'unsubscribeToken',
     createdAt: 'createdAt'
   };
@@ -23352,6 +23380,7 @@ export namespace Prisma {
     role?: StringFilter<"User"> | string
     bio?: StringNullableFilter<"User"> | string | null
     newsletterSubscribed?: BoolFilter<"User"> | boolean
+    newsletterTime?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -23371,6 +23400,7 @@ export namespace Prisma {
     role?: SortOrder
     bio?: SortOrderInput | SortOrder
     newsletterSubscribed?: SortOrder
+    newsletterTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     accounts?: AccountOrderByRelationAggregateInput
@@ -23393,6 +23423,7 @@ export namespace Prisma {
     role?: StringFilter<"User"> | string
     bio?: StringNullableFilter<"User"> | string | null
     newsletterSubscribed?: BoolFilter<"User"> | boolean
+    newsletterTime?: StringFilter<"User"> | string
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     accounts?: AccountListRelationFilter
@@ -23412,6 +23443,7 @@ export namespace Prisma {
     role?: SortOrder
     bio?: SortOrderInput | SortOrder
     newsletterSubscribed?: SortOrder
+    newsletterTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -23431,6 +23463,7 @@ export namespace Prisma {
     role?: StringWithAggregatesFilter<"User"> | string
     bio?: StringNullableWithAggregatesFilter<"User"> | string | null
     newsletterSubscribed?: BoolWithAggregatesFilter<"User"> | boolean
+    newsletterTime?: StringWithAggregatesFilter<"User"> | string
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -24087,6 +24120,7 @@ export namespace Prisma {
     id?: StringFilter<"Subscriber"> | string
     email?: StringFilter<"Subscriber"> | string
     isActive?: BoolFilter<"Subscriber"> | boolean
+    newsletterTime?: StringFilter<"Subscriber"> | string
     unsubscribeToken?: StringFilter<"Subscriber"> | string
     createdAt?: DateTimeFilter<"Subscriber"> | Date | string
   }
@@ -24095,6 +24129,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     isActive?: SortOrder
+    newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
   }
@@ -24107,6 +24142,7 @@ export namespace Prisma {
     OR?: SubscriberWhereInput[]
     NOT?: SubscriberWhereInput | SubscriberWhereInput[]
     isActive?: BoolFilter<"Subscriber"> | boolean
+    newsletterTime?: StringFilter<"Subscriber"> | string
     createdAt?: DateTimeFilter<"Subscriber"> | Date | string
   }, "id" | "email" | "unsubscribeToken">
 
@@ -24114,6 +24150,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     isActive?: SortOrder
+    newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
     _count?: SubscriberCountOrderByAggregateInput
@@ -24128,6 +24165,7 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"Subscriber"> | string
     email?: StringWithAggregatesFilter<"Subscriber"> | string
     isActive?: BoolWithAggregatesFilter<"Subscriber"> | boolean
+    newsletterTime?: StringWithAggregatesFilter<"Subscriber"> | string
     unsubscribeToken?: StringWithAggregatesFilter<"Subscriber"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Subscriber"> | Date | string
   }
@@ -24679,6 +24717,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -24698,6 +24737,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -24717,6 +24757,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -24736,6 +24777,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -24755,6 +24797,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -24768,6 +24811,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -24781,6 +24825,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25475,6 +25520,7 @@ export namespace Prisma {
     id?: string
     email: string
     isActive?: boolean
+    newsletterTime?: string
     unsubscribeToken?: string
     createdAt?: Date | string
   }
@@ -25483,6 +25529,7 @@ export namespace Prisma {
     id?: string
     email: string
     isActive?: boolean
+    newsletterTime?: string
     unsubscribeToken?: string
     createdAt?: Date | string
   }
@@ -25491,6 +25538,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     unsubscribeToken?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25499,6 +25547,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     unsubscribeToken?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25507,6 +25556,7 @@ export namespace Prisma {
     id?: string
     email: string
     isActive?: boolean
+    newsletterTime?: string
     unsubscribeToken?: string
     createdAt?: Date | string
   }
@@ -25515,6 +25565,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     unsubscribeToken?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -25523,6 +25574,7 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     isActive?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     unsubscribeToken?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -26261,6 +26313,7 @@ export namespace Prisma {
     role?: SortOrder
     bio?: SortOrder
     newsletterSubscribed?: SortOrder
+    newsletterTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26274,6 +26327,7 @@ export namespace Prisma {
     role?: SortOrder
     bio?: SortOrder
     newsletterSubscribed?: SortOrder
+    newsletterTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26287,6 +26341,7 @@ export namespace Prisma {
     role?: SortOrder
     bio?: SortOrder
     newsletterSubscribed?: SortOrder
+    newsletterTime?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -26754,6 +26809,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     isActive?: SortOrder
+    newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
   }
@@ -26762,6 +26818,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     isActive?: SortOrder
+    newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
   }
@@ -26770,6 +26827,7 @@ export namespace Prisma {
     id?: SortOrder
     email?: SortOrder
     isActive?: SortOrder
+    newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
   }
@@ -28683,6 +28741,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -28701,6 +28760,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -28735,6 +28795,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -28753,6 +28814,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -28771,6 +28833,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     articles?: ArticleCreateNestedManyWithoutAuthorInput
@@ -28789,6 +28852,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     articles?: ArticleUncheckedCreateNestedManyWithoutAuthorInput
@@ -28823,6 +28887,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     articles?: ArticleUpdateManyWithoutAuthorNestedInput
@@ -28841,6 +28906,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     articles?: ArticleUncheckedUpdateManyWithoutAuthorNestedInput
@@ -28859,6 +28925,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -28877,6 +28944,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -29012,6 +29080,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -29030,6 +29099,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -29477,6 +29547,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -29495,6 +29566,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -29625,6 +29697,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -29643,6 +29716,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -29704,6 +29778,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -29722,6 +29797,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -29805,6 +29881,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -29823,6 +29900,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -29841,6 +29919,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountCreateNestedManyWithoutUserInput
@@ -29859,6 +29938,7 @@ export namespace Prisma {
     role?: string
     bio?: string | null
     newsletterSubscribed?: boolean
+    newsletterTime?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
@@ -29893,6 +29973,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUpdateManyWithoutUserNestedInput
@@ -29911,6 +29992,7 @@ export namespace Prisma {
     role?: StringFieldUpdateOperationsInput | string
     bio?: NullableStringFieldUpdateOperationsInput | string | null
     newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
