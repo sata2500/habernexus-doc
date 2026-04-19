@@ -9,6 +9,18 @@ const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
 // Yardımcı: Belirli bir süre bekle (ms)
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+// Yardımcı: URL'den görseli indirip base64'e çevirir (Gemini analizi için)
+async function fetchImageAsBase64(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const arrayBuffer = await res.arrayBuffer();
+    return Buffer.from(arrayBuffer).toString("base64");
+  } catch (e) {
+    return null;
+  }
+}
+
 /**
  * Pollinations.ai kullanarak tamamen ücretsiz görsel üretir.
  * Kredi kartı veya API Key gerektirmez. Kotalara takılmaz.
@@ -109,13 +121,42 @@ export async function writeArticleWithAI(suggestionId: string) {
     if (!content) throw new Error("Yapay zeka metin üretemedi.");
 
     // 3. Görsel Üret - Pollinations.ai ile tamamen ücretsiz
-    const imagePrompt = `
+    let imagePrompt = `
       ${imagePromptBase}
       News headline: "${suggestion.title}"
       Create a professional, high-quality, photorealistic news cover image for this article.
       Style: Editorial photography, dramatic lighting, 16:9 aspect ratio.
       Do NOT include any text or watermarks in the image.
     `;
+
+    // Yeni Özellik: RSS kaynağında görsel varsa, ondan ilham al
+    if (suggestion.imageUrl) {
+      const base64Image = await fetchImageAsBase64(suggestion.imageUrl);
+      if (base64Image) {
+        try {
+          console.log("[AI Writer] Orijinal görsel analiz ediliyor (İlham alma)...");
+          const visionResponse = await ai.models.generateContent({
+            model: "gemini-2.5-flash",
+            contents: [
+              "Describe this image in extreme detail in English. I will use your description as a prompt to generate a highly realistic and professional editorial photograph. Focus on the main subjects, colors, lighting, action, and mood. Make it sound like a prompt for Midjourney. Do NOT include any text or watermarks.",
+              {
+                inlineData: {
+                  data: base64Image,
+                  mimeType: "image/jpeg",
+                },
+              },
+            ],
+          });
+
+          if (visionResponse.text) {
+            imagePrompt = visionResponse.text + " -- 16:9 aspect ratio, photorealistic high quality news photography, no text, no watermarks.";
+            console.log("[AI Writer] Görselden ilham alınan yeni prompt oluşturuldu!");
+          }
+        } catch (e: any) {
+          console.warn("[AI Writer] Görselden ilham alma başarısız oldu, varsayılan prompt kullanılacak:", e.message);
+        }
+      }
+    }
 
     let imageUrl: string | null | undefined = suggestion.imageUrl;
     const generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
