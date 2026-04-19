@@ -20,25 +20,31 @@ const TEXT_MODELS = [
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (Ücretli - En Zeki)", type: "paid" },
 ];
 
-// ── Görsel Üretim Modelleri (Nano Banana Serisi) ──────────────────────────────
+// ── Görsel Üretim Modelleri (Imagen & Nano Banana) ─────────────────────────
 // Kaynak: https://ai.google.dev/gemini-api/docs/image-generation
 const IMAGE_MODELS = [
   {
+    id: "imagen-3.0-generate-002",
+    name: "🖼️ Imagen 3.0 (Önerilen)",
+    desc: "Ücretsiz Katman • AI Studio'da Imagen Requests olarak listelenir",
+    type: "free",
+  },
+  {
+    id: "imagen-4.0-fast-generate-001",
+    name: "🖼️ Imagen 4.0 Fast (Ücretli)",
+    desc: "Ücretli • Çok daha hızlı ve gerçekçi (Paid/Billing gerektirir)",
+    type: "paid",
+  },
+  {
     id: "gemini-2.5-flash-image",
-    name: "🍌 Nano Banana (Gemini 2.5 Flash Image)",
-    desc: "Ücretsiz • Hızlı & verimli, yüksek hacimli işler için",
+    name: "🍌 Nano Banana (Gemini 2.5 Image)",
+    desc: "Ücretsiz • Multimodal altyapı kullanır",
     type: "free",
   },
   {
     id: "gemini-3.1-flash-image-preview",
-    name: "🍌🍌 Nano Banana 2 (Gemini 3.1 Flash Image)",
+    name: "🍌🍌 Nano Banana 2 (Gemini 3.1 Image)",
     desc: "Ücretli • Pro seviye zeka + Flash hızı",
-    type: "paid",
-  },
-  {
-    id: "gemini-3-pro-image-preview",
-    name: "🍌👑 Nano Banana Pro (Gemini 3 Pro Image)",
-    desc: "Ücretli • En yüksek kalite, düşünceli (Thinking) üretim",
     type: "paid",
   },
 ];
