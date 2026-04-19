@@ -87,18 +87,28 @@ export async function writeArticleWithAI(suggestionId: string) {
     let imageUrl = suggestion.imageUrl;
 
     try {
-      // @ts-ignore
-      const imageResult = await callAiWithRetry(imageModel, {
-        contents: [{ role: "user", parts: [{ text: imageGenPrompt }] }],
-        generationConfig: {
-          // @ts-ignore
-          responseModalities: ["IMAGE"],
-        },
-      }, { isImage: true });
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModelName}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+      
+      const imageFetchRes = await fetch(apiUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ role: "user", parts: [{ text: imageGenPrompt }] }],
+          generationConfig: {
+            responseModalities: ["IMAGE"],
+          },
+        }),
+      });
 
-      const imageResponse = await imageResult.response;
+      if (!imageFetchRes.ok) {
+        const errorData = await imageFetchRes.json();
+        throw new Error(`Görsel API Hatası: ${JSON.stringify(errorData)}`);
+      }
+
+      const imageResultData = await imageFetchRes.json();
+      
       // @ts-ignore
-      const imagePart = imageResponse.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+      const imagePart = imageResultData.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
       
       if (imagePart?.inlineData) {
         const buffer = Buffer.from(imagePart.inlineData.data, "base64");
@@ -107,10 +117,12 @@ export async function writeArticleWithAI(suggestionId: string) {
           contentType: "image/png",
         });
         imageUrl = url;
+        console.log("[AI Writer] Görsel başarıyla üretildi ve yüklendi:", imageUrl);
+      } else {
+        console.warn("[AI Writer] Model görsel döndürmedi, metin döndürmüş olabilir. Orijinal görsel kullanılacak.");
       }
     } catch (imageErr) {
       console.error("Görsel üretilirken hata oluştu (Orijinal görsel kullanılacak):", imageErr);
-      // Görsel hatası tüm makalenin yazılmasını engellemesin
     }
 
     // 5. Makaleyi Kaydet

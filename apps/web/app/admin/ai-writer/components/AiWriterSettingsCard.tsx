@@ -15,9 +15,9 @@ const AVAILABLE_MODELS = [
   { id: "gemini-3.1-flash", name: "Gemini 3.1 Flash (Ücretsiz - Hızlı)", type: "free" },
   { id: "gemini-3.1-flash-lite", name: "Gemini 3.1 Flash-Lite (Ücretsiz - Ekonomik)", type: "free" },
   { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (Ücretsiz - Stabil)", type: "free" },
-  { id: "gemini-2.5-flash-image", name: "Gemini 2.5 Flash Image (Ücretsiz - Görsel)", type: "free" },
-  { id: "gemini-2.5-flash-preview-image", name: "Gemini 2.5 Flash Preview Image", type: "free" },
-  { id: "gemini-3.1-flash-image-preview", name: "Nano Banana 2 (Ücretsiz - 4K)", type: "free" },
+  { id: "gemini-3.1-flash-image-preview", name: "Nano Banana 2 (Gemini 3.1 Flash Image)", type: "free" },
+  { id: "gemini-3-pro-image-preview", name: "Nano Banana Pro (Gemini 3 Pro Image)", type: "paid" },
+  { id: "imagen-3.0-generate-001", name: "Imagen 3 (Legacy - Eski Sistem)", type: "paid" },
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (Ücretli - En Zeki)", type: "paid" },
   { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro (Ücretli - Derinlikli)", type: "paid" },
 ];
