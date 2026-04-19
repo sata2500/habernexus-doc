@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, X, CheckCheck, Sparkles, TrendingUp } from "lucide-react";
-import { dismissSuggestion, approveSuggestion } from "../actions";
+import { ExternalLink, X, CheckCheck, Sparkles, TrendingUp, Wand2 } from "lucide-react";
+import { dismissSuggestion, approveSuggestion, triggerAiWriter } from "../actions";
 
 type SuggestionItem = {
   id: string;
@@ -152,10 +152,11 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
             </div>
 
             {/* Actions */}
-            <div className="border-t border-border p-3 flex gap-2">
+            <div className="border-t border-border p-3 flex flex-wrap gap-2">
               <button
                 onClick={() => handleApprove(item.id)}
                 disabled={loadingId !== null}
+                title="Yazar Masasına Gönder"
                 className="flex-1 text-center px-3 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-primary-500/20 disabled:opacity-50"
               >
                 {loadingId === item.id ? (
@@ -165,6 +166,30 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
                 )}
                 Haber Yazılsın
               </button>
+              
+              <button
+                onClick={async () => {
+                  setLoadingId(item.id);
+                  const res = await triggerAiWriter(item.id);
+                  if (res.success) {
+                    setItems((prev) => prev.filter((i) => i.id !== item.id));
+                  } else {
+                    alert("AI Hatası: " + res.error);
+                  }
+                  setLoadingId(null);
+                }}
+                disabled={loadingId !== null}
+                title="Yapay Zeka İle Tam Otomatik Yaz"
+                className="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-purple-500/20 disabled:opacity-50"
+              >
+                {loadingId === item.id ? (
+                  <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <Wand2 className="h-3.5 w-3.5" />
+                )}
+                AI Yazdır
+              </button>
+
               <button
                 onClick={() => handleDismiss(item.id)}
                 disabled={loadingId !== null}

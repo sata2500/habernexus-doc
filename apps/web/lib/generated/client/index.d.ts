@@ -21952,10 +21952,14 @@ export namespace Prisma {
     id: string | null
     rssScanCron: string | null
     rssAnalyzeCron: string | null
+    rssRetentionDays: number | null
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
-    rssRetentionDays: number | null
+    aiWriterModel: string | null
+    aiWriterImageModel: string | null
+    aiWriterPrompt: string | null
+    aiWriterImagePrompt: string | null
     updatedAt: Date | null
   }
 
@@ -21963,10 +21967,14 @@ export namespace Prisma {
     id: string | null
     rssScanCron: string | null
     rssAnalyzeCron: string | null
+    rssRetentionDays: number | null
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
-    rssRetentionDays: number | null
+    aiWriterModel: string | null
+    aiWriterImageModel: string | null
+    aiWriterPrompt: string | null
+    aiWriterImagePrompt: string | null
     updatedAt: Date | null
   }
 
@@ -21974,10 +21982,14 @@ export namespace Prisma {
     id: number
     rssScanCron: number
     rssAnalyzeCron: number
+    rssRetentionDays: number
     qStashScanId: number
     qStashAnalyzeId: number
     qStashNewsletterId: number
-    rssRetentionDays: number
+    aiWriterModel: number
+    aiWriterImageModel: number
+    aiWriterPrompt: number
+    aiWriterImagePrompt: number
     updatedAt: number
     _all: number
   }
@@ -21995,10 +22007,14 @@ export namespace Prisma {
     id?: true
     rssScanCron?: true
     rssAnalyzeCron?: true
+    rssRetentionDays?: true
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
-    rssRetentionDays?: true
+    aiWriterModel?: true
+    aiWriterImageModel?: true
+    aiWriterPrompt?: true
+    aiWriterImagePrompt?: true
     updatedAt?: true
   }
 
@@ -22006,10 +22022,14 @@ export namespace Prisma {
     id?: true
     rssScanCron?: true
     rssAnalyzeCron?: true
+    rssRetentionDays?: true
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
-    rssRetentionDays?: true
+    aiWriterModel?: true
+    aiWriterImageModel?: true
+    aiWriterPrompt?: true
+    aiWriterImagePrompt?: true
     updatedAt?: true
   }
 
@@ -22017,10 +22037,14 @@ export namespace Prisma {
     id?: true
     rssScanCron?: true
     rssAnalyzeCron?: true
+    rssRetentionDays?: true
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
-    rssRetentionDays?: true
+    aiWriterModel?: true
+    aiWriterImageModel?: true
+    aiWriterPrompt?: true
+    aiWriterImagePrompt?: true
     updatedAt?: true
     _all?: true
   }
@@ -22115,10 +22139,14 @@ export namespace Prisma {
     id: string
     rssScanCron: string
     rssAnalyzeCron: string
+    rssRetentionDays: number
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
-    rssRetentionDays: number
+    aiWriterModel: string
+    aiWriterImageModel: string
+    aiWriterPrompt: string
+    aiWriterImagePrompt: string
     updatedAt: Date
     _count: SystemSettingsCountAggregateOutputType | null
     _avg: SystemSettingsAvgAggregateOutputType | null
@@ -22145,10 +22173,14 @@ export namespace Prisma {
     id?: boolean
     rssScanCron?: boolean
     rssAnalyzeCron?: boolean
+    rssRetentionDays?: boolean
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
-    rssRetentionDays?: boolean
+    aiWriterModel?: boolean
+    aiWriterImageModel?: boolean
+    aiWriterPrompt?: boolean
+    aiWriterImagePrompt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22156,10 +22188,14 @@ export namespace Prisma {
     id?: boolean
     rssScanCron?: boolean
     rssAnalyzeCron?: boolean
+    rssRetentionDays?: boolean
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
-    rssRetentionDays?: boolean
+    aiWriterModel?: boolean
+    aiWriterImageModel?: boolean
+    aiWriterPrompt?: boolean
+    aiWriterImagePrompt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22167,10 +22203,14 @@ export namespace Prisma {
     id?: boolean
     rssScanCron?: boolean
     rssAnalyzeCron?: boolean
+    rssRetentionDays?: boolean
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
-    rssRetentionDays?: boolean
+    aiWriterModel?: boolean
+    aiWriterImageModel?: boolean
+    aiWriterPrompt?: boolean
+    aiWriterImagePrompt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22178,14 +22218,18 @@ export namespace Prisma {
     id?: boolean
     rssScanCron?: boolean
     rssAnalyzeCron?: boolean
+    rssRetentionDays?: boolean
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
-    rssRetentionDays?: boolean
+    aiWriterModel?: boolean
+    aiWriterImageModel?: boolean
+    aiWriterPrompt?: boolean
+    aiWriterImagePrompt?: boolean
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "rssRetentionDays" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -22194,10 +22238,14 @@ export namespace Prisma {
       id: string
       rssScanCron: string
       rssAnalyzeCron: string
+      rssRetentionDays: number
       qStashScanId: string | null
       qStashAnalyzeId: string | null
       qStashNewsletterId: string | null
-      rssRetentionDays: number
+      aiWriterModel: string
+      aiWriterImageModel: string
+      aiWriterPrompt: string
+      aiWriterImagePrompt: string
       updatedAt: Date
     }, ExtArgs["result"]["systemSettings"]>
     composites: {}
@@ -22625,10 +22673,14 @@ export namespace Prisma {
     readonly id: FieldRef<"SystemSettings", 'String'>
     readonly rssScanCron: FieldRef<"SystemSettings", 'String'>
     readonly rssAnalyzeCron: FieldRef<"SystemSettings", 'String'>
+    readonly rssRetentionDays: FieldRef<"SystemSettings", 'Int'>
     readonly qStashScanId: FieldRef<"SystemSettings", 'String'>
     readonly qStashAnalyzeId: FieldRef<"SystemSettings", 'String'>
     readonly qStashNewsletterId: FieldRef<"SystemSettings", 'String'>
-    readonly rssRetentionDays: FieldRef<"SystemSettings", 'Int'>
+    readonly aiWriterModel: FieldRef<"SystemSettings", 'String'>
+    readonly aiWriterImageModel: FieldRef<"SystemSettings", 'String'>
+    readonly aiWriterPrompt: FieldRef<"SystemSettings", 'String'>
+    readonly aiWriterImagePrompt: FieldRef<"SystemSettings", 'String'>
     readonly updatedAt: FieldRef<"SystemSettings", 'DateTime'>
   }
     
@@ -23267,10 +23319,14 @@ export namespace Prisma {
     id: 'id',
     rssScanCron: 'rssScanCron',
     rssAnalyzeCron: 'rssAnalyzeCron',
+    rssRetentionDays: 'rssRetentionDays',
     qStashScanId: 'qStashScanId',
     qStashAnalyzeId: 'qStashAnalyzeId',
     qStashNewsletterId: 'qStashNewsletterId',
-    rssRetentionDays: 'rssRetentionDays',
+    aiWriterModel: 'aiWriterModel',
+    aiWriterImageModel: 'aiWriterImageModel',
+    aiWriterPrompt: 'aiWriterPrompt',
+    aiWriterImagePrompt: 'aiWriterImagePrompt',
     updatedAt: 'updatedAt'
   };
 
@@ -24721,10 +24777,14 @@ export namespace Prisma {
     id?: StringFilter<"SystemSettings"> | string
     rssScanCron?: StringFilter<"SystemSettings"> | string
     rssAnalyzeCron?: StringFilter<"SystemSettings"> | string
+    rssRetentionDays?: IntFilter<"SystemSettings"> | number
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
-    rssRetentionDays?: IntFilter<"SystemSettings"> | number
+    aiWriterModel?: StringFilter<"SystemSettings"> | string
+    aiWriterImageModel?: StringFilter<"SystemSettings"> | string
+    aiWriterPrompt?: StringFilter<"SystemSettings"> | string
+    aiWriterImagePrompt?: StringFilter<"SystemSettings"> | string
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }
 
@@ -24732,10 +24792,14 @@ export namespace Prisma {
     id?: SortOrder
     rssScanCron?: SortOrder
     rssAnalyzeCron?: SortOrder
+    rssRetentionDays?: SortOrder
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
     qStashNewsletterId?: SortOrderInput | SortOrder
-    rssRetentionDays?: SortOrder
+    aiWriterModel?: SortOrder
+    aiWriterImageModel?: SortOrder
+    aiWriterPrompt?: SortOrder
+    aiWriterImagePrompt?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -24746,10 +24810,14 @@ export namespace Prisma {
     NOT?: SystemSettingsWhereInput | SystemSettingsWhereInput[]
     rssScanCron?: StringFilter<"SystemSettings"> | string
     rssAnalyzeCron?: StringFilter<"SystemSettings"> | string
+    rssRetentionDays?: IntFilter<"SystemSettings"> | number
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
-    rssRetentionDays?: IntFilter<"SystemSettings"> | number
+    aiWriterModel?: StringFilter<"SystemSettings"> | string
+    aiWriterImageModel?: StringFilter<"SystemSettings"> | string
+    aiWriterPrompt?: StringFilter<"SystemSettings"> | string
+    aiWriterImagePrompt?: StringFilter<"SystemSettings"> | string
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }, "id">
 
@@ -24757,10 +24825,14 @@ export namespace Prisma {
     id?: SortOrder
     rssScanCron?: SortOrder
     rssAnalyzeCron?: SortOrder
+    rssRetentionDays?: SortOrder
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
     qStashNewsletterId?: SortOrderInput | SortOrder
-    rssRetentionDays?: SortOrder
+    aiWriterModel?: SortOrder
+    aiWriterImageModel?: SortOrder
+    aiWriterPrompt?: SortOrder
+    aiWriterImagePrompt?: SortOrder
     updatedAt?: SortOrder
     _count?: SystemSettingsCountOrderByAggregateInput
     _avg?: SystemSettingsAvgOrderByAggregateInput
@@ -24776,10 +24848,14 @@ export namespace Prisma {
     id?: StringWithAggregatesFilter<"SystemSettings"> | string
     rssScanCron?: StringWithAggregatesFilter<"SystemSettings"> | string
     rssAnalyzeCron?: StringWithAggregatesFilter<"SystemSettings"> | string
+    rssRetentionDays?: IntWithAggregatesFilter<"SystemSettings"> | number
     qStashScanId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
-    rssRetentionDays?: IntWithAggregatesFilter<"SystemSettings"> | number
+    aiWriterModel?: StringWithAggregatesFilter<"SystemSettings"> | string
+    aiWriterImageModel?: StringWithAggregatesFilter<"SystemSettings"> | string
+    aiWriterPrompt?: StringWithAggregatesFilter<"SystemSettings"> | string
+    aiWriterImagePrompt?: StringWithAggregatesFilter<"SystemSettings"> | string
     updatedAt?: DateTimeWithAggregatesFilter<"SystemSettings"> | Date | string
   }
 
@@ -26209,10 +26285,14 @@ export namespace Prisma {
     id?: string
     rssScanCron?: string
     rssAnalyzeCron?: string
+    rssRetentionDays?: number
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
-    rssRetentionDays?: number
+    aiWriterModel?: string
+    aiWriterImageModel?: string
+    aiWriterPrompt?: string
+    aiWriterImagePrompt?: string
     updatedAt?: Date | string
   }
 
@@ -26220,10 +26300,14 @@ export namespace Prisma {
     id?: string
     rssScanCron?: string
     rssAnalyzeCron?: string
+    rssRetentionDays?: number
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
-    rssRetentionDays?: number
+    aiWriterModel?: string
+    aiWriterImageModel?: string
+    aiWriterPrompt?: string
+    aiWriterImagePrompt?: string
     updatedAt?: Date | string
   }
 
@@ -26231,10 +26315,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     rssScanCron?: StringFieldUpdateOperationsInput | string
     rssAnalyzeCron?: StringFieldUpdateOperationsInput | string
+    rssRetentionDays?: IntFieldUpdateOperationsInput | number
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
-    rssRetentionDays?: IntFieldUpdateOperationsInput | number
+    aiWriterModel?: StringFieldUpdateOperationsInput | string
+    aiWriterImageModel?: StringFieldUpdateOperationsInput | string
+    aiWriterPrompt?: StringFieldUpdateOperationsInput | string
+    aiWriterImagePrompt?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26242,10 +26330,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     rssScanCron?: StringFieldUpdateOperationsInput | string
     rssAnalyzeCron?: StringFieldUpdateOperationsInput | string
+    rssRetentionDays?: IntFieldUpdateOperationsInput | number
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
-    rssRetentionDays?: IntFieldUpdateOperationsInput | number
+    aiWriterModel?: StringFieldUpdateOperationsInput | string
+    aiWriterImageModel?: StringFieldUpdateOperationsInput | string
+    aiWriterPrompt?: StringFieldUpdateOperationsInput | string
+    aiWriterImagePrompt?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26253,10 +26345,14 @@ export namespace Prisma {
     id?: string
     rssScanCron?: string
     rssAnalyzeCron?: string
+    rssRetentionDays?: number
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
-    rssRetentionDays?: number
+    aiWriterModel?: string
+    aiWriterImageModel?: string
+    aiWriterPrompt?: string
+    aiWriterImagePrompt?: string
     updatedAt?: Date | string
   }
 
@@ -26264,10 +26360,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     rssScanCron?: StringFieldUpdateOperationsInput | string
     rssAnalyzeCron?: StringFieldUpdateOperationsInput | string
+    rssRetentionDays?: IntFieldUpdateOperationsInput | number
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
-    rssRetentionDays?: IntFieldUpdateOperationsInput | number
+    aiWriterModel?: StringFieldUpdateOperationsInput | string
+    aiWriterImageModel?: StringFieldUpdateOperationsInput | string
+    aiWriterPrompt?: StringFieldUpdateOperationsInput | string
+    aiWriterImagePrompt?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26275,10 +26375,14 @@ export namespace Prisma {
     id?: StringFieldUpdateOperationsInput | string
     rssScanCron?: StringFieldUpdateOperationsInput | string
     rssAnalyzeCron?: StringFieldUpdateOperationsInput | string
+    rssRetentionDays?: IntFieldUpdateOperationsInput | number
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
-    rssRetentionDays?: IntFieldUpdateOperationsInput | number
+    aiWriterModel?: StringFieldUpdateOperationsInput | string
+    aiWriterImageModel?: StringFieldUpdateOperationsInput | string
+    aiWriterPrompt?: StringFieldUpdateOperationsInput | string
+    aiWriterImagePrompt?: StringFieldUpdateOperationsInput | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -27313,10 +27417,14 @@ export namespace Prisma {
     id?: SortOrder
     rssScanCron?: SortOrder
     rssAnalyzeCron?: SortOrder
+    rssRetentionDays?: SortOrder
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
-    rssRetentionDays?: SortOrder
+    aiWriterModel?: SortOrder
+    aiWriterImageModel?: SortOrder
+    aiWriterPrompt?: SortOrder
+    aiWriterImagePrompt?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -27328,10 +27436,14 @@ export namespace Prisma {
     id?: SortOrder
     rssScanCron?: SortOrder
     rssAnalyzeCron?: SortOrder
+    rssRetentionDays?: SortOrder
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
-    rssRetentionDays?: SortOrder
+    aiWriterModel?: SortOrder
+    aiWriterImageModel?: SortOrder
+    aiWriterPrompt?: SortOrder
+    aiWriterImagePrompt?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -27339,10 +27451,14 @@ export namespace Prisma {
     id?: SortOrder
     rssScanCron?: SortOrder
     rssAnalyzeCron?: SortOrder
+    rssRetentionDays?: SortOrder
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
-    rssRetentionDays?: SortOrder
+    aiWriterModel?: SortOrder
+    aiWriterImageModel?: SortOrder
+    aiWriterPrompt?: SortOrder
+    aiWriterImagePrompt?: SortOrder
     updatedAt?: SortOrder
   }
 

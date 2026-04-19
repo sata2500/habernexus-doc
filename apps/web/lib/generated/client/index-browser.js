@@ -321,10 +321,14 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   id: 'id',
   rssScanCron: 'rssScanCron',
   rssAnalyzeCron: 'rssAnalyzeCron',
+  rssRetentionDays: 'rssRetentionDays',
   qStashScanId: 'qStashScanId',
   qStashAnalyzeId: 'qStashAnalyzeId',
   qStashNewsletterId: 'qStashNewsletterId',
-  rssRetentionDays: 'rssRetentionDays',
+  aiWriterModel: 'aiWriterModel',
+  aiWriterImageModel: 'aiWriterImageModel',
+  aiWriterPrompt: 'aiWriterPrompt',
+  aiWriterImagePrompt: 'aiWriterImagePrompt',
   updatedAt: 'updatedAt'
 };
 

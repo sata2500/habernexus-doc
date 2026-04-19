@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { scanRssSource } from "@/lib/rss-scanner";
 import { analyzeRssBatch } from "@/lib/ai-analyzer";
+import { writeArticleWithAI } from "@/lib/ai-writer";
 
 export async function getRssSources() {
   return prisma.rssFeedSource.findMany({
@@ -131,6 +132,36 @@ export async function markAsUsed(id: string) {
   });
   revalidatePath("/admin/rss-feeds");
   revalidatePath("/author/suggestions");
+  return { success: true };
+}
+
+export async function triggerAiWriter(suggestionId: string) {
+  try {
+    const result = await writeArticleWithAI(suggestionId);
+    revalidatePath("/admin/rss-feeds");
+    revalidatePath("/");
+    return result;
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function updateAiWriterSettings(data: { 
+  prompt: string; 
+  imagePrompt: string;
+  model: string;
+  imageModel: string;
+}) {
+  await prisma.systemSettings.update({
+    where: { id: "global" },
+    data: {
+      aiWriterPrompt: data.prompt,
+      aiWriterImagePrompt: data.imagePrompt,
+      aiWriterModel: data.model,
+      aiWriterImageModel: data.imageModel,
+    },
+  });
+  revalidatePath("/admin/rss-feeds");
   return { success: true };
 }
 

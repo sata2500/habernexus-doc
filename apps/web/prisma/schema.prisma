@@ -292,12 +292,19 @@ enum RssItemStatus {
 
 /// Sistem genel ayarları ve aktif QStash Cron görev ID'leri
 model SystemSettings {
-  id              String   @id @default("global") // Her zaman tek satır olacak
-  rssScanCron     String   @default("0 */2 * * *") // 2 saatte bir
-  rssAnalyzeCron  String   @default("30 */4 * * *") // 4 saatte bir
-  qStashScanId    String?  // QStash üzerindeki görev ID'si
-  qStashAnalyzeId String?
-  qStashNewsletterId String? // Bülten QStash ID'si
-  rssRetentionDays Int      @default(14) // Eski haberlerin silinme süresi
-  updatedAt       DateTime @updatedAt
+  id                 String   @id @default("global") // Her zaman tek satır olacak
+  rssScanCron        String   @default("0 */2 * * *") // 2 saatte bir
+  rssAnalyzeCron     String   @default("0 */4 * * *") // 4 saatte bir
+  rssRetentionDays   Int      @default(14)            // Eski öğeler kaç gün saklansın
+  qStashScanId       String?  // QStash üzerindeki görev ID'si
+  qStashAnalyzeId    String?
+  qStashNewsletterId String?  // QStash Newsletter Task ID
+  
+  // AI Writer Ayarları
+  aiWriterModel       String   @default("gemini-2.5-flash")
+  aiWriterImageModel  String   @default("gemini-2.5-flash")
+  aiWriterPrompt      String   @default("Sen profesyonel bir haber editörüsün. Verilen konuyu Google Arama kullanarak araştır ve en güncel, doğru bilgilerle son derece kaliteli, özgün ve tarafsız bir haber makalesi yaz. HTML formatında (h2, p, strong etiketlerini kullanarak) döndür. Başlık dahil etme.")
+  aiWriterImagePrompt String   @default("Profesyonel, gerçekçi bir haber fotoğrafı. Fotoğrafçılık kalitesinde, 16:9 oranında, haberin konusuyla ilgili.")
+  
+  updatedAt          DateTime @updatedAt
 }
