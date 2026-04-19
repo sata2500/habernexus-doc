@@ -45,9 +45,17 @@ export async function writeArticleWithAI(suggestionId: string) {
     const response = await result.response;
     const content = response.text();
 
-    // 4. Görsel Oluştur
+    // 4. Görsel Oluştur (Flash Image / Nano Banana)
     const imageModel = genAI.getGenerativeModel({ model: imageModelName });
-    const imageGenPrompt = `${imagePromptBase} Haber Başlığı: ${suggestion.title}`;
+    
+    // Orijinal görseli ve başlığı bağlama ekle
+    const imageGenPrompt = `
+      ${imagePromptBase}
+      Haber Başlığı: ${suggestion.title}
+      ${suggestion.imageUrl ? `Kaynak Görsel Referansı: ${suggestion.imageUrl}` : ""}
+      
+      Lütfen bu haber için profesyonel, çarpıcı ve gerçekçi bir kapak fotoğrafı oluştur.
+    `;
     
     // @ts-ignore
     const imageResult = await imageModel.generateContent({
@@ -100,9 +108,33 @@ export async function writeArticleWithAI(suggestionId: string) {
       data: { usedForArticle: true },
     });
 
-    return { success: true, articleId: article.id };
+    return { success: true, articleId: article.id, title: article.title };
   } catch (error) {
     console.error("AI Writer Hatası:", error);
     return { success: false, error: String(error) };
   }
+}
+
+/**
+ * Belirtilen sayıda en yüksek puanlı haberi otomatik olarak yazar.
+ */
+export async function writeBatchArticlesWithAI(count: number = 3) {
+  // En yüksek puanlı, henüz kullanılmamış önerileri getir
+  const suggestions = await prisma.rssFeedItem.findMany({
+    where: {
+      status: { in: ["ANALYZED", "APPROVED"] },
+      dismissed: false,
+      usedForArticle: false,
+    },
+    orderBy: { aiScore: "desc" },
+    take: count,
+  });
+
+  const results = [];
+  for (const suggestion of suggestions) {
+    const result = await writeArticleWithAI(suggestion.id);
+    results.push({ id: suggestion.id, ...result });
+  }
+
+  return results;
 }

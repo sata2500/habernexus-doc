@@ -2,12 +2,13 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image, Home, PenTool, Mail, LayoutTemplate, Rss } from "lucide-react";
+import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image, Home, PenTool, Mail, LayoutTemplate, Rss, Wand2 } from "lucide-react";
 import { SignOutButton } from "../dashboard/components/SignOutButton";
 
 const navItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { name: "RSS Önerileri", href: "/admin/rss-feeds", icon: Rss },
+  { name: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
   { name: "Medya Kütüphanesi", href: "/admin/media", icon: Image },
   { name: "Kategoriler", href: "/admin/categories", icon: Bookmark },
   { name: "Kullanıcılar", href: "/admin/users", icon: Users },

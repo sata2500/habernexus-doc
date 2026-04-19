@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Sparkles, Save, Loader2, Wand2, Image as ImageIcon } from "lucide-react";
-import { updateAiWriterSettings } from "../actions";
+import { updateAiWriterSettings } from "../../rss-feeds/actions";
 
 interface Props {
   initialPrompt: string;
@@ -17,6 +17,8 @@ const AVAILABLE_MODELS = [
   { id: "gemini-3.1-flash-lite", name: "Gemini 3.1 Flash-Lite (Ekonomik)" },
   { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro" },
   { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash" },
+  { id: "gemini-2.5-flash-image", name: "Gemini 2.5 Flash Image (Görsel İçin)" },
+  { id: "gemini-3.1-flash-image-preview", name: "Nano Banana 2 (4K Görsel)" },
   { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro" },
   { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash" },
 ];
@@ -143,7 +145,7 @@ export function AiWriterSettingsCard({
           <div className="text-xs text-muted-foreground leading-relaxed">
             <p className="font-bold text-foreground mb-1">İpucu:</p>
             Promptlarda "HTML formatında yaz", "h2 ve p etiketleri kullan", "gerçekçi fotoğraf kalitesinde" gibi spesifik 
-            yönergeler kullanmak sonuç kalitesini doğrudan etkiler. Gemini 2.0 Flash modeli oldukça zekidir, detaylı talimat verebilirsiniz.
+            yönergeler kullanmak sonuç kalitesini doğrudan etkiler. Gemini 3.1 modelleri oldukça zekidir, detaylı talimat verebilirsiniz.
           </div>
         </div>
       </div>

@@ -302,9 +302,15 @@ model SystemSettings {
 
   // AI Writer Ayarları
   aiWriterModel       String @default("gemini-2.5-flash")
-  aiWriterImageModel  String @default("gemini-2.5-flash")
+  aiWriterImageModel  String @default("gemini-2.5-flash-image")
   aiWriterPrompt      String @default("Sen profesyonel bir haber editörüsün. Verilen konuyu Google Arama kullanarak araştır ve en güncel, doğru bilgilerle son derece kaliteli, özgün ve tarafsız bir haber makalesi yaz. HTML formatında (h2, p, strong etiketlerini kullanarak) döndür. Başlık dahil etme.")
   aiWriterImagePrompt String @default("Profesyonel, gerçekçi bir haber fotoğrafı. Fotoğrafçılık kalitesinde, 16:9 oranında, haberin konusuyla ilgili.")
+
+  // AI Writer Otomasyonu
+  aiWriterAutoEnabled Boolean @default(false)
+  aiWriterAutoCount   Int     @default(3)
+  aiWriterAutoCron    String  @default("0 */6 * * *") // 6 saatte bir
+  qStashAiWriterId    String? // QStash üzerindeki görev ID'si
 
   updatedAt DateTime @updatedAt
 }

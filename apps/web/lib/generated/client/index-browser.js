@@ -329,6 +329,10 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   aiWriterImageModel: 'aiWriterImageModel',
   aiWriterPrompt: 'aiWriterPrompt',
   aiWriterImagePrompt: 'aiWriterImagePrompt',
+  aiWriterAutoEnabled: 'aiWriterAutoEnabled',
+  aiWriterAutoCount: 'aiWriterAutoCount',
+  aiWriterAutoCron: 'aiWriterAutoCron',
+  qStashAiWriterId: 'qStashAiWriterId',
   updatedAt: 'updatedAt'
 };
 

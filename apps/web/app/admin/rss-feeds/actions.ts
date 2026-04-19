@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { scanRssSource } from "@/lib/rss-scanner";
 import { analyzeRssBatch } from "@/lib/ai-analyzer";
-import { writeArticleWithAI } from "@/lib/ai-writer";
+import { writeArticleWithAI, writeBatchArticlesWithAI } from "@/lib/ai-writer";
 
 export async function getRssSources() {
   return prisma.rssFeedSource.findMany({
@@ -163,6 +163,80 @@ export async function updateAiWriterSettings(data: {
   });
   revalidatePath("/admin/rss-feeds");
   return { success: true };
+}
+export async function triggerBatchAiWriter(count: number) {
+  try {
+    const results = await writeBatchArticlesWithAI(count);
+    revalidatePath("/admin/rss-feeds");
+    revalidatePath("/admin/ai-writer");
+    revalidatePath("/");
+    return { success: true, results };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function updateAiWriterAutomation(data: {
+  enabled: boolean;
+  count: number;
+  cron: string;
+}) {
+  try {
+    await prisma.systemSettings.update({
+      where: { id: "global" },
+      data: {
+        aiWriterAutoEnabled: data.enabled,
+        aiWriterAutoCount: data.count,
+        aiWriterAutoCron: data.cron,
+      },
+    });
+
+    if (data.enabled) {
+      await setupAiWriterCron(data.cron);
+    } else {
+      // Devre dışı bırakıldığında QStash görevini sil
+      const settings = await prisma.systemSettings.findUnique({ where: { id: "global" } });
+      if (settings?.qStashAiWriterId) {
+        const { Client } = await import("@upstash/qstash");
+        const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
+        try {
+          await qstash.schedules.delete(settings.qStashAiWriterId);
+        } catch (e) { console.error(e); }
+        await prisma.systemSettings.update({
+          where: { id: "global" },
+          data: { qStashAiWriterId: null },
+        });
+      }
+    }
+
+    revalidatePath("/admin/ai-writer");
+    return { success: true };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+async function setupAiWriterCron(cron: string) {
+  const { Client } = await import("@upstash/qstash");
+  const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
+  const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+  
+  const settings = await prisma.systemSettings.findUnique({ where: { id: "global" } });
+  if (settings?.qStashAiWriterId) {
+    try {
+      await qstash.schedules.delete(settings.qStashAiWriterId);
+    } catch (e) { console.error(e); }
+  }
+
+  const schedule = await qstash.schedules.create({
+    destination: `${APP_URL}/api/cron/ai-writer`,
+    cron: cron,
+  });
+
+  await prisma.systemSettings.update({
+    where: { id: "global" },
+    data: { qStashAiWriterId: schedule.scheduleId },
+  });
 }
 
 export async function getRssStats() {

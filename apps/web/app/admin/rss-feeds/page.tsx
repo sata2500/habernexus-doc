@@ -4,7 +4,6 @@ import { FeedSourceManager } from "./components/FeedSourceManager";
 import { SuggestionsList } from "./components/SuggestionsList";
 import { AdminTriggerButtons } from "./components/AdminTriggerButtons";
 import { CronSettingsCard } from "./components/CronSettingsCard";
-import { AiWriterSettingsCard } from "./components/AiWriterSettingsCard";
 import { Rss, Sparkles, Database, CheckCircle2, X, BarChart3 } from "lucide-react";
 
 export default async function AdminRssFeedsPage() {
@@ -56,26 +55,15 @@ export default async function AdminRssFeedsPage() {
         ))}
       </div>
 
-      {/* ── Otomasyon & Ayarlar ── */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section>
-          <CronSettingsCard 
-            scanCron={systemSettings.rssScanCron} 
-            analyzeCron={systemSettings.rssAnalyzeCron} 
-            hasNewsletter={!!systemSettings.qStashNewsletterId}
-            retentionDays={systemSettings.rssRetentionDays}
-          />
-        </section>
-
-        <section>
-          <AiWriterSettingsCard 
-            initialPrompt={systemSettings.aiWriterPrompt}
-            initialImagePrompt={systemSettings.aiWriterImagePrompt}
-            initialModel={systemSettings.aiWriterModel}
-            initialImageModel={systemSettings.aiWriterImageModel}
-          />
-        </section>
-      </div>
+      {/* ── Otomasyon & Cron ── */}
+      <section>
+        <CronSettingsCard 
+          scanCron={systemSettings.rssScanCron} 
+          analyzeCron={systemSettings.rssAnalyzeCron} 
+          hasNewsletter={!!systemSettings.qStashNewsletterId}
+          retentionDays={systemSettings.rssRetentionDays}
+        />
+      </section>
 
       {/* ── RSS Kaynakları ── */}
       <section>
