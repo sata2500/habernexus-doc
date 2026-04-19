@@ -17,8 +17,8 @@ export default async function AdminRssFeedsPage() {
   const statCards = [
     { label: "Toplam Öğe", value: stats.total, icon: Database, color: "text-blue-500 bg-blue-500/10" },
     { label: "Bekleyen Analiz", value: stats.pending, icon: Rss, color: "text-amber-500 bg-amber-500/10" },
-    { label: "Aktif Öneri", value: stats.analyzed, icon: Sparkles, color: "text-primary-500 bg-primary-500/10" },
-    { label: "Kapsandı", value: stats.covered, icon: CheckCircle2, color: "text-green-500 bg-green-500/10" },
+    { label: "Yeni Öneriler", value: stats.analyzed, icon: Sparkles, color: "text-blue-500 bg-blue-500/10" },
+    { label: "Onaylananlar", value: stats.approved, icon: CheckCircle2, color: "text-primary-500 bg-primary-500/10" },
     { label: "Haberleştirildi", value: stats.used, icon: BarChart3, color: "text-purple-500 bg-purple-500/10" },
     { label: "Reddedildi", value: stats.dismissed, icon: X, color: "text-red-500 bg-red-500/10" },
   ];
@@ -33,14 +33,14 @@ export default async function AdminRssFeedsPage() {
             RSS Öneri Sistemi
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
-            Kaynak yönetimi, AI analizi ve yazarlara önerilecek haber konuları.
+            Kaynak yönetimi, AI analizi ve yazarlar için haber onayı.
           </p>
         </div>
         <AdminTriggerButtons />
       </div>
 
       {/* ── Stats ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {statCards.map((stat) => (
           <div
             key={stat.label}

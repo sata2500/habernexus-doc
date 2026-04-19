@@ -363,6 +363,7 @@ exports.MediaStatus = exports.$Enums.MediaStatus = {
 exports.RssItemStatus = exports.$Enums.RssItemStatus = {
   PENDING: 'PENDING',
   ANALYZED: 'ANALYZED',
+  APPROVED: 'APPROVED',
   LOW_SCORE: 'LOW_SCORE',
   COVERED: 'COVERED',
   DISMISSED: 'DISMISSED'

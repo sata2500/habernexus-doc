@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { ExternalLink, X, CheckCheck, Sparkles, TrendingUp } from "lucide-react";
-import { dismissSuggestion, markAsUsed } from "../actions";
-import Link from "next/link";
+import { dismissSuggestion, approveSuggestion } from "../actions";
 
 type SuggestionItem = {
   id: string;
@@ -47,10 +46,12 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
     setLoadingId(null);
   };
 
-  const handleUsed = async (id: string) => {
+  const handleApprove = async (id: string) => {
     setLoadingId(id);
-    await markAsUsed(id);
-    setItems((prev) => prev.filter((i) => i.id !== id));
+    const res = await approveSuggestion(id);
+    if (res.success) {
+      setItems((prev) => prev.filter((i) => i.id !== id));
+    }
     setLoadingId(null);
   };
 
@@ -152,18 +153,23 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
 
             {/* Actions */}
             <div className="border-t border-border p-3 flex gap-2">
-              <Link
-                href={`/author/articles/new`}
-                onClick={() => handleUsed(item.id)}
-                className="flex-1 text-center px-3 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-primary-500/20"
+              <button
+                onClick={() => handleApprove(item.id)}
+                disabled={loadingId !== null}
+                className="flex-1 text-center px-3 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-primary-500/20 disabled:opacity-50"
               >
-                <CheckCheck className="h-3.5 w-3.5" />
-                Haber Yaz
-              </Link>
+                {loadingId === item.id ? (
+                  <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                ) : (
+                  <CheckCheck className="h-3.5 w-3.5" />
+                )}
+                Haber Yazılsın
+              </button>
               <button
                 onClick={() => handleDismiss(item.id)}
+                disabled={loadingId !== null}
                 title="İlginç Değil"
-                className="px-3 py-2 rounded-xl bg-muted hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-all cursor-pointer"
+                className="px-3 py-2 rounded-xl bg-muted hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-all cursor-pointer disabled:opacity-50"
               >
                 <X className="h-4 w-4" />
               </button>

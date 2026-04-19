@@ -121,6 +121,7 @@ export type MediaStatus = (typeof MediaStatus)[keyof typeof MediaStatus]
 export const RssItemStatus: {
   PENDING: 'PENDING',
   ANALYZED: 'ANALYZED',
+  APPROVED: 'APPROVED',
   LOW_SCORE: 'LOW_SCORE',
   COVERED: 'COVERED',
   DISMISSED: 'DISMISSED'

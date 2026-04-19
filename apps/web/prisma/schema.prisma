@@ -284,6 +284,7 @@ model RssFeedItem {
 enum RssItemStatus {
   PENDING   // Henüz AI analizi yapılmadı
   ANALYZED  // Gemini analiz etti, puan verildi
+  APPROVED  // Admin onayladı, yazar masasına düştü
   LOW_SCORE // Puan düşük (< 40), gösterilmeyecek
   COVERED   // Zaten haberleştirilmiş konuyla örtüşüyor
   DISMISSED // Yazar/admin "gerek yok" dedi

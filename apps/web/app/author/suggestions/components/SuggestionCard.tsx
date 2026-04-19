@@ -10,6 +10,7 @@ import {
   TrendingUp,
   Clock,
   Eye,
+  ShieldCheck,
 } from "lucide-react";
 import {
   dismissSuggestionByAuthor,
@@ -24,6 +25,7 @@ type SuggestionItem = {
   imageUrl: string | null;
   publishedAt: Date | null;
   aiScore: number | null;
+  status: string;
   aiAnalysis: unknown;
   source: { name: string };
 };
@@ -70,8 +72,16 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
     <>
       <div className="group bg-background rounded-2xl border border-border shadow-sm hover:shadow-lg hover:border-primary-500/30 transition-all duration-300 flex flex-col overflow-hidden">
         {/* Score Header */}
-        <div className="px-4 pt-4 pb-2">
-          <ScoreBar score={item.aiScore ?? 50} />
+        <div className="px-4 pt-4 pb-2 flex items-center justify-between gap-4">
+          <div className="flex-1">
+            <ScoreBar score={item.aiScore ?? 50} />
+          </div>
+          {item.status === "APPROVED" && (
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 animate-pulse">
+              <ShieldCheck className="h-3 w-3" />
+              <span className="text-[10px] font-bold uppercase tracking-tight">Yönetici Önerisi</span>
+            </div>
+          )}
         </div>
 
         <div className="px-4 pb-4 flex flex-col gap-3 flex-1">
@@ -175,9 +185,17 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
           <div className="bg-background border border-border rounded-2xl shadow-xl w-full max-w-2xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
             {/* Modal Header */}
             <div className="px-5 py-4 border-b border-border flex items-center justify-between bg-muted/30">
-              <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
-                <TrendingUp className="h-4 w-4" />
-                {item.source.name}
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+                  <TrendingUp className="h-4 w-4" />
+                  {item.source.name}
+                </div>
+                {item.status === "APPROVED" && (
+                  <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500">
+                    <ShieldCheck className="h-3.5 w-3.5" />
+                    <span className="text-[10px] font-bold uppercase">Yönetici Önerisi</span>
+                  </div>
+                )}
               </div>
               <button
                 onClick={() => setShowPreview(false)}

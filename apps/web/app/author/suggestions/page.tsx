@@ -14,7 +14,7 @@ export default async function AuthorSuggestionsPage() {
           Haber Önerileri
         </h1>
         <p className="text-muted-foreground text-sm mt-1">
-          RSS kaynaklarından derlenen, AI tarafından puanlanmış güncel haber konuları.
+          AI tarafından puanlanmış güncel haberler ve yöneticilerimizin özellikle önerdiği konular.
         </p>
       </div>
 

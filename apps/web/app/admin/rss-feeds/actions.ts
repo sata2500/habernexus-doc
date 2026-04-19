@@ -104,6 +104,16 @@ export async function getRssSuggestions(filters?: {
   });
 }
 
+export async function approveSuggestion(id: string) {
+  await prisma.rssFeedItem.update({
+    where: { id },
+    data: { status: "APPROVED" },
+  });
+  revalidatePath("/admin/rss-feeds");
+  revalidatePath("/author/suggestions");
+  return { success: true };
+}
+
 export async function dismissSuggestion(id: string) {
   await prisma.rssFeedItem.update({
     where: { id },
@@ -125,16 +135,17 @@ export async function markAsUsed(id: string) {
 }
 
 export async function getRssStats() {
-  const [total, pending, analyzed, covered, lowScore, dismissed, used] =
+  const [total, pending, analyzed, approved, covered, lowScore, dismissed, used] =
     await Promise.all([
       prisma.rssFeedItem.count(),
       prisma.rssFeedItem.count({ where: { status: "PENDING" } }),
       prisma.rssFeedItem.count({ where: { status: "ANALYZED", dismissed: false, usedForArticle: false } }),
+      prisma.rssFeedItem.count({ where: { status: "APPROVED", dismissed: false, usedForArticle: false } }),
       prisma.rssFeedItem.count({ where: { status: "COVERED" } }),
       prisma.rssFeedItem.count({ where: { status: "LOW_SCORE" } }),
       prisma.rssFeedItem.count({ where: { status: "DISMISSED" } }),
       prisma.rssFeedItem.count({ where: { usedForArticle: true } }),
     ]);
 
-  return { total, pending, analyzed, covered, lowScore, dismissed, used };
+  return { total, pending, analyzed, approved, covered, lowScore, dismissed, used };
 }

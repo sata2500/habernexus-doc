@@ -6,11 +6,14 @@ import { revalidatePath } from "next/cache";
 export async function getAuthorSuggestions() {
   return prisma.rssFeedItem.findMany({
     where: {
-      status: "ANALYZED",
+      status: { in: ["ANALYZED", "APPROVED"] },
       dismissed: false,
       usedForArticle: false,
     },
-    orderBy: { aiScore: "desc" },
+    orderBy: [
+      { status: "asc" }, // APPROVED comes before ANALYZED alphabetically, but we might want explicit logic.
+      { aiScore: "desc" }
+    ],
     take: 20,
     include: {
       source: { select: { name: true } },
