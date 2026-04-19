@@ -87,18 +87,34 @@ export async function writeArticleWithAI(suggestionId: string) {
     let imageUrl = suggestion.imageUrl;
 
     try {
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModelName}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+      // 1. Önce yeni 'generateImages' endpoint'ini dene (Nano Banana için standart)
+      const generateImagesUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModelName}:generateImages?key=${process.env.GEMINI_API_KEY}`;
       
-      const imageFetchRes = await fetch(apiUrl, {
+      let imageFetchRes = await fetch(generateImagesUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          contents: [{ role: "user", parts: [{ text: imageGenPrompt }] }],
-          generationConfig: {
-            responseModalities: ["IMAGE"],
+          prompt: imageGenPrompt,
+          config: {
+            numberOfImages: 1,
+            aspectRatio: "16:9",
           },
         }),
       });
+
+      // Eğer 404/405 verirse (belki bu model hala generateContent istiyordur), fallback yap
+      if (!imageFetchRes.ok && (imageFetchRes.status === 404 || imageFetchRes.status === 405)) {
+        console.warn(`[AI Writer] ${imageModelName} için generateImages desteklenmiyor, generateContent deneniyor...`);
+        const generateContentUrl = `https://generativelanguage.googleapis.com/v1beta/models/${imageModelName}:generateContent?key=${process.env.GEMINI_API_KEY}`;
+        imageFetchRes = await fetch(generateContentUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: imageGenPrompt }] }],
+            generationConfig: { responseModalities: ["IMAGE"] },
+          }),
+        });
+      }
 
       if (!imageFetchRes.ok) {
         const errorData = await imageFetchRes.json();
@@ -106,20 +122,30 @@ export async function writeArticleWithAI(suggestionId: string) {
       }
 
       const imageResultData = await imageFetchRes.json();
-      
-      // @ts-ignore
-      const imagePart = imageResultData.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-      
-      if (imagePart?.inlineData) {
-        const buffer = Buffer.from(imagePart.inlineData.data, "base64");
+      let base64Data: string | null = null;
+
+      // generateImages Yanıtı
+      if (imageResultData.generatedImages?.[0]?.image?.imageBytes) {
+        base64Data = imageResultData.generatedImages[0].image.imageBytes;
+      } 
+      // generateContent Yanıtı (Fallback)
+      else if (imageResultData.candidates?.[0]?.content?.parts) {
+        const part = imageResultData.candidates[0].content.parts.find((p: any) => p.inlineData);
+        if (part?.inlineData?.data) {
+          base64Data = part.inlineData.data;
+        }
+      }
+
+      if (base64Data) {
+        const buffer = Buffer.from(base64Data, "base64");
         const { url } = await put(`articles/ai-${Date.now()}.png`, buffer, {
           access: "public",
           contentType: "image/png",
         });
         imageUrl = url;
-        console.log("[AI Writer] Görsel başarıyla üretildi ve yüklendi:", imageUrl);
+        console.log("[AI Writer] Görsel başarıyla üretildi:", imageUrl);
       } else {
-        console.warn("[AI Writer] Model görsel döndürmedi, metin döndürmüş olabilir. Orijinal görsel kullanılacak.");
+        console.warn("[AI Writer] Modelden geçerli bir görsel verisi alınamadı.");
       }
     } catch (imageErr) {
       console.error("Görsel üretilirken hata oluştu (Orijinal görsel kullanılacak):", imageErr);
