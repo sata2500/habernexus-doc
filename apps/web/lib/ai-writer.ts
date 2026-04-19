@@ -5,6 +5,33 @@ import { slugify } from "./utils"; // Varsayalım slugify var, yoksa ekleriz
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
+// Yardımcı: Belirli bir süre bekle (ms)
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+/**
+ * AI Çağrılarını Retry (Tekrar Deneme) Mantığıyla Sarmalar
+ */
+async function callAiWithRetry(model: any, prompt: any, options: any = {}, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      if (options.isImage) {
+        return await model.generateContent(prompt);
+      } else {
+        return await model.generateContent(prompt);
+      }
+    } catch (error: any) {
+      const isQuotaError = error.message?.includes("429") || error.message?.includes("Too Many Requests") || error.message?.includes("quota");
+      if (isQuotaError && i < retries - 1) {
+        console.warn(`[AI Retry] Kota hatası alındı. ${i + 1}. deneme başarısız. Bekleniyor...`);
+        // Her denemede daha uzun bekle (Exponential Backoff)
+        await sleep(Math.pow(2, i) * 1000 + 1000);
+        continue;
+      }
+      throw error;
+    }
+  }
+}
+
 export async function writeArticleWithAI(suggestionId: string) {
   try {
     // 1. Öneriyi ve ayarları getir
@@ -41,7 +68,7 @@ export async function writeArticleWithAI(suggestionId: string) {
       Lütfen bu konuyu internetten araştır ve en az 500 kelimelik, SEO uyumlu, profesyonel bir haber makalesi yaz.
     `;
 
-    const result = await model.generateContent(prompt);
+    const result = await callAiWithRetry(model, prompt);
     const response = await result.response;
     const content = response.text();
 
@@ -57,28 +84,33 @@ export async function writeArticleWithAI(suggestionId: string) {
       Lütfen bu haber için profesyonel, çarpıcı ve gerçekçi bir kapak fotoğrafı oluştur.
     `;
     
-    // @ts-ignore
-    const imageResult = await imageModel.generateContent({
-      contents: [{ role: "user", parts: [{ text: imageGenPrompt }] }],
-      generationConfig: {
-        // @ts-ignore
-        responseModalities: ["IMAGE"],
-      },
-    });
+    let imageUrl = suggestion.imageUrl;
 
-    const imageResponse = await imageResult.response;
-    // @ts-ignore
-    const imagePart = imageResponse.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-    
-    let imageUrl = suggestion.imageUrl; // Varsayılan olarak orijinal görseli kullan
+    try {
+      // @ts-ignore
+      const imageResult = await callAiWithRetry(imageModel, {
+        contents: [{ role: "user", parts: [{ text: imageGenPrompt }] }],
+        generationConfig: {
+          // @ts-ignore
+          responseModalities: ["IMAGE"],
+        },
+      }, { isImage: true });
 
-    if (imagePart?.inlineData) {
-      const buffer = Buffer.from(imagePart.inlineData.data, "base64");
-      const { url } = await put(`articles/ai-${Date.now()}.png`, buffer, {
-        access: "public",
-        contentType: "image/png",
-      });
-      imageUrl = url;
+      const imageResponse = await imageResult.response;
+      // @ts-ignore
+      const imagePart = imageResponse.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
+      
+      if (imagePart?.inlineData) {
+        const buffer = Buffer.from(imagePart.inlineData.data, "base64");
+        const { url } = await put(`articles/ai-${Date.now()}.png`, buffer, {
+          access: "public",
+          contentType: "image/png",
+        });
+        imageUrl = url;
+      }
+    } catch (imageErr) {
+      console.error("Görsel üretilirken hata oluştu (Orijinal görsel kullanılacak):", imageErr);
+      // Görsel hatası tüm makalenin yazılmasını engellemesin
     }
 
     // 5. Makaleyi Kaydet
@@ -134,6 +166,11 @@ export async function writeBatchArticlesWithAI(count: number = 3) {
   for (const suggestion of suggestions) {
     const result = await writeArticleWithAI(suggestion.id);
     results.push({ id: suggestion.id, ...result });
+    
+    // Ücretsiz katman RPM limitlerine takılmamak için her haber arasında bekle
+    if (suggestions.indexOf(suggestion) < suggestions.length - 1) {
+      await sleep(5000); 
+    }
   }
 
   return results;

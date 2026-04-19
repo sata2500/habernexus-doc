@@ -12,15 +12,14 @@ interface Props {
 }
 
 const AVAILABLE_MODELS = [
-  { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (En Zeki)" },
-  { id: "gemini-3.1-flash", name: "Gemini 3.1 Flash (En Hızlı)" },
-  { id: "gemini-3.1-flash-lite", name: "Gemini 3.1 Flash-Lite (Ekonomik)" },
-  { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro" },
-  { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash" },
-  { id: "gemini-2.5-flash-image", name: "Gemini 2.5 Flash Image (Görsel İçin)" },
-  { id: "gemini-3.1-flash-image-preview", name: "Nano Banana 2 (4K Görsel)" },
-  { id: "gemini-1.5-pro", name: "Gemini 1.5 Pro" },
-  { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash" },
+  { id: "gemini-3.1-flash", name: "Gemini 3.1 Flash (Ücretsiz - Hızlı)", type: "free" },
+  { id: "gemini-3.1-flash-lite", name: "Gemini 3.1 Flash-Lite (Ücretsiz - Ekonomik)", type: "free" },
+  { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (Ücretsiz - Stabil)", type: "free" },
+  { id: "gemini-2.5-flash-image", name: "Gemini 2.5 Flash Image (Ücretsiz - Görsel)", type: "free" },
+  { id: "gemini-2.5-flash-preview-image", name: "Gemini 2.5 Flash Preview Image", type: "free" },
+  { id: "gemini-3.1-flash-image-preview", name: "Nano Banana 2 (Ücretsiz - 4K)", type: "free" },
+  { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (Ücretli - En Zeki)", type: "paid" },
+  { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro (Ücretli - Derinlikli)", type: "paid" },
 ];
 
 export function AiWriterSettingsCard({ 
@@ -75,6 +74,17 @@ export function AiWriterSettingsCard({
       </div>
 
       <div className="p-6 space-y-6">
+        <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 text-xs space-y-2">
+          <div className="flex items-center gap-2 font-bold text-amber-700">
+            <Loader2 className="h-3.5 w-3.5" />
+            Nisan 2026 Ücretsiz Katman (Free Tier) Limitleri
+          </div>
+          <p className="text-amber-800 leading-relaxed">
+            • <strong>RPM:</strong> Dakikada 15 istek. • <strong>RPD:</strong> Günde 1500 istek. <br />
+            • <strong>Önemli:</strong> Görsel üretimi (Flash Image) kota dolduğunda 429 hatası verebilir. Bu durumda sistem orijinal görseli kullanacak şekilde otomatik fallback yapar.
+          </p>
+        </div>
+
         {/* Model Selection Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div className="space-y-2">
@@ -85,7 +95,9 @@ export function AiWriterSettingsCard({
               className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-purple-500/50"
             >
               {AVAILABLE_MODELS.map(m => (
-                <option key={m.id} value={m.id}>{m.name}</option>
+                <option key={m.id} value={m.id} className={m.type === "paid" ? "text-amber-600 font-bold" : ""}>
+                  {m.name}
+                </option>
               ))}
             </select>
           </div>
@@ -97,7 +109,9 @@ export function AiWriterSettingsCard({
               className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500/50"
             >
               {AVAILABLE_MODELS.map(m => (
-                <option key={m.id} value={m.id}>{m.name}</option>
+                <option key={m.id} value={m.id} className={m.type === "paid" ? "text-amber-600 font-bold" : ""}>
+                  {m.name}
+                </option>
               ))}
             </select>
           </div>
@@ -143,9 +157,8 @@ export function AiWriterSettingsCard({
             <Wand2 className="h-4 w-4" />
           </div>
           <div className="text-xs text-muted-foreground leading-relaxed">
-            <p className="font-bold text-foreground mb-1">İpucu:</p>
-            Promptlarda "HTML formatında yaz", "h2 ve p etiketleri kullan", "gerçekçi fotoğraf kalitesinde" gibi spesifik 
-            yönergeler kullanmak sonuç kalitesini doğrudan etkiler. Gemini 3.1 modelleri oldukça zekidir, detaylı talimat verebilirsiniz.
+            <p className="font-bold text-foreground mb-1">Kota ve Limit İpucu:</p>
+            Ücretsiz planda arka arkaya çok fazla haber yazdırmamaya dikkat edin. Sistem kota hatası aldığında otomatik olarak bekleyip tekrar deneyecek (Retry) ve görsel üretilemezse orijinal RSS görselini koruyacaktır.
           </div>
         </div>
       </div>
