@@ -21933,8 +21933,18 @@ export namespace Prisma {
 
   export type AggregateSystemSettings = {
     _count: SystemSettingsCountAggregateOutputType | null
+    _avg: SystemSettingsAvgAggregateOutputType | null
+    _sum: SystemSettingsSumAggregateOutputType | null
     _min: SystemSettingsMinAggregateOutputType | null
     _max: SystemSettingsMaxAggregateOutputType | null
+  }
+
+  export type SystemSettingsAvgAggregateOutputType = {
+    rssRetentionDays: number | null
+  }
+
+  export type SystemSettingsSumAggregateOutputType = {
+    rssRetentionDays: number | null
   }
 
   export type SystemSettingsMinAggregateOutputType = {
@@ -21944,6 +21954,7 @@ export namespace Prisma {
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
+    rssRetentionDays: number | null
     updatedAt: Date | null
   }
 
@@ -21954,6 +21965,7 @@ export namespace Prisma {
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
+    rssRetentionDays: number | null
     updatedAt: Date | null
   }
 
@@ -21964,10 +21976,19 @@ export namespace Prisma {
     qStashScanId: number
     qStashAnalyzeId: number
     qStashNewsletterId: number
+    rssRetentionDays: number
     updatedAt: number
     _all: number
   }
 
+
+  export type SystemSettingsAvgAggregateInputType = {
+    rssRetentionDays?: true
+  }
+
+  export type SystemSettingsSumAggregateInputType = {
+    rssRetentionDays?: true
+  }
 
   export type SystemSettingsMinAggregateInputType = {
     id?: true
@@ -21976,6 +21997,7 @@ export namespace Prisma {
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
+    rssRetentionDays?: true
     updatedAt?: true
   }
 
@@ -21986,6 +22008,7 @@ export namespace Prisma {
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
+    rssRetentionDays?: true
     updatedAt?: true
   }
 
@@ -21996,6 +22019,7 @@ export namespace Prisma {
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
+    rssRetentionDays?: true
     updatedAt?: true
     _all?: true
   }
@@ -22038,6 +22062,18 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
+     * Select which fields to average
+    **/
+    _avg?: SystemSettingsAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SystemSettingsSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
      * Select which fields to find the minimum value
     **/
     _min?: SystemSettingsMinAggregateInputType
@@ -22068,6 +22104,8 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: SystemSettingsCountAggregateInputType | true
+    _avg?: SystemSettingsAvgAggregateInputType
+    _sum?: SystemSettingsSumAggregateInputType
     _min?: SystemSettingsMinAggregateInputType
     _max?: SystemSettingsMaxAggregateInputType
   }
@@ -22079,8 +22117,11 @@ export namespace Prisma {
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
+    rssRetentionDays: number
     updatedAt: Date
     _count: SystemSettingsCountAggregateOutputType | null
+    _avg: SystemSettingsAvgAggregateOutputType | null
+    _sum: SystemSettingsSumAggregateOutputType | null
     _min: SystemSettingsMinAggregateOutputType | null
     _max: SystemSettingsMaxAggregateOutputType | null
   }
@@ -22106,6 +22147,7 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
+    rssRetentionDays?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22116,6 +22158,7 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
+    rssRetentionDays?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22126,6 +22169,7 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
+    rssRetentionDays?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22136,10 +22180,11 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
+    rssRetentionDays?: boolean
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "rssRetentionDays" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -22151,6 +22196,7 @@ export namespace Prisma {
       qStashScanId: string | null
       qStashAnalyzeId: string | null
       qStashNewsletterId: string | null
+      rssRetentionDays: number
       updatedAt: Date
     }, ExtArgs["result"]["systemSettings"]>
     composites: {}
@@ -22581,6 +22627,7 @@ export namespace Prisma {
     readonly qStashScanId: FieldRef<"SystemSettings", 'String'>
     readonly qStashAnalyzeId: FieldRef<"SystemSettings", 'String'>
     readonly qStashNewsletterId: FieldRef<"SystemSettings", 'String'>
+    readonly rssRetentionDays: FieldRef<"SystemSettings", 'Int'>
     readonly updatedAt: FieldRef<"SystemSettings", 'DateTime'>
   }
     
@@ -23222,6 +23269,7 @@ export namespace Prisma {
     qStashScanId: 'qStashScanId',
     qStashAnalyzeId: 'qStashAnalyzeId',
     qStashNewsletterId: 'qStashNewsletterId',
+    rssRetentionDays: 'rssRetentionDays',
     updatedAt: 'updatedAt'
   };
 
@@ -24675,6 +24723,7 @@ export namespace Prisma {
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
+    rssRetentionDays?: IntFilter<"SystemSettings"> | number
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }
 
@@ -24685,6 +24734,7 @@ export namespace Prisma {
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
     qStashNewsletterId?: SortOrderInput | SortOrder
+    rssRetentionDays?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -24698,6 +24748,7 @@ export namespace Prisma {
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
+    rssRetentionDays?: IntFilter<"SystemSettings"> | number
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }, "id">
 
@@ -24708,10 +24759,13 @@ export namespace Prisma {
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
     qStashNewsletterId?: SortOrderInput | SortOrder
+    rssRetentionDays?: SortOrder
     updatedAt?: SortOrder
     _count?: SystemSettingsCountOrderByAggregateInput
+    _avg?: SystemSettingsAvgOrderByAggregateInput
     _max?: SystemSettingsMaxOrderByAggregateInput
     _min?: SystemSettingsMinOrderByAggregateInput
+    _sum?: SystemSettingsSumOrderByAggregateInput
   }
 
   export type SystemSettingsScalarWhereWithAggregatesInput = {
@@ -24724,6 +24778,7 @@ export namespace Prisma {
     qStashScanId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
+    rssRetentionDays?: IntWithAggregatesFilter<"SystemSettings"> | number
     updatedAt?: DateTimeWithAggregatesFilter<"SystemSettings"> | Date | string
   }
 
@@ -26156,6 +26211,7 @@ export namespace Prisma {
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
+    rssRetentionDays?: number
     updatedAt?: Date | string
   }
 
@@ -26166,6 +26222,7 @@ export namespace Prisma {
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
+    rssRetentionDays?: number
     updatedAt?: Date | string
   }
 
@@ -26176,6 +26233,7 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
+    rssRetentionDays?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26186,6 +26244,7 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
+    rssRetentionDays?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26196,6 +26255,7 @@ export namespace Prisma {
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
+    rssRetentionDays?: number
     updatedAt?: Date | string
   }
 
@@ -26206,6 +26266,7 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
+    rssRetentionDays?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -26216,6 +26277,7 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
+    rssRetentionDays?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -27253,7 +27315,12 @@ export namespace Prisma {
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
+    rssRetentionDays?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type SystemSettingsAvgOrderByAggregateInput = {
+    rssRetentionDays?: SortOrder
   }
 
   export type SystemSettingsMaxOrderByAggregateInput = {
@@ -27263,6 +27330,7 @@ export namespace Prisma {
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
+    rssRetentionDays?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -27273,7 +27341,12 @@ export namespace Prisma {
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
+    rssRetentionDays?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type SystemSettingsSumOrderByAggregateInput = {
+    rssRetentionDays?: SortOrder
   }
 
   export type AccountCreateNestedManyWithoutUserInput = {

@@ -104,3 +104,17 @@ export async function setupNewsletterCron() {
     return { success: false, error: String(err) };
   }
 }
+
+export async function updateRssRetention(days: number) {
+  try {
+    await prisma.systemSettings.update({
+      where: { id: "global" },
+      data: { rssRetentionDays: days },
+    });
+    revalidatePath("/admin/rss-feeds");
+    return { success: true };
+  } catch (err) {
+    console.error("Error updating retention:", err);
+    return { success: false, error: String(err) };
+  }
+}

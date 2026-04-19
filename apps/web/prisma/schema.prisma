@@ -297,5 +297,6 @@ model SystemSettings {
   qStashScanId    String?  // QStash üzerindeki görev ID'si
   qStashAnalyzeId String?
   qStashNewsletterId String? // Bülten QStash ID'si
+  rssRetentionDays Int      @default(14) // Eski haberlerin silinme süresi
   updatedAt       DateTime @updatedAt
 }

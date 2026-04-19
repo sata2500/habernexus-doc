@@ -234,11 +234,15 @@ SADECE JSON formatında yanıt ver. Başka hiçbir şey yazma:
   };
 }
 
-/**
- * 14 günden eski işlenmiş öğeleri temizler.
- */
 export async function cleanupOldItems(): Promise<number> {
-  const cutoff = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+  const settings = await prisma.systemSettings.findUnique({
+    where: { id: "global" },
+    select: { rssRetentionDays: true },
+  });
+  
+  const retentionDays = settings?.rssRetentionDays ?? 14;
+  const cutoff = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
+  
   const result = await prisma.rssFeedItem.deleteMany({
     where: {
       createdAt: { lt: cutoff },

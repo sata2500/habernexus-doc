@@ -61,6 +61,7 @@ export default async function AdminRssFeedsPage() {
           scanCron={systemSettings.rssScanCron} 
           analyzeCron={systemSettings.rssAnalyzeCron} 
           hasNewsletter={!!systemSettings.qStashNewsletterId}
+          retentionDays={systemSettings.rssRetentionDays}
         />
       </section>
 

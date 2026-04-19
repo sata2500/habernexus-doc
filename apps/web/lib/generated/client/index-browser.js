@@ -324,6 +324,7 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   qStashScanId: 'qStashScanId',
   qStashAnalyzeId: 'qStashAnalyzeId',
   qStashNewsletterId: 'qStashNewsletterId',
+  rssRetentionDays: 'rssRetentionDays',
   updatedAt: 'updatedAt'
 };
 

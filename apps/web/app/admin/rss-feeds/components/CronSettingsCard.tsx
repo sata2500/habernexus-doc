@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
-import { updateCronSchedule, setupNewsletterCron } from "../cron-actions";
+import { Clock, CheckCircle2, Loader2, AlertCircle, Database } from "lucide-react";
+import { updateCronSchedule, setupNewsletterCron, updateRssRetention } from "../cron-actions";
 
 type Props = {
   scanCron: string;
   analyzeCron: string;
   hasNewsletter: boolean;
+  retentionDays: number;
 };
 
 const SCHEDULE_OPTIONS = [
@@ -19,11 +20,24 @@ const SCHEDULE_OPTIONS = [
   { label: "Günde 1 Kez", value: "0 6 * * *" },
 ];
 
-export function CronSettingsCard({ scanCron: initialScan, analyzeCron: initialAnalyze, hasNewsletter: initialHasNewsletter }: Props) {
+const RETENTION_OPTIONS = [
+  { label: "3 Gün Sakla", value: 3 },
+  { label: "7 Gün Sakla", value: 7 },
+  { label: "14 Gün Sakla", value: 14 },
+  { label: "30 Gün Sakla", value: 30 },
+];
+
+export function CronSettingsCard({ 
+  scanCron: initialScan, 
+  analyzeCron: initialAnalyze, 
+  hasNewsletter: initialHasNewsletter,
+  retentionDays: initialRetention
+}: Props) {
   const [scanCron, setScanCron] = useState(initialScan);
   const [analyzeCron, setAnalyzeCron] = useState(initialAnalyze);
+  const [retentionDays, setRetentionDays] = useState(initialRetention);
   const [hasNewsletter, setHasNewsletter] = useState(initialHasNewsletter);
-  const [loadingType, setLoadingType] = useState<"scan" | "analyze" | "newsletter" | null>(null);
+  const [loadingType, setLoadingType] = useState<"scan" | "analyze" | "newsletter" | "retention" | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const handleNewsletterSetup = async () => {
@@ -53,7 +67,6 @@ export function CronSettingsCard({ scanCron: initialScan, analyzeCron: initialAn
       setMessage({ type: "success", text: "Zamanlama başarıyla güncellendi." });
     } else {
       setMessage({ type: "error", text: res.error || "Güncellenirken bir hata oluştu." });
-      // Reset select to previous value
       if (type === "scan") setScanCron(initialScan);
       else setAnalyzeCron(initialAnalyze);
     }
@@ -62,11 +75,27 @@ export function CronSettingsCard({ scanCron: initialScan, analyzeCron: initialAn
     setTimeout(() => setMessage(null), 5000);
   };
 
+  const handleRetentionUpdate = async (days: number) => {
+    setLoadingType("retention");
+    setMessage(null);
+
+    const res = await updateRssRetention(days);
+    if (res.success) {
+      setRetentionDays(days);
+      setMessage({ type: "success", text: "Temizlik süresi başarıyla güncellendi." });
+    } else {
+      setMessage({ type: "error", text: res.error || "Temizlik süresi güncellenemedi." });
+      setRetentionDays(initialRetention);
+    }
+    setLoadingType(null);
+    setTimeout(() => setMessage(null), 5000);
+  };
+
   return (
     <div className="glass-strong rounded-2xl border border-border shadow-soft overflow-hidden">
       <div className="p-4 border-b border-border bg-muted/20 flex items-center gap-2">
         <Clock className="h-5 w-5 text-primary-500" />
-        <h3 className="font-bold font-(family-name:--font-outfit)">Otomasyon Zamanlaması (QStash)</h3>
+        <h3 className="font-bold font-(family-name:--font-outfit)">Otomasyon ve Temizlik (QStash)</h3>
       </div>
       
       <div className="p-5 space-y-5">
@@ -100,7 +129,6 @@ export function CronSettingsCard({ scanCron: initialScan, analyzeCron: initialAn
               {SCHEDULE_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
-              {/* Eğer özel bir cron ifadesi varsa listede göstermek için */}
               {!SCHEDULE_OPTIONS.some(o => o.value === scanCron) && (
                 <option value={scanCron}>Özel: {scanCron}</option>
               )}
@@ -114,7 +142,7 @@ export function CronSettingsCard({ scanCron: initialScan, analyzeCron: initialAn
               {loadingType === "analyze" && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary-500" />}
             </label>
             <p className="text-xs text-muted-foreground mb-2">
-              Çekilen haberlerin ne sıklıkla yapay zeka (Gemini) tarafından puanlanacağını belirler.
+              Çekilen haberlerin ne sıklıkla yapay zeka tarafından puanlanacağını belirler.
             </p>
             <select
               value={analyzeCron}
@@ -128,6 +156,30 @@ export function CronSettingsCard({ scanCron: initialScan, analyzeCron: initialAn
               {!SCHEDULE_OPTIONS.some(o => o.value === analyzeCron) && (
                 <option value={analyzeCron}>Özel: {analyzeCron}</option>
               )}
+            </select>
+          </div>
+
+          {/* Retention Setting */}
+          <div className="space-y-2 md:col-span-2 pt-4 border-t border-border">
+            <label className="text-sm font-semibold flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Database className="h-4 w-4 text-muted-foreground" />
+                Veritabanı Temizliği (Garbage Collection)
+              </span>
+              {loadingType === "retention" && <Loader2 className="h-3.5 w-3.5 animate-spin text-primary-500" />}
+            </label>
+            <p className="text-xs text-muted-foreground mb-2">
+              İşlenmiş, reddedilmiş veya ilgi çekmeyen (Düşük Puanlı) eski haberler ne kadar süre saklanıp silinsin?
+            </p>
+            <select
+              value={retentionDays}
+              onChange={(e) => handleRetentionUpdate(Number(e.target.value))}
+              disabled={loadingType !== null}
+              className="w-full sm:w-1/2 px-3 py-2.5 rounded-xl bg-background border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm disabled:opacity-50"
+            >
+              {RETENTION_OPTIONS.map((opt) => (
+                <option key={opt.value} value={opt.value}>{opt.label}</option>
+              ))}
             </select>
           </div>
 
