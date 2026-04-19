@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 import { getAuthorArticles } from "./actions";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
-import { PlusCircle, Eye, FileText, Newspaper, Pencil, TrendingUp } from "lucide-react";
+import { PlusCircle, Eye, FileText, Newspaper, Pencil, TrendingUp, Sparkles } from "lucide-react";
 
 function getStatusLabel(status: string) {
   if (status === "PUBLISHED") return { label: "Yayında", variant: "success" as const };
@@ -20,6 +20,8 @@ export default async function AuthorDashboardPage() {
   const reqHeaders = await headers();
   const session = await auth.api.getSession({ headers: reqHeaders });
   const articles = await getAuthorArticles();
+  const { getAuthorSuggestions } = await import("./suggestions/actions");
+  const topSuggestions = (await getAuthorSuggestions()).slice(0, 3);
   type AuthorArticle = Awaited<ReturnType<typeof getAuthorArticles>>[number];
 
   const published = (articles as AuthorArticle[]).filter((a) => a.status === "PUBLISHED");
@@ -100,6 +102,54 @@ export default async function AuthorDashboardPage() {
                       <Pencil className="h-4 w-4" />
                     </Link>
                   </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+      {/* ── Haber Önerileri Widget ──────────────────── */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold font-(family-name:--font-outfit) flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary-500" />
+            Güncel Haber Önerileri
+          </h2>
+          <Link href="/author/suggestions" className="text-sm text-primary-600 hover:underline">
+            Tümünü Gör
+          </Link>
+        </div>
+
+        {topSuggestions.length === 0 ? (
+          <div className="text-center py-10 bg-muted/30 rounded-2xl border border-dashed border-border">
+            <Sparkles className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
+            <p className="text-sm text-muted-foreground">Henüz öneri bulunmuyor. RSS kaynakları yakında taranacak.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden bg-background">
+            {topSuggestions.map((item) => {
+              const analysis = item.aiAnalysis as { suggestedTitles?: string[]; suggestedCategory?: string } | null;
+              const score = item.aiScore ?? 50;
+              const scoreColor = score >= 75 ? "text-green-600 bg-green-500/10" : score >= 55 ? "text-amber-600 bg-amber-500/10" : "text-muted-foreground bg-muted";
+              return (
+                <div key={item.id} className="flex items-center gap-4 p-4 hover:bg-muted/40 transition-colors">
+                  <div className={`h-9 w-9 shrink-0 rounded-xl flex items-center justify-center text-xs font-bold ${scoreColor}`}>
+                    {score}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold truncate">
+                      {analysis?.suggestedTitles?.[0] || item.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {item.source.name} · {analysis?.suggestedCategory || "Genel"}
+                    </p>
+                  </div>
+                  <Link
+                    href="/author/suggestions"
+                    className="shrink-0 px-3 py-1.5 rounded-lg bg-primary-500/10 hover:bg-primary-500/20 text-primary-600 text-xs font-semibold transition-colors"
+                  >
+                    Gör
+                  </Link>
                 </div>
               );
             })}

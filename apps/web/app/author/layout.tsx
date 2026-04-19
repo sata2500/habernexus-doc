@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import Link from "next/link";
-import { PenTool, FileText, PlusCircle, LayoutDashboard, BarChart3, Home, MessageSquare, UserCircle } from "lucide-react";
+import { PenTool, FileText, PlusCircle, LayoutDashboard, BarChart3, Home, MessageSquare, UserCircle, Sparkles } from "lucide-react";
 import { SignOutButton } from "../dashboard/components/SignOutButton";
 
 export default async function AuthorLayout({ children }: { children: React.ReactNode }) {
@@ -24,6 +24,7 @@ export default async function AuthorLayout({ children }: { children: React.React
 
   const navItems = [
     { name: "Yazar Özeti", href: "/author", icon: LayoutDashboard },
+    { name: "Haber Önerileri", href: "/author/suggestions", icon: Sparkles },
     { name: "Makalelerim", href: "/author/articles", icon: FileText },
     { name: "Yeni Haber Ekle", href: "/author/articles/new", icon: PlusCircle },
     { name: "İstatistikler", href: "/author/stats", icon: BarChart3 },

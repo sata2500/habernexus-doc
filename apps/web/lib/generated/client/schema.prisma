@@ -234,3 +234,55 @@ enum MediaStatus {
   OPTIMIZED
   FAILED
 }
+
+/// Yönetici tarafından eklenen RSS kaynakları
+model RssFeedSource {
+  id            String        @id @default(cuid())
+  name          String // Örn: "BBC News TR"
+  url           String        @unique // RSS feed URL
+  categoryHint  String? // Öneri kategori eşleşmesi
+  language      String        @default("tr")
+  isActive      Boolean       @default(true)
+  lastFetchedAt DateTime?
+  fetchError    String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  items         RssFeedItem[]
+
+  @@index([isActive])
+}
+
+/// RSS'ten çekilen ham haberler
+model RssFeedItem {
+  id             String        @id @default(cuid())
+  sourceId       String
+  title          String
+  url            String        @unique
+  urlHash        String        @unique // SHA-256 hash, hızlı dedup
+  excerpt        String?
+  imageUrl       String?
+  publishedAt    DateTime?
+  status         RssItemStatus @default(PENDING)
+  aiScore        Int? // 0-100 Gemini öneri puanı
+  aiAnalysis     Json? // Gemini'nin tam JSON çıktısı
+  dismissed      Boolean       @default(false) // "İlginç değil" işareti
+  usedForArticle Boolean       @default(false) // Bu öneriden haber yazıldıysa
+  source         RssFeedSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([sourceId])
+  @@index([status])
+  @@index([aiScore])
+  @@index([publishedAt])
+  @@index([dismissed])
+  @@index([usedForArticle])
+}
+
+enum RssItemStatus {
+  PENDING // Henüz AI analizi yapılmadı
+  ANALYZED // Gemini analiz etti, puan verildi
+  LOW_SCORE // Puan düşük (< 40), gösterilmeyecek
+  COVERED // Zaten haberleştirilmiş konuyla örtüşüyor
+  DISMISSED // Yazar/admin "gerek yok" dedi
+}

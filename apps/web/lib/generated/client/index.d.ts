@@ -88,6 +88,16 @@ export type SupportTicket = $Result.DefaultSelection<Prisma.$SupportTicketPayloa
  * 
  */
 export type SupportMessage = $Result.DefaultSelection<Prisma.$SupportMessagePayload>
+/**
+ * Model RssFeedSource
+ * Yönetici tarafından eklenen RSS kaynakları
+ */
+export type RssFeedSource = $Result.DefaultSelection<Prisma.$RssFeedSourcePayload>
+/**
+ * Model RssFeedItem
+ * RSS'ten çekilen ham haberler
+ */
+export type RssFeedItem = $Result.DefaultSelection<Prisma.$RssFeedItemPayload>
 
 /**
  * Enums
@@ -102,11 +112,26 @@ export namespace $Enums {
 
 export type MediaStatus = (typeof MediaStatus)[keyof typeof MediaStatus]
 
+
+export const RssItemStatus: {
+  PENDING: 'PENDING',
+  ANALYZED: 'ANALYZED',
+  LOW_SCORE: 'LOW_SCORE',
+  COVERED: 'COVERED',
+  DISMISSED: 'DISMISSED'
+};
+
+export type RssItemStatus = (typeof RssItemStatus)[keyof typeof RssItemStatus]
+
 }
 
 export type MediaStatus = $Enums.MediaStatus
 
 export const MediaStatus: typeof $Enums.MediaStatus
+
+export type RssItemStatus = $Enums.RssItemStatus
+
+export const RssItemStatus: typeof $Enums.RssItemStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -378,6 +403,26 @@ export class PrismaClient<
     * ```
     */
   get supportMessage(): Prisma.SupportMessageDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.rssFeedSource`: Exposes CRUD operations for the **RssFeedSource** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RssFeedSources
+    * const rssFeedSources = await prisma.rssFeedSource.findMany()
+    * ```
+    */
+  get rssFeedSource(): Prisma.RssFeedSourceDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.rssFeedItem`: Exposes CRUD operations for the **RssFeedItem** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more RssFeedItems
+    * const rssFeedItems = await prisma.rssFeedItem.findMany()
+    * ```
+    */
+  get rssFeedItem(): Prisma.RssFeedItemDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -826,7 +871,9 @@ export namespace Prisma {
     Media: 'Media',
     StaticPage: 'StaticPage',
     SupportTicket: 'SupportTicket',
-    SupportMessage: 'SupportMessage'
+    SupportMessage: 'SupportMessage',
+    RssFeedSource: 'RssFeedSource',
+    RssFeedItem: 'RssFeedItem'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -842,7 +889,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1956,6 +2003,154 @@ export namespace Prisma {
           }
         }
       }
+      RssFeedSource: {
+        payload: Prisma.$RssFeedSourcePayload<ExtArgs>
+        fields: Prisma.RssFeedSourceFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RssFeedSourceFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RssFeedSourceFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload>
+          }
+          findFirst: {
+            args: Prisma.RssFeedSourceFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RssFeedSourceFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload>
+          }
+          findMany: {
+            args: Prisma.RssFeedSourceFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload>[]
+          }
+          create: {
+            args: Prisma.RssFeedSourceCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload>
+          }
+          createMany: {
+            args: Prisma.RssFeedSourceCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RssFeedSourceCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload>[]
+          }
+          delete: {
+            args: Prisma.RssFeedSourceDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload>
+          }
+          update: {
+            args: Prisma.RssFeedSourceUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload>
+          }
+          deleteMany: {
+            args: Prisma.RssFeedSourceDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RssFeedSourceUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RssFeedSourceUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload>[]
+          }
+          upsert: {
+            args: Prisma.RssFeedSourceUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedSourcePayload>
+          }
+          aggregate: {
+            args: Prisma.RssFeedSourceAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRssFeedSource>
+          }
+          groupBy: {
+            args: Prisma.RssFeedSourceGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RssFeedSourceGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RssFeedSourceCountArgs<ExtArgs>
+            result: $Utils.Optional<RssFeedSourceCountAggregateOutputType> | number
+          }
+        }
+      }
+      RssFeedItem: {
+        payload: Prisma.$RssFeedItemPayload<ExtArgs>
+        fields: Prisma.RssFeedItemFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.RssFeedItemFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.RssFeedItemFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload>
+          }
+          findFirst: {
+            args: Prisma.RssFeedItemFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.RssFeedItemFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload>
+          }
+          findMany: {
+            args: Prisma.RssFeedItemFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload>[]
+          }
+          create: {
+            args: Prisma.RssFeedItemCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload>
+          }
+          createMany: {
+            args: Prisma.RssFeedItemCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.RssFeedItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload>[]
+          }
+          delete: {
+            args: Prisma.RssFeedItemDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload>
+          }
+          update: {
+            args: Prisma.RssFeedItemUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload>
+          }
+          deleteMany: {
+            args: Prisma.RssFeedItemDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.RssFeedItemUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.RssFeedItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload>[]
+          }
+          upsert: {
+            args: Prisma.RssFeedItemUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$RssFeedItemPayload>
+          }
+          aggregate: {
+            args: Prisma.RssFeedItemAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateRssFeedItem>
+          }
+          groupBy: {
+            args: Prisma.RssFeedItemGroupByArgs<ExtArgs>
+            result: $Utils.Optional<RssFeedItemGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.RssFeedItemCountArgs<ExtArgs>
+            result: $Utils.Optional<RssFeedItemCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2079,6 +2274,8 @@ export namespace Prisma {
     staticPage?: StaticPageOmit
     supportTicket?: SupportTicketOmit
     supportMessage?: SupportMessageOmit
+    rssFeedSource?: RssFeedSourceOmit
+    rssFeedItem?: RssFeedItemOmit
   }
 
   /* Types for Logging */
@@ -2400,6 +2597,37 @@ export namespace Prisma {
    */
   export type SupportTicketCountOutputTypeCountMessagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SupportMessageWhereInput
+  }
+
+
+  /**
+   * Count Type RssFeedSourceCountOutputType
+   */
+
+  export type RssFeedSourceCountOutputType = {
+    items: number
+  }
+
+  export type RssFeedSourceCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    items?: boolean | RssFeedSourceCountOutputTypeCountItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * RssFeedSourceCountOutputType without action
+   */
+  export type RssFeedSourceCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSourceCountOutputType
+     */
+    select?: RssFeedSourceCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * RssFeedSourceCountOutputType without action
+   */
+  export type RssFeedSourceCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RssFeedItemWhereInput
   }
 
 
@@ -19220,6 +19448,2369 @@ export namespace Prisma {
 
 
   /**
+   * Model RssFeedSource
+   */
+
+  export type AggregateRssFeedSource = {
+    _count: RssFeedSourceCountAggregateOutputType | null
+    _min: RssFeedSourceMinAggregateOutputType | null
+    _max: RssFeedSourceMaxAggregateOutputType | null
+  }
+
+  export type RssFeedSourceMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    url: string | null
+    categoryHint: string | null
+    language: string | null
+    isActive: boolean | null
+    lastFetchedAt: Date | null
+    fetchError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RssFeedSourceMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    url: string | null
+    categoryHint: string | null
+    language: string | null
+    isActive: boolean | null
+    lastFetchedAt: Date | null
+    fetchError: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RssFeedSourceCountAggregateOutputType = {
+    id: number
+    name: number
+    url: number
+    categoryHint: number
+    language: number
+    isActive: number
+    lastFetchedAt: number
+    fetchError: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type RssFeedSourceMinAggregateInputType = {
+    id?: true
+    name?: true
+    url?: true
+    categoryHint?: true
+    language?: true
+    isActive?: true
+    lastFetchedAt?: true
+    fetchError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RssFeedSourceMaxAggregateInputType = {
+    id?: true
+    name?: true
+    url?: true
+    categoryHint?: true
+    language?: true
+    isActive?: true
+    lastFetchedAt?: true
+    fetchError?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RssFeedSourceCountAggregateInputType = {
+    id?: true
+    name?: true
+    url?: true
+    categoryHint?: true
+    language?: true
+    isActive?: true
+    lastFetchedAt?: true
+    fetchError?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type RssFeedSourceAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RssFeedSource to aggregate.
+     */
+    where?: RssFeedSourceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RssFeedSources to fetch.
+     */
+    orderBy?: RssFeedSourceOrderByWithRelationInput | RssFeedSourceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RssFeedSourceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RssFeedSources from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RssFeedSources.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RssFeedSources
+    **/
+    _count?: true | RssFeedSourceCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RssFeedSourceMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RssFeedSourceMaxAggregateInputType
+  }
+
+  export type GetRssFeedSourceAggregateType<T extends RssFeedSourceAggregateArgs> = {
+        [P in keyof T & keyof AggregateRssFeedSource]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRssFeedSource[P]>
+      : GetScalarType<T[P], AggregateRssFeedSource[P]>
+  }
+
+
+
+
+  export type RssFeedSourceGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RssFeedSourceWhereInput
+    orderBy?: RssFeedSourceOrderByWithAggregationInput | RssFeedSourceOrderByWithAggregationInput[]
+    by: RssFeedSourceScalarFieldEnum[] | RssFeedSourceScalarFieldEnum
+    having?: RssFeedSourceScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RssFeedSourceCountAggregateInputType | true
+    _min?: RssFeedSourceMinAggregateInputType
+    _max?: RssFeedSourceMaxAggregateInputType
+  }
+
+  export type RssFeedSourceGroupByOutputType = {
+    id: string
+    name: string
+    url: string
+    categoryHint: string | null
+    language: string
+    isActive: boolean
+    lastFetchedAt: Date | null
+    fetchError: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: RssFeedSourceCountAggregateOutputType | null
+    _min: RssFeedSourceMinAggregateOutputType | null
+    _max: RssFeedSourceMaxAggregateOutputType | null
+  }
+
+  type GetRssFeedSourceGroupByPayload<T extends RssFeedSourceGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RssFeedSourceGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RssFeedSourceGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RssFeedSourceGroupByOutputType[P]>
+            : GetScalarType<T[P], RssFeedSourceGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RssFeedSourceSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    url?: boolean
+    categoryHint?: boolean
+    language?: boolean
+    isActive?: boolean
+    lastFetchedAt?: boolean
+    fetchError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    items?: boolean | RssFeedSource$itemsArgs<ExtArgs>
+    _count?: boolean | RssFeedSourceCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rssFeedSource"]>
+
+  export type RssFeedSourceSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    url?: boolean
+    categoryHint?: boolean
+    language?: boolean
+    isActive?: boolean
+    lastFetchedAt?: boolean
+    fetchError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["rssFeedSource"]>
+
+  export type RssFeedSourceSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    url?: boolean
+    categoryHint?: boolean
+    language?: boolean
+    isActive?: boolean
+    lastFetchedAt?: boolean
+    fetchError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["rssFeedSource"]>
+
+  export type RssFeedSourceSelectScalar = {
+    id?: boolean
+    name?: boolean
+    url?: boolean
+    categoryHint?: boolean
+    language?: boolean
+    isActive?: boolean
+    lastFetchedAt?: boolean
+    fetchError?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type RssFeedSourceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "url" | "categoryHint" | "language" | "isActive" | "lastFetchedAt" | "fetchError" | "createdAt" | "updatedAt", ExtArgs["result"]["rssFeedSource"]>
+  export type RssFeedSourceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    items?: boolean | RssFeedSource$itemsArgs<ExtArgs>
+    _count?: boolean | RssFeedSourceCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type RssFeedSourceIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type RssFeedSourceIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $RssFeedSourcePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RssFeedSource"
+    objects: {
+      items: Prisma.$RssFeedItemPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      url: string
+      categoryHint: string | null
+      language: string
+      isActive: boolean
+      lastFetchedAt: Date | null
+      fetchError: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["rssFeedSource"]>
+    composites: {}
+  }
+
+  type RssFeedSourceGetPayload<S extends boolean | null | undefined | RssFeedSourceDefaultArgs> = $Result.GetResult<Prisma.$RssFeedSourcePayload, S>
+
+  type RssFeedSourceCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RssFeedSourceFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RssFeedSourceCountAggregateInputType | true
+    }
+
+  export interface RssFeedSourceDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RssFeedSource'], meta: { name: 'RssFeedSource' } }
+    /**
+     * Find zero or one RssFeedSource that matches the filter.
+     * @param {RssFeedSourceFindUniqueArgs} args - Arguments to find a RssFeedSource
+     * @example
+     * // Get one RssFeedSource
+     * const rssFeedSource = await prisma.rssFeedSource.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RssFeedSourceFindUniqueArgs>(args: SelectSubset<T, RssFeedSourceFindUniqueArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RssFeedSource that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RssFeedSourceFindUniqueOrThrowArgs} args - Arguments to find a RssFeedSource
+     * @example
+     * // Get one RssFeedSource
+     * const rssFeedSource = await prisma.rssFeedSource.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RssFeedSourceFindUniqueOrThrowArgs>(args: SelectSubset<T, RssFeedSourceFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RssFeedSource that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedSourceFindFirstArgs} args - Arguments to find a RssFeedSource
+     * @example
+     * // Get one RssFeedSource
+     * const rssFeedSource = await prisma.rssFeedSource.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RssFeedSourceFindFirstArgs>(args?: SelectSubset<T, RssFeedSourceFindFirstArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RssFeedSource that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedSourceFindFirstOrThrowArgs} args - Arguments to find a RssFeedSource
+     * @example
+     * // Get one RssFeedSource
+     * const rssFeedSource = await prisma.rssFeedSource.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RssFeedSourceFindFirstOrThrowArgs>(args?: SelectSubset<T, RssFeedSourceFindFirstOrThrowArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RssFeedSources that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedSourceFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RssFeedSources
+     * const rssFeedSources = await prisma.rssFeedSource.findMany()
+     * 
+     * // Get first 10 RssFeedSources
+     * const rssFeedSources = await prisma.rssFeedSource.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const rssFeedSourceWithIdOnly = await prisma.rssFeedSource.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RssFeedSourceFindManyArgs>(args?: SelectSubset<T, RssFeedSourceFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RssFeedSource.
+     * @param {RssFeedSourceCreateArgs} args - Arguments to create a RssFeedSource.
+     * @example
+     * // Create one RssFeedSource
+     * const RssFeedSource = await prisma.rssFeedSource.create({
+     *   data: {
+     *     // ... data to create a RssFeedSource
+     *   }
+     * })
+     * 
+     */
+    create<T extends RssFeedSourceCreateArgs>(args: SelectSubset<T, RssFeedSourceCreateArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RssFeedSources.
+     * @param {RssFeedSourceCreateManyArgs} args - Arguments to create many RssFeedSources.
+     * @example
+     * // Create many RssFeedSources
+     * const rssFeedSource = await prisma.rssFeedSource.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RssFeedSourceCreateManyArgs>(args?: SelectSubset<T, RssFeedSourceCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RssFeedSources and returns the data saved in the database.
+     * @param {RssFeedSourceCreateManyAndReturnArgs} args - Arguments to create many RssFeedSources.
+     * @example
+     * // Create many RssFeedSources
+     * const rssFeedSource = await prisma.rssFeedSource.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RssFeedSources and only return the `id`
+     * const rssFeedSourceWithIdOnly = await prisma.rssFeedSource.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RssFeedSourceCreateManyAndReturnArgs>(args?: SelectSubset<T, RssFeedSourceCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RssFeedSource.
+     * @param {RssFeedSourceDeleteArgs} args - Arguments to delete one RssFeedSource.
+     * @example
+     * // Delete one RssFeedSource
+     * const RssFeedSource = await prisma.rssFeedSource.delete({
+     *   where: {
+     *     // ... filter to delete one RssFeedSource
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RssFeedSourceDeleteArgs>(args: SelectSubset<T, RssFeedSourceDeleteArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RssFeedSource.
+     * @param {RssFeedSourceUpdateArgs} args - Arguments to update one RssFeedSource.
+     * @example
+     * // Update one RssFeedSource
+     * const rssFeedSource = await prisma.rssFeedSource.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RssFeedSourceUpdateArgs>(args: SelectSubset<T, RssFeedSourceUpdateArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RssFeedSources.
+     * @param {RssFeedSourceDeleteManyArgs} args - Arguments to filter RssFeedSources to delete.
+     * @example
+     * // Delete a few RssFeedSources
+     * const { count } = await prisma.rssFeedSource.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RssFeedSourceDeleteManyArgs>(args?: SelectSubset<T, RssFeedSourceDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RssFeedSources.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedSourceUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RssFeedSources
+     * const rssFeedSource = await prisma.rssFeedSource.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RssFeedSourceUpdateManyArgs>(args: SelectSubset<T, RssFeedSourceUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RssFeedSources and returns the data updated in the database.
+     * @param {RssFeedSourceUpdateManyAndReturnArgs} args - Arguments to update many RssFeedSources.
+     * @example
+     * // Update many RssFeedSources
+     * const rssFeedSource = await prisma.rssFeedSource.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RssFeedSources and only return the `id`
+     * const rssFeedSourceWithIdOnly = await prisma.rssFeedSource.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RssFeedSourceUpdateManyAndReturnArgs>(args: SelectSubset<T, RssFeedSourceUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RssFeedSource.
+     * @param {RssFeedSourceUpsertArgs} args - Arguments to update or create a RssFeedSource.
+     * @example
+     * // Update or create a RssFeedSource
+     * const rssFeedSource = await prisma.rssFeedSource.upsert({
+     *   create: {
+     *     // ... data to create a RssFeedSource
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RssFeedSource we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RssFeedSourceUpsertArgs>(args: SelectSubset<T, RssFeedSourceUpsertArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RssFeedSources.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedSourceCountArgs} args - Arguments to filter RssFeedSources to count.
+     * @example
+     * // Count the number of RssFeedSources
+     * const count = await prisma.rssFeedSource.count({
+     *   where: {
+     *     // ... the filter for the RssFeedSources we want to count
+     *   }
+     * })
+    **/
+    count<T extends RssFeedSourceCountArgs>(
+      args?: Subset<T, RssFeedSourceCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RssFeedSourceCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RssFeedSource.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedSourceAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RssFeedSourceAggregateArgs>(args: Subset<T, RssFeedSourceAggregateArgs>): Prisma.PrismaPromise<GetRssFeedSourceAggregateType<T>>
+
+    /**
+     * Group by RssFeedSource.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedSourceGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RssFeedSourceGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RssFeedSourceGroupByArgs['orderBy'] }
+        : { orderBy?: RssFeedSourceGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RssFeedSourceGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRssFeedSourceGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RssFeedSource model
+   */
+  readonly fields: RssFeedSourceFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RssFeedSource.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RssFeedSourceClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    items<T extends RssFeedSource$itemsArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedSource$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RssFeedSource model
+   */
+  interface RssFeedSourceFieldRefs {
+    readonly id: FieldRef<"RssFeedSource", 'String'>
+    readonly name: FieldRef<"RssFeedSource", 'String'>
+    readonly url: FieldRef<"RssFeedSource", 'String'>
+    readonly categoryHint: FieldRef<"RssFeedSource", 'String'>
+    readonly language: FieldRef<"RssFeedSource", 'String'>
+    readonly isActive: FieldRef<"RssFeedSource", 'Boolean'>
+    readonly lastFetchedAt: FieldRef<"RssFeedSource", 'DateTime'>
+    readonly fetchError: FieldRef<"RssFeedSource", 'String'>
+    readonly createdAt: FieldRef<"RssFeedSource", 'DateTime'>
+    readonly updatedAt: FieldRef<"RssFeedSource", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RssFeedSource findUnique
+   */
+  export type RssFeedSourceFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedSource to fetch.
+     */
+    where: RssFeedSourceWhereUniqueInput
+  }
+
+  /**
+   * RssFeedSource findUniqueOrThrow
+   */
+  export type RssFeedSourceFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedSource to fetch.
+     */
+    where: RssFeedSourceWhereUniqueInput
+  }
+
+  /**
+   * RssFeedSource findFirst
+   */
+  export type RssFeedSourceFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedSource to fetch.
+     */
+    where?: RssFeedSourceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RssFeedSources to fetch.
+     */
+    orderBy?: RssFeedSourceOrderByWithRelationInput | RssFeedSourceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RssFeedSources.
+     */
+    cursor?: RssFeedSourceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RssFeedSources from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RssFeedSources.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RssFeedSources.
+     */
+    distinct?: RssFeedSourceScalarFieldEnum | RssFeedSourceScalarFieldEnum[]
+  }
+
+  /**
+   * RssFeedSource findFirstOrThrow
+   */
+  export type RssFeedSourceFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedSource to fetch.
+     */
+    where?: RssFeedSourceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RssFeedSources to fetch.
+     */
+    orderBy?: RssFeedSourceOrderByWithRelationInput | RssFeedSourceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RssFeedSources.
+     */
+    cursor?: RssFeedSourceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RssFeedSources from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RssFeedSources.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RssFeedSources.
+     */
+    distinct?: RssFeedSourceScalarFieldEnum | RssFeedSourceScalarFieldEnum[]
+  }
+
+  /**
+   * RssFeedSource findMany
+   */
+  export type RssFeedSourceFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedSources to fetch.
+     */
+    where?: RssFeedSourceWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RssFeedSources to fetch.
+     */
+    orderBy?: RssFeedSourceOrderByWithRelationInput | RssFeedSourceOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RssFeedSources.
+     */
+    cursor?: RssFeedSourceWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RssFeedSources from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RssFeedSources.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RssFeedSources.
+     */
+    distinct?: RssFeedSourceScalarFieldEnum | RssFeedSourceScalarFieldEnum[]
+  }
+
+  /**
+   * RssFeedSource create
+   */
+  export type RssFeedSourceCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RssFeedSource.
+     */
+    data: XOR<RssFeedSourceCreateInput, RssFeedSourceUncheckedCreateInput>
+  }
+
+  /**
+   * RssFeedSource createMany
+   */
+  export type RssFeedSourceCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RssFeedSources.
+     */
+    data: RssFeedSourceCreateManyInput | RssFeedSourceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RssFeedSource createManyAndReturn
+   */
+  export type RssFeedSourceCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * The data used to create many RssFeedSources.
+     */
+    data: RssFeedSourceCreateManyInput | RssFeedSourceCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RssFeedSource update
+   */
+  export type RssFeedSourceUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RssFeedSource.
+     */
+    data: XOR<RssFeedSourceUpdateInput, RssFeedSourceUncheckedUpdateInput>
+    /**
+     * Choose, which RssFeedSource to update.
+     */
+    where: RssFeedSourceWhereUniqueInput
+  }
+
+  /**
+   * RssFeedSource updateMany
+   */
+  export type RssFeedSourceUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RssFeedSources.
+     */
+    data: XOR<RssFeedSourceUpdateManyMutationInput, RssFeedSourceUncheckedUpdateManyInput>
+    /**
+     * Filter which RssFeedSources to update
+     */
+    where?: RssFeedSourceWhereInput
+    /**
+     * Limit how many RssFeedSources to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RssFeedSource updateManyAndReturn
+   */
+  export type RssFeedSourceUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * The data used to update RssFeedSources.
+     */
+    data: XOR<RssFeedSourceUpdateManyMutationInput, RssFeedSourceUncheckedUpdateManyInput>
+    /**
+     * Filter which RssFeedSources to update
+     */
+    where?: RssFeedSourceWhereInput
+    /**
+     * Limit how many RssFeedSources to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RssFeedSource upsert
+   */
+  export type RssFeedSourceUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RssFeedSource to update in case it exists.
+     */
+    where: RssFeedSourceWhereUniqueInput
+    /**
+     * In case the RssFeedSource found by the `where` argument doesn't exist, create a new RssFeedSource with this data.
+     */
+    create: XOR<RssFeedSourceCreateInput, RssFeedSourceUncheckedCreateInput>
+    /**
+     * In case the RssFeedSource was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RssFeedSourceUpdateInput, RssFeedSourceUncheckedUpdateInput>
+  }
+
+  /**
+   * RssFeedSource delete
+   */
+  export type RssFeedSourceDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+    /**
+     * Filter which RssFeedSource to delete.
+     */
+    where: RssFeedSourceWhereUniqueInput
+  }
+
+  /**
+   * RssFeedSource deleteMany
+   */
+  export type RssFeedSourceDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RssFeedSources to delete
+     */
+    where?: RssFeedSourceWhereInput
+    /**
+     * Limit how many RssFeedSources to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RssFeedSource.items
+   */
+  export type RssFeedSource$itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    where?: RssFeedItemWhereInput
+    orderBy?: RssFeedItemOrderByWithRelationInput | RssFeedItemOrderByWithRelationInput[]
+    cursor?: RssFeedItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RssFeedItemScalarFieldEnum | RssFeedItemScalarFieldEnum[]
+  }
+
+  /**
+   * RssFeedSource without action
+   */
+  export type RssFeedSourceDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedSource
+     */
+    select?: RssFeedSourceSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedSource
+     */
+    omit?: RssFeedSourceOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedSourceInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model RssFeedItem
+   */
+
+  export type AggregateRssFeedItem = {
+    _count: RssFeedItemCountAggregateOutputType | null
+    _avg: RssFeedItemAvgAggregateOutputType | null
+    _sum: RssFeedItemSumAggregateOutputType | null
+    _min: RssFeedItemMinAggregateOutputType | null
+    _max: RssFeedItemMaxAggregateOutputType | null
+  }
+
+  export type RssFeedItemAvgAggregateOutputType = {
+    aiScore: number | null
+  }
+
+  export type RssFeedItemSumAggregateOutputType = {
+    aiScore: number | null
+  }
+
+  export type RssFeedItemMinAggregateOutputType = {
+    id: string | null
+    sourceId: string | null
+    title: string | null
+    url: string | null
+    urlHash: string | null
+    excerpt: string | null
+    imageUrl: string | null
+    publishedAt: Date | null
+    status: $Enums.RssItemStatus | null
+    aiScore: number | null
+    dismissed: boolean | null
+    usedForArticle: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RssFeedItemMaxAggregateOutputType = {
+    id: string | null
+    sourceId: string | null
+    title: string | null
+    url: string | null
+    urlHash: string | null
+    excerpt: string | null
+    imageUrl: string | null
+    publishedAt: Date | null
+    status: $Enums.RssItemStatus | null
+    aiScore: number | null
+    dismissed: boolean | null
+    usedForArticle: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type RssFeedItemCountAggregateOutputType = {
+    id: number
+    sourceId: number
+    title: number
+    url: number
+    urlHash: number
+    excerpt: number
+    imageUrl: number
+    publishedAt: number
+    status: number
+    aiScore: number
+    aiAnalysis: number
+    dismissed: number
+    usedForArticle: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type RssFeedItemAvgAggregateInputType = {
+    aiScore?: true
+  }
+
+  export type RssFeedItemSumAggregateInputType = {
+    aiScore?: true
+  }
+
+  export type RssFeedItemMinAggregateInputType = {
+    id?: true
+    sourceId?: true
+    title?: true
+    url?: true
+    urlHash?: true
+    excerpt?: true
+    imageUrl?: true
+    publishedAt?: true
+    status?: true
+    aiScore?: true
+    dismissed?: true
+    usedForArticle?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RssFeedItemMaxAggregateInputType = {
+    id?: true
+    sourceId?: true
+    title?: true
+    url?: true
+    urlHash?: true
+    excerpt?: true
+    imageUrl?: true
+    publishedAt?: true
+    status?: true
+    aiScore?: true
+    dismissed?: true
+    usedForArticle?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type RssFeedItemCountAggregateInputType = {
+    id?: true
+    sourceId?: true
+    title?: true
+    url?: true
+    urlHash?: true
+    excerpt?: true
+    imageUrl?: true
+    publishedAt?: true
+    status?: true
+    aiScore?: true
+    aiAnalysis?: true
+    dismissed?: true
+    usedForArticle?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type RssFeedItemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RssFeedItem to aggregate.
+     */
+    where?: RssFeedItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RssFeedItems to fetch.
+     */
+    orderBy?: RssFeedItemOrderByWithRelationInput | RssFeedItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: RssFeedItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RssFeedItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RssFeedItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned RssFeedItems
+    **/
+    _count?: true | RssFeedItemCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: RssFeedItemAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: RssFeedItemSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: RssFeedItemMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: RssFeedItemMaxAggregateInputType
+  }
+
+  export type GetRssFeedItemAggregateType<T extends RssFeedItemAggregateArgs> = {
+        [P in keyof T & keyof AggregateRssFeedItem]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateRssFeedItem[P]>
+      : GetScalarType<T[P], AggregateRssFeedItem[P]>
+  }
+
+
+
+
+  export type RssFeedItemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RssFeedItemWhereInput
+    orderBy?: RssFeedItemOrderByWithAggregationInput | RssFeedItemOrderByWithAggregationInput[]
+    by: RssFeedItemScalarFieldEnum[] | RssFeedItemScalarFieldEnum
+    having?: RssFeedItemScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: RssFeedItemCountAggregateInputType | true
+    _avg?: RssFeedItemAvgAggregateInputType
+    _sum?: RssFeedItemSumAggregateInputType
+    _min?: RssFeedItemMinAggregateInputType
+    _max?: RssFeedItemMaxAggregateInputType
+  }
+
+  export type RssFeedItemGroupByOutputType = {
+    id: string
+    sourceId: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt: string | null
+    imageUrl: string | null
+    publishedAt: Date | null
+    status: $Enums.RssItemStatus
+    aiScore: number | null
+    aiAnalysis: JsonValue | null
+    dismissed: boolean
+    usedForArticle: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: RssFeedItemCountAggregateOutputType | null
+    _avg: RssFeedItemAvgAggregateOutputType | null
+    _sum: RssFeedItemSumAggregateOutputType | null
+    _min: RssFeedItemMinAggregateOutputType | null
+    _max: RssFeedItemMaxAggregateOutputType | null
+  }
+
+  type GetRssFeedItemGroupByPayload<T extends RssFeedItemGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<RssFeedItemGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof RssFeedItemGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], RssFeedItemGroupByOutputType[P]>
+            : GetScalarType<T[P], RssFeedItemGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type RssFeedItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sourceId?: boolean
+    title?: boolean
+    url?: boolean
+    urlHash?: boolean
+    excerpt?: boolean
+    imageUrl?: boolean
+    publishedAt?: boolean
+    status?: boolean
+    aiScore?: boolean
+    aiAnalysis?: boolean
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rssFeedItem"]>
+
+  export type RssFeedItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sourceId?: boolean
+    title?: boolean
+    url?: boolean
+    urlHash?: boolean
+    excerpt?: boolean
+    imageUrl?: boolean
+    publishedAt?: boolean
+    status?: boolean
+    aiScore?: boolean
+    aiAnalysis?: boolean
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rssFeedItem"]>
+
+  export type RssFeedItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    sourceId?: boolean
+    title?: boolean
+    url?: boolean
+    urlHash?: boolean
+    excerpt?: boolean
+    imageUrl?: boolean
+    publishedAt?: boolean
+    status?: boolean
+    aiScore?: boolean
+    aiAnalysis?: boolean
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["rssFeedItem"]>
+
+  export type RssFeedItemSelectScalar = {
+    id?: boolean
+    sourceId?: boolean
+    title?: boolean
+    url?: boolean
+    urlHash?: boolean
+    excerpt?: boolean
+    imageUrl?: boolean
+    publishedAt?: boolean
+    status?: boolean
+    aiScore?: boolean
+    aiAnalysis?: boolean
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type RssFeedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceId" | "title" | "url" | "urlHash" | "excerpt" | "imageUrl" | "publishedAt" | "status" | "aiScore" | "aiAnalysis" | "dismissed" | "usedForArticle" | "createdAt" | "updatedAt", ExtArgs["result"]["rssFeedItem"]>
+  export type RssFeedItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
+  }
+  export type RssFeedItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
+  }
+  export type RssFeedItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
+  }
+
+  export type $RssFeedItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "RssFeedItem"
+    objects: {
+      source: Prisma.$RssFeedSourcePayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      sourceId: string
+      title: string
+      url: string
+      urlHash: string
+      excerpt: string | null
+      imageUrl: string | null
+      publishedAt: Date | null
+      status: $Enums.RssItemStatus
+      aiScore: number | null
+      aiAnalysis: Prisma.JsonValue | null
+      dismissed: boolean
+      usedForArticle: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["rssFeedItem"]>
+    composites: {}
+  }
+
+  type RssFeedItemGetPayload<S extends boolean | null | undefined | RssFeedItemDefaultArgs> = $Result.GetResult<Prisma.$RssFeedItemPayload, S>
+
+  type RssFeedItemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<RssFeedItemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: RssFeedItemCountAggregateInputType | true
+    }
+
+  export interface RssFeedItemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['RssFeedItem'], meta: { name: 'RssFeedItem' } }
+    /**
+     * Find zero or one RssFeedItem that matches the filter.
+     * @param {RssFeedItemFindUniqueArgs} args - Arguments to find a RssFeedItem
+     * @example
+     * // Get one RssFeedItem
+     * const rssFeedItem = await prisma.rssFeedItem.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends RssFeedItemFindUniqueArgs>(args: SelectSubset<T, RssFeedItemFindUniqueArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one RssFeedItem that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {RssFeedItemFindUniqueOrThrowArgs} args - Arguments to find a RssFeedItem
+     * @example
+     * // Get one RssFeedItem
+     * const rssFeedItem = await prisma.rssFeedItem.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends RssFeedItemFindUniqueOrThrowArgs>(args: SelectSubset<T, RssFeedItemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RssFeedItem that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedItemFindFirstArgs} args - Arguments to find a RssFeedItem
+     * @example
+     * // Get one RssFeedItem
+     * const rssFeedItem = await prisma.rssFeedItem.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends RssFeedItemFindFirstArgs>(args?: SelectSubset<T, RssFeedItemFindFirstArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first RssFeedItem that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedItemFindFirstOrThrowArgs} args - Arguments to find a RssFeedItem
+     * @example
+     * // Get one RssFeedItem
+     * const rssFeedItem = await prisma.rssFeedItem.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends RssFeedItemFindFirstOrThrowArgs>(args?: SelectSubset<T, RssFeedItemFindFirstOrThrowArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more RssFeedItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedItemFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all RssFeedItems
+     * const rssFeedItems = await prisma.rssFeedItem.findMany()
+     * 
+     * // Get first 10 RssFeedItems
+     * const rssFeedItems = await prisma.rssFeedItem.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const rssFeedItemWithIdOnly = await prisma.rssFeedItem.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends RssFeedItemFindManyArgs>(args?: SelectSubset<T, RssFeedItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a RssFeedItem.
+     * @param {RssFeedItemCreateArgs} args - Arguments to create a RssFeedItem.
+     * @example
+     * // Create one RssFeedItem
+     * const RssFeedItem = await prisma.rssFeedItem.create({
+     *   data: {
+     *     // ... data to create a RssFeedItem
+     *   }
+     * })
+     * 
+     */
+    create<T extends RssFeedItemCreateArgs>(args: SelectSubset<T, RssFeedItemCreateArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many RssFeedItems.
+     * @param {RssFeedItemCreateManyArgs} args - Arguments to create many RssFeedItems.
+     * @example
+     * // Create many RssFeedItems
+     * const rssFeedItem = await prisma.rssFeedItem.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends RssFeedItemCreateManyArgs>(args?: SelectSubset<T, RssFeedItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many RssFeedItems and returns the data saved in the database.
+     * @param {RssFeedItemCreateManyAndReturnArgs} args - Arguments to create many RssFeedItems.
+     * @example
+     * // Create many RssFeedItems
+     * const rssFeedItem = await prisma.rssFeedItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many RssFeedItems and only return the `id`
+     * const rssFeedItemWithIdOnly = await prisma.rssFeedItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends RssFeedItemCreateManyAndReturnArgs>(args?: SelectSubset<T, RssFeedItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a RssFeedItem.
+     * @param {RssFeedItemDeleteArgs} args - Arguments to delete one RssFeedItem.
+     * @example
+     * // Delete one RssFeedItem
+     * const RssFeedItem = await prisma.rssFeedItem.delete({
+     *   where: {
+     *     // ... filter to delete one RssFeedItem
+     *   }
+     * })
+     * 
+     */
+    delete<T extends RssFeedItemDeleteArgs>(args: SelectSubset<T, RssFeedItemDeleteArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one RssFeedItem.
+     * @param {RssFeedItemUpdateArgs} args - Arguments to update one RssFeedItem.
+     * @example
+     * // Update one RssFeedItem
+     * const rssFeedItem = await prisma.rssFeedItem.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends RssFeedItemUpdateArgs>(args: SelectSubset<T, RssFeedItemUpdateArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more RssFeedItems.
+     * @param {RssFeedItemDeleteManyArgs} args - Arguments to filter RssFeedItems to delete.
+     * @example
+     * // Delete a few RssFeedItems
+     * const { count } = await prisma.rssFeedItem.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends RssFeedItemDeleteManyArgs>(args?: SelectSubset<T, RssFeedItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RssFeedItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedItemUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many RssFeedItems
+     * const rssFeedItem = await prisma.rssFeedItem.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends RssFeedItemUpdateManyArgs>(args: SelectSubset<T, RssFeedItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more RssFeedItems and returns the data updated in the database.
+     * @param {RssFeedItemUpdateManyAndReturnArgs} args - Arguments to update many RssFeedItems.
+     * @example
+     * // Update many RssFeedItems
+     * const rssFeedItem = await prisma.rssFeedItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more RssFeedItems and only return the `id`
+     * const rssFeedItemWithIdOnly = await prisma.rssFeedItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends RssFeedItemUpdateManyAndReturnArgs>(args: SelectSubset<T, RssFeedItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one RssFeedItem.
+     * @param {RssFeedItemUpsertArgs} args - Arguments to update or create a RssFeedItem.
+     * @example
+     * // Update or create a RssFeedItem
+     * const rssFeedItem = await prisma.rssFeedItem.upsert({
+     *   create: {
+     *     // ... data to create a RssFeedItem
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the RssFeedItem we want to update
+     *   }
+     * })
+     */
+    upsert<T extends RssFeedItemUpsertArgs>(args: SelectSubset<T, RssFeedItemUpsertArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of RssFeedItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedItemCountArgs} args - Arguments to filter RssFeedItems to count.
+     * @example
+     * // Count the number of RssFeedItems
+     * const count = await prisma.rssFeedItem.count({
+     *   where: {
+     *     // ... the filter for the RssFeedItems we want to count
+     *   }
+     * })
+    **/
+    count<T extends RssFeedItemCountArgs>(
+      args?: Subset<T, RssFeedItemCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], RssFeedItemCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a RssFeedItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedItemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends RssFeedItemAggregateArgs>(args: Subset<T, RssFeedItemAggregateArgs>): Prisma.PrismaPromise<GetRssFeedItemAggregateType<T>>
+
+    /**
+     * Group by RssFeedItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {RssFeedItemGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends RssFeedItemGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: RssFeedItemGroupByArgs['orderBy'] }
+        : { orderBy?: RssFeedItemGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, RssFeedItemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetRssFeedItemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the RssFeedItem model
+   */
+  readonly fields: RssFeedItemFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for RssFeedItem.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__RssFeedItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    source<T extends RssFeedSourceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedSourceDefaultArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the RssFeedItem model
+   */
+  interface RssFeedItemFieldRefs {
+    readonly id: FieldRef<"RssFeedItem", 'String'>
+    readonly sourceId: FieldRef<"RssFeedItem", 'String'>
+    readonly title: FieldRef<"RssFeedItem", 'String'>
+    readonly url: FieldRef<"RssFeedItem", 'String'>
+    readonly urlHash: FieldRef<"RssFeedItem", 'String'>
+    readonly excerpt: FieldRef<"RssFeedItem", 'String'>
+    readonly imageUrl: FieldRef<"RssFeedItem", 'String'>
+    readonly publishedAt: FieldRef<"RssFeedItem", 'DateTime'>
+    readonly status: FieldRef<"RssFeedItem", 'RssItemStatus'>
+    readonly aiScore: FieldRef<"RssFeedItem", 'Int'>
+    readonly aiAnalysis: FieldRef<"RssFeedItem", 'Json'>
+    readonly dismissed: FieldRef<"RssFeedItem", 'Boolean'>
+    readonly usedForArticle: FieldRef<"RssFeedItem", 'Boolean'>
+    readonly createdAt: FieldRef<"RssFeedItem", 'DateTime'>
+    readonly updatedAt: FieldRef<"RssFeedItem", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * RssFeedItem findUnique
+   */
+  export type RssFeedItemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedItem to fetch.
+     */
+    where: RssFeedItemWhereUniqueInput
+  }
+
+  /**
+   * RssFeedItem findUniqueOrThrow
+   */
+  export type RssFeedItemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedItem to fetch.
+     */
+    where: RssFeedItemWhereUniqueInput
+  }
+
+  /**
+   * RssFeedItem findFirst
+   */
+  export type RssFeedItemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedItem to fetch.
+     */
+    where?: RssFeedItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RssFeedItems to fetch.
+     */
+    orderBy?: RssFeedItemOrderByWithRelationInput | RssFeedItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RssFeedItems.
+     */
+    cursor?: RssFeedItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RssFeedItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RssFeedItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RssFeedItems.
+     */
+    distinct?: RssFeedItemScalarFieldEnum | RssFeedItemScalarFieldEnum[]
+  }
+
+  /**
+   * RssFeedItem findFirstOrThrow
+   */
+  export type RssFeedItemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedItem to fetch.
+     */
+    where?: RssFeedItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RssFeedItems to fetch.
+     */
+    orderBy?: RssFeedItemOrderByWithRelationInput | RssFeedItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for RssFeedItems.
+     */
+    cursor?: RssFeedItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RssFeedItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RssFeedItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RssFeedItems.
+     */
+    distinct?: RssFeedItemScalarFieldEnum | RssFeedItemScalarFieldEnum[]
+  }
+
+  /**
+   * RssFeedItem findMany
+   */
+  export type RssFeedItemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    /**
+     * Filter, which RssFeedItems to fetch.
+     */
+    where?: RssFeedItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of RssFeedItems to fetch.
+     */
+    orderBy?: RssFeedItemOrderByWithRelationInput | RssFeedItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing RssFeedItems.
+     */
+    cursor?: RssFeedItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` RssFeedItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` RssFeedItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of RssFeedItems.
+     */
+    distinct?: RssFeedItemScalarFieldEnum | RssFeedItemScalarFieldEnum[]
+  }
+
+  /**
+   * RssFeedItem create
+   */
+  export type RssFeedItemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    /**
+     * The data needed to create a RssFeedItem.
+     */
+    data: XOR<RssFeedItemCreateInput, RssFeedItemUncheckedCreateInput>
+  }
+
+  /**
+   * RssFeedItem createMany
+   */
+  export type RssFeedItemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many RssFeedItems.
+     */
+    data: RssFeedItemCreateManyInput | RssFeedItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * RssFeedItem createManyAndReturn
+   */
+  export type RssFeedItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many RssFeedItems.
+     */
+    data: RssFeedItemCreateManyInput | RssFeedItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RssFeedItem update
+   */
+  export type RssFeedItemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    /**
+     * The data needed to update a RssFeedItem.
+     */
+    data: XOR<RssFeedItemUpdateInput, RssFeedItemUncheckedUpdateInput>
+    /**
+     * Choose, which RssFeedItem to update.
+     */
+    where: RssFeedItemWhereUniqueInput
+  }
+
+  /**
+   * RssFeedItem updateMany
+   */
+  export type RssFeedItemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update RssFeedItems.
+     */
+    data: XOR<RssFeedItemUpdateManyMutationInput, RssFeedItemUncheckedUpdateManyInput>
+    /**
+     * Filter which RssFeedItems to update
+     */
+    where?: RssFeedItemWhereInput
+    /**
+     * Limit how many RssFeedItems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * RssFeedItem updateManyAndReturn
+   */
+  export type RssFeedItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * The data used to update RssFeedItems.
+     */
+    data: XOR<RssFeedItemUpdateManyMutationInput, RssFeedItemUncheckedUpdateManyInput>
+    /**
+     * Filter which RssFeedItems to update
+     */
+    where?: RssFeedItemWhereInput
+    /**
+     * Limit how many RssFeedItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * RssFeedItem upsert
+   */
+  export type RssFeedItemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    /**
+     * The filter to search for the RssFeedItem to update in case it exists.
+     */
+    where: RssFeedItemWhereUniqueInput
+    /**
+     * In case the RssFeedItem found by the `where` argument doesn't exist, create a new RssFeedItem with this data.
+     */
+    create: XOR<RssFeedItemCreateInput, RssFeedItemUncheckedCreateInput>
+    /**
+     * In case the RssFeedItem was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<RssFeedItemUpdateInput, RssFeedItemUncheckedUpdateInput>
+  }
+
+  /**
+   * RssFeedItem delete
+   */
+  export type RssFeedItemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    /**
+     * Filter which RssFeedItem to delete.
+     */
+    where: RssFeedItemWhereUniqueInput
+  }
+
+  /**
+   * RssFeedItem deleteMany
+   */
+  export type RssFeedItemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which RssFeedItems to delete
+     */
+    where?: RssFeedItemWhereInput
+    /**
+     * Limit how many RssFeedItems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * RssFeedItem without action
+   */
+  export type RssFeedItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -19442,6 +22033,43 @@ export namespace Prisma {
   export type SupportMessageScalarFieldEnum = (typeof SupportMessageScalarFieldEnum)[keyof typeof SupportMessageScalarFieldEnum]
 
 
+  export const RssFeedSourceScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    url: 'url',
+    categoryHint: 'categoryHint',
+    language: 'language',
+    isActive: 'isActive',
+    lastFetchedAt: 'lastFetchedAt',
+    fetchError: 'fetchError',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type RssFeedSourceScalarFieldEnum = (typeof RssFeedSourceScalarFieldEnum)[keyof typeof RssFeedSourceScalarFieldEnum]
+
+
+  export const RssFeedItemScalarFieldEnum: {
+    id: 'id',
+    sourceId: 'sourceId',
+    title: 'title',
+    url: 'url',
+    urlHash: 'urlHash',
+    excerpt: 'excerpt',
+    imageUrl: 'imageUrl',
+    publishedAt: 'publishedAt',
+    status: 'status',
+    aiScore: 'aiScore',
+    aiAnalysis: 'aiAnalysis',
+    dismissed: 'dismissed',
+    usedForArticle: 'usedForArticle',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type RssFeedItemScalarFieldEnum = (typeof RssFeedItemScalarFieldEnum)[keyof typeof RssFeedItemScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -19562,6 +22190,20 @@ export namespace Prisma {
    * Reference to a field of type 'QueryMode'
    */
   export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'RssItemStatus'
+   */
+  export type EnumRssItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RssItemStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'RssItemStatus[]'
+   */
+  export type ListEnumRssItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RssItemStatus[]'>
     
 
 
@@ -20666,6 +23308,193 @@ export namespace Prisma {
     content?: StringWithAggregatesFilter<"SupportMessage"> | string
     attachments?: JsonNullableWithAggregatesFilter<"SupportMessage">
     createdAt?: DateTimeWithAggregatesFilter<"SupportMessage"> | Date | string
+  }
+
+  export type RssFeedSourceWhereInput = {
+    AND?: RssFeedSourceWhereInput | RssFeedSourceWhereInput[]
+    OR?: RssFeedSourceWhereInput[]
+    NOT?: RssFeedSourceWhereInput | RssFeedSourceWhereInput[]
+    id?: StringFilter<"RssFeedSource"> | string
+    name?: StringFilter<"RssFeedSource"> | string
+    url?: StringFilter<"RssFeedSource"> | string
+    categoryHint?: StringNullableFilter<"RssFeedSource"> | string | null
+    language?: StringFilter<"RssFeedSource"> | string
+    isActive?: BoolFilter<"RssFeedSource"> | boolean
+    lastFetchedAt?: DateTimeNullableFilter<"RssFeedSource"> | Date | string | null
+    fetchError?: StringNullableFilter<"RssFeedSource"> | string | null
+    createdAt?: DateTimeFilter<"RssFeedSource"> | Date | string
+    updatedAt?: DateTimeFilter<"RssFeedSource"> | Date | string
+    items?: RssFeedItemListRelationFilter
+  }
+
+  export type RssFeedSourceOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    categoryHint?: SortOrderInput | SortOrder
+    language?: SortOrder
+    isActive?: SortOrder
+    lastFetchedAt?: SortOrderInput | SortOrder
+    fetchError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    items?: RssFeedItemOrderByRelationAggregateInput
+  }
+
+  export type RssFeedSourceWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    url?: string
+    AND?: RssFeedSourceWhereInput | RssFeedSourceWhereInput[]
+    OR?: RssFeedSourceWhereInput[]
+    NOT?: RssFeedSourceWhereInput | RssFeedSourceWhereInput[]
+    name?: StringFilter<"RssFeedSource"> | string
+    categoryHint?: StringNullableFilter<"RssFeedSource"> | string | null
+    language?: StringFilter<"RssFeedSource"> | string
+    isActive?: BoolFilter<"RssFeedSource"> | boolean
+    lastFetchedAt?: DateTimeNullableFilter<"RssFeedSource"> | Date | string | null
+    fetchError?: StringNullableFilter<"RssFeedSource"> | string | null
+    createdAt?: DateTimeFilter<"RssFeedSource"> | Date | string
+    updatedAt?: DateTimeFilter<"RssFeedSource"> | Date | string
+    items?: RssFeedItemListRelationFilter
+  }, "id" | "url">
+
+  export type RssFeedSourceOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    categoryHint?: SortOrderInput | SortOrder
+    language?: SortOrder
+    isActive?: SortOrder
+    lastFetchedAt?: SortOrderInput | SortOrder
+    fetchError?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: RssFeedSourceCountOrderByAggregateInput
+    _max?: RssFeedSourceMaxOrderByAggregateInput
+    _min?: RssFeedSourceMinOrderByAggregateInput
+  }
+
+  export type RssFeedSourceScalarWhereWithAggregatesInput = {
+    AND?: RssFeedSourceScalarWhereWithAggregatesInput | RssFeedSourceScalarWhereWithAggregatesInput[]
+    OR?: RssFeedSourceScalarWhereWithAggregatesInput[]
+    NOT?: RssFeedSourceScalarWhereWithAggregatesInput | RssFeedSourceScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"RssFeedSource"> | string
+    name?: StringWithAggregatesFilter<"RssFeedSource"> | string
+    url?: StringWithAggregatesFilter<"RssFeedSource"> | string
+    categoryHint?: StringNullableWithAggregatesFilter<"RssFeedSource"> | string | null
+    language?: StringWithAggregatesFilter<"RssFeedSource"> | string
+    isActive?: BoolWithAggregatesFilter<"RssFeedSource"> | boolean
+    lastFetchedAt?: DateTimeNullableWithAggregatesFilter<"RssFeedSource"> | Date | string | null
+    fetchError?: StringNullableWithAggregatesFilter<"RssFeedSource"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"RssFeedSource"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"RssFeedSource"> | Date | string
+  }
+
+  export type RssFeedItemWhereInput = {
+    AND?: RssFeedItemWhereInput | RssFeedItemWhereInput[]
+    OR?: RssFeedItemWhereInput[]
+    NOT?: RssFeedItemWhereInput | RssFeedItemWhereInput[]
+    id?: StringFilter<"RssFeedItem"> | string
+    sourceId?: StringFilter<"RssFeedItem"> | string
+    title?: StringFilter<"RssFeedItem"> | string
+    url?: StringFilter<"RssFeedItem"> | string
+    urlHash?: StringFilter<"RssFeedItem"> | string
+    excerpt?: StringNullableFilter<"RssFeedItem"> | string | null
+    imageUrl?: StringNullableFilter<"RssFeedItem"> | string | null
+    publishedAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
+    status?: EnumRssItemStatusFilter<"RssFeedItem"> | $Enums.RssItemStatus
+    aiScore?: IntNullableFilter<"RssFeedItem"> | number | null
+    aiAnalysis?: JsonNullableFilter<"RssFeedItem">
+    dismissed?: BoolFilter<"RssFeedItem"> | boolean
+    usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
+    createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
+    updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
+    source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
+  }
+
+  export type RssFeedItemOrderByWithRelationInput = {
+    id?: SortOrder
+    sourceId?: SortOrder
+    title?: SortOrder
+    url?: SortOrder
+    urlHash?: SortOrder
+    excerpt?: SortOrderInput | SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    publishedAt?: SortOrderInput | SortOrder
+    status?: SortOrder
+    aiScore?: SortOrderInput | SortOrder
+    aiAnalysis?: SortOrderInput | SortOrder
+    dismissed?: SortOrder
+    usedForArticle?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    source?: RssFeedSourceOrderByWithRelationInput
+  }
+
+  export type RssFeedItemWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    url?: string
+    urlHash?: string
+    AND?: RssFeedItemWhereInput | RssFeedItemWhereInput[]
+    OR?: RssFeedItemWhereInput[]
+    NOT?: RssFeedItemWhereInput | RssFeedItemWhereInput[]
+    sourceId?: StringFilter<"RssFeedItem"> | string
+    title?: StringFilter<"RssFeedItem"> | string
+    excerpt?: StringNullableFilter<"RssFeedItem"> | string | null
+    imageUrl?: StringNullableFilter<"RssFeedItem"> | string | null
+    publishedAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
+    status?: EnumRssItemStatusFilter<"RssFeedItem"> | $Enums.RssItemStatus
+    aiScore?: IntNullableFilter<"RssFeedItem"> | number | null
+    aiAnalysis?: JsonNullableFilter<"RssFeedItem">
+    dismissed?: BoolFilter<"RssFeedItem"> | boolean
+    usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
+    createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
+    updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
+    source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
+  }, "id" | "url" | "urlHash">
+
+  export type RssFeedItemOrderByWithAggregationInput = {
+    id?: SortOrder
+    sourceId?: SortOrder
+    title?: SortOrder
+    url?: SortOrder
+    urlHash?: SortOrder
+    excerpt?: SortOrderInput | SortOrder
+    imageUrl?: SortOrderInput | SortOrder
+    publishedAt?: SortOrderInput | SortOrder
+    status?: SortOrder
+    aiScore?: SortOrderInput | SortOrder
+    aiAnalysis?: SortOrderInput | SortOrder
+    dismissed?: SortOrder
+    usedForArticle?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: RssFeedItemCountOrderByAggregateInput
+    _avg?: RssFeedItemAvgOrderByAggregateInput
+    _max?: RssFeedItemMaxOrderByAggregateInput
+    _min?: RssFeedItemMinOrderByAggregateInput
+    _sum?: RssFeedItemSumOrderByAggregateInput
+  }
+
+  export type RssFeedItemScalarWhereWithAggregatesInput = {
+    AND?: RssFeedItemScalarWhereWithAggregatesInput | RssFeedItemScalarWhereWithAggregatesInput[]
+    OR?: RssFeedItemScalarWhereWithAggregatesInput[]
+    NOT?: RssFeedItemScalarWhereWithAggregatesInput | RssFeedItemScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"RssFeedItem"> | string
+    sourceId?: StringWithAggregatesFilter<"RssFeedItem"> | string
+    title?: StringWithAggregatesFilter<"RssFeedItem"> | string
+    url?: StringWithAggregatesFilter<"RssFeedItem"> | string
+    urlHash?: StringWithAggregatesFilter<"RssFeedItem"> | string
+    excerpt?: StringNullableWithAggregatesFilter<"RssFeedItem"> | string | null
+    imageUrl?: StringNullableWithAggregatesFilter<"RssFeedItem"> | string | null
+    publishedAt?: DateTimeNullableWithAggregatesFilter<"RssFeedItem"> | Date | string | null
+    status?: EnumRssItemStatusWithAggregatesFilter<"RssFeedItem"> | $Enums.RssItemStatus
+    aiScore?: IntNullableWithAggregatesFilter<"RssFeedItem"> | number | null
+    aiAnalysis?: JsonNullableWithAggregatesFilter<"RssFeedItem">
+    dismissed?: BoolWithAggregatesFilter<"RssFeedItem"> | boolean
+    usedForArticle?: BoolWithAggregatesFilter<"RssFeedItem"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"RssFeedItem"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"RssFeedItem"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -21856,6 +24685,226 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type RssFeedSourceCreateInput = {
+    id?: string
+    name: string
+    url: string
+    categoryHint?: string | null
+    language?: string
+    isActive?: boolean
+    lastFetchedAt?: Date | string | null
+    fetchError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: RssFeedItemCreateNestedManyWithoutSourceInput
+  }
+
+  export type RssFeedSourceUncheckedCreateInput = {
+    id?: string
+    name: string
+    url: string
+    categoryHint?: string | null
+    language?: string
+    isActive?: boolean
+    lastFetchedAt?: Date | string | null
+    fetchError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: RssFeedItemUncheckedCreateNestedManyWithoutSourceInput
+  }
+
+  export type RssFeedSourceUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    categoryHint?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fetchError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: RssFeedItemUpdateManyWithoutSourceNestedInput
+  }
+
+  export type RssFeedSourceUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    categoryHint?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fetchError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: RssFeedItemUncheckedUpdateManyWithoutSourceNestedInput
+  }
+
+  export type RssFeedSourceCreateManyInput = {
+    id?: string
+    name: string
+    url: string
+    categoryHint?: string | null
+    language?: string
+    isActive?: boolean
+    lastFetchedAt?: Date | string | null
+    fetchError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedSourceUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    categoryHint?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fetchError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedSourceUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    categoryHint?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fetchError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedItemCreateInput = {
+    id?: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    source: RssFeedSourceCreateNestedOneWithoutItemsInput
+  }
+
+  export type RssFeedItemUncheckedCreateInput = {
+    id?: string
+    sourceId: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
+  }
+
+  export type RssFeedItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedItemCreateManyInput = {
+    id?: string
+    sourceId: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedItemUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -22746,6 +25795,137 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
+  export type RssFeedItemListRelationFilter = {
+    every?: RssFeedItemWhereInput
+    some?: RssFeedItemWhereInput
+    none?: RssFeedItemWhereInput
+  }
+
+  export type RssFeedItemOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type RssFeedSourceCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    categoryHint?: SortOrder
+    language?: SortOrder
+    isActive?: SortOrder
+    lastFetchedAt?: SortOrder
+    fetchError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RssFeedSourceMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    categoryHint?: SortOrder
+    language?: SortOrder
+    isActive?: SortOrder
+    lastFetchedAt?: SortOrder
+    fetchError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RssFeedSourceMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    url?: SortOrder
+    categoryHint?: SortOrder
+    language?: SortOrder
+    isActive?: SortOrder
+    lastFetchedAt?: SortOrder
+    fetchError?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type EnumRssItemStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RssItemStatus | EnumRssItemStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RssItemStatus[] | ListEnumRssItemStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RssItemStatus[] | ListEnumRssItemStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRssItemStatusFilter<$PrismaModel> | $Enums.RssItemStatus
+  }
+
+  export type RssFeedSourceScalarRelationFilter = {
+    is?: RssFeedSourceWhereInput
+    isNot?: RssFeedSourceWhereInput
+  }
+
+  export type RssFeedItemCountOrderByAggregateInput = {
+    id?: SortOrder
+    sourceId?: SortOrder
+    title?: SortOrder
+    url?: SortOrder
+    urlHash?: SortOrder
+    excerpt?: SortOrder
+    imageUrl?: SortOrder
+    publishedAt?: SortOrder
+    status?: SortOrder
+    aiScore?: SortOrder
+    aiAnalysis?: SortOrder
+    dismissed?: SortOrder
+    usedForArticle?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RssFeedItemAvgOrderByAggregateInput = {
+    aiScore?: SortOrder
+  }
+
+  export type RssFeedItemMaxOrderByAggregateInput = {
+    id?: SortOrder
+    sourceId?: SortOrder
+    title?: SortOrder
+    url?: SortOrder
+    urlHash?: SortOrder
+    excerpt?: SortOrder
+    imageUrl?: SortOrder
+    publishedAt?: SortOrder
+    status?: SortOrder
+    aiScore?: SortOrder
+    dismissed?: SortOrder
+    usedForArticle?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RssFeedItemMinOrderByAggregateInput = {
+    id?: SortOrder
+    sourceId?: SortOrder
+    title?: SortOrder
+    url?: SortOrder
+    urlHash?: SortOrder
+    excerpt?: SortOrder
+    imageUrl?: SortOrder
+    publishedAt?: SortOrder
+    status?: SortOrder
+    aiScore?: SortOrder
+    dismissed?: SortOrder
+    usedForArticle?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type RssFeedItemSumOrderByAggregateInput = {
+    aiScore?: SortOrder
+  }
+
+  export type EnumRssItemStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RssItemStatus | EnumRssItemStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RssItemStatus[] | ListEnumRssItemStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RssItemStatus[] | ListEnumRssItemStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRssItemStatusWithAggregatesFilter<$PrismaModel> | $Enums.RssItemStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRssItemStatusFilter<$PrismaModel>
+    _max?: NestedEnumRssItemStatusFilter<$PrismaModel>
+  }
+
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -23518,6 +26698,66 @@ export namespace Prisma {
     update?: XOR<XOR<SupportTicketUpdateToOneWithWhereWithoutMessagesInput, SupportTicketUpdateWithoutMessagesInput>, SupportTicketUncheckedUpdateWithoutMessagesInput>
   }
 
+  export type RssFeedItemCreateNestedManyWithoutSourceInput = {
+    create?: XOR<RssFeedItemCreateWithoutSourceInput, RssFeedItemUncheckedCreateWithoutSourceInput> | RssFeedItemCreateWithoutSourceInput[] | RssFeedItemUncheckedCreateWithoutSourceInput[]
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutSourceInput | RssFeedItemCreateOrConnectWithoutSourceInput[]
+    createMany?: RssFeedItemCreateManySourceInputEnvelope
+    connect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+  }
+
+  export type RssFeedItemUncheckedCreateNestedManyWithoutSourceInput = {
+    create?: XOR<RssFeedItemCreateWithoutSourceInput, RssFeedItemUncheckedCreateWithoutSourceInput> | RssFeedItemCreateWithoutSourceInput[] | RssFeedItemUncheckedCreateWithoutSourceInput[]
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutSourceInput | RssFeedItemCreateOrConnectWithoutSourceInput[]
+    createMany?: RssFeedItemCreateManySourceInputEnvelope
+    connect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+  }
+
+  export type RssFeedItemUpdateManyWithoutSourceNestedInput = {
+    create?: XOR<RssFeedItemCreateWithoutSourceInput, RssFeedItemUncheckedCreateWithoutSourceInput> | RssFeedItemCreateWithoutSourceInput[] | RssFeedItemUncheckedCreateWithoutSourceInput[]
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutSourceInput | RssFeedItemCreateOrConnectWithoutSourceInput[]
+    upsert?: RssFeedItemUpsertWithWhereUniqueWithoutSourceInput | RssFeedItemUpsertWithWhereUniqueWithoutSourceInput[]
+    createMany?: RssFeedItemCreateManySourceInputEnvelope
+    set?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    disconnect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    delete?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    connect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    update?: RssFeedItemUpdateWithWhereUniqueWithoutSourceInput | RssFeedItemUpdateWithWhereUniqueWithoutSourceInput[]
+    updateMany?: RssFeedItemUpdateManyWithWhereWithoutSourceInput | RssFeedItemUpdateManyWithWhereWithoutSourceInput[]
+    deleteMany?: RssFeedItemScalarWhereInput | RssFeedItemScalarWhereInput[]
+  }
+
+  export type RssFeedItemUncheckedUpdateManyWithoutSourceNestedInput = {
+    create?: XOR<RssFeedItemCreateWithoutSourceInput, RssFeedItemUncheckedCreateWithoutSourceInput> | RssFeedItemCreateWithoutSourceInput[] | RssFeedItemUncheckedCreateWithoutSourceInput[]
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutSourceInput | RssFeedItemCreateOrConnectWithoutSourceInput[]
+    upsert?: RssFeedItemUpsertWithWhereUniqueWithoutSourceInput | RssFeedItemUpsertWithWhereUniqueWithoutSourceInput[]
+    createMany?: RssFeedItemCreateManySourceInputEnvelope
+    set?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    disconnect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    delete?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    connect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    update?: RssFeedItemUpdateWithWhereUniqueWithoutSourceInput | RssFeedItemUpdateWithWhereUniqueWithoutSourceInput[]
+    updateMany?: RssFeedItemUpdateManyWithWhereWithoutSourceInput | RssFeedItemUpdateManyWithWhereWithoutSourceInput[]
+    deleteMany?: RssFeedItemScalarWhereInput | RssFeedItemScalarWhereInput[]
+  }
+
+  export type RssFeedSourceCreateNestedOneWithoutItemsInput = {
+    create?: XOR<RssFeedSourceCreateWithoutItemsInput, RssFeedSourceUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: RssFeedSourceCreateOrConnectWithoutItemsInput
+    connect?: RssFeedSourceWhereUniqueInput
+  }
+
+  export type EnumRssItemStatusFieldUpdateOperationsInput = {
+    set?: $Enums.RssItemStatus
+  }
+
+  export type RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput = {
+    create?: XOR<RssFeedSourceCreateWithoutItemsInput, RssFeedSourceUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: RssFeedSourceCreateOrConnectWithoutItemsInput
+    upsert?: RssFeedSourceUpsertWithoutItemsInput
+    connect?: RssFeedSourceWhereUniqueInput
+    update?: XOR<XOR<RssFeedSourceUpdateToOneWithWhereWithoutItemsInput, RssFeedSourceUpdateWithoutItemsInput>, RssFeedSourceUncheckedUpdateWithoutItemsInput>
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -23757,6 +26997,23 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedEnumRssItemStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.RssItemStatus | EnumRssItemStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RssItemStatus[] | ListEnumRssItemStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RssItemStatus[] | ListEnumRssItemStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRssItemStatusFilter<$PrismaModel> | $Enums.RssItemStatus
+  }
+
+  export type NestedEnumRssItemStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.RssItemStatus | EnumRssItemStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.RssItemStatus[] | ListEnumRssItemStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.RssItemStatus[] | ListEnumRssItemStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumRssItemStatusWithAggregatesFilter<$PrismaModel> | $Enums.RssItemStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumRssItemStatusFilter<$PrismaModel>
+    _max?: NestedEnumRssItemStatusFilter<$PrismaModel>
   }
 
   export type AccountCreateWithoutUserInput = {
@@ -25517,6 +28774,155 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type RssFeedItemCreateWithoutSourceInput = {
+    id?: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedItemUncheckedCreateWithoutSourceInput = {
+    id?: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedItemCreateOrConnectWithoutSourceInput = {
+    where: RssFeedItemWhereUniqueInput
+    create: XOR<RssFeedItemCreateWithoutSourceInput, RssFeedItemUncheckedCreateWithoutSourceInput>
+  }
+
+  export type RssFeedItemCreateManySourceInputEnvelope = {
+    data: RssFeedItemCreateManySourceInput | RssFeedItemCreateManySourceInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type RssFeedItemUpsertWithWhereUniqueWithoutSourceInput = {
+    where: RssFeedItemWhereUniqueInput
+    update: XOR<RssFeedItemUpdateWithoutSourceInput, RssFeedItemUncheckedUpdateWithoutSourceInput>
+    create: XOR<RssFeedItemCreateWithoutSourceInput, RssFeedItemUncheckedCreateWithoutSourceInput>
+  }
+
+  export type RssFeedItemUpdateWithWhereUniqueWithoutSourceInput = {
+    where: RssFeedItemWhereUniqueInput
+    data: XOR<RssFeedItemUpdateWithoutSourceInput, RssFeedItemUncheckedUpdateWithoutSourceInput>
+  }
+
+  export type RssFeedItemUpdateManyWithWhereWithoutSourceInput = {
+    where: RssFeedItemScalarWhereInput
+    data: XOR<RssFeedItemUpdateManyMutationInput, RssFeedItemUncheckedUpdateManyWithoutSourceInput>
+  }
+
+  export type RssFeedItemScalarWhereInput = {
+    AND?: RssFeedItemScalarWhereInput | RssFeedItemScalarWhereInput[]
+    OR?: RssFeedItemScalarWhereInput[]
+    NOT?: RssFeedItemScalarWhereInput | RssFeedItemScalarWhereInput[]
+    id?: StringFilter<"RssFeedItem"> | string
+    sourceId?: StringFilter<"RssFeedItem"> | string
+    title?: StringFilter<"RssFeedItem"> | string
+    url?: StringFilter<"RssFeedItem"> | string
+    urlHash?: StringFilter<"RssFeedItem"> | string
+    excerpt?: StringNullableFilter<"RssFeedItem"> | string | null
+    imageUrl?: StringNullableFilter<"RssFeedItem"> | string | null
+    publishedAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
+    status?: EnumRssItemStatusFilter<"RssFeedItem"> | $Enums.RssItemStatus
+    aiScore?: IntNullableFilter<"RssFeedItem"> | number | null
+    aiAnalysis?: JsonNullableFilter<"RssFeedItem">
+    dismissed?: BoolFilter<"RssFeedItem"> | boolean
+    usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
+    createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
+    updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
+  }
+
+  export type RssFeedSourceCreateWithoutItemsInput = {
+    id?: string
+    name: string
+    url: string
+    categoryHint?: string | null
+    language?: string
+    isActive?: boolean
+    lastFetchedAt?: Date | string | null
+    fetchError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedSourceUncheckedCreateWithoutItemsInput = {
+    id?: string
+    name: string
+    url: string
+    categoryHint?: string | null
+    language?: string
+    isActive?: boolean
+    lastFetchedAt?: Date | string | null
+    fetchError?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedSourceCreateOrConnectWithoutItemsInput = {
+    where: RssFeedSourceWhereUniqueInput
+    create: XOR<RssFeedSourceCreateWithoutItemsInput, RssFeedSourceUncheckedCreateWithoutItemsInput>
+  }
+
+  export type RssFeedSourceUpsertWithoutItemsInput = {
+    update: XOR<RssFeedSourceUpdateWithoutItemsInput, RssFeedSourceUncheckedUpdateWithoutItemsInput>
+    create: XOR<RssFeedSourceCreateWithoutItemsInput, RssFeedSourceUncheckedCreateWithoutItemsInput>
+    where?: RssFeedSourceWhereInput
+  }
+
+  export type RssFeedSourceUpdateToOneWithWhereWithoutItemsInput = {
+    where?: RssFeedSourceWhereInput
+    data: XOR<RssFeedSourceUpdateWithoutItemsInput, RssFeedSourceUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type RssFeedSourceUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    categoryHint?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fetchError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedSourceUncheckedUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    categoryHint?: NullableStringFieldUpdateOperationsInput | string | null
+    language?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    lastFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    fetchError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AccountCreateManyUserInput = {
     id?: string
     accountId: string
@@ -26037,6 +29443,74 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     attachments?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedItemCreateManySourceInput = {
+    id?: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedItemUpdateWithoutSourceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedItemUncheckedUpdateWithoutSourceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedItemUncheckedUpdateManyWithoutSourceInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

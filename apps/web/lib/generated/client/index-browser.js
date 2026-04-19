@@ -284,6 +284,37 @@ exports.Prisma.SupportMessageScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.RssFeedSourceScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  url: 'url',
+  categoryHint: 'categoryHint',
+  language: 'language',
+  isActive: 'isActive',
+  lastFetchedAt: 'lastFetchedAt',
+  fetchError: 'fetchError',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.RssFeedItemScalarFieldEnum = {
+  id: 'id',
+  sourceId: 'sourceId',
+  title: 'title',
+  url: 'url',
+  urlHash: 'urlHash',
+  excerpt: 'excerpt',
+  imageUrl: 'imageUrl',
+  publishedAt: 'publishedAt',
+  status: 'status',
+  aiScore: 'aiScore',
+  aiAnalysis: 'aiAnalysis',
+  dismissed: 'dismissed',
+  usedForArticle: 'usedForArticle',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -316,6 +347,14 @@ exports.MediaStatus = exports.$Enums.MediaStatus = {
   FAILED: 'FAILED'
 };
 
+exports.RssItemStatus = exports.$Enums.RssItemStatus = {
+  PENDING: 'PENDING',
+  ANALYZED: 'ANALYZED',
+  LOW_SCORE: 'LOW_SCORE',
+  COVERED: 'COVERED',
+  DISMISSED: 'DISMISSED'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
@@ -331,7 +370,9 @@ exports.Prisma.ModelName = {
   Media: 'Media',
   StaticPage: 'StaticPage',
   SupportTicket: 'SupportTicket',
-  SupportMessage: 'SupportMessage'
+  SupportMessage: 'SupportMessage',
+  RssFeedSource: 'RssFeedSource',
+  RssFeedItem: 'RssFeedItem'
 };
 
 /**
