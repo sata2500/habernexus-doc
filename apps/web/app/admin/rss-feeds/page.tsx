@@ -1,14 +1,17 @@
 import { getRssSources, getRssSuggestions, getRssStats } from "./actions";
+import { getSystemSettings } from "./cron-actions";
 import { FeedSourceManager } from "./components/FeedSourceManager";
 import { SuggestionsList } from "./components/SuggestionsList";
 import { AdminTriggerButtons } from "./components/AdminTriggerButtons";
+import { CronSettingsCard } from "./components/CronSettingsCard";
 import { Rss, Sparkles, Database, CheckCircle2, X, BarChart3 } from "lucide-react";
 
 export default async function AdminRssFeedsPage() {
-  const [sources, suggestions, stats] = await Promise.all([
+  const [sources, suggestions, stats, systemSettings] = await Promise.all([
     getRssSources(),
     getRssSuggestions(),
     getRssStats(),
+    getSystemSettings(),
   ]);
 
   const statCards = [
@@ -51,6 +54,14 @@ export default async function AdminRssFeedsPage() {
           </div>
         ))}
       </div>
+
+      {/* ── Otomasyon & Cron ── */}
+      <section>
+        <CronSettingsCard 
+          scanCron={systemSettings.rssScanCron} 
+          analyzeCron={systemSettings.rssAnalyzeCron} 
+        />
+      </section>
 
       {/* ── RSS Kaynakları ── */}
       <section>

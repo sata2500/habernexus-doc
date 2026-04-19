@@ -315,6 +315,15 @@ exports.Prisma.RssFeedItemScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SystemSettingsScalarFieldEnum = {
+  id: 'id',
+  rssScanCron: 'rssScanCron',
+  rssAnalyzeCron: 'rssAnalyzeCron',
+  qStashScanId: 'qStashScanId',
+  qStashAnalyzeId: 'qStashAnalyzeId',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -372,7 +381,8 @@ exports.Prisma.ModelName = {
   SupportTicket: 'SupportTicket',
   SupportMessage: 'SupportMessage',
   RssFeedSource: 'RssFeedSource',
-  RssFeedItem: 'RssFeedItem'
+  RssFeedItem: 'RssFeedItem',
+  SystemSettings: 'SystemSettings'
 };
 
 /**

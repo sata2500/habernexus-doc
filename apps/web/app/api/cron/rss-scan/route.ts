@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { scanAllActiveSources } from "@/lib/rss-scanner";
+import { verifySignature } from "@upstash/qstash/nextjs";
 
 /**
- * RSS Tarama Cron Job
+ * RSS Tarama QStash Webhook
  *
- * Vercel Cron ile her 2 saatte bir tetiklenir.
+ * Upstash QStash tarafından tetiklenir.
  * Tüm aktif RSS kaynaklarını tarar ve yeni öğeleri PENDING olarak DB'ye kaydeder.
  */
-export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (
-    process.env.NODE_ENV === "production" &&
-    authHeader !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+async function handler(req: NextRequest) {
   try {
     const result = await scanAllActiveSources();
 
@@ -25,10 +18,16 @@ export async function GET(req: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("RSS Scan Cron Error:", error);
+    console.error("RSS Scan QStash Error:", error);
     return NextResponse.json(
       { error: "RSS scanning failed", details: String(error) },
       { status: 500 }
     );
   }
 }
+
+export const POST = verifySignature(handler, {
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "dummy",
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "dummy",
+});
+

@@ -286,3 +286,13 @@ enum RssItemStatus {
   COVERED // Zaten haberleştirilmiş konuyla örtüşüyor
   DISMISSED // Yazar/admin "gerek yok" dedi
 }
+
+/// Sistem genel ayarları ve aktif QStash Cron görev ID'leri
+model SystemSettings {
+  id              String   @id @default("global") // Her zaman tek satır olacak
+  rssScanCron     String   @default("0 */2 * * *") // 2 saatte bir
+  rssAnalyzeCron  String   @default("30 */4 * * *") // 4 saatte bir
+  qStashScanId    String? // QStash üzerindeki görev ID'si
+  qStashAnalyzeId String?
+  updatedAt       DateTime @updatedAt
+}

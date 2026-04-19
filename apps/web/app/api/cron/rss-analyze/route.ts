@@ -1,22 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { analyzeRssBatch, cleanupOldItems } from "@/lib/ai-analyzer";
+import { verifySignature } from "@upstash/qstash/nextjs";
 
 /**
- * AI Analiz Cron Job
+ * AI Analiz QStash Webhook
  *
- * Vercel Cron ile her 4 saatte bir tetiklenir.
+ * Upstash QStash tarafından tetiklenir.
  * PENDING öğeleri Gemini ile analiz eder ve puanlar.
  * Eski öğeleri temizler.
  */
-export async function GET(req: NextRequest) {
-  const authHeader = req.headers.get("authorization");
-  if (
-    process.env.NODE_ENV === "production" &&
-    authHeader !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+async function handler(req: NextRequest) {
   try {
     // 1. AI analiz
     const analysisResult = await analyzeRssBatch();
@@ -31,10 +24,16 @@ export async function GET(req: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("RSS Analyze Cron Error:", error);
+    console.error("RSS Analyze QStash Error:", error);
     return NextResponse.json(
       { error: "RSS analysis failed", details: String(error) },
       { status: 500 }
     );
   }
 }
+
+export const POST = verifySignature(handler, {
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "dummy",
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "dummy",
+});
+
