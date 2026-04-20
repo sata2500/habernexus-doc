@@ -24,18 +24,40 @@ export async function syncModelsFromOpenRouter() {
       const isFree = parseFloat(m.pricing?.prompt || "0") === 0 && 
                      parseFloat(m.pricing?.completion || "0") === 0;
 
+      // Model Tipi Belirleme (OpenRouter Modalities Analizi)
+      let type: "TEXT" | "IMAGE" | "MULTIMODAL" = "TEXT";
+      const modelId = m.id.toLowerCase();
+      const modelName = m.name.toLowerCase();
+      
+      // 1. İsim/ID Kontrolü (Görsel Modelleri için)
+      const imageKeywords = ["stable-diffusion", "flux", "dall-e", "midjourney", "imagen", "vision", "video", "multimodal"];
+      if (imageKeywords.some(kw => modelId.includes(kw) || modelName.includes(kw))) {
+        if (modelId.includes("vision") || modelId.includes("multimodal")) {
+          type = "MULTIMODAL";
+        } else {
+          type = "IMAGE";
+        }
+      }
+
+      // 2. Modality Kontrolü (Varsa)
+      const modalities = m.architecture?.modality || "";
+      if (modalities.includes("image")) {
+        type = "IMAGE";
+      }
+
       await prisma.aiModel.upsert({
         where: { id: m.id },
         update: {
           name: m.name,
           description: m.description,
           isFree,
+          type, // Tipini de güncelle
         },
         create: {
           id: m.id,
           name: m.name,
           description: m.description,
-          type: "TEXT",
+          type,
           isFree,
           isActive: false,
         }

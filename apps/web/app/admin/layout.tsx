@@ -28,16 +28,16 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (session.user.role !== "ADMIN") redirect("/");
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex flex-col md:flex-row gap-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex flex-col md:flex-row gap-8 min-h-screen">
       <aside className="w-full md:w-64 shrink-0">
-        <div className="bg-neutral-950 text-white rounded-2xl p-5 border border-neutral-800 shadow-2xl sticky top-24">
+        <div className="bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-white rounded-3xl p-5 border border-neutral-200 dark:border-neutral-800 shadow-xl dark:shadow-2xl sticky top-24 transition-colors">
           <div className="flex items-center gap-3 mb-8 px-2">
             <div className="h-10 w-10 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center justify-center">
               <ShieldCheck className="h-5 w-5 text-red-400" />
             </div>
             <div>
               <h2 className="font-bold font-(family-name:--font-outfit) leading-none">Admin Paneli</h2>
-              <span className="text-xs text-neutral-400">Süper Yönetici</span>
+              <span className="text-xs text-neutral-500 dark:text-neutral-400">Süper Yönetici</span>
             </div>
           </div>
 
@@ -48,7 +48,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-800 hover:text-white transition-all"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-800 hover:text-neutral-950 dark:hover:text-white transition-all"
                 >
                   <Icon className="h-4 w-4" />
                   {item.name}
@@ -57,22 +57,22 @@ export default async function AdminLayout({ children }: { children: React.ReactN
             })}
           </nav>
 
-          <div className="mt-8 pt-6 border-t border-neutral-800 px-2 space-y-1">
+          <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-800 px-2 space-y-1">
             <Link
               href="/"
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-800 hover:text-white transition-all group"
+              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-800 hover:text-neutral-950 dark:hover:text-white transition-all group"
             >
               <Home className="h-4 w-4 group-hover:scale-110 transition-transform" />
               Ana Sayfaya Dön
             </Link>
             <Link
               href="/author"
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-800 hover:text-white transition-all group"
+              className="flex items-center gap-3 w-full px-4 py-3 rounded-xl text-sm font-medium text-neutral-600 dark:text-neutral-400 hover:bg-neutral-200 dark:hover:bg-neutral-800 hover:text-neutral-950 dark:hover:text-white transition-all group"
             >
               <PenTool className="h-4 w-4 group-hover:scale-110 transition-transform" />
               Yazar Masasına Geç
             </Link>
-            <div className="text-neutral-400">
+            <div className="text-neutral-500 dark:text-neutral-400">
               <SignOutButton />
             </div>
           </div>
