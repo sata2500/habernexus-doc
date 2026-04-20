@@ -117,6 +117,34 @@ async function generateImageWithPollinations(
   return null;
 }
 
+/**
+ * OpenRouter API kullanarak içerik üretir (Claude, GPT, Llama vb. desteği için).
+ */
+async function generateContentWithOpenRouter(model: string, prompt: string): Promise<string> {
+  const apiKey = process.env.OPENROUTER_API_KEY || "";
+  if (!apiKey) throw new Error("OPENROUTER_API_KEY eksik.");
+
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com",
+      "X-Title": "Haber Nexus",
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      model: model,
+      messages: [{ role: "user", content: prompt }],
+    })
+  });
+
+  const data = await response.json();
+  if (!response.ok) {
+    throw new Error(`OpenRouter Hatası: ${data.error?.message || response.statusText}`);
+  }
+  return data.choices?.[0]?.message?.content || "";
+}
+
 export async function writeArticleWithAI(suggestionId: string) {
   try {
     // 1. Öneriyi ve ayarları getir
@@ -137,6 +165,7 @@ export async function writeArticleWithAI(suggestionId: string) {
     let imagePromptBase = settings?.aiWriterImagePrompt || "Professional, photorealistic news cover image.";
     let categoryId: string | null = null;
     let aiPersonaId: string | null = null;
+    let personaModelName: string | null = null;
 
     if (suggestion.aiAnalysis && (suggestion.aiAnalysis as any).suggestedCategory) {
       const suggestedCatName = (suggestion.aiAnalysis as any).suggestedCategory;
@@ -163,12 +192,13 @@ export async function writeArticleWithAI(suggestionId: string) {
         if (personaLink) {
           const persona = personaLink.persona;
           aiPersonaId = persona.id;
+          personaModelName = persona.modelName;
           
           // TALİMAT: Genel prompt + Persona promptu birleştir
           systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları (Bu kimlikle yaz):\n${persona.prompt}`;
           imagePromptBase = persona.imagePrompt;
           
-          console.log(`[AI Writer] Persona seçildi (Rotasyon): ${persona.name}`);
+          console.log(`[AI Writer] Persona seçildi (Rotasyon): ${persona.name}${personaModelName ? ` [Model: ${personaModelName}]` : ''}`);
           
           // Rotasyon zamanını güncelle
           await prisma.aiPersonaOnCategory.update({
@@ -192,24 +222,33 @@ export async function writeArticleWithAI(suggestionId: string) {
 
     // ... (Metin üretim kısmı aynı kalıyor)
     let content = "";
+    const effectiveModel = personaModelName || writerModelName;
+    const provider = settings?.aiProvider || "GOOGLE";
+
     for (let i = 0; i < 3; i++) {
       try {
-        const textResponse = await ai.models.generateContent({
-          model: writerModelName,
-          contents: textPrompt,
-          config: {
-            tools: [{ googleSearch: {} }],
-          },
-        });
-        content = textResponse.text || "";
+        console.log(`[AI Writer] Metin üretiliyor: Provider=${provider}, Model=${effectiveModel}, Deneme=${i + 1}`);
+        
+        if (provider === "OPENROUTER") {
+          content = await generateContentWithOpenRouter(effectiveModel, textPrompt);
+        } else {
+          const textResponse = await ai.models.generateContent({
+            model: effectiveModel,
+            contents: textPrompt,
+            config: {
+              tools: [{ googleSearch: {} }],
+            },
+          });
+          content = textResponse.text || "";
+        }
         break;
       } catch (err: any) {
         const errorMsg = String(err);
-        const isRetryable = errorMsg.includes("429") || errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE") || errorMsg.includes("high demand");
+        const isRetryable = errorMsg.includes("429") || errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE") || errorMsg.includes("high demand") || errorMsg.includes("timeout");
         
         if (isRetryable && i < 2) {
-          const waitMs = errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE") ? 10000 : 5000;
-          console.warn(`[AI Writer] Metin üretiminde geçici hata (${errorMsg.includes("429") ? "429" : "503"}), ${waitMs/1000}sn bekleniyor... Deneme: ${i+1}`);
+          const waitMs = (errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE")) ? 10000 : 5000;
+          console.warn(`[AI Writer] Metin üretiminde geçici hata, ${waitMs / 1000}sn bekleniyor...`);
           await sleep(waitMs);
           continue;
         }

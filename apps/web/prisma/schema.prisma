@@ -305,6 +305,7 @@ model SystemSettings {
   qStashNewsletterId String?  // QStash Newsletter Task ID
   
   // AI Writer Ayarları
+  aiProvider          String   @default("GOOGLE")      // GOOGLE veya OPENROUTER
   aiWriterModel       String   @default("gemini-2.5-flash")
   aiWriterImageModel  String   @default("gemini-2.5-flash-image")
   aiWriterPrompt      String   @default("Sen profesyonel bir haber editörüsün. Verilen konuyu Google Arama kullanarak araştır ve en güncel, doğru bilgilerle son derece kaliteli, özgün ve tarafsız bir haber makalesi yaz. HTML formatında (h2, p, strong etiketlerini kullanarak) döndür. Başlık dahil etme.")
@@ -329,6 +330,7 @@ model AiPersona {
   description String?    
   prompt      String     @db.Text
   imagePrompt String     @db.Text
+  modelName   String?    // Örn: "google/gemini-2.0-flash-001" (OpenRouter için)
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt

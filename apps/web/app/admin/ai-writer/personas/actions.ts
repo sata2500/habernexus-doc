@@ -28,6 +28,7 @@ export async function createPersona(data: {
   description: string;
   prompt: string;
   imagePrompt: string;
+  modelName?: string;
   categoryIds: string[];
 }) {
   try {
@@ -59,6 +60,7 @@ export async function updatePersona(id: string, data: {
   description: string;
   prompt: string;
   imagePrompt: string;
+  modelName?: string;
   categoryIds: string[];
 }) {
   try {

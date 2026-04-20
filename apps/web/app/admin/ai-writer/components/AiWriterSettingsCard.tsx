@@ -10,6 +10,7 @@ interface Props {
   initialModel: string;
   initialImageModel: string;
   initialUseRssImage: boolean;
+  initialProvider: string;
 }
 
 // ── Metin Yazım Modelleri (Google Search Grounding destekli) ──────────────────
@@ -19,6 +20,15 @@ const TEXT_MODELS = [
   { id: "gemini-3.1-flash-lite", name: "Gemini 3.1 Flash-Lite (Ücretsiz - Ekonomik)", type: "free" },
   { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro (Ücretli)", type: "paid" },
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (Ücretli - En Zeki)", type: "paid" },
+];
+
+const OPENROUTER_MODELS = [
+  { id: "google/gemini-2.0-flash-001", name: "Gemini 2.0 Flash (Hızlı - Ücretsiz)", type: "free" },
+  { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet (En Zeki Yazım)", type: "paid" },
+  { id: "meta-llama/llama-3.3-70b-instruct", name: "Llama 3.3 70B (Çok Güçlü)", type: "free" },
+  { id: "openai/gpt-4o", name: "GPT-4o (Standart Zeka)", type: "paid" },
+  { id: "deepseek/deepseek-chat", name: "DeepSeek V3 (Hızlı & Ekonomik)", type: "free" },
+  { id: "google/gemini-pro-1.5", name: "Gemini 1.5 Pro (OpenRouter)", type: "paid" },
 ];
 
 // ── Görsel Üretim Modelleri (Pollinations.ai & Premium) ─────────────────────────
@@ -62,7 +72,9 @@ export function AiWriterSettingsCard({
   initialModel,
   initialImageModel,
   initialUseRssImage,
+  initialProvider,
 }: Props) {
+  const [provider, setProvider] = useState(initialProvider);
   const [prompt, setPrompt] = useState(initialPrompt);
   const [imagePrompt, setImagePrompt] = useState(initialImagePrompt);
   const [model, setModel] = useState(initialModel);
@@ -76,7 +88,7 @@ export function AiWriterSettingsCard({
   const handleSave = async () => {
     setLoading(true);
     setSuccess(false);
-    const res = await updateAiWriterSettings({ prompt, imagePrompt, model, imageModel, useRssImage });
+    const res = await updateAiWriterSettings({ prompt, imagePrompt, model, imageModel, useRssImage, provider });
     if (res.success) {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -107,7 +119,41 @@ export function AiWriterSettingsCard({
         </button>
       </div>
 
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-8">
+        {/* ── Hizmet Sağlayıcı Seçimi ── */}
+        <div className="space-y-4 p-4 bg-muted/20 rounded-2xl border border-border">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-bold text-sm">Hizmet Sağlayıcı</p>
+              <p className="text-xs text-muted-foreground">Yapay zeka modellerinin hangi servis üzerinden çağrılacağını seçin.</p>
+            </div>
+            <div className="flex p-1 bg-muted rounded-xl border border-border">
+              <button
+                onClick={() => {
+                  setProvider("GOOGLE");
+                  setModel("gemini-2.5-flash");
+                }}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  provider === "GOOGLE" ? "bg-primary-600 text-white shadow-md" : "hover:bg-muted-foreground/10"
+                }`}
+              >
+                Google GenAI
+              </button>
+              <button
+                onClick={() => {
+                  setProvider("OPENROUTER");
+                  setModel("google/gemini-2.0-flash-001");
+                }}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  provider === "OPENROUTER" ? "bg-primary-600 text-white shadow-md" : "hover:bg-muted-foreground/10"
+                }`}
+              >
+                OpenRouter
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* ── Metin Modeli ── */}
         <div className="space-y-2">
           <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -119,13 +165,17 @@ export function AiWriterSettingsCard({
             onChange={(e) => setModel(e.target.value)}
             className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-purple-500/50"
           >
-            {TEXT_MODELS.map((m) => (
+            {(provider === "GOOGLE" ? TEXT_MODELS : OPENROUTER_MODELS).map((m) => (
               <option key={m.id} value={m.id}>
                 {m.name}
               </option>
             ))}
           </select>
-          <p className="text-xs text-muted-foreground">Google Search grounding ile internetten araştırarak haber makalesi yazar.</p>
+          <p className="text-xs text-muted-foreground">
+            {provider === "GOOGLE" 
+              ? "Google Search grounding ile internetten araştırarak haber makalesi yazar."
+              : "OpenRouter üzerinden seçilen model ile haber makalesi yazar."}
+          </p>
         </div>
 
         {/* ── Görsel Modeli ── */}

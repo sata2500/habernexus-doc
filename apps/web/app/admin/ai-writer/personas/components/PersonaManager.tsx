@@ -12,7 +12,8 @@ import {
   Image as ImageIcon,
   ChevronRight,
   Info,
-  AlertCircle
+  AlertCircle,
+  Sparkles
 } from "lucide-react";
 import { createPersona, updatePersona, deletePersona } from "../actions";
 
@@ -29,6 +30,7 @@ interface Persona {
   description: string | null;
   prompt: string;
   imagePrompt: string;
+  modelName: string | null;
   categories: { category: Category }[];
 }
 
@@ -51,6 +53,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
     description: "",
     prompt: "",
     imagePrompt: "",
+    modelName: "",
     categoryIds: [] as string[],
   });
 
@@ -62,6 +65,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
       description: "",
       prompt: "",
       imagePrompt: "",
+      modelName: "",
       categoryIds: [],
     });
     setIsAdding(false);
@@ -76,6 +80,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
       description: persona.description || "",
       prompt: persona.prompt,
       imagePrompt: persona.imagePrompt,
+      modelName: persona.modelName || "",
       categoryIds: persona.categories.map(c => c.category.id),
     });
     setEditingId(persona.id);
@@ -234,6 +239,21 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
                 />
               </div>
 
+              <div className="space-y-2">
+                <label className="text-sm font-bold flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-amber-500" />
+                  Özel Model (Opsiyonel - OpenRouter)
+                </label>
+                <input
+                  type="text"
+                  value={formData.modelName}
+                  onChange={e => setFormData({ ...formData, modelName: e.target.value })}
+                  placeholder="Örn: anthropic/claude-3.5-sonnet"
+                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                />
+                <p className="text-[10px] text-muted-foreground">Boş bırakılırsa AI Yazar genel ayarlarındaki model kullanılır.</p>
+              </div>
+
               <div className="space-y-4">
                 <label className="text-sm font-bold block">Hizmet Edeceği Kategoriler</label>
                 <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 bg-muted/20 rounded-xl border border-border">
@@ -320,7 +340,14 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
                 </div>
                 <div>
                   <h4 className="font-bold text-lg leading-tight">{persona.name}</h4>
-                  <p className="text-xs text-primary-500 font-bold">{persona.role || "Haber Editörü"}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-xs text-primary-500 font-bold">{persona.role || "Haber Editörü"}</p>
+                    {persona.modelName && (
+                      <span className="px-1.5 py-0.5 bg-amber-500/10 text-amber-600 rounded text-[9px] font-bold border border-amber-500/20">
+                        {persona.modelName.split('/').pop()}
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
