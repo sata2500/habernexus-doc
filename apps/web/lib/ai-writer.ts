@@ -22,6 +22,55 @@ async function fetchImageAsBase64(url: string): Promise<string | null> {
 }
 
 /**
+ * Resmi @google/genai SDK ile görsel üretir (Tier 1+ Ücretli Hesaplar için).
+ */
+async function generateImageWithImagen(
+  modelName: string,
+  prompt: string,
+  retries = 3
+): Promise<string | null> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      console.log(`[AI Writer] Görsel üretimi deneniyor (Premium): model=${modelName}, deneme=${i + 1}`);
+
+      const response = await ai.models.generateImages({
+        model: modelName,
+        prompt: prompt,
+        config: {
+          numberOfImages: 1,
+          outputMimeType: "image/png",
+        },
+      });
+
+      const image = response.generatedImages?.[0];
+      if (image?.image?.imageBytes) {
+        const buffer = Buffer.from(image.image.imageBytes, "base64");
+        const { url } = await put(`articles/ai-${Date.now()}.png`, buffer, {
+          access: "public",
+          contentType: "image/png",
+        });
+        console.log("[AI Writer] Görsel başarıyla üretildi (Premium):", url);
+        return url;
+      }
+
+      console.warn("[AI Writer] Model görsel döndürmedi.");
+      return null;
+    } catch (error: any) {
+      const isQuota = error.message?.includes("429") || error.message?.includes("quota") || error.message?.includes("Too Many Requests");
+      if (isQuota && i < retries - 1) {
+        const waitMs = Math.pow(2, i + 1) * 5000;
+        console.warn(`[AI Writer] Kota hatası, Imagen limitlerine takıldı. ${waitMs}ms bekleniyor...`);
+        await sleep(waitMs);
+        continue;
+      }
+      console.error(`[AI Writer] Görsel üretim hatası:`, error.message);
+      return null;
+    }
+  }
+  return null;
+}
+
+/**
  * Pollinations.ai kullanarak tamamen ücretsiz görsel üretir.
  * Kredi kartı veya API Key gerektirmez. Kotalara takılmaz.
  */
@@ -159,14 +208,36 @@ export async function writeArticleWithAI(suggestionId: string) {
     }
 
     let imageUrl: string | null | undefined = suggestion.imageUrl;
-    const generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
+    let generatedImageUrl = null;
+    
+    // Model adına göre Google Premium API veya Ücretsiz Pollinations API kullan
+    if (imageModelName.includes("gemini") || imageModelName.includes("imagen")) {
+      generatedImageUrl = await generateImageWithImagen(imageModelName, imagePrompt);
+    } else {
+      generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
+    }
+
     if (generatedImageUrl) {
       imageUrl = generatedImageUrl;
     }
 
-    // 4. Makaleyi Kaydet
+    // 4. Makaleyi ve Medyayı Kaydet
     const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
     if (!adminUser) throw new Error("Admin kullanıcı bulunamadı.");
+
+    // Üretilen AI görselini Admin Medya Kütüphanesine ekle
+    if (generatedImageUrl) {
+      await prisma.media.create({
+        data: {
+          url: generatedImageUrl,
+          filename: `AI_Cover_${Date.now()}.png`,
+          size: 0, // Dış bağlantı olduğu için tahmini/0
+          mimeType: "image/png",
+          status: "RAW",
+          userId: adminUser.id,
+        }
+      }).catch(e => console.error("Media kütüphanesine eklenemedi:", e));
+    }
 
     const title = suggestion.title;
     const slug = `${slugify(title)}-${Date.now().toString().slice(-4)}`;

@@ -20,26 +20,38 @@ const TEXT_MODELS = [
   { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (Ücretli - En Zeki)", type: "paid" },
 ];
 
-// ── Görsel Üretim Modelleri (Pollinations.ai) ─────────────────────────
-// Kaynak: Tamamen ücretsiz, açık kaynak modeller
+// ── Görsel Üretim Modelleri (Pollinations.ai & Premium) ─────────────────────────
+// Kaynak: Ücretsiz modeller için Pollinations.ai, ücretliler için Google AI Studio
 const IMAGE_MODELS = [
   {
     id: "flux",
-    name: "🎨 Flux (Önerilen)",
+    name: "🎨 Flux (Pollinations)",
     desc: "Ücretsiz • En yüksek kalite ve gerçekçilik (Sınırsız)",
     type: "free",
   },
   {
     id: "turbo",
-    name: "⚡ Turbo (Hızlı)",
+    name: "⚡ Turbo (Pollinations)",
     desc: "Ücretsiz • Çok hızlı üretim, iyi kalite (Sınırsız)",
     type: "free",
   },
   {
-    id: "default",
-    name: "🌟 Pollinations Default",
-    desc: "Ücretsiz • Standart dengeli üretim (Sınırsız)",
-    type: "free",
+    id: "gemini-2.5-flash-image",
+    name: "🍌 Nano Banana (Gemini 2.5 Image)",
+    desc: "Ücretli • Multimodal altyapı (Sadece Tier 1+ Faturalı)",
+    type: "paid",
+  },
+  {
+    id: "gemini-3.1-flash-image-preview",
+    name: "🍌🍌 Nano Banana 2 (Gemini 3.1 Image)",
+    desc: "Ücretli • Pro seviye zeka + Flash hızı (Sadece Tier 1+)",
+    type: "paid",
+  },
+  {
+    id: "imagen-3.0-generate-002",
+    name: "🖼️ Imagen 3.0",
+    desc: "Ücretli • Gerçekçi Imagen altyapısı (Sadece Tier 1+)",
+    type: "paid",
   },
 ];
 
