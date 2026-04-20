@@ -21962,6 +21962,7 @@ export namespace Prisma {
     aiWriterImageModel: string | null
     aiWriterPrompt: string | null
     aiWriterImagePrompt: string | null
+    aiWriterUseRssImage: boolean | null
     aiWriterAutoEnabled: boolean | null
     aiWriterAutoCount: number | null
     aiWriterAutoCron: string | null
@@ -21981,6 +21982,7 @@ export namespace Prisma {
     aiWriterImageModel: string | null
     aiWriterPrompt: string | null
     aiWriterImagePrompt: string | null
+    aiWriterUseRssImage: boolean | null
     aiWriterAutoEnabled: boolean | null
     aiWriterAutoCount: number | null
     aiWriterAutoCron: string | null
@@ -22000,6 +22002,7 @@ export namespace Prisma {
     aiWriterImageModel: number
     aiWriterPrompt: number
     aiWriterImagePrompt: number
+    aiWriterUseRssImage: number
     aiWriterAutoEnabled: number
     aiWriterAutoCount: number
     aiWriterAutoCron: number
@@ -22031,6 +22034,7 @@ export namespace Prisma {
     aiWriterImageModel?: true
     aiWriterPrompt?: true
     aiWriterImagePrompt?: true
+    aiWriterUseRssImage?: true
     aiWriterAutoEnabled?: true
     aiWriterAutoCount?: true
     aiWriterAutoCron?: true
@@ -22050,6 +22054,7 @@ export namespace Prisma {
     aiWriterImageModel?: true
     aiWriterPrompt?: true
     aiWriterImagePrompt?: true
+    aiWriterUseRssImage?: true
     aiWriterAutoEnabled?: true
     aiWriterAutoCount?: true
     aiWriterAutoCron?: true
@@ -22069,6 +22074,7 @@ export namespace Prisma {
     aiWriterImageModel?: true
     aiWriterPrompt?: true
     aiWriterImagePrompt?: true
+    aiWriterUseRssImage?: true
     aiWriterAutoEnabled?: true
     aiWriterAutoCount?: true
     aiWriterAutoCron?: true
@@ -22175,6 +22181,7 @@ export namespace Prisma {
     aiWriterImageModel: string
     aiWriterPrompt: string
     aiWriterImagePrompt: string
+    aiWriterUseRssImage: boolean
     aiWriterAutoEnabled: boolean
     aiWriterAutoCount: number
     aiWriterAutoCron: string
@@ -22213,6 +22220,7 @@ export namespace Prisma {
     aiWriterImageModel?: boolean
     aiWriterPrompt?: boolean
     aiWriterImagePrompt?: boolean
+    aiWriterUseRssImage?: boolean
     aiWriterAutoEnabled?: boolean
     aiWriterAutoCount?: boolean
     aiWriterAutoCron?: boolean
@@ -22232,6 +22240,7 @@ export namespace Prisma {
     aiWriterImageModel?: boolean
     aiWriterPrompt?: boolean
     aiWriterImagePrompt?: boolean
+    aiWriterUseRssImage?: boolean
     aiWriterAutoEnabled?: boolean
     aiWriterAutoCount?: boolean
     aiWriterAutoCron?: boolean
@@ -22251,6 +22260,7 @@ export namespace Prisma {
     aiWriterImageModel?: boolean
     aiWriterPrompt?: boolean
     aiWriterImagePrompt?: boolean
+    aiWriterUseRssImage?: boolean
     aiWriterAutoEnabled?: boolean
     aiWriterAutoCount?: boolean
     aiWriterAutoCron?: boolean
@@ -22270,6 +22280,7 @@ export namespace Prisma {
     aiWriterImageModel?: boolean
     aiWriterPrompt?: boolean
     aiWriterImagePrompt?: boolean
+    aiWriterUseRssImage?: boolean
     aiWriterAutoEnabled?: boolean
     aiWriterAutoCount?: boolean
     aiWriterAutoCron?: boolean
@@ -22277,7 +22288,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -22294,6 +22305,7 @@ export namespace Prisma {
       aiWriterImageModel: string
       aiWriterPrompt: string
       aiWriterImagePrompt: string
+      aiWriterUseRssImage: boolean
       aiWriterAutoEnabled: boolean
       aiWriterAutoCount: number
       aiWriterAutoCron: string
@@ -22733,6 +22745,7 @@ export namespace Prisma {
     readonly aiWriterImageModel: FieldRef<"SystemSettings", 'String'>
     readonly aiWriterPrompt: FieldRef<"SystemSettings", 'String'>
     readonly aiWriterImagePrompt: FieldRef<"SystemSettings", 'String'>
+    readonly aiWriterUseRssImage: FieldRef<"SystemSettings", 'Boolean'>
     readonly aiWriterAutoEnabled: FieldRef<"SystemSettings", 'Boolean'>
     readonly aiWriterAutoCount: FieldRef<"SystemSettings", 'Int'>
     readonly aiWriterAutoCron: FieldRef<"SystemSettings", 'String'>
@@ -23383,6 +23396,7 @@ export namespace Prisma {
     aiWriterImageModel: 'aiWriterImageModel',
     aiWriterPrompt: 'aiWriterPrompt',
     aiWriterImagePrompt: 'aiWriterImagePrompt',
+    aiWriterUseRssImage: 'aiWriterUseRssImage',
     aiWriterAutoEnabled: 'aiWriterAutoEnabled',
     aiWriterAutoCount: 'aiWriterAutoCount',
     aiWriterAutoCron: 'aiWriterAutoCron',
@@ -24845,6 +24859,7 @@ export namespace Prisma {
     aiWriterImageModel?: StringFilter<"SystemSettings"> | string
     aiWriterPrompt?: StringFilter<"SystemSettings"> | string
     aiWriterImagePrompt?: StringFilter<"SystemSettings"> | string
+    aiWriterUseRssImage?: BoolFilter<"SystemSettings"> | boolean
     aiWriterAutoEnabled?: BoolFilter<"SystemSettings"> | boolean
     aiWriterAutoCount?: IntFilter<"SystemSettings"> | number
     aiWriterAutoCron?: StringFilter<"SystemSettings"> | string
@@ -24864,6 +24879,7 @@ export namespace Prisma {
     aiWriterImageModel?: SortOrder
     aiWriterPrompt?: SortOrder
     aiWriterImagePrompt?: SortOrder
+    aiWriterUseRssImage?: SortOrder
     aiWriterAutoEnabled?: SortOrder
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder
@@ -24886,6 +24902,7 @@ export namespace Prisma {
     aiWriterImageModel?: StringFilter<"SystemSettings"> | string
     aiWriterPrompt?: StringFilter<"SystemSettings"> | string
     aiWriterImagePrompt?: StringFilter<"SystemSettings"> | string
+    aiWriterUseRssImage?: BoolFilter<"SystemSettings"> | boolean
     aiWriterAutoEnabled?: BoolFilter<"SystemSettings"> | boolean
     aiWriterAutoCount?: IntFilter<"SystemSettings"> | number
     aiWriterAutoCron?: StringFilter<"SystemSettings"> | string
@@ -24905,6 +24922,7 @@ export namespace Prisma {
     aiWriterImageModel?: SortOrder
     aiWriterPrompt?: SortOrder
     aiWriterImagePrompt?: SortOrder
+    aiWriterUseRssImage?: SortOrder
     aiWriterAutoEnabled?: SortOrder
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder
@@ -24932,6 +24950,7 @@ export namespace Prisma {
     aiWriterImageModel?: StringWithAggregatesFilter<"SystemSettings"> | string
     aiWriterPrompt?: StringWithAggregatesFilter<"SystemSettings"> | string
     aiWriterImagePrompt?: StringWithAggregatesFilter<"SystemSettings"> | string
+    aiWriterUseRssImage?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
     aiWriterAutoEnabled?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
     aiWriterAutoCount?: IntWithAggregatesFilter<"SystemSettings"> | number
     aiWriterAutoCron?: StringWithAggregatesFilter<"SystemSettings"> | string
@@ -26373,6 +26392,7 @@ export namespace Prisma {
     aiWriterImageModel?: string
     aiWriterPrompt?: string
     aiWriterImagePrompt?: string
+    aiWriterUseRssImage?: boolean
     aiWriterAutoEnabled?: boolean
     aiWriterAutoCount?: number
     aiWriterAutoCron?: string
@@ -26392,6 +26412,7 @@ export namespace Prisma {
     aiWriterImageModel?: string
     aiWriterPrompt?: string
     aiWriterImagePrompt?: string
+    aiWriterUseRssImage?: boolean
     aiWriterAutoEnabled?: boolean
     aiWriterAutoCount?: number
     aiWriterAutoCron?: string
@@ -26411,6 +26432,7 @@ export namespace Prisma {
     aiWriterImageModel?: StringFieldUpdateOperationsInput | string
     aiWriterPrompt?: StringFieldUpdateOperationsInput | string
     aiWriterImagePrompt?: StringFieldUpdateOperationsInput | string
+    aiWriterUseRssImage?: BoolFieldUpdateOperationsInput | boolean
     aiWriterAutoEnabled?: BoolFieldUpdateOperationsInput | boolean
     aiWriterAutoCount?: IntFieldUpdateOperationsInput | number
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
@@ -26430,6 +26452,7 @@ export namespace Prisma {
     aiWriterImageModel?: StringFieldUpdateOperationsInput | string
     aiWriterPrompt?: StringFieldUpdateOperationsInput | string
     aiWriterImagePrompt?: StringFieldUpdateOperationsInput | string
+    aiWriterUseRssImage?: BoolFieldUpdateOperationsInput | boolean
     aiWriterAutoEnabled?: BoolFieldUpdateOperationsInput | boolean
     aiWriterAutoCount?: IntFieldUpdateOperationsInput | number
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
@@ -26449,6 +26472,7 @@ export namespace Prisma {
     aiWriterImageModel?: string
     aiWriterPrompt?: string
     aiWriterImagePrompt?: string
+    aiWriterUseRssImage?: boolean
     aiWriterAutoEnabled?: boolean
     aiWriterAutoCount?: number
     aiWriterAutoCron?: string
@@ -26468,6 +26492,7 @@ export namespace Prisma {
     aiWriterImageModel?: StringFieldUpdateOperationsInput | string
     aiWriterPrompt?: StringFieldUpdateOperationsInput | string
     aiWriterImagePrompt?: StringFieldUpdateOperationsInput | string
+    aiWriterUseRssImage?: BoolFieldUpdateOperationsInput | boolean
     aiWriterAutoEnabled?: BoolFieldUpdateOperationsInput | boolean
     aiWriterAutoCount?: IntFieldUpdateOperationsInput | number
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
@@ -26487,6 +26512,7 @@ export namespace Prisma {
     aiWriterImageModel?: StringFieldUpdateOperationsInput | string
     aiWriterPrompt?: StringFieldUpdateOperationsInput | string
     aiWriterImagePrompt?: StringFieldUpdateOperationsInput | string
+    aiWriterUseRssImage?: BoolFieldUpdateOperationsInput | boolean
     aiWriterAutoEnabled?: BoolFieldUpdateOperationsInput | boolean
     aiWriterAutoCount?: IntFieldUpdateOperationsInput | number
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
@@ -27533,6 +27559,7 @@ export namespace Prisma {
     aiWriterImageModel?: SortOrder
     aiWriterPrompt?: SortOrder
     aiWriterImagePrompt?: SortOrder
+    aiWriterUseRssImage?: SortOrder
     aiWriterAutoEnabled?: SortOrder
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder
@@ -27557,6 +27584,7 @@ export namespace Prisma {
     aiWriterImageModel?: SortOrder
     aiWriterPrompt?: SortOrder
     aiWriterImagePrompt?: SortOrder
+    aiWriterUseRssImage?: SortOrder
     aiWriterAutoEnabled?: SortOrder
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder
@@ -27576,6 +27604,7 @@ export namespace Prisma {
     aiWriterImageModel?: SortOrder
     aiWriterPrompt?: SortOrder
     aiWriterImagePrompt?: SortOrder
+    aiWriterUseRssImage?: SortOrder
     aiWriterAutoEnabled?: SortOrder
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder

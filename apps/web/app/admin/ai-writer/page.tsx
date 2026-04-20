@@ -58,6 +58,7 @@ export default async function AdminAiWriterPage() {
           initialImagePrompt={settings.aiWriterImagePrompt}
           initialModel={settings.aiWriterModel}
           initialImageModel={settings.aiWriterImageModel}
+          initialUseRssImage={settings.aiWriterUseRssImage}
         />
         <AiWriterAutomationCard 
           enabled={settings.aiWriterAutoEnabled}

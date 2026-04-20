@@ -178,8 +178,8 @@ export async function writeArticleWithAI(suggestionId: string) {
       Do NOT include any text or watermarks in the image.
     `;
 
-    // Yeni Özellik: RSS kaynağında görsel varsa, ondan ilham al
-    if (suggestion.imageUrl) {
+    // Yeni Özellik: RSS kaynağında görsel varsa ve ayarlardan "İlham Al" açıksa, ondan ilham al
+    if (suggestion.imageUrl && settings?.aiWriterUseRssImage !== false) {
       const base64Image = await fetchImageAsBase64(suggestion.imageUrl);
       if (base64Image) {
         try {

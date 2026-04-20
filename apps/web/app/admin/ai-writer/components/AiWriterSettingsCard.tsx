@@ -9,6 +9,7 @@ interface Props {
   initialImagePrompt: string;
   initialModel: string;
   initialImageModel: string;
+  initialUseRssImage: boolean;
 }
 
 // ── Metin Yazım Modelleri (Google Search Grounding destekli) ──────────────────
@@ -60,11 +61,13 @@ export function AiWriterSettingsCard({
   initialImagePrompt,
   initialModel,
   initialImageModel,
+  initialUseRssImage,
 }: Props) {
   const [prompt, setPrompt] = useState(initialPrompt);
   const [imagePrompt, setImagePrompt] = useState(initialImagePrompt);
   const [model, setModel] = useState(initialModel);
   const [imageModel, setImageModel] = useState(initialImageModel);
+  const [useRssImage, setUseRssImage] = useState(initialUseRssImage);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -73,7 +76,7 @@ export function AiWriterSettingsCard({
   const handleSave = async () => {
     setLoading(true);
     setSuccess(false);
-    const res = await updateAiWriterSettings({ prompt, imagePrompt, model, imageModel });
+    const res = await updateAiWriterSettings({ prompt, imagePrompt, model, imageModel, useRssImage });
     if (res.success) {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -167,6 +170,20 @@ export function AiWriterSettingsCard({
             </span>
           </div>
         )}
+
+        {/* ── RSS Görseli İlhamı Toggle ── */}
+        <label className="flex items-center gap-3 cursor-pointer bg-muted/20 p-4 rounded-xl border border-border hover:bg-muted/40 transition-colors">
+          <input
+            type="checkbox"
+            checked={useRssImage}
+            onChange={(e) => setUseRssImage(e.target.checked)}
+            className="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+          />
+          <div className="flex flex-col">
+            <span className="text-sm font-bold">Orijinal Görselden İlham Al (Image-to-Image)</span>
+            <span className="text-xs text-muted-foreground">Eğer RSS haberinde bir görsel varsa, AI bu görselin renklerini ve içeriğini kopyalayarak yepyeni telifsiz bir kapak fotoğrafı üretir.</span>
+          </div>
+        </label>
 
         {/* ── Makale Promptu ── */}
         <div className="space-y-2">
