@@ -108,6 +108,11 @@ export type SystemSettings = $Result.DefaultSelection<Prisma.$SystemSettingsPayl
  * AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)
  */
 export type AiPersona = $Result.DefaultSelection<Prisma.$AiPersonaPayload>
+/**
+ * Model AiPersonaOnCategory
+ * 
+ */
+export type AiPersonaOnCategory = $Result.DefaultSelection<Prisma.$AiPersonaOnCategoryPayload>
 
 /**
  * Enums
@@ -454,6 +459,16 @@ export class PrismaClient<
     * ```
     */
   get aiPersona(): Prisma.AiPersonaDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.aiPersonaOnCategory`: Exposes CRUD operations for the **AiPersonaOnCategory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more AiPersonaOnCategories
+    * const aiPersonaOnCategories = await prisma.aiPersonaOnCategory.findMany()
+    * ```
+    */
+  get aiPersonaOnCategory(): Prisma.AiPersonaOnCategoryDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -906,7 +921,8 @@ export namespace Prisma {
     RssFeedSource: 'RssFeedSource',
     RssFeedItem: 'RssFeedItem',
     SystemSettings: 'SystemSettings',
-    AiPersona: 'AiPersona'
+    AiPersona: 'AiPersona',
+    AiPersonaOnCategory: 'AiPersonaOnCategory'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -922,7 +938,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "systemSettings" | "aiPersona"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "systemSettings" | "aiPersona" | "aiPersonaOnCategory"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2332,6 +2348,80 @@ export namespace Prisma {
           }
         }
       }
+      AiPersonaOnCategory: {
+        payload: Prisma.$AiPersonaOnCategoryPayload<ExtArgs>
+        fields: Prisma.AiPersonaOnCategoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.AiPersonaOnCategoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.AiPersonaOnCategoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload>
+          }
+          findFirst: {
+            args: Prisma.AiPersonaOnCategoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.AiPersonaOnCategoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload>
+          }
+          findMany: {
+            args: Prisma.AiPersonaOnCategoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload>[]
+          }
+          create: {
+            args: Prisma.AiPersonaOnCategoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload>
+          }
+          createMany: {
+            args: Prisma.AiPersonaOnCategoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.AiPersonaOnCategoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload>[]
+          }
+          delete: {
+            args: Prisma.AiPersonaOnCategoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload>
+          }
+          update: {
+            args: Prisma.AiPersonaOnCategoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.AiPersonaOnCategoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.AiPersonaOnCategoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.AiPersonaOnCategoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.AiPersonaOnCategoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$AiPersonaOnCategoryPayload>
+          }
+          aggregate: {
+            args: Prisma.AiPersonaOnCategoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateAiPersonaOnCategory>
+          }
+          groupBy: {
+            args: Prisma.AiPersonaOnCategoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<AiPersonaOnCategoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.AiPersonaOnCategoryCountArgs<ExtArgs>
+            result: $Utils.Optional<AiPersonaOnCategoryCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2459,6 +2549,7 @@ export namespace Prisma {
     rssFeedItem?: RssFeedItemOmit
     systemSettings?: SystemSettingsOmit
     aiPersona?: AiPersonaOmit
+    aiPersonaOnCategory?: AiPersonaOnCategoryOmit
   }
 
   /* Types for Logging */
@@ -2665,10 +2756,12 @@ export namespace Prisma {
 
   export type CategoryCountOutputType = {
     articles: number
+    personas: number
   }
 
   export type CategoryCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     articles?: boolean | CategoryCountOutputTypeCountArticlesArgs
+    personas?: boolean | CategoryCountOutputTypeCountPersonasArgs
   }
 
   // Custom InputTypes
@@ -2687,6 +2780,13 @@ export namespace Prisma {
    */
   export type CategoryCountOutputTypeCountArticlesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ArticleWhereInput
+  }
+
+  /**
+   * CategoryCountOutputType without action
+   */
+  export type CategoryCountOutputTypeCountPersonasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AiPersonaOnCategoryWhereInput
   }
 
 
@@ -2820,10 +2920,12 @@ export namespace Prisma {
 
   export type AiPersonaCountOutputType = {
     categories: number
+    articles: number
   }
 
   export type AiPersonaCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     categories?: boolean | AiPersonaCountOutputTypeCountCategoriesArgs
+    articles?: boolean | AiPersonaCountOutputTypeCountArticlesArgs
   }
 
   // Custom InputTypes
@@ -2841,7 +2943,14 @@ export namespace Prisma {
    * AiPersonaCountOutputType without action
    */
   export type AiPersonaCountOutputTypeCountCategoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: CategoryWhereInput
+    where?: AiPersonaOnCategoryWhereInput
+  }
+
+  /**
+   * AiPersonaCountOutputType without action
+   */
+  export type AiPersonaCountOutputTypeCountArticlesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArticleWhereInput
   }
 
 
@@ -7455,6 +7564,7 @@ export namespace Prisma {
     viewCount: number | null
     authorId: string | null
     categoryId: string | null
+    aiPersonaId: string | null
     publishedAt: Date | null
     lang: string | null
     createdAt: Date | null
@@ -7472,6 +7582,7 @@ export namespace Prisma {
     viewCount: number | null
     authorId: string | null
     categoryId: string | null
+    aiPersonaId: string | null
     publishedAt: Date | null
     lang: string | null
     createdAt: Date | null
@@ -7489,6 +7600,7 @@ export namespace Prisma {
     viewCount: number
     authorId: number
     categoryId: number
+    aiPersonaId: number
     publishedAt: number
     lang: number
     createdAt: number
@@ -7516,6 +7628,7 @@ export namespace Prisma {
     viewCount?: true
     authorId?: true
     categoryId?: true
+    aiPersonaId?: true
     publishedAt?: true
     lang?: true
     createdAt?: true
@@ -7533,6 +7646,7 @@ export namespace Prisma {
     viewCount?: true
     authorId?: true
     categoryId?: true
+    aiPersonaId?: true
     publishedAt?: true
     lang?: true
     createdAt?: true
@@ -7550,6 +7664,7 @@ export namespace Prisma {
     viewCount?: true
     authorId?: true
     categoryId?: true
+    aiPersonaId?: true
     publishedAt?: true
     lang?: true
     createdAt?: true
@@ -7654,6 +7769,7 @@ export namespace Prisma {
     viewCount: number
     authorId: string
     categoryId: string | null
+    aiPersonaId: string | null
     publishedAt: Date | null
     lang: string
     createdAt: Date
@@ -7690,12 +7806,14 @@ export namespace Prisma {
     viewCount?: boolean
     authorId?: boolean
     categoryId?: boolean
+    aiPersonaId?: boolean
     publishedAt?: boolean
     lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
+    aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
     tags?: boolean | Article$tagsArgs<ExtArgs>
@@ -7713,12 +7831,14 @@ export namespace Prisma {
     viewCount?: boolean
     authorId?: boolean
     categoryId?: boolean
+    aiPersonaId?: boolean
     publishedAt?: boolean
     lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
+    aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
   }, ExtArgs["result"]["article"]>
 
   export type ArticleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7732,12 +7852,14 @@ export namespace Prisma {
     viewCount?: boolean
     authorId?: boolean
     categoryId?: boolean
+    aiPersonaId?: boolean
     publishedAt?: boolean
     lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
+    aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
   }, ExtArgs["result"]["article"]>
 
   export type ArticleSelectScalar = {
@@ -7751,16 +7873,18 @@ export namespace Prisma {
     viewCount?: boolean
     authorId?: boolean
     categoryId?: boolean
+    aiPersonaId?: boolean
     publishedAt?: boolean
     lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "content" | "excerpt" | "coverImage" | "status" | "viewCount" | "authorId" | "categoryId" | "publishedAt" | "lang" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
+  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "content" | "excerpt" | "coverImage" | "status" | "viewCount" | "authorId" | "categoryId" | "aiPersonaId" | "publishedAt" | "lang" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
   export type ArticleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
+    aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
     tags?: boolean | Article$tagsArgs<ExtArgs>
@@ -7769,10 +7893,12 @@ export namespace Prisma {
   export type ArticleIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
+    aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
   }
   export type ArticleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
+    aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
   }
 
   export type $ArticlePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7780,6 +7906,7 @@ export namespace Prisma {
     objects: {
       author: Prisma.$UserPayload<ExtArgs>
       category: Prisma.$CategoryPayload<ExtArgs> | null
+      aiPersona: Prisma.$AiPersonaPayload<ExtArgs> | null
       bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       tags: Prisma.$TagOnArticlePayload<ExtArgs>[]
@@ -7795,6 +7922,7 @@ export namespace Prisma {
       viewCount: number
       authorId: string
       categoryId: string | null
+      aiPersonaId: string | null
       publishedAt: Date | null
       lang: string
       createdAt: Date
@@ -8195,6 +8323,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     category<T extends Article$categoryArgs<ExtArgs> = {}>(args?: Subset<T, Article$categoryArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    aiPersona<T extends Article$aiPersonaArgs<ExtArgs> = {}>(args?: Subset<T, Article$aiPersonaArgs<ExtArgs>>): Prisma__AiPersonaClient<$Result.GetResult<Prisma.$AiPersonaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bookmarks<T extends Article$bookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Article$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends Article$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Article$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tags<T extends Article$tagsArgs<ExtArgs> = {}>(args?: Subset<T, Article$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TagOnArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -8237,6 +8366,7 @@ export namespace Prisma {
     readonly viewCount: FieldRef<"Article", 'Int'>
     readonly authorId: FieldRef<"Article", 'String'>
     readonly categoryId: FieldRef<"Article", 'String'>
+    readonly aiPersonaId: FieldRef<"Article", 'String'>
     readonly publishedAt: FieldRef<"Article", 'DateTime'>
     readonly lang: FieldRef<"Article", 'String'>
     readonly createdAt: FieldRef<"Article", 'DateTime'>
@@ -8661,6 +8791,25 @@ export namespace Prisma {
   }
 
   /**
+   * Article.aiPersona
+   */
+  export type Article$aiPersonaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersona
+     */
+    select?: AiPersonaSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersona
+     */
+    omit?: AiPersonaOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaInclude<ExtArgs> | null
+    where?: AiPersonaWhereInput
+  }
+
+  /**
    * Article.bookmarks
    */
   export type Article$bookmarksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8782,7 +8931,6 @@ export namespace Prisma {
     lang: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    personaId: string | null
   }
 
   export type CategoryMaxAggregateOutputType = {
@@ -8796,7 +8944,6 @@ export namespace Prisma {
     lang: string | null
     createdAt: Date | null
     updatedAt: Date | null
-    personaId: string | null
   }
 
   export type CategoryCountAggregateOutputType = {
@@ -8810,7 +8957,6 @@ export namespace Prisma {
     lang: number
     createdAt: number
     updatedAt: number
-    personaId: number
     _all: number
   }
 
@@ -8834,7 +8980,6 @@ export namespace Prisma {
     lang?: true
     createdAt?: true
     updatedAt?: true
-    personaId?: true
   }
 
   export type CategoryMaxAggregateInputType = {
@@ -8848,7 +8993,6 @@ export namespace Prisma {
     lang?: true
     createdAt?: true
     updatedAt?: true
-    personaId?: true
   }
 
   export type CategoryCountAggregateInputType = {
@@ -8862,7 +9006,6 @@ export namespace Prisma {
     lang?: true
     createdAt?: true
     updatedAt?: true
-    personaId?: true
     _all?: true
   }
 
@@ -8963,7 +9106,6 @@ export namespace Prisma {
     lang: string
     createdAt: Date
     updatedAt: Date
-    personaId: string | null
     _count: CategoryCountAggregateOutputType | null
     _avg: CategoryAvgAggregateOutputType | null
     _sum: CategorySumAggregateOutputType | null
@@ -8996,9 +9138,8 @@ export namespace Prisma {
     lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    personaId?: boolean
     articles?: boolean | Category$articlesArgs<ExtArgs>
-    aiPersona?: boolean | Category$aiPersonaArgs<ExtArgs>
+    personas?: boolean | Category$personasArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["category"]>
 
@@ -9013,8 +9154,6 @@ export namespace Prisma {
     lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    personaId?: boolean
-    aiPersona?: boolean | Category$aiPersonaArgs<ExtArgs>
   }, ExtArgs["result"]["category"]>
 
   export type CategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -9028,8 +9167,6 @@ export namespace Prisma {
     lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    personaId?: boolean
-    aiPersona?: boolean | Category$aiPersonaArgs<ExtArgs>
   }, ExtArgs["result"]["category"]>
 
   export type CategorySelectScalar = {
@@ -9043,27 +9180,22 @@ export namespace Prisma {
     lang?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    personaId?: boolean
   }
 
-  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "description" | "color" | "icon" | "order" | "lang" | "createdAt" | "updatedAt" | "personaId", ExtArgs["result"]["category"]>
+  export type CategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "slug" | "description" | "color" | "icon" | "order" | "lang" | "createdAt" | "updatedAt", ExtArgs["result"]["category"]>
   export type CategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     articles?: boolean | Category$articlesArgs<ExtArgs>
-    aiPersona?: boolean | Category$aiPersonaArgs<ExtArgs>
+    personas?: boolean | Category$personasArgs<ExtArgs>
     _count?: boolean | CategoryCountOutputTypeDefaultArgs<ExtArgs>
   }
-  export type CategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    aiPersona?: boolean | Category$aiPersonaArgs<ExtArgs>
-  }
-  export type CategoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    aiPersona?: boolean | Category$aiPersonaArgs<ExtArgs>
-  }
+  export type CategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type CategoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $CategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Category"
     objects: {
       articles: Prisma.$ArticlePayload<ExtArgs>[]
-      aiPersona: Prisma.$AiPersonaPayload<ExtArgs> | null
+      personas: Prisma.$AiPersonaOnCategoryPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -9076,7 +9208,6 @@ export namespace Prisma {
       lang: string
       createdAt: Date
       updatedAt: Date
-      personaId: string | null
     }, ExtArgs["result"]["category"]>
     composites: {}
   }
@@ -9472,7 +9603,7 @@ export namespace Prisma {
   export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     articles<T extends Category$articlesArgs<ExtArgs> = {}>(args?: Subset<T, Category$articlesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    aiPersona<T extends Category$aiPersonaArgs<ExtArgs> = {}>(args?: Subset<T, Category$aiPersonaArgs<ExtArgs>>): Prisma__AiPersonaClient<$Result.GetResult<Prisma.$AiPersonaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    personas<T extends Category$personasArgs<ExtArgs> = {}>(args?: Subset<T, Category$personasArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -9512,7 +9643,6 @@ export namespace Prisma {
     readonly lang: FieldRef<"Category", 'String'>
     readonly createdAt: FieldRef<"Category", 'DateTime'>
     readonly updatedAt: FieldRef<"Category", 'DateTime'>
-    readonly personaId: FieldRef<"Category", 'String'>
   }
     
 
@@ -9767,10 +9897,6 @@ export namespace Prisma {
      */
     data: CategoryCreateManyInput | CategoryCreateManyInput[]
     skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CategoryIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9841,10 +9967,6 @@ export namespace Prisma {
      * Limit how many Categories to update.
      */
     limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: CategoryIncludeUpdateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -9938,22 +10060,27 @@ export namespace Prisma {
   }
 
   /**
-   * Category.aiPersona
+   * Category.personas
    */
-  export type Category$aiPersonaArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+  export type Category$personasArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the AiPersona
+     * Select specific fields to fetch from the AiPersonaOnCategory
      */
-    select?: AiPersonaSelect<ExtArgs> | null
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
     /**
-     * Omit specific fields from the AiPersona
+     * Omit specific fields from the AiPersonaOnCategory
      */
-    omit?: AiPersonaOmit<ExtArgs> | null
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: AiPersonaInclude<ExtArgs> | null
-    where?: AiPersonaWhereInput
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    where?: AiPersonaOnCategoryWhereInput
+    orderBy?: AiPersonaOnCategoryOrderByWithRelationInput | AiPersonaOnCategoryOrderByWithRelationInput[]
+    cursor?: AiPersonaOnCategoryWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: AiPersonaOnCategoryScalarFieldEnum | AiPersonaOnCategoryScalarFieldEnum[]
   }
 
   /**
@@ -23307,9 +23434,12 @@ export namespace Prisma {
   export type AiPersonaMinAggregateOutputType = {
     id: string | null
     name: string | null
+    role: string | null
+    image: string | null
     description: string | null
     prompt: string | null
     imagePrompt: string | null
+    isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -23317,9 +23447,12 @@ export namespace Prisma {
   export type AiPersonaMaxAggregateOutputType = {
     id: string | null
     name: string | null
+    role: string | null
+    image: string | null
     description: string | null
     prompt: string | null
     imagePrompt: string | null
+    isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -23327,9 +23460,12 @@ export namespace Prisma {
   export type AiPersonaCountAggregateOutputType = {
     id: number
     name: number
+    role: number
+    image: number
     description: number
     prompt: number
     imagePrompt: number
+    isActive: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -23339,9 +23475,12 @@ export namespace Prisma {
   export type AiPersonaMinAggregateInputType = {
     id?: true
     name?: true
+    role?: true
+    image?: true
     description?: true
     prompt?: true
     imagePrompt?: true
+    isActive?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -23349,9 +23488,12 @@ export namespace Prisma {
   export type AiPersonaMaxAggregateInputType = {
     id?: true
     name?: true
+    role?: true
+    image?: true
     description?: true
     prompt?: true
     imagePrompt?: true
+    isActive?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -23359,9 +23501,12 @@ export namespace Prisma {
   export type AiPersonaCountAggregateInputType = {
     id?: true
     name?: true
+    role?: true
+    image?: true
     description?: true
     prompt?: true
     imagePrompt?: true
+    isActive?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -23442,9 +23587,12 @@ export namespace Prisma {
   export type AiPersonaGroupByOutputType = {
     id: string
     name: string
+    role: string | null
+    image: string | null
     description: string | null
     prompt: string
     imagePrompt: string
+    isActive: boolean
     createdAt: Date
     updatedAt: Date
     _count: AiPersonaCountAggregateOutputType | null
@@ -23469,21 +23617,28 @@ export namespace Prisma {
   export type AiPersonaSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    role?: boolean
+    image?: boolean
     description?: boolean
     prompt?: boolean
     imagePrompt?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     categories?: boolean | AiPersona$categoriesArgs<ExtArgs>
+    articles?: boolean | AiPersona$articlesArgs<ExtArgs>
     _count?: boolean | AiPersonaCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["aiPersona"]>
 
   export type AiPersonaSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    role?: boolean
+    image?: boolean
     description?: boolean
     prompt?: boolean
     imagePrompt?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["aiPersona"]>
@@ -23491,9 +23646,12 @@ export namespace Prisma {
   export type AiPersonaSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
     id?: boolean
     name?: boolean
+    role?: boolean
+    image?: boolean
     description?: boolean
     prompt?: boolean
     imagePrompt?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["aiPersona"]>
@@ -23501,16 +23659,20 @@ export namespace Prisma {
   export type AiPersonaSelectScalar = {
     id?: boolean
     name?: boolean
+    role?: boolean
+    image?: boolean
     description?: boolean
     prompt?: boolean
     imagePrompt?: boolean
+    isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AiPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "prompt" | "imagePrompt" | "createdAt" | "updatedAt", ExtArgs["result"]["aiPersona"]>
+  export type AiPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "role" | "image" | "description" | "prompt" | "imagePrompt" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["aiPersona"]>
   export type AiPersonaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     categories?: boolean | AiPersona$categoriesArgs<ExtArgs>
+    articles?: boolean | AiPersona$articlesArgs<ExtArgs>
     _count?: boolean | AiPersonaCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type AiPersonaIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -23519,14 +23681,18 @@ export namespace Prisma {
   export type $AiPersonaPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "AiPersona"
     objects: {
-      categories: Prisma.$CategoryPayload<ExtArgs>[]
+      categories: Prisma.$AiPersonaOnCategoryPayload<ExtArgs>[]
+      articles: Prisma.$ArticlePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
       name: string
+      role: string | null
+      image: string | null
       description: string | null
       prompt: string
       imagePrompt: string
+      isActive: boolean
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["aiPersona"]>
@@ -23923,7 +24089,8 @@ export namespace Prisma {
    */
   export interface Prisma__AiPersonaClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    categories<T extends AiPersona$categoriesArgs<ExtArgs> = {}>(args?: Subset<T, AiPersona$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    categories<T extends AiPersona$categoriesArgs<ExtArgs> = {}>(args?: Subset<T, AiPersona$categoriesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    articles<T extends AiPersona$articlesArgs<ExtArgs> = {}>(args?: Subset<T, AiPersona$articlesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -23955,9 +24122,12 @@ export namespace Prisma {
   interface AiPersonaFieldRefs {
     readonly id: FieldRef<"AiPersona", 'String'>
     readonly name: FieldRef<"AiPersona", 'String'>
+    readonly role: FieldRef<"AiPersona", 'String'>
+    readonly image: FieldRef<"AiPersona", 'String'>
     readonly description: FieldRef<"AiPersona", 'String'>
     readonly prompt: FieldRef<"AiPersona", 'String'>
     readonly imagePrompt: FieldRef<"AiPersona", 'String'>
+    readonly isActive: FieldRef<"AiPersona", 'Boolean'>
     readonly createdAt: FieldRef<"AiPersona", 'DateTime'>
     readonly updatedAt: FieldRef<"AiPersona", 'DateTime'>
   }
@@ -24357,23 +24527,47 @@ export namespace Prisma {
    */
   export type AiPersona$categoriesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
-     * Select specific fields to fetch from the Category
+     * Select specific fields to fetch from the AiPersonaOnCategory
      */
-    select?: CategorySelect<ExtArgs> | null
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
     /**
-     * Omit specific fields from the Category
+     * Omit specific fields from the AiPersonaOnCategory
      */
-    omit?: CategoryOmit<ExtArgs> | null
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
     /**
      * Choose, which related nodes to fetch as well
      */
-    include?: CategoryInclude<ExtArgs> | null
-    where?: CategoryWhereInput
-    orderBy?: CategoryOrderByWithRelationInput | CategoryOrderByWithRelationInput[]
-    cursor?: CategoryWhereUniqueInput
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    where?: AiPersonaOnCategoryWhereInput
+    orderBy?: AiPersonaOnCategoryOrderByWithRelationInput | AiPersonaOnCategoryOrderByWithRelationInput[]
+    cursor?: AiPersonaOnCategoryWhereUniqueInput
     take?: number
     skip?: number
-    distinct?: CategoryScalarFieldEnum | CategoryScalarFieldEnum[]
+    distinct?: AiPersonaOnCategoryScalarFieldEnum | AiPersonaOnCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * AiPersona.articles
+   */
+  export type AiPersona$articlesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    where?: ArticleWhereInput
+    orderBy?: ArticleOrderByWithRelationInput | ArticleOrderByWithRelationInput[]
+    cursor?: ArticleWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ArticleScalarFieldEnum | ArticleScalarFieldEnum[]
   }
 
   /**
@@ -24392,6 +24586,1051 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: AiPersonaInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model AiPersonaOnCategory
+   */
+
+  export type AggregateAiPersonaOnCategory = {
+    _count: AiPersonaOnCategoryCountAggregateOutputType | null
+    _min: AiPersonaOnCategoryMinAggregateOutputType | null
+    _max: AiPersonaOnCategoryMaxAggregateOutputType | null
+  }
+
+  export type AiPersonaOnCategoryMinAggregateOutputType = {
+    personaId: string | null
+    categoryId: string | null
+    lastUsedAt: Date | null
+  }
+
+  export type AiPersonaOnCategoryMaxAggregateOutputType = {
+    personaId: string | null
+    categoryId: string | null
+    lastUsedAt: Date | null
+  }
+
+  export type AiPersonaOnCategoryCountAggregateOutputType = {
+    personaId: number
+    categoryId: number
+    lastUsedAt: number
+    _all: number
+  }
+
+
+  export type AiPersonaOnCategoryMinAggregateInputType = {
+    personaId?: true
+    categoryId?: true
+    lastUsedAt?: true
+  }
+
+  export type AiPersonaOnCategoryMaxAggregateInputType = {
+    personaId?: true
+    categoryId?: true
+    lastUsedAt?: true
+  }
+
+  export type AiPersonaOnCategoryCountAggregateInputType = {
+    personaId?: true
+    categoryId?: true
+    lastUsedAt?: true
+    _all?: true
+  }
+
+  export type AiPersonaOnCategoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AiPersonaOnCategory to aggregate.
+     */
+    where?: AiPersonaOnCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiPersonaOnCategories to fetch.
+     */
+    orderBy?: AiPersonaOnCategoryOrderByWithRelationInput | AiPersonaOnCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: AiPersonaOnCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiPersonaOnCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiPersonaOnCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned AiPersonaOnCategories
+    **/
+    _count?: true | AiPersonaOnCategoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: AiPersonaOnCategoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: AiPersonaOnCategoryMaxAggregateInputType
+  }
+
+  export type GetAiPersonaOnCategoryAggregateType<T extends AiPersonaOnCategoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateAiPersonaOnCategory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateAiPersonaOnCategory[P]>
+      : GetScalarType<T[P], AggregateAiPersonaOnCategory[P]>
+  }
+
+
+
+
+  export type AiPersonaOnCategoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: AiPersonaOnCategoryWhereInput
+    orderBy?: AiPersonaOnCategoryOrderByWithAggregationInput | AiPersonaOnCategoryOrderByWithAggregationInput[]
+    by: AiPersonaOnCategoryScalarFieldEnum[] | AiPersonaOnCategoryScalarFieldEnum
+    having?: AiPersonaOnCategoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: AiPersonaOnCategoryCountAggregateInputType | true
+    _min?: AiPersonaOnCategoryMinAggregateInputType
+    _max?: AiPersonaOnCategoryMaxAggregateInputType
+  }
+
+  export type AiPersonaOnCategoryGroupByOutputType = {
+    personaId: string
+    categoryId: string
+    lastUsedAt: Date | null
+    _count: AiPersonaOnCategoryCountAggregateOutputType | null
+    _min: AiPersonaOnCategoryMinAggregateOutputType | null
+    _max: AiPersonaOnCategoryMaxAggregateOutputType | null
+  }
+
+  type GetAiPersonaOnCategoryGroupByPayload<T extends AiPersonaOnCategoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<AiPersonaOnCategoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof AiPersonaOnCategoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], AiPersonaOnCategoryGroupByOutputType[P]>
+            : GetScalarType<T[P], AiPersonaOnCategoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type AiPersonaOnCategorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    personaId?: boolean
+    categoryId?: boolean
+    lastUsedAt?: boolean
+    persona?: boolean | AiPersonaDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aiPersonaOnCategory"]>
+
+  export type AiPersonaOnCategorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    personaId?: boolean
+    categoryId?: boolean
+    lastUsedAt?: boolean
+    persona?: boolean | AiPersonaDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aiPersonaOnCategory"]>
+
+  export type AiPersonaOnCategorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    personaId?: boolean
+    categoryId?: boolean
+    lastUsedAt?: boolean
+    persona?: boolean | AiPersonaDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["aiPersonaOnCategory"]>
+
+  export type AiPersonaOnCategorySelectScalar = {
+    personaId?: boolean
+    categoryId?: boolean
+    lastUsedAt?: boolean
+  }
+
+  export type AiPersonaOnCategoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"personaId" | "categoryId" | "lastUsedAt", ExtArgs["result"]["aiPersonaOnCategory"]>
+  export type AiPersonaOnCategoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    persona?: boolean | AiPersonaDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
+  }
+  export type AiPersonaOnCategoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    persona?: boolean | AiPersonaDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
+  }
+  export type AiPersonaOnCategoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    persona?: boolean | AiPersonaDefaultArgs<ExtArgs>
+    category?: boolean | CategoryDefaultArgs<ExtArgs>
+  }
+
+  export type $AiPersonaOnCategoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "AiPersonaOnCategory"
+    objects: {
+      persona: Prisma.$AiPersonaPayload<ExtArgs>
+      category: Prisma.$CategoryPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      personaId: string
+      categoryId: string
+      lastUsedAt: Date | null
+    }, ExtArgs["result"]["aiPersonaOnCategory"]>
+    composites: {}
+  }
+
+  type AiPersonaOnCategoryGetPayload<S extends boolean | null | undefined | AiPersonaOnCategoryDefaultArgs> = $Result.GetResult<Prisma.$AiPersonaOnCategoryPayload, S>
+
+  type AiPersonaOnCategoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<AiPersonaOnCategoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: AiPersonaOnCategoryCountAggregateInputType | true
+    }
+
+  export interface AiPersonaOnCategoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AiPersonaOnCategory'], meta: { name: 'AiPersonaOnCategory' } }
+    /**
+     * Find zero or one AiPersonaOnCategory that matches the filter.
+     * @param {AiPersonaOnCategoryFindUniqueArgs} args - Arguments to find a AiPersonaOnCategory
+     * @example
+     * // Get one AiPersonaOnCategory
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends AiPersonaOnCategoryFindUniqueArgs>(args: SelectSubset<T, AiPersonaOnCategoryFindUniqueArgs<ExtArgs>>): Prisma__AiPersonaOnCategoryClient<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one AiPersonaOnCategory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {AiPersonaOnCategoryFindUniqueOrThrowArgs} args - Arguments to find a AiPersonaOnCategory
+     * @example
+     * // Get one AiPersonaOnCategory
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends AiPersonaOnCategoryFindUniqueOrThrowArgs>(args: SelectSubset<T, AiPersonaOnCategoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AiPersonaOnCategoryClient<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AiPersonaOnCategory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiPersonaOnCategoryFindFirstArgs} args - Arguments to find a AiPersonaOnCategory
+     * @example
+     * // Get one AiPersonaOnCategory
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends AiPersonaOnCategoryFindFirstArgs>(args?: SelectSubset<T, AiPersonaOnCategoryFindFirstArgs<ExtArgs>>): Prisma__AiPersonaOnCategoryClient<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first AiPersonaOnCategory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiPersonaOnCategoryFindFirstOrThrowArgs} args - Arguments to find a AiPersonaOnCategory
+     * @example
+     * // Get one AiPersonaOnCategory
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends AiPersonaOnCategoryFindFirstOrThrowArgs>(args?: SelectSubset<T, AiPersonaOnCategoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__AiPersonaOnCategoryClient<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more AiPersonaOnCategories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiPersonaOnCategoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all AiPersonaOnCategories
+     * const aiPersonaOnCategories = await prisma.aiPersonaOnCategory.findMany()
+     * 
+     * // Get first 10 AiPersonaOnCategories
+     * const aiPersonaOnCategories = await prisma.aiPersonaOnCategory.findMany({ take: 10 })
+     * 
+     * // Only select the `personaId`
+     * const aiPersonaOnCategoryWithPersonaIdOnly = await prisma.aiPersonaOnCategory.findMany({ select: { personaId: true } })
+     * 
+     */
+    findMany<T extends AiPersonaOnCategoryFindManyArgs>(args?: SelectSubset<T, AiPersonaOnCategoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a AiPersonaOnCategory.
+     * @param {AiPersonaOnCategoryCreateArgs} args - Arguments to create a AiPersonaOnCategory.
+     * @example
+     * // Create one AiPersonaOnCategory
+     * const AiPersonaOnCategory = await prisma.aiPersonaOnCategory.create({
+     *   data: {
+     *     // ... data to create a AiPersonaOnCategory
+     *   }
+     * })
+     * 
+     */
+    create<T extends AiPersonaOnCategoryCreateArgs>(args: SelectSubset<T, AiPersonaOnCategoryCreateArgs<ExtArgs>>): Prisma__AiPersonaOnCategoryClient<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many AiPersonaOnCategories.
+     * @param {AiPersonaOnCategoryCreateManyArgs} args - Arguments to create many AiPersonaOnCategories.
+     * @example
+     * // Create many AiPersonaOnCategories
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends AiPersonaOnCategoryCreateManyArgs>(args?: SelectSubset<T, AiPersonaOnCategoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many AiPersonaOnCategories and returns the data saved in the database.
+     * @param {AiPersonaOnCategoryCreateManyAndReturnArgs} args - Arguments to create many AiPersonaOnCategories.
+     * @example
+     * // Create many AiPersonaOnCategories
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many AiPersonaOnCategories and only return the `personaId`
+     * const aiPersonaOnCategoryWithPersonaIdOnly = await prisma.aiPersonaOnCategory.createManyAndReturn({
+     *   select: { personaId: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends AiPersonaOnCategoryCreateManyAndReturnArgs>(args?: SelectSubset<T, AiPersonaOnCategoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a AiPersonaOnCategory.
+     * @param {AiPersonaOnCategoryDeleteArgs} args - Arguments to delete one AiPersonaOnCategory.
+     * @example
+     * // Delete one AiPersonaOnCategory
+     * const AiPersonaOnCategory = await prisma.aiPersonaOnCategory.delete({
+     *   where: {
+     *     // ... filter to delete one AiPersonaOnCategory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends AiPersonaOnCategoryDeleteArgs>(args: SelectSubset<T, AiPersonaOnCategoryDeleteArgs<ExtArgs>>): Prisma__AiPersonaOnCategoryClient<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one AiPersonaOnCategory.
+     * @param {AiPersonaOnCategoryUpdateArgs} args - Arguments to update one AiPersonaOnCategory.
+     * @example
+     * // Update one AiPersonaOnCategory
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends AiPersonaOnCategoryUpdateArgs>(args: SelectSubset<T, AiPersonaOnCategoryUpdateArgs<ExtArgs>>): Prisma__AiPersonaOnCategoryClient<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more AiPersonaOnCategories.
+     * @param {AiPersonaOnCategoryDeleteManyArgs} args - Arguments to filter AiPersonaOnCategories to delete.
+     * @example
+     * // Delete a few AiPersonaOnCategories
+     * const { count } = await prisma.aiPersonaOnCategory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends AiPersonaOnCategoryDeleteManyArgs>(args?: SelectSubset<T, AiPersonaOnCategoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AiPersonaOnCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiPersonaOnCategoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many AiPersonaOnCategories
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends AiPersonaOnCategoryUpdateManyArgs>(args: SelectSubset<T, AiPersonaOnCategoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more AiPersonaOnCategories and returns the data updated in the database.
+     * @param {AiPersonaOnCategoryUpdateManyAndReturnArgs} args - Arguments to update many AiPersonaOnCategories.
+     * @example
+     * // Update many AiPersonaOnCategories
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more AiPersonaOnCategories and only return the `personaId`
+     * const aiPersonaOnCategoryWithPersonaIdOnly = await prisma.aiPersonaOnCategory.updateManyAndReturn({
+     *   select: { personaId: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends AiPersonaOnCategoryUpdateManyAndReturnArgs>(args: SelectSubset<T, AiPersonaOnCategoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one AiPersonaOnCategory.
+     * @param {AiPersonaOnCategoryUpsertArgs} args - Arguments to update or create a AiPersonaOnCategory.
+     * @example
+     * // Update or create a AiPersonaOnCategory
+     * const aiPersonaOnCategory = await prisma.aiPersonaOnCategory.upsert({
+     *   create: {
+     *     // ... data to create a AiPersonaOnCategory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the AiPersonaOnCategory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends AiPersonaOnCategoryUpsertArgs>(args: SelectSubset<T, AiPersonaOnCategoryUpsertArgs<ExtArgs>>): Prisma__AiPersonaOnCategoryClient<$Result.GetResult<Prisma.$AiPersonaOnCategoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of AiPersonaOnCategories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiPersonaOnCategoryCountArgs} args - Arguments to filter AiPersonaOnCategories to count.
+     * @example
+     * // Count the number of AiPersonaOnCategories
+     * const count = await prisma.aiPersonaOnCategory.count({
+     *   where: {
+     *     // ... the filter for the AiPersonaOnCategories we want to count
+     *   }
+     * })
+    **/
+    count<T extends AiPersonaOnCategoryCountArgs>(
+      args?: Subset<T, AiPersonaOnCategoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], AiPersonaOnCategoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a AiPersonaOnCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiPersonaOnCategoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends AiPersonaOnCategoryAggregateArgs>(args: Subset<T, AiPersonaOnCategoryAggregateArgs>): Prisma.PrismaPromise<GetAiPersonaOnCategoryAggregateType<T>>
+
+    /**
+     * Group by AiPersonaOnCategory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {AiPersonaOnCategoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends AiPersonaOnCategoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: AiPersonaOnCategoryGroupByArgs['orderBy'] }
+        : { orderBy?: AiPersonaOnCategoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, AiPersonaOnCategoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAiPersonaOnCategoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the AiPersonaOnCategory model
+   */
+  readonly fields: AiPersonaOnCategoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for AiPersonaOnCategory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__AiPersonaOnCategoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    persona<T extends AiPersonaDefaultArgs<ExtArgs> = {}>(args?: Subset<T, AiPersonaDefaultArgs<ExtArgs>>): Prisma__AiPersonaClient<$Result.GetResult<Prisma.$AiPersonaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    category<T extends CategoryDefaultArgs<ExtArgs> = {}>(args?: Subset<T, CategoryDefaultArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the AiPersonaOnCategory model
+   */
+  interface AiPersonaOnCategoryFieldRefs {
+    readonly personaId: FieldRef<"AiPersonaOnCategory", 'String'>
+    readonly categoryId: FieldRef<"AiPersonaOnCategory", 'String'>
+    readonly lastUsedAt: FieldRef<"AiPersonaOnCategory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * AiPersonaOnCategory findUnique
+   */
+  export type AiPersonaOnCategoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which AiPersonaOnCategory to fetch.
+     */
+    where: AiPersonaOnCategoryWhereUniqueInput
+  }
+
+  /**
+   * AiPersonaOnCategory findUniqueOrThrow
+   */
+  export type AiPersonaOnCategoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which AiPersonaOnCategory to fetch.
+     */
+    where: AiPersonaOnCategoryWhereUniqueInput
+  }
+
+  /**
+   * AiPersonaOnCategory findFirst
+   */
+  export type AiPersonaOnCategoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which AiPersonaOnCategory to fetch.
+     */
+    where?: AiPersonaOnCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiPersonaOnCategories to fetch.
+     */
+    orderBy?: AiPersonaOnCategoryOrderByWithRelationInput | AiPersonaOnCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AiPersonaOnCategories.
+     */
+    cursor?: AiPersonaOnCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiPersonaOnCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiPersonaOnCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AiPersonaOnCategories.
+     */
+    distinct?: AiPersonaOnCategoryScalarFieldEnum | AiPersonaOnCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * AiPersonaOnCategory findFirstOrThrow
+   */
+  export type AiPersonaOnCategoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which AiPersonaOnCategory to fetch.
+     */
+    where?: AiPersonaOnCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiPersonaOnCategories to fetch.
+     */
+    orderBy?: AiPersonaOnCategoryOrderByWithRelationInput | AiPersonaOnCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for AiPersonaOnCategories.
+     */
+    cursor?: AiPersonaOnCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiPersonaOnCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiPersonaOnCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AiPersonaOnCategories.
+     */
+    distinct?: AiPersonaOnCategoryScalarFieldEnum | AiPersonaOnCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * AiPersonaOnCategory findMany
+   */
+  export type AiPersonaOnCategoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    /**
+     * Filter, which AiPersonaOnCategories to fetch.
+     */
+    where?: AiPersonaOnCategoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of AiPersonaOnCategories to fetch.
+     */
+    orderBy?: AiPersonaOnCategoryOrderByWithRelationInput | AiPersonaOnCategoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing AiPersonaOnCategories.
+     */
+    cursor?: AiPersonaOnCategoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` AiPersonaOnCategories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` AiPersonaOnCategories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of AiPersonaOnCategories.
+     */
+    distinct?: AiPersonaOnCategoryScalarFieldEnum | AiPersonaOnCategoryScalarFieldEnum[]
+  }
+
+  /**
+   * AiPersonaOnCategory create
+   */
+  export type AiPersonaOnCategoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a AiPersonaOnCategory.
+     */
+    data: XOR<AiPersonaOnCategoryCreateInput, AiPersonaOnCategoryUncheckedCreateInput>
+  }
+
+  /**
+   * AiPersonaOnCategory createMany
+   */
+  export type AiPersonaOnCategoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many AiPersonaOnCategories.
+     */
+    data: AiPersonaOnCategoryCreateManyInput | AiPersonaOnCategoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * AiPersonaOnCategory createManyAndReturn
+   */
+  export type AiPersonaOnCategoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many AiPersonaOnCategories.
+     */
+    data: AiPersonaOnCategoryCreateManyInput | AiPersonaOnCategoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AiPersonaOnCategory update
+   */
+  export type AiPersonaOnCategoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a AiPersonaOnCategory.
+     */
+    data: XOR<AiPersonaOnCategoryUpdateInput, AiPersonaOnCategoryUncheckedUpdateInput>
+    /**
+     * Choose, which AiPersonaOnCategory to update.
+     */
+    where: AiPersonaOnCategoryWhereUniqueInput
+  }
+
+  /**
+   * AiPersonaOnCategory updateMany
+   */
+  export type AiPersonaOnCategoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update AiPersonaOnCategories.
+     */
+    data: XOR<AiPersonaOnCategoryUpdateManyMutationInput, AiPersonaOnCategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which AiPersonaOnCategories to update
+     */
+    where?: AiPersonaOnCategoryWhereInput
+    /**
+     * Limit how many AiPersonaOnCategories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiPersonaOnCategory updateManyAndReturn
+   */
+  export type AiPersonaOnCategoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * The data used to update AiPersonaOnCategories.
+     */
+    data: XOR<AiPersonaOnCategoryUpdateManyMutationInput, AiPersonaOnCategoryUncheckedUpdateManyInput>
+    /**
+     * Filter which AiPersonaOnCategories to update
+     */
+    where?: AiPersonaOnCategoryWhereInput
+    /**
+     * Limit how many AiPersonaOnCategories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * AiPersonaOnCategory upsert
+   */
+  export type AiPersonaOnCategoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the AiPersonaOnCategory to update in case it exists.
+     */
+    where: AiPersonaOnCategoryWhereUniqueInput
+    /**
+     * In case the AiPersonaOnCategory found by the `where` argument doesn't exist, create a new AiPersonaOnCategory with this data.
+     */
+    create: XOR<AiPersonaOnCategoryCreateInput, AiPersonaOnCategoryUncheckedCreateInput>
+    /**
+     * In case the AiPersonaOnCategory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<AiPersonaOnCategoryUpdateInput, AiPersonaOnCategoryUncheckedUpdateInput>
+  }
+
+  /**
+   * AiPersonaOnCategory delete
+   */
+  export type AiPersonaOnCategoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
+    /**
+     * Filter which AiPersonaOnCategory to delete.
+     */
+    where: AiPersonaOnCategoryWhereUniqueInput
+  }
+
+  /**
+   * AiPersonaOnCategory deleteMany
+   */
+  export type AiPersonaOnCategoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which AiPersonaOnCategories to delete
+     */
+    where?: AiPersonaOnCategoryWhereInput
+    /**
+     * Limit how many AiPersonaOnCategories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * AiPersonaOnCategory without action
+   */
+  export type AiPersonaOnCategoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the AiPersonaOnCategory
+     */
+    select?: AiPersonaOnCategorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the AiPersonaOnCategory
+     */
+    omit?: AiPersonaOnCategoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: AiPersonaOnCategoryInclude<ExtArgs> | null
   }
 
 
@@ -24482,6 +25721,7 @@ export namespace Prisma {
     viewCount: 'viewCount',
     authorId: 'authorId',
     categoryId: 'categoryId',
+    aiPersonaId: 'aiPersonaId',
     publishedAt: 'publishedAt',
     lang: 'lang',
     createdAt: 'createdAt',
@@ -24501,8 +25741,7 @@ export namespace Prisma {
     order: 'order',
     lang: 'lang',
     createdAt: 'createdAt',
-    updatedAt: 'updatedAt',
-    personaId: 'personaId'
+    updatedAt: 'updatedAt'
   };
 
   export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
@@ -24684,14 +25923,26 @@ export namespace Prisma {
   export const AiPersonaScalarFieldEnum: {
     id: 'id',
     name: 'name',
+    role: 'role',
+    image: 'image',
     description: 'description',
     prompt: 'prompt',
     imagePrompt: 'imagePrompt',
+    isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type AiPersonaScalarFieldEnum = (typeof AiPersonaScalarFieldEnum)[keyof typeof AiPersonaScalarFieldEnum]
+
+
+  export const AiPersonaOnCategoryScalarFieldEnum: {
+    personaId: 'personaId',
+    categoryId: 'categoryId',
+    lastUsedAt: 'lastUsedAt'
+  };
+
+  export type AiPersonaOnCategoryScalarFieldEnum = (typeof AiPersonaOnCategoryScalarFieldEnum)[keyof typeof AiPersonaOnCategoryScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -25184,12 +26435,14 @@ export namespace Prisma {
     viewCount?: IntFilter<"Article"> | number
     authorId?: StringFilter<"Article"> | string
     categoryId?: StringNullableFilter<"Article"> | string | null
+    aiPersonaId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     lang?: StringFilter<"Article"> | string
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
+    aiPersona?: XOR<AiPersonaNullableScalarRelationFilter, AiPersonaWhereInput> | null
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     tags?: TagOnArticleListRelationFilter
@@ -25206,12 +26459,14 @@ export namespace Prisma {
     viewCount?: SortOrder
     authorId?: SortOrder
     categoryId?: SortOrderInput | SortOrder
+    aiPersonaId?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     author?: UserOrderByWithRelationInput
     category?: CategoryOrderByWithRelationInput
+    aiPersona?: AiPersonaOrderByWithRelationInput
     bookmarks?: BookmarkOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     tags?: TagOnArticleOrderByRelationAggregateInput
@@ -25231,12 +26486,14 @@ export namespace Prisma {
     viewCount?: IntFilter<"Article"> | number
     authorId?: StringFilter<"Article"> | string
     categoryId?: StringNullableFilter<"Article"> | string | null
+    aiPersonaId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     lang?: StringFilter<"Article"> | string
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
+    aiPersona?: XOR<AiPersonaNullableScalarRelationFilter, AiPersonaWhereInput> | null
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     tags?: TagOnArticleListRelationFilter
@@ -25253,6 +26510,7 @@ export namespace Prisma {
     viewCount?: SortOrder
     authorId?: SortOrder
     categoryId?: SortOrderInput | SortOrder
+    aiPersonaId?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     lang?: SortOrder
     createdAt?: SortOrder
@@ -25278,6 +26536,7 @@ export namespace Prisma {
     viewCount?: IntWithAggregatesFilter<"Article"> | number
     authorId?: StringWithAggregatesFilter<"Article"> | string
     categoryId?: StringNullableWithAggregatesFilter<"Article"> | string | null
+    aiPersonaId?: StringNullableWithAggregatesFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableWithAggregatesFilter<"Article"> | Date | string | null
     lang?: StringWithAggregatesFilter<"Article"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Article"> | Date | string
@@ -25298,9 +26557,8 @@ export namespace Prisma {
     lang?: StringFilter<"Category"> | string
     createdAt?: DateTimeFilter<"Category"> | Date | string
     updatedAt?: DateTimeFilter<"Category"> | Date | string
-    personaId?: StringNullableFilter<"Category"> | string | null
     articles?: ArticleListRelationFilter
-    aiPersona?: XOR<AiPersonaNullableScalarRelationFilter, AiPersonaWhereInput> | null
+    personas?: AiPersonaOnCategoryListRelationFilter
   }
 
   export type CategoryOrderByWithRelationInput = {
@@ -25314,9 +26572,8 @@ export namespace Prisma {
     lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    personaId?: SortOrderInput | SortOrder
     articles?: ArticleOrderByRelationAggregateInput
-    aiPersona?: AiPersonaOrderByWithRelationInput
+    personas?: AiPersonaOnCategoryOrderByRelationAggregateInput
   }
 
   export type CategoryWhereUniqueInput = Prisma.AtLeast<{
@@ -25333,9 +26590,8 @@ export namespace Prisma {
     lang?: StringFilter<"Category"> | string
     createdAt?: DateTimeFilter<"Category"> | Date | string
     updatedAt?: DateTimeFilter<"Category"> | Date | string
-    personaId?: StringNullableFilter<"Category"> | string | null
     articles?: ArticleListRelationFilter
-    aiPersona?: XOR<AiPersonaNullableScalarRelationFilter, AiPersonaWhereInput> | null
+    personas?: AiPersonaOnCategoryListRelationFilter
   }, "id" | "name" | "slug">
 
   export type CategoryOrderByWithAggregationInput = {
@@ -25349,7 +26605,6 @@ export namespace Prisma {
     lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    personaId?: SortOrderInput | SortOrder
     _count?: CategoryCountOrderByAggregateInput
     _avg?: CategoryAvgOrderByAggregateInput
     _max?: CategoryMaxOrderByAggregateInput
@@ -25371,7 +26626,6 @@ export namespace Prisma {
     lang?: StringWithAggregatesFilter<"Category"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Category"> | Date | string
-    personaId?: StringNullableWithAggregatesFilter<"Category"> | string | null
   }
 
   export type TagWhereInput = {
@@ -26259,23 +27513,31 @@ export namespace Prisma {
     NOT?: AiPersonaWhereInput | AiPersonaWhereInput[]
     id?: StringFilter<"AiPersona"> | string
     name?: StringFilter<"AiPersona"> | string
+    role?: StringNullableFilter<"AiPersona"> | string | null
+    image?: StringNullableFilter<"AiPersona"> | string | null
     description?: StringNullableFilter<"AiPersona"> | string | null
     prompt?: StringFilter<"AiPersona"> | string
     imagePrompt?: StringFilter<"AiPersona"> | string
+    isActive?: BoolFilter<"AiPersona"> | boolean
     createdAt?: DateTimeFilter<"AiPersona"> | Date | string
     updatedAt?: DateTimeFilter<"AiPersona"> | Date | string
-    categories?: CategoryListRelationFilter
+    categories?: AiPersonaOnCategoryListRelationFilter
+    articles?: ArticleListRelationFilter
   }
 
   export type AiPersonaOrderByWithRelationInput = {
     id?: SortOrder
     name?: SortOrder
+    role?: SortOrderInput | SortOrder
+    image?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    categories?: CategoryOrderByRelationAggregateInput
+    categories?: AiPersonaOnCategoryOrderByRelationAggregateInput
+    articles?: ArticleOrderByRelationAggregateInput
   }
 
   export type AiPersonaWhereUniqueInput = Prisma.AtLeast<{
@@ -26284,20 +27546,27 @@ export namespace Prisma {
     AND?: AiPersonaWhereInput | AiPersonaWhereInput[]
     OR?: AiPersonaWhereInput[]
     NOT?: AiPersonaWhereInput | AiPersonaWhereInput[]
+    role?: StringNullableFilter<"AiPersona"> | string | null
+    image?: StringNullableFilter<"AiPersona"> | string | null
     description?: StringNullableFilter<"AiPersona"> | string | null
     prompt?: StringFilter<"AiPersona"> | string
     imagePrompt?: StringFilter<"AiPersona"> | string
+    isActive?: BoolFilter<"AiPersona"> | boolean
     createdAt?: DateTimeFilter<"AiPersona"> | Date | string
     updatedAt?: DateTimeFilter<"AiPersona"> | Date | string
-    categories?: CategoryListRelationFilter
+    categories?: AiPersonaOnCategoryListRelationFilter
+    articles?: ArticleListRelationFilter
   }, "id" | "name">
 
   export type AiPersonaOrderByWithAggregationInput = {
     id?: SortOrder
     name?: SortOrder
+    role?: SortOrderInput | SortOrder
+    image?: SortOrderInput | SortOrder
     description?: SortOrderInput | SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: AiPersonaCountOrderByAggregateInput
@@ -26311,11 +27580,63 @@ export namespace Prisma {
     NOT?: AiPersonaScalarWhereWithAggregatesInput | AiPersonaScalarWhereWithAggregatesInput[]
     id?: StringWithAggregatesFilter<"AiPersona"> | string
     name?: StringWithAggregatesFilter<"AiPersona"> | string
+    role?: StringNullableWithAggregatesFilter<"AiPersona"> | string | null
+    image?: StringNullableWithAggregatesFilter<"AiPersona"> | string | null
     description?: StringNullableWithAggregatesFilter<"AiPersona"> | string | null
     prompt?: StringWithAggregatesFilter<"AiPersona"> | string
     imagePrompt?: StringWithAggregatesFilter<"AiPersona"> | string
+    isActive?: BoolWithAggregatesFilter<"AiPersona"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"AiPersona"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"AiPersona"> | Date | string
+  }
+
+  export type AiPersonaOnCategoryWhereInput = {
+    AND?: AiPersonaOnCategoryWhereInput | AiPersonaOnCategoryWhereInput[]
+    OR?: AiPersonaOnCategoryWhereInput[]
+    NOT?: AiPersonaOnCategoryWhereInput | AiPersonaOnCategoryWhereInput[]
+    personaId?: StringFilter<"AiPersonaOnCategory"> | string
+    categoryId?: StringFilter<"AiPersonaOnCategory"> | string
+    lastUsedAt?: DateTimeNullableFilter<"AiPersonaOnCategory"> | Date | string | null
+    persona?: XOR<AiPersonaScalarRelationFilter, AiPersonaWhereInput>
+    category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
+  }
+
+  export type AiPersonaOnCategoryOrderByWithRelationInput = {
+    personaId?: SortOrder
+    categoryId?: SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
+    persona?: AiPersonaOrderByWithRelationInput
+    category?: CategoryOrderByWithRelationInput
+  }
+
+  export type AiPersonaOnCategoryWhereUniqueInput = Prisma.AtLeast<{
+    personaId_categoryId?: AiPersonaOnCategoryPersonaIdCategoryIdCompoundUniqueInput
+    AND?: AiPersonaOnCategoryWhereInput | AiPersonaOnCategoryWhereInput[]
+    OR?: AiPersonaOnCategoryWhereInput[]
+    NOT?: AiPersonaOnCategoryWhereInput | AiPersonaOnCategoryWhereInput[]
+    personaId?: StringFilter<"AiPersonaOnCategory"> | string
+    categoryId?: StringFilter<"AiPersonaOnCategory"> | string
+    lastUsedAt?: DateTimeNullableFilter<"AiPersonaOnCategory"> | Date | string | null
+    persona?: XOR<AiPersonaScalarRelationFilter, AiPersonaWhereInput>
+    category?: XOR<CategoryScalarRelationFilter, CategoryWhereInput>
+  }, "personaId_categoryId">
+
+  export type AiPersonaOnCategoryOrderByWithAggregationInput = {
+    personaId?: SortOrder
+    categoryId?: SortOrder
+    lastUsedAt?: SortOrderInput | SortOrder
+    _count?: AiPersonaOnCategoryCountOrderByAggregateInput
+    _max?: AiPersonaOnCategoryMaxOrderByAggregateInput
+    _min?: AiPersonaOnCategoryMinOrderByAggregateInput
+  }
+
+  export type AiPersonaOnCategoryScalarWhereWithAggregatesInput = {
+    AND?: AiPersonaOnCategoryScalarWhereWithAggregatesInput | AiPersonaOnCategoryScalarWhereWithAggregatesInput[]
+    OR?: AiPersonaOnCategoryScalarWhereWithAggregatesInput[]
+    NOT?: AiPersonaOnCategoryScalarWhereWithAggregatesInput | AiPersonaOnCategoryScalarWhereWithAggregatesInput[]
+    personaId?: StringWithAggregatesFilter<"AiPersonaOnCategory"> | string
+    categoryId?: StringWithAggregatesFilter<"AiPersonaOnCategory"> | string
+    lastUsedAt?: DateTimeNullableWithAggregatesFilter<"AiPersonaOnCategory"> | Date | string | null
   }
 
   export type UserCreateInput = {
@@ -26705,6 +28026,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -26721,6 +28043,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     categoryId?: string | null
+    aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
@@ -26745,6 +28068,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -26761,6 +28085,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26781,6 +28106,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     categoryId?: string | null
+    aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
@@ -26813,6 +28139,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -26831,7 +28158,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     articles?: ArticleCreateNestedManyWithoutCategoryInput
-    aiPersona?: AiPersonaCreateNestedOneWithoutCategoriesInput
+    personas?: AiPersonaOnCategoryCreateNestedManyWithoutCategoryInput
   }
 
   export type CategoryUncheckedCreateInput = {
@@ -26845,8 +28172,8 @@ export namespace Prisma {
     lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    personaId?: string | null
     articles?: ArticleUncheckedCreateNestedManyWithoutCategoryInput
+    personas?: AiPersonaOnCategoryUncheckedCreateNestedManyWithoutCategoryInput
   }
 
   export type CategoryUpdateInput = {
@@ -26861,7 +28188,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     articles?: ArticleUpdateManyWithoutCategoryNestedInput
-    aiPersona?: AiPersonaUpdateOneWithoutCategoriesNestedInput
+    personas?: AiPersonaOnCategoryUpdateManyWithoutCategoryNestedInput
   }
 
   export type CategoryUncheckedUpdateInput = {
@@ -26875,8 +28202,8 @@ export namespace Prisma {
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    personaId?: NullableStringFieldUpdateOperationsInput | string | null
     articles?: ArticleUncheckedUpdateManyWithoutCategoryNestedInput
+    personas?: AiPersonaOnCategoryUncheckedUpdateManyWithoutCategoryNestedInput
   }
 
   export type CategoryCreateManyInput = {
@@ -26890,7 +28217,6 @@ export namespace Prisma {
     lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    personaId?: string | null
   }
 
   export type CategoryUpdateManyMutationInput = {
@@ -26917,7 +28243,6 @@ export namespace Prisma {
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    personaId?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type TagCreateInput = {
@@ -27889,53 +29214,72 @@ export namespace Prisma {
   export type AiPersonaCreateInput = {
     id?: string
     name: string
+    role?: string | null
+    image?: string | null
     description?: string | null
     prompt: string
     imagePrompt: string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    categories?: CategoryCreateNestedManyWithoutAiPersonaInput
+    categories?: AiPersonaOnCategoryCreateNestedManyWithoutPersonaInput
+    articles?: ArticleCreateNestedManyWithoutAiPersonaInput
   }
 
   export type AiPersonaUncheckedCreateInput = {
     id?: string
     name: string
+    role?: string | null
+    image?: string | null
     description?: string | null
     prompt: string
     imagePrompt: string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
-    categories?: CategoryUncheckedCreateNestedManyWithoutAiPersonaInput
+    categories?: AiPersonaOnCategoryUncheckedCreateNestedManyWithoutPersonaInput
+    articles?: ArticleUncheckedCreateNestedManyWithoutAiPersonaInput
   }
 
   export type AiPersonaUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    categories?: CategoryUpdateManyWithoutAiPersonaNestedInput
+    categories?: AiPersonaOnCategoryUpdateManyWithoutPersonaNestedInput
+    articles?: ArticleUpdateManyWithoutAiPersonaNestedInput
   }
 
   export type AiPersonaUncheckedUpdateInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    categories?: CategoryUncheckedUpdateManyWithoutAiPersonaNestedInput
+    categories?: AiPersonaOnCategoryUncheckedUpdateManyWithoutPersonaNestedInput
+    articles?: ArticleUncheckedUpdateManyWithoutAiPersonaNestedInput
   }
 
   export type AiPersonaCreateManyInput = {
     id?: string
     name: string
+    role?: string | null
+    image?: string | null
     description?: string | null
     prompt: string
     imagePrompt: string
+    isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -27943,9 +29287,12 @@ export namespace Prisma {
   export type AiPersonaUpdateManyMutationInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -27953,11 +29300,54 @@ export namespace Prisma {
   export type AiPersonaUncheckedUpdateManyInput = {
     id?: StringFieldUpdateOperationsInput | string
     name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiPersonaOnCategoryCreateInput = {
+    lastUsedAt?: Date | string | null
+    persona: AiPersonaCreateNestedOneWithoutCategoriesInput
+    category: CategoryCreateNestedOneWithoutPersonasInput
+  }
+
+  export type AiPersonaOnCategoryUncheckedCreateInput = {
+    personaId: string
+    categoryId: string
+    lastUsedAt?: Date | string | null
+  }
+
+  export type AiPersonaOnCategoryUpdateInput = {
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    persona?: AiPersonaUpdateOneRequiredWithoutCategoriesNestedInput
+    category?: CategoryUpdateOneRequiredWithoutPersonasNestedInput
+  }
+
+  export type AiPersonaOnCategoryUncheckedUpdateInput = {
+    personaId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AiPersonaOnCategoryCreateManyInput = {
+    personaId: string
+    categoryId: string
+    lastUsedAt?: Date | string | null
+  }
+
+  export type AiPersonaOnCategoryUpdateManyMutationInput = {
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AiPersonaOnCategoryUncheckedUpdateManyInput = {
+    personaId?: StringFieldUpdateOperationsInput | string
+    categoryId?: StringFieldUpdateOperationsInput | string
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -28325,6 +29715,11 @@ export namespace Prisma {
     isNot?: CategoryWhereInput | null
   }
 
+  export type AiPersonaNullableScalarRelationFilter = {
+    is?: AiPersonaWhereInput | null
+    isNot?: AiPersonaWhereInput | null
+  }
+
   export type TagOnArticleListRelationFilter = {
     every?: TagOnArticleWhereInput
     some?: TagOnArticleWhereInput
@@ -28346,6 +29741,7 @@ export namespace Prisma {
     viewCount?: SortOrder
     authorId?: SortOrder
     categoryId?: SortOrder
+    aiPersonaId?: SortOrder
     publishedAt?: SortOrder
     lang?: SortOrder
     createdAt?: SortOrder
@@ -28367,6 +29763,7 @@ export namespace Prisma {
     viewCount?: SortOrder
     authorId?: SortOrder
     categoryId?: SortOrder
+    aiPersonaId?: SortOrder
     publishedAt?: SortOrder
     lang?: SortOrder
     createdAt?: SortOrder
@@ -28384,6 +29781,7 @@ export namespace Prisma {
     viewCount?: SortOrder
     authorId?: SortOrder
     categoryId?: SortOrder
+    aiPersonaId?: SortOrder
     publishedAt?: SortOrder
     lang?: SortOrder
     createdAt?: SortOrder
@@ -28410,9 +29808,14 @@ export namespace Prisma {
     _max?: NestedIntFilter<$PrismaModel>
   }
 
-  export type AiPersonaNullableScalarRelationFilter = {
-    is?: AiPersonaWhereInput | null
-    isNot?: AiPersonaWhereInput | null
+  export type AiPersonaOnCategoryListRelationFilter = {
+    every?: AiPersonaOnCategoryWhereInput
+    some?: AiPersonaOnCategoryWhereInput
+    none?: AiPersonaOnCategoryWhereInput
+  }
+
+  export type AiPersonaOnCategoryOrderByRelationAggregateInput = {
+    _count?: SortOrder
   }
 
   export type CategoryCountOrderByAggregateInput = {
@@ -28426,7 +29829,6 @@ export namespace Prisma {
     lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    personaId?: SortOrder
   }
 
   export type CategoryAvgOrderByAggregateInput = {
@@ -28444,7 +29846,6 @@ export namespace Prisma {
     lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    personaId?: SortOrder
   }
 
   export type CategoryMinOrderByAggregateInput = {
@@ -28458,7 +29859,6 @@ export namespace Prisma {
     lang?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    personaId?: SortOrder
   }
 
   export type CategorySumOrderByAggregateInput = {
@@ -29065,22 +30465,15 @@ export namespace Prisma {
     aiWriterAutoCount?: SortOrder
   }
 
-  export type CategoryListRelationFilter = {
-    every?: CategoryWhereInput
-    some?: CategoryWhereInput
-    none?: CategoryWhereInput
-  }
-
-  export type CategoryOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type AiPersonaCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    role?: SortOrder
+    image?: SortOrder
     description?: SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -29088,9 +30481,12 @@ export namespace Prisma {
   export type AiPersonaMaxOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    role?: SortOrder
+    image?: SortOrder
     description?: SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -29098,11 +30494,47 @@ export namespace Prisma {
   export type AiPersonaMinOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
+    role?: SortOrder
+    image?: SortOrder
     description?: SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type AiPersonaScalarRelationFilter = {
+    is?: AiPersonaWhereInput
+    isNot?: AiPersonaWhereInput
+  }
+
+  export type CategoryScalarRelationFilter = {
+    is?: CategoryWhereInput
+    isNot?: CategoryWhereInput
+  }
+
+  export type AiPersonaOnCategoryPersonaIdCategoryIdCompoundUniqueInput = {
+    personaId: string
+    categoryId: string
+  }
+
+  export type AiPersonaOnCategoryCountOrderByAggregateInput = {
+    personaId?: SortOrder
+    categoryId?: SortOrder
+    lastUsedAt?: SortOrder
+  }
+
+  export type AiPersonaOnCategoryMaxOrderByAggregateInput = {
+    personaId?: SortOrder
+    categoryId?: SortOrder
+    lastUsedAt?: SortOrder
+  }
+
+  export type AiPersonaOnCategoryMinOrderByAggregateInput = {
+    personaId?: SortOrder
+    categoryId?: SortOrder
+    lastUsedAt?: SortOrder
   }
 
   export type AccountCreateNestedManyWithoutUserInput = {
@@ -29417,6 +30849,12 @@ export namespace Prisma {
     connect?: CategoryWhereUniqueInput
   }
 
+  export type AiPersonaCreateNestedOneWithoutArticlesInput = {
+    create?: XOR<AiPersonaCreateWithoutArticlesInput, AiPersonaUncheckedCreateWithoutArticlesInput>
+    connectOrCreate?: AiPersonaCreateOrConnectWithoutArticlesInput
+    connect?: AiPersonaWhereUniqueInput
+  }
+
   export type BookmarkCreateNestedManyWithoutArticleInput = {
     create?: XOR<BookmarkCreateWithoutArticleInput, BookmarkUncheckedCreateWithoutArticleInput> | BookmarkCreateWithoutArticleInput[] | BookmarkUncheckedCreateWithoutArticleInput[]
     connectOrCreate?: BookmarkCreateOrConnectWithoutArticleInput | BookmarkCreateOrConnectWithoutArticleInput[]
@@ -29483,6 +30921,16 @@ export namespace Prisma {
     delete?: CategoryWhereInput | boolean
     connect?: CategoryWhereUniqueInput
     update?: XOR<XOR<CategoryUpdateToOneWithWhereWithoutArticlesInput, CategoryUpdateWithoutArticlesInput>, CategoryUncheckedUpdateWithoutArticlesInput>
+  }
+
+  export type AiPersonaUpdateOneWithoutArticlesNestedInput = {
+    create?: XOR<AiPersonaCreateWithoutArticlesInput, AiPersonaUncheckedCreateWithoutArticlesInput>
+    connectOrCreate?: AiPersonaCreateOrConnectWithoutArticlesInput
+    upsert?: AiPersonaUpsertWithoutArticlesInput
+    disconnect?: AiPersonaWhereInput | boolean
+    delete?: AiPersonaWhereInput | boolean
+    connect?: AiPersonaWhereUniqueInput
+    update?: XOR<XOR<AiPersonaUpdateToOneWithWhereWithoutArticlesInput, AiPersonaUpdateWithoutArticlesInput>, AiPersonaUncheckedUpdateWithoutArticlesInput>
   }
 
   export type BookmarkUpdateManyWithoutArticleNestedInput = {
@@ -29576,10 +31024,11 @@ export namespace Prisma {
     connect?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
   }
 
-  export type AiPersonaCreateNestedOneWithoutCategoriesInput = {
-    create?: XOR<AiPersonaCreateWithoutCategoriesInput, AiPersonaUncheckedCreateWithoutCategoriesInput>
-    connectOrCreate?: AiPersonaCreateOrConnectWithoutCategoriesInput
-    connect?: AiPersonaWhereUniqueInput
+  export type AiPersonaOnCategoryCreateNestedManyWithoutCategoryInput = {
+    create?: XOR<AiPersonaOnCategoryCreateWithoutCategoryInput, AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput> | AiPersonaOnCategoryCreateWithoutCategoryInput[] | AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput[]
+    connectOrCreate?: AiPersonaOnCategoryCreateOrConnectWithoutCategoryInput | AiPersonaOnCategoryCreateOrConnectWithoutCategoryInput[]
+    createMany?: AiPersonaOnCategoryCreateManyCategoryInputEnvelope
+    connect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
   }
 
   export type ArticleUncheckedCreateNestedManyWithoutCategoryInput = {
@@ -29587,6 +31036,13 @@ export namespace Prisma {
     connectOrCreate?: ArticleCreateOrConnectWithoutCategoryInput | ArticleCreateOrConnectWithoutCategoryInput[]
     createMany?: ArticleCreateManyCategoryInputEnvelope
     connect?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+  }
+
+  export type AiPersonaOnCategoryUncheckedCreateNestedManyWithoutCategoryInput = {
+    create?: XOR<AiPersonaOnCategoryCreateWithoutCategoryInput, AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput> | AiPersonaOnCategoryCreateWithoutCategoryInput[] | AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput[]
+    connectOrCreate?: AiPersonaOnCategoryCreateOrConnectWithoutCategoryInput | AiPersonaOnCategoryCreateOrConnectWithoutCategoryInput[]
+    createMany?: AiPersonaOnCategoryCreateManyCategoryInputEnvelope
+    connect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
   }
 
   export type ArticleUpdateManyWithoutCategoryNestedInput = {
@@ -29603,14 +31059,18 @@ export namespace Prisma {
     deleteMany?: ArticleScalarWhereInput | ArticleScalarWhereInput[]
   }
 
-  export type AiPersonaUpdateOneWithoutCategoriesNestedInput = {
-    create?: XOR<AiPersonaCreateWithoutCategoriesInput, AiPersonaUncheckedCreateWithoutCategoriesInput>
-    connectOrCreate?: AiPersonaCreateOrConnectWithoutCategoriesInput
-    upsert?: AiPersonaUpsertWithoutCategoriesInput
-    disconnect?: AiPersonaWhereInput | boolean
-    delete?: AiPersonaWhereInput | boolean
-    connect?: AiPersonaWhereUniqueInput
-    update?: XOR<XOR<AiPersonaUpdateToOneWithWhereWithoutCategoriesInput, AiPersonaUpdateWithoutCategoriesInput>, AiPersonaUncheckedUpdateWithoutCategoriesInput>
+  export type AiPersonaOnCategoryUpdateManyWithoutCategoryNestedInput = {
+    create?: XOR<AiPersonaOnCategoryCreateWithoutCategoryInput, AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput> | AiPersonaOnCategoryCreateWithoutCategoryInput[] | AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput[]
+    connectOrCreate?: AiPersonaOnCategoryCreateOrConnectWithoutCategoryInput | AiPersonaOnCategoryCreateOrConnectWithoutCategoryInput[]
+    upsert?: AiPersonaOnCategoryUpsertWithWhereUniqueWithoutCategoryInput | AiPersonaOnCategoryUpsertWithWhereUniqueWithoutCategoryInput[]
+    createMany?: AiPersonaOnCategoryCreateManyCategoryInputEnvelope
+    set?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    disconnect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    delete?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    connect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    update?: AiPersonaOnCategoryUpdateWithWhereUniqueWithoutCategoryInput | AiPersonaOnCategoryUpdateWithWhereUniqueWithoutCategoryInput[]
+    updateMany?: AiPersonaOnCategoryUpdateManyWithWhereWithoutCategoryInput | AiPersonaOnCategoryUpdateManyWithWhereWithoutCategoryInput[]
+    deleteMany?: AiPersonaOnCategoryScalarWhereInput | AiPersonaOnCategoryScalarWhereInput[]
   }
 
   export type ArticleUncheckedUpdateManyWithoutCategoryNestedInput = {
@@ -29625,6 +31085,20 @@ export namespace Prisma {
     update?: ArticleUpdateWithWhereUniqueWithoutCategoryInput | ArticleUpdateWithWhereUniqueWithoutCategoryInput[]
     updateMany?: ArticleUpdateManyWithWhereWithoutCategoryInput | ArticleUpdateManyWithWhereWithoutCategoryInput[]
     deleteMany?: ArticleScalarWhereInput | ArticleScalarWhereInput[]
+  }
+
+  export type AiPersonaOnCategoryUncheckedUpdateManyWithoutCategoryNestedInput = {
+    create?: XOR<AiPersonaOnCategoryCreateWithoutCategoryInput, AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput> | AiPersonaOnCategoryCreateWithoutCategoryInput[] | AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput[]
+    connectOrCreate?: AiPersonaOnCategoryCreateOrConnectWithoutCategoryInput | AiPersonaOnCategoryCreateOrConnectWithoutCategoryInput[]
+    upsert?: AiPersonaOnCategoryUpsertWithWhereUniqueWithoutCategoryInput | AiPersonaOnCategoryUpsertWithWhereUniqueWithoutCategoryInput[]
+    createMany?: AiPersonaOnCategoryCreateManyCategoryInputEnvelope
+    set?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    disconnect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    delete?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    connect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    update?: AiPersonaOnCategoryUpdateWithWhereUniqueWithoutCategoryInput | AiPersonaOnCategoryUpdateWithWhereUniqueWithoutCategoryInput[]
+    updateMany?: AiPersonaOnCategoryUpdateManyWithWhereWithoutCategoryInput | AiPersonaOnCategoryUpdateManyWithWhereWithoutCategoryInput[]
+    deleteMany?: AiPersonaOnCategoryScalarWhereInput | AiPersonaOnCategoryScalarWhereInput[]
   }
 
   export type TagOnArticleCreateNestedManyWithoutTagInput = {
@@ -29953,46 +31427,116 @@ export namespace Prisma {
     update?: XOR<XOR<RssFeedSourceUpdateToOneWithWhereWithoutItemsInput, RssFeedSourceUpdateWithoutItemsInput>, RssFeedSourceUncheckedUpdateWithoutItemsInput>
   }
 
-  export type CategoryCreateNestedManyWithoutAiPersonaInput = {
-    create?: XOR<CategoryCreateWithoutAiPersonaInput, CategoryUncheckedCreateWithoutAiPersonaInput> | CategoryCreateWithoutAiPersonaInput[] | CategoryUncheckedCreateWithoutAiPersonaInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutAiPersonaInput | CategoryCreateOrConnectWithoutAiPersonaInput[]
-    createMany?: CategoryCreateManyAiPersonaInputEnvelope
-    connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+  export type AiPersonaOnCategoryCreateNestedManyWithoutPersonaInput = {
+    create?: XOR<AiPersonaOnCategoryCreateWithoutPersonaInput, AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput> | AiPersonaOnCategoryCreateWithoutPersonaInput[] | AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: AiPersonaOnCategoryCreateOrConnectWithoutPersonaInput | AiPersonaOnCategoryCreateOrConnectWithoutPersonaInput[]
+    createMany?: AiPersonaOnCategoryCreateManyPersonaInputEnvelope
+    connect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
   }
 
-  export type CategoryUncheckedCreateNestedManyWithoutAiPersonaInput = {
-    create?: XOR<CategoryCreateWithoutAiPersonaInput, CategoryUncheckedCreateWithoutAiPersonaInput> | CategoryCreateWithoutAiPersonaInput[] | CategoryUncheckedCreateWithoutAiPersonaInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutAiPersonaInput | CategoryCreateOrConnectWithoutAiPersonaInput[]
-    createMany?: CategoryCreateManyAiPersonaInputEnvelope
-    connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
+  export type ArticleCreateNestedManyWithoutAiPersonaInput = {
+    create?: XOR<ArticleCreateWithoutAiPersonaInput, ArticleUncheckedCreateWithoutAiPersonaInput> | ArticleCreateWithoutAiPersonaInput[] | ArticleUncheckedCreateWithoutAiPersonaInput[]
+    connectOrCreate?: ArticleCreateOrConnectWithoutAiPersonaInput | ArticleCreateOrConnectWithoutAiPersonaInput[]
+    createMany?: ArticleCreateManyAiPersonaInputEnvelope
+    connect?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
   }
 
-  export type CategoryUpdateManyWithoutAiPersonaNestedInput = {
-    create?: XOR<CategoryCreateWithoutAiPersonaInput, CategoryUncheckedCreateWithoutAiPersonaInput> | CategoryCreateWithoutAiPersonaInput[] | CategoryUncheckedCreateWithoutAiPersonaInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutAiPersonaInput | CategoryCreateOrConnectWithoutAiPersonaInput[]
-    upsert?: CategoryUpsertWithWhereUniqueWithoutAiPersonaInput | CategoryUpsertWithWhereUniqueWithoutAiPersonaInput[]
-    createMany?: CategoryCreateManyAiPersonaInputEnvelope
-    set?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    disconnect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    delete?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    update?: CategoryUpdateWithWhereUniqueWithoutAiPersonaInput | CategoryUpdateWithWhereUniqueWithoutAiPersonaInput[]
-    updateMany?: CategoryUpdateManyWithWhereWithoutAiPersonaInput | CategoryUpdateManyWithWhereWithoutAiPersonaInput[]
-    deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
+  export type AiPersonaOnCategoryUncheckedCreateNestedManyWithoutPersonaInput = {
+    create?: XOR<AiPersonaOnCategoryCreateWithoutPersonaInput, AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput> | AiPersonaOnCategoryCreateWithoutPersonaInput[] | AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: AiPersonaOnCategoryCreateOrConnectWithoutPersonaInput | AiPersonaOnCategoryCreateOrConnectWithoutPersonaInput[]
+    createMany?: AiPersonaOnCategoryCreateManyPersonaInputEnvelope
+    connect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
   }
 
-  export type CategoryUncheckedUpdateManyWithoutAiPersonaNestedInput = {
-    create?: XOR<CategoryCreateWithoutAiPersonaInput, CategoryUncheckedCreateWithoutAiPersonaInput> | CategoryCreateWithoutAiPersonaInput[] | CategoryUncheckedCreateWithoutAiPersonaInput[]
-    connectOrCreate?: CategoryCreateOrConnectWithoutAiPersonaInput | CategoryCreateOrConnectWithoutAiPersonaInput[]
-    upsert?: CategoryUpsertWithWhereUniqueWithoutAiPersonaInput | CategoryUpsertWithWhereUniqueWithoutAiPersonaInput[]
-    createMany?: CategoryCreateManyAiPersonaInputEnvelope
-    set?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    disconnect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    delete?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    connect?: CategoryWhereUniqueInput | CategoryWhereUniqueInput[]
-    update?: CategoryUpdateWithWhereUniqueWithoutAiPersonaInput | CategoryUpdateWithWhereUniqueWithoutAiPersonaInput[]
-    updateMany?: CategoryUpdateManyWithWhereWithoutAiPersonaInput | CategoryUpdateManyWithWhereWithoutAiPersonaInput[]
-    deleteMany?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
+  export type ArticleUncheckedCreateNestedManyWithoutAiPersonaInput = {
+    create?: XOR<ArticleCreateWithoutAiPersonaInput, ArticleUncheckedCreateWithoutAiPersonaInput> | ArticleCreateWithoutAiPersonaInput[] | ArticleUncheckedCreateWithoutAiPersonaInput[]
+    connectOrCreate?: ArticleCreateOrConnectWithoutAiPersonaInput | ArticleCreateOrConnectWithoutAiPersonaInput[]
+    createMany?: ArticleCreateManyAiPersonaInputEnvelope
+    connect?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+  }
+
+  export type AiPersonaOnCategoryUpdateManyWithoutPersonaNestedInput = {
+    create?: XOR<AiPersonaOnCategoryCreateWithoutPersonaInput, AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput> | AiPersonaOnCategoryCreateWithoutPersonaInput[] | AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: AiPersonaOnCategoryCreateOrConnectWithoutPersonaInput | AiPersonaOnCategoryCreateOrConnectWithoutPersonaInput[]
+    upsert?: AiPersonaOnCategoryUpsertWithWhereUniqueWithoutPersonaInput | AiPersonaOnCategoryUpsertWithWhereUniqueWithoutPersonaInput[]
+    createMany?: AiPersonaOnCategoryCreateManyPersonaInputEnvelope
+    set?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    disconnect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    delete?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    connect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    update?: AiPersonaOnCategoryUpdateWithWhereUniqueWithoutPersonaInput | AiPersonaOnCategoryUpdateWithWhereUniqueWithoutPersonaInput[]
+    updateMany?: AiPersonaOnCategoryUpdateManyWithWhereWithoutPersonaInput | AiPersonaOnCategoryUpdateManyWithWhereWithoutPersonaInput[]
+    deleteMany?: AiPersonaOnCategoryScalarWhereInput | AiPersonaOnCategoryScalarWhereInput[]
+  }
+
+  export type ArticleUpdateManyWithoutAiPersonaNestedInput = {
+    create?: XOR<ArticleCreateWithoutAiPersonaInput, ArticleUncheckedCreateWithoutAiPersonaInput> | ArticleCreateWithoutAiPersonaInput[] | ArticleUncheckedCreateWithoutAiPersonaInput[]
+    connectOrCreate?: ArticleCreateOrConnectWithoutAiPersonaInput | ArticleCreateOrConnectWithoutAiPersonaInput[]
+    upsert?: ArticleUpsertWithWhereUniqueWithoutAiPersonaInput | ArticleUpsertWithWhereUniqueWithoutAiPersonaInput[]
+    createMany?: ArticleCreateManyAiPersonaInputEnvelope
+    set?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+    disconnect?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+    delete?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+    connect?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+    update?: ArticleUpdateWithWhereUniqueWithoutAiPersonaInput | ArticleUpdateWithWhereUniqueWithoutAiPersonaInput[]
+    updateMany?: ArticleUpdateManyWithWhereWithoutAiPersonaInput | ArticleUpdateManyWithWhereWithoutAiPersonaInput[]
+    deleteMany?: ArticleScalarWhereInput | ArticleScalarWhereInput[]
+  }
+
+  export type AiPersonaOnCategoryUncheckedUpdateManyWithoutPersonaNestedInput = {
+    create?: XOR<AiPersonaOnCategoryCreateWithoutPersonaInput, AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput> | AiPersonaOnCategoryCreateWithoutPersonaInput[] | AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput[]
+    connectOrCreate?: AiPersonaOnCategoryCreateOrConnectWithoutPersonaInput | AiPersonaOnCategoryCreateOrConnectWithoutPersonaInput[]
+    upsert?: AiPersonaOnCategoryUpsertWithWhereUniqueWithoutPersonaInput | AiPersonaOnCategoryUpsertWithWhereUniqueWithoutPersonaInput[]
+    createMany?: AiPersonaOnCategoryCreateManyPersonaInputEnvelope
+    set?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    disconnect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    delete?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    connect?: AiPersonaOnCategoryWhereUniqueInput | AiPersonaOnCategoryWhereUniqueInput[]
+    update?: AiPersonaOnCategoryUpdateWithWhereUniqueWithoutPersonaInput | AiPersonaOnCategoryUpdateWithWhereUniqueWithoutPersonaInput[]
+    updateMany?: AiPersonaOnCategoryUpdateManyWithWhereWithoutPersonaInput | AiPersonaOnCategoryUpdateManyWithWhereWithoutPersonaInput[]
+    deleteMany?: AiPersonaOnCategoryScalarWhereInput | AiPersonaOnCategoryScalarWhereInput[]
+  }
+
+  export type ArticleUncheckedUpdateManyWithoutAiPersonaNestedInput = {
+    create?: XOR<ArticleCreateWithoutAiPersonaInput, ArticleUncheckedCreateWithoutAiPersonaInput> | ArticleCreateWithoutAiPersonaInput[] | ArticleUncheckedCreateWithoutAiPersonaInput[]
+    connectOrCreate?: ArticleCreateOrConnectWithoutAiPersonaInput | ArticleCreateOrConnectWithoutAiPersonaInput[]
+    upsert?: ArticleUpsertWithWhereUniqueWithoutAiPersonaInput | ArticleUpsertWithWhereUniqueWithoutAiPersonaInput[]
+    createMany?: ArticleCreateManyAiPersonaInputEnvelope
+    set?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+    disconnect?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+    delete?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+    connect?: ArticleWhereUniqueInput | ArticleWhereUniqueInput[]
+    update?: ArticleUpdateWithWhereUniqueWithoutAiPersonaInput | ArticleUpdateWithWhereUniqueWithoutAiPersonaInput[]
+    updateMany?: ArticleUpdateManyWithWhereWithoutAiPersonaInput | ArticleUpdateManyWithWhereWithoutAiPersonaInput[]
+    deleteMany?: ArticleScalarWhereInput | ArticleScalarWhereInput[]
+  }
+
+  export type AiPersonaCreateNestedOneWithoutCategoriesInput = {
+    create?: XOR<AiPersonaCreateWithoutCategoriesInput, AiPersonaUncheckedCreateWithoutCategoriesInput>
+    connectOrCreate?: AiPersonaCreateOrConnectWithoutCategoriesInput
+    connect?: AiPersonaWhereUniqueInput
+  }
+
+  export type CategoryCreateNestedOneWithoutPersonasInput = {
+    create?: XOR<CategoryCreateWithoutPersonasInput, CategoryUncheckedCreateWithoutPersonasInput>
+    connectOrCreate?: CategoryCreateOrConnectWithoutPersonasInput
+    connect?: CategoryWhereUniqueInput
+  }
+
+  export type AiPersonaUpdateOneRequiredWithoutCategoriesNestedInput = {
+    create?: XOR<AiPersonaCreateWithoutCategoriesInput, AiPersonaUncheckedCreateWithoutCategoriesInput>
+    connectOrCreate?: AiPersonaCreateOrConnectWithoutCategoriesInput
+    upsert?: AiPersonaUpsertWithoutCategoriesInput
+    connect?: AiPersonaWhereUniqueInput
+    update?: XOR<XOR<AiPersonaUpdateToOneWithWhereWithoutCategoriesInput, AiPersonaUpdateWithoutCategoriesInput>, AiPersonaUncheckedUpdateWithoutCategoriesInput>
+  }
+
+  export type CategoryUpdateOneRequiredWithoutPersonasNestedInput = {
+    create?: XOR<CategoryCreateWithoutPersonasInput, CategoryUncheckedCreateWithoutPersonasInput>
+    connectOrCreate?: CategoryCreateOrConnectWithoutPersonasInput
+    upsert?: CategoryUpsertWithoutPersonasInput
+    connect?: CategoryWhereUniqueInput
+    update?: XOR<XOR<CategoryUpdateToOneWithWhereWithoutPersonasInput, CategoryUpdateWithoutPersonasInput>, CategoryUncheckedUpdateWithoutPersonasInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -30307,6 +31851,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     category?: CategoryCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -30322,6 +31867,7 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     categoryId?: string | null
+    aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
@@ -30524,6 +32070,7 @@ export namespace Prisma {
     viewCount?: IntFilter<"Article"> | number
     authorId?: StringFilter<"Article"> | string
     categoryId?: StringNullableFilter<"Article"> | string | null
+    aiPersonaId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     lang?: StringFilter<"Article"> | string
     createdAt?: DateTimeFilter<"Article"> | Date | string
@@ -30886,7 +32433,7 @@ export namespace Prisma {
     lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    aiPersona?: AiPersonaCreateNestedOneWithoutCategoriesInput
+    personas?: AiPersonaOnCategoryCreateNestedManyWithoutCategoryInput
   }
 
   export type CategoryUncheckedCreateWithoutArticlesInput = {
@@ -30900,12 +32447,45 @@ export namespace Prisma {
     lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
-    personaId?: string | null
+    personas?: AiPersonaOnCategoryUncheckedCreateNestedManyWithoutCategoryInput
   }
 
   export type CategoryCreateOrConnectWithoutArticlesInput = {
     where: CategoryWhereUniqueInput
     create: XOR<CategoryCreateWithoutArticlesInput, CategoryUncheckedCreateWithoutArticlesInput>
+  }
+
+  export type AiPersonaCreateWithoutArticlesInput = {
+    id?: string
+    name: string
+    role?: string | null
+    image?: string | null
+    description?: string | null
+    prompt: string
+    imagePrompt: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    categories?: AiPersonaOnCategoryCreateNestedManyWithoutPersonaInput
+  }
+
+  export type AiPersonaUncheckedCreateWithoutArticlesInput = {
+    id?: string
+    name: string
+    role?: string | null
+    image?: string | null
+    description?: string | null
+    prompt: string
+    imagePrompt: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    categories?: AiPersonaOnCategoryUncheckedCreateNestedManyWithoutPersonaInput
+  }
+
+  export type AiPersonaCreateOrConnectWithoutArticlesInput = {
+    where: AiPersonaWhereUniqueInput
+    create: XOR<AiPersonaCreateWithoutArticlesInput, AiPersonaUncheckedCreateWithoutArticlesInput>
   }
 
   export type BookmarkCreateWithoutArticleInput = {
@@ -31049,7 +32629,7 @@ export namespace Prisma {
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    aiPersona?: AiPersonaUpdateOneWithoutCategoriesNestedInput
+    personas?: AiPersonaOnCategoryUpdateManyWithoutCategoryNestedInput
   }
 
   export type CategoryUncheckedUpdateWithoutArticlesInput = {
@@ -31063,7 +32643,46 @@ export namespace Prisma {
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    personaId?: NullableStringFieldUpdateOperationsInput | string | null
+    personas?: AiPersonaOnCategoryUncheckedUpdateManyWithoutCategoryNestedInput
+  }
+
+  export type AiPersonaUpsertWithoutArticlesInput = {
+    update: XOR<AiPersonaUpdateWithoutArticlesInput, AiPersonaUncheckedUpdateWithoutArticlesInput>
+    create: XOR<AiPersonaCreateWithoutArticlesInput, AiPersonaUncheckedCreateWithoutArticlesInput>
+    where?: AiPersonaWhereInput
+  }
+
+  export type AiPersonaUpdateToOneWithWhereWithoutArticlesInput = {
+    where?: AiPersonaWhereInput
+    data: XOR<AiPersonaUpdateWithoutArticlesInput, AiPersonaUncheckedUpdateWithoutArticlesInput>
+  }
+
+  export type AiPersonaUpdateWithoutArticlesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    prompt?: StringFieldUpdateOperationsInput | string
+    imagePrompt?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    categories?: AiPersonaOnCategoryUpdateManyWithoutPersonaNestedInput
+  }
+
+  export type AiPersonaUncheckedUpdateWithoutArticlesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    prompt?: StringFieldUpdateOperationsInput | string
+    imagePrompt?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    categories?: AiPersonaOnCategoryUncheckedUpdateManyWithoutPersonaNestedInput
   }
 
   export type BookmarkUpsertWithWhereUniqueWithoutArticleInput = {
@@ -31136,6 +32755,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -31151,6 +32771,7 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     authorId: string
+    aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
@@ -31170,29 +32791,24 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type AiPersonaCreateWithoutCategoriesInput = {
-    id?: string
-    name: string
-    description?: string | null
-    prompt: string
-    imagePrompt: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type AiPersonaOnCategoryCreateWithoutCategoryInput = {
+    lastUsedAt?: Date | string | null
+    persona: AiPersonaCreateNestedOneWithoutCategoriesInput
   }
 
-  export type AiPersonaUncheckedCreateWithoutCategoriesInput = {
-    id?: string
-    name: string
-    description?: string | null
-    prompt: string
-    imagePrompt: string
-    createdAt?: Date | string
-    updatedAt?: Date | string
+  export type AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput = {
+    personaId: string
+    lastUsedAt?: Date | string | null
   }
 
-  export type AiPersonaCreateOrConnectWithoutCategoriesInput = {
-    where: AiPersonaWhereUniqueInput
-    create: XOR<AiPersonaCreateWithoutCategoriesInput, AiPersonaUncheckedCreateWithoutCategoriesInput>
+  export type AiPersonaOnCategoryCreateOrConnectWithoutCategoryInput = {
+    where: AiPersonaOnCategoryWhereUniqueInput
+    create: XOR<AiPersonaOnCategoryCreateWithoutCategoryInput, AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput>
+  }
+
+  export type AiPersonaOnCategoryCreateManyCategoryInputEnvelope = {
+    data: AiPersonaOnCategoryCreateManyCategoryInput | AiPersonaOnCategoryCreateManyCategoryInput[]
+    skipDuplicates?: boolean
   }
 
   export type ArticleUpsertWithWhereUniqueWithoutCategoryInput = {
@@ -31211,35 +32827,29 @@ export namespace Prisma {
     data: XOR<ArticleUpdateManyMutationInput, ArticleUncheckedUpdateManyWithoutCategoryInput>
   }
 
-  export type AiPersonaUpsertWithoutCategoriesInput = {
-    update: XOR<AiPersonaUpdateWithoutCategoriesInput, AiPersonaUncheckedUpdateWithoutCategoriesInput>
-    create: XOR<AiPersonaCreateWithoutCategoriesInput, AiPersonaUncheckedCreateWithoutCategoriesInput>
-    where?: AiPersonaWhereInput
+  export type AiPersonaOnCategoryUpsertWithWhereUniqueWithoutCategoryInput = {
+    where: AiPersonaOnCategoryWhereUniqueInput
+    update: XOR<AiPersonaOnCategoryUpdateWithoutCategoryInput, AiPersonaOnCategoryUncheckedUpdateWithoutCategoryInput>
+    create: XOR<AiPersonaOnCategoryCreateWithoutCategoryInput, AiPersonaOnCategoryUncheckedCreateWithoutCategoryInput>
   }
 
-  export type AiPersonaUpdateToOneWithWhereWithoutCategoriesInput = {
-    where?: AiPersonaWhereInput
-    data: XOR<AiPersonaUpdateWithoutCategoriesInput, AiPersonaUncheckedUpdateWithoutCategoriesInput>
+  export type AiPersonaOnCategoryUpdateWithWhereUniqueWithoutCategoryInput = {
+    where: AiPersonaOnCategoryWhereUniqueInput
+    data: XOR<AiPersonaOnCategoryUpdateWithoutCategoryInput, AiPersonaOnCategoryUncheckedUpdateWithoutCategoryInput>
   }
 
-  export type AiPersonaUpdateWithoutCategoriesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    prompt?: StringFieldUpdateOperationsInput | string
-    imagePrompt?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type AiPersonaOnCategoryUpdateManyWithWhereWithoutCategoryInput = {
+    where: AiPersonaOnCategoryScalarWhereInput
+    data: XOR<AiPersonaOnCategoryUpdateManyMutationInput, AiPersonaOnCategoryUncheckedUpdateManyWithoutCategoryInput>
   }
 
-  export type AiPersonaUncheckedUpdateWithoutCategoriesInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    prompt?: StringFieldUpdateOperationsInput | string
-    imagePrompt?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  export type AiPersonaOnCategoryScalarWhereInput = {
+    AND?: AiPersonaOnCategoryScalarWhereInput | AiPersonaOnCategoryScalarWhereInput[]
+    OR?: AiPersonaOnCategoryScalarWhereInput[]
+    NOT?: AiPersonaOnCategoryScalarWhereInput | AiPersonaOnCategoryScalarWhereInput[]
+    personaId?: StringFilter<"AiPersonaOnCategory"> | string
+    categoryId?: StringFilter<"AiPersonaOnCategory"> | string
+    lastUsedAt?: DateTimeNullableFilter<"AiPersonaOnCategory"> | Date | string | null
   }
 
   export type TagOnArticleCreateWithoutTagInput = {
@@ -31291,6 +32901,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
   }
@@ -31306,6 +32917,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     categoryId?: string | null
+    aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
@@ -31366,6 +32978,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
   }
@@ -31381,6 +32994,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31431,6 +33045,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
@@ -31446,6 +33061,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     categoryId?: string | null
+    aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
@@ -31583,6 +33199,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
@@ -31598,6 +33215,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31717,6 +33335,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
@@ -31732,6 +33351,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     categoryId?: string | null
+    aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
@@ -31814,6 +33434,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
@@ -31829,6 +33450,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32244,7 +33866,142 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CategoryCreateWithoutAiPersonaInput = {
+  export type AiPersonaOnCategoryCreateWithoutPersonaInput = {
+    lastUsedAt?: Date | string | null
+    category: CategoryCreateNestedOneWithoutPersonasInput
+  }
+
+  export type AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput = {
+    categoryId: string
+    lastUsedAt?: Date | string | null
+  }
+
+  export type AiPersonaOnCategoryCreateOrConnectWithoutPersonaInput = {
+    where: AiPersonaOnCategoryWhereUniqueInput
+    create: XOR<AiPersonaOnCategoryCreateWithoutPersonaInput, AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput>
+  }
+
+  export type AiPersonaOnCategoryCreateManyPersonaInputEnvelope = {
+    data: AiPersonaOnCategoryCreateManyPersonaInput | AiPersonaOnCategoryCreateManyPersonaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ArticleCreateWithoutAiPersonaInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    publishedAt?: Date | string | null
+    lang?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutArticlesInput
+    category?: CategoryCreateNestedOneWithoutArticlesInput
+    bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
+    comments?: CommentCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleUncheckedCreateWithoutAiPersonaInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    authorId: string
+    categoryId?: string | null
+    publishedAt?: Date | string | null
+    lang?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
+    comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleCreateOrConnectWithoutAiPersonaInput = {
+    where: ArticleWhereUniqueInput
+    create: XOR<ArticleCreateWithoutAiPersonaInput, ArticleUncheckedCreateWithoutAiPersonaInput>
+  }
+
+  export type ArticleCreateManyAiPersonaInputEnvelope = {
+    data: ArticleCreateManyAiPersonaInput | ArticleCreateManyAiPersonaInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type AiPersonaOnCategoryUpsertWithWhereUniqueWithoutPersonaInput = {
+    where: AiPersonaOnCategoryWhereUniqueInput
+    update: XOR<AiPersonaOnCategoryUpdateWithoutPersonaInput, AiPersonaOnCategoryUncheckedUpdateWithoutPersonaInput>
+    create: XOR<AiPersonaOnCategoryCreateWithoutPersonaInput, AiPersonaOnCategoryUncheckedCreateWithoutPersonaInput>
+  }
+
+  export type AiPersonaOnCategoryUpdateWithWhereUniqueWithoutPersonaInput = {
+    where: AiPersonaOnCategoryWhereUniqueInput
+    data: XOR<AiPersonaOnCategoryUpdateWithoutPersonaInput, AiPersonaOnCategoryUncheckedUpdateWithoutPersonaInput>
+  }
+
+  export type AiPersonaOnCategoryUpdateManyWithWhereWithoutPersonaInput = {
+    where: AiPersonaOnCategoryScalarWhereInput
+    data: XOR<AiPersonaOnCategoryUpdateManyMutationInput, AiPersonaOnCategoryUncheckedUpdateManyWithoutPersonaInput>
+  }
+
+  export type ArticleUpsertWithWhereUniqueWithoutAiPersonaInput = {
+    where: ArticleWhereUniqueInput
+    update: XOR<ArticleUpdateWithoutAiPersonaInput, ArticleUncheckedUpdateWithoutAiPersonaInput>
+    create: XOR<ArticleCreateWithoutAiPersonaInput, ArticleUncheckedCreateWithoutAiPersonaInput>
+  }
+
+  export type ArticleUpdateWithWhereUniqueWithoutAiPersonaInput = {
+    where: ArticleWhereUniqueInput
+    data: XOR<ArticleUpdateWithoutAiPersonaInput, ArticleUncheckedUpdateWithoutAiPersonaInput>
+  }
+
+  export type ArticleUpdateManyWithWhereWithoutAiPersonaInput = {
+    where: ArticleScalarWhereInput
+    data: XOR<ArticleUpdateManyMutationInput, ArticleUncheckedUpdateManyWithoutAiPersonaInput>
+  }
+
+  export type AiPersonaCreateWithoutCategoriesInput = {
+    id?: string
+    name: string
+    role?: string | null
+    image?: string | null
+    description?: string | null
+    prompt: string
+    imagePrompt: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    articles?: ArticleCreateNestedManyWithoutAiPersonaInput
+  }
+
+  export type AiPersonaUncheckedCreateWithoutCategoriesInput = {
+    id?: string
+    name: string
+    role?: string | null
+    image?: string | null
+    description?: string | null
+    prompt: string
+    imagePrompt: string
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    articles?: ArticleUncheckedCreateNestedManyWithoutAiPersonaInput
+  }
+
+  export type AiPersonaCreateOrConnectWithoutCategoriesInput = {
+    where: AiPersonaWhereUniqueInput
+    create: XOR<AiPersonaCreateWithoutCategoriesInput, AiPersonaUncheckedCreateWithoutCategoriesInput>
+  }
+
+  export type CategoryCreateWithoutPersonasInput = {
     id?: string
     name: string
     slug: string
@@ -32258,7 +34015,7 @@ export namespace Prisma {
     articles?: ArticleCreateNestedManyWithoutCategoryInput
   }
 
-  export type CategoryUncheckedCreateWithoutAiPersonaInput = {
+  export type CategoryUncheckedCreateWithoutPersonasInput = {
     id?: string
     name: string
     slug: string
@@ -32272,47 +34029,87 @@ export namespace Prisma {
     articles?: ArticleUncheckedCreateNestedManyWithoutCategoryInput
   }
 
-  export type CategoryCreateOrConnectWithoutAiPersonaInput = {
+  export type CategoryCreateOrConnectWithoutPersonasInput = {
     where: CategoryWhereUniqueInput
-    create: XOR<CategoryCreateWithoutAiPersonaInput, CategoryUncheckedCreateWithoutAiPersonaInput>
+    create: XOR<CategoryCreateWithoutPersonasInput, CategoryUncheckedCreateWithoutPersonasInput>
   }
 
-  export type CategoryCreateManyAiPersonaInputEnvelope = {
-    data: CategoryCreateManyAiPersonaInput | CategoryCreateManyAiPersonaInput[]
-    skipDuplicates?: boolean
+  export type AiPersonaUpsertWithoutCategoriesInput = {
+    update: XOR<AiPersonaUpdateWithoutCategoriesInput, AiPersonaUncheckedUpdateWithoutCategoriesInput>
+    create: XOR<AiPersonaCreateWithoutCategoriesInput, AiPersonaUncheckedCreateWithoutCategoriesInput>
+    where?: AiPersonaWhereInput
   }
 
-  export type CategoryUpsertWithWhereUniqueWithoutAiPersonaInput = {
-    where: CategoryWhereUniqueInput
-    update: XOR<CategoryUpdateWithoutAiPersonaInput, CategoryUncheckedUpdateWithoutAiPersonaInput>
-    create: XOR<CategoryCreateWithoutAiPersonaInput, CategoryUncheckedCreateWithoutAiPersonaInput>
+  export type AiPersonaUpdateToOneWithWhereWithoutCategoriesInput = {
+    where?: AiPersonaWhereInput
+    data: XOR<AiPersonaUpdateWithoutCategoriesInput, AiPersonaUncheckedUpdateWithoutCategoriesInput>
   }
 
-  export type CategoryUpdateWithWhereUniqueWithoutAiPersonaInput = {
-    where: CategoryWhereUniqueInput
-    data: XOR<CategoryUpdateWithoutAiPersonaInput, CategoryUncheckedUpdateWithoutAiPersonaInput>
+  export type AiPersonaUpdateWithoutCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    prompt?: StringFieldUpdateOperationsInput | string
+    imagePrompt?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    articles?: ArticleUpdateManyWithoutAiPersonaNestedInput
   }
 
-  export type CategoryUpdateManyWithWhereWithoutAiPersonaInput = {
-    where: CategoryScalarWhereInput
-    data: XOR<CategoryUpdateManyMutationInput, CategoryUncheckedUpdateManyWithoutAiPersonaInput>
+  export type AiPersonaUncheckedUpdateWithoutCategoriesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    role?: NullableStringFieldUpdateOperationsInput | string | null
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    prompt?: StringFieldUpdateOperationsInput | string
+    imagePrompt?: StringFieldUpdateOperationsInput | string
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    articles?: ArticleUncheckedUpdateManyWithoutAiPersonaNestedInput
   }
 
-  export type CategoryScalarWhereInput = {
-    AND?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
-    OR?: CategoryScalarWhereInput[]
-    NOT?: CategoryScalarWhereInput | CategoryScalarWhereInput[]
-    id?: StringFilter<"Category"> | string
-    name?: StringFilter<"Category"> | string
-    slug?: StringFilter<"Category"> | string
-    description?: StringNullableFilter<"Category"> | string | null
-    color?: StringNullableFilter<"Category"> | string | null
-    icon?: StringNullableFilter<"Category"> | string | null
-    order?: IntFilter<"Category"> | number
-    lang?: StringFilter<"Category"> | string
-    createdAt?: DateTimeFilter<"Category"> | Date | string
-    updatedAt?: DateTimeFilter<"Category"> | Date | string
-    personaId?: StringNullableFilter<"Category"> | string | null
+  export type CategoryUpsertWithoutPersonasInput = {
+    update: XOR<CategoryUpdateWithoutPersonasInput, CategoryUncheckedUpdateWithoutPersonasInput>
+    create: XOR<CategoryCreateWithoutPersonasInput, CategoryUncheckedCreateWithoutPersonasInput>
+    where?: CategoryWhereInput
+  }
+
+  export type CategoryUpdateToOneWithWhereWithoutPersonasInput = {
+    where?: CategoryWhereInput
+    data: XOR<CategoryUpdateWithoutPersonasInput, CategoryUncheckedUpdateWithoutPersonasInput>
+  }
+
+  export type CategoryUpdateWithoutPersonasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    lang?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    articles?: ArticleUpdateManyWithoutCategoryNestedInput
+  }
+
+  export type CategoryUncheckedUpdateWithoutPersonasInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    color?: NullableStringFieldUpdateOperationsInput | string | null
+    icon?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    lang?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    articles?: ArticleUncheckedUpdateManyWithoutCategoryNestedInput
   }
 
   export type AccountCreateManyUserInput = {
@@ -32340,6 +34137,7 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     categoryId?: string | null
+    aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
@@ -32443,6 +34241,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -32458,6 +34257,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32477,6 +34277,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32687,10 +34488,16 @@ export namespace Prisma {
     status?: string
     viewCount?: number
     authorId: string
+    aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
+  }
+
+  export type AiPersonaOnCategoryCreateManyCategoryInput = {
+    personaId: string
+    lastUsedAt?: Date | string | null
   }
 
   export type ArticleUpdateWithoutCategoryInput = {
@@ -32707,6 +34514,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -32722,6 +34530,7 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -32741,10 +34550,26 @@ export namespace Prisma {
     status?: StringFieldUpdateOperationsInput | string
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type AiPersonaOnCategoryUpdateWithoutCategoryInput = {
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    persona?: AiPersonaUpdateOneRequiredWithoutCategoriesNestedInput
+  }
+
+  export type AiPersonaOnCategoryUncheckedUpdateWithoutCategoryInput = {
+    personaId?: StringFieldUpdateOperationsInput | string
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AiPersonaOnCategoryUncheckedUpdateManyWithoutCategoryInput = {
+    personaId?: StringFieldUpdateOperationsInput | string
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
   export type TagOnArticleCreateManyTagInput = {
@@ -32905,55 +34730,95 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type CategoryCreateManyAiPersonaInput = {
+  export type AiPersonaOnCategoryCreateManyPersonaInput = {
+    categoryId: string
+    lastUsedAt?: Date | string | null
+  }
+
+  export type ArticleCreateManyAiPersonaInput = {
     id?: string
-    name: string
+    title: string
     slug: string
-    description?: string | null
-    color?: string | null
-    icon?: string | null
-    order?: number
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    authorId: string
+    categoryId?: string | null
+    publishedAt?: Date | string | null
     lang?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
 
-  export type CategoryUpdateWithoutAiPersonaInput = {
+  export type AiPersonaOnCategoryUpdateWithoutPersonaInput = {
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    category?: CategoryUpdateOneRequiredWithoutPersonasNestedInput
+  }
+
+  export type AiPersonaOnCategoryUncheckedUpdateWithoutPersonaInput = {
+    categoryId?: StringFieldUpdateOperationsInput | string
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type AiPersonaOnCategoryUncheckedUpdateManyWithoutPersonaInput = {
+    categoryId?: StringFieldUpdateOperationsInput | string
+    lastUsedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type ArticleUpdateWithoutAiPersonaInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
-    icon?: NullableStringFieldUpdateOperationsInput | string | null
-    order?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    articles?: ArticleUpdateManyWithoutCategoryNestedInput
+    author?: UserUpdateOneRequiredWithoutArticlesNestedInput
+    category?: CategoryUpdateOneWithoutArticlesNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
+    comments?: CommentUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
-  export type CategoryUncheckedUpdateWithoutAiPersonaInput = {
+  export type ArticleUncheckedUpdateWithoutAiPersonaInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
-    icon?: NullableStringFieldUpdateOperationsInput | string | null
-    order?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    articles?: ArticleUncheckedUpdateManyWithoutCategoryNestedInput
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
-  export type CategoryUncheckedUpdateManyWithoutAiPersonaInput = {
+  export type ArticleUncheckedUpdateManyWithoutAiPersonaInput = {
     id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
     slug?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    color?: NullableStringFieldUpdateOperationsInput | string | null
-    icon?: NullableStringFieldUpdateOperationsInput | string | null
-    order?: IntFieldUpdateOperationsInput | number
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

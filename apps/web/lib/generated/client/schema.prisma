@@ -78,12 +78,14 @@ model Article {
   viewCount   Int            @default(0)
   authorId    String
   categoryId  String?
+  aiPersonaId String?
   publishedAt DateTime?
   lang        String         @default("tr")
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   category    Category?      @relation(fields: [categoryId], references: [id])
+  aiPersona   AiPersona?     @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
   bookmarks   Bookmark[]
   comments    Comment[]
   tags        TagOnArticle[]
@@ -94,22 +96,22 @@ model Article {
   @@index([publishedAt])
   @@index([slug])
   @@index([lang])
+  @@index([aiPersonaId])
 }
 
 model Category {
-  id          String     @id @default(cuid())
-  name        String     @unique
-  slug        String     @unique
+  id          String                @id @default(cuid())
+  name        String                @unique
+  slug        String                @unique
   description String?
   color       String?
   icon        String?
-  order       Int        @default(0)
-  lang        String     @default("tr")
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  order       Int                   @default(0)
+  lang        String                @default("tr")
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
   articles    Article[]
-  personaId   String?
-  aiPersona   AiPersona? @relation(fields: [personaId], references: [id], onDelete: SetNull)
+  personas    AiPersonaOnCategory[]
 }
 
 model Tag {
@@ -320,12 +322,26 @@ model SystemSettings {
 
 /// AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)
 model AiPersona {
-  id          String     @id @default(cuid())
-  name        String     @unique // "Spor Editörü", "Ekonomi Uzmanı" vb.
+  id          String                @id @default(cuid())
+  name        String                @unique // "Caner KÖSE" vb.
+  role        String?               @default("Haber Editörü")
+  image       String? // Profil resmi URL
   description String?
-  prompt      String     @db.Text
-  imagePrompt String     @db.Text
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-  categories  Category[] // Bir persona birden fazla kategoriye hizmet edebilir
+  prompt      String                @db.Text
+  imagePrompt String                @db.Text
+  isActive    Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  categories  AiPersonaOnCategory[]
+  articles    Article[]
+}
+
+model AiPersonaOnCategory {
+  personaId  String
+  categoryId String
+  lastUsedAt DateTime? @default(now())
+  persona    AiPersona @relation(fields: [personaId], references: [id], onDelete: Cascade)
+  category   Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([personaId, categoryId])
 }
