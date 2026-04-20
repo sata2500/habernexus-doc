@@ -113,11 +113,11 @@ export default async function HomePage() {
                     <div className="flex items-center gap-4 text-sm text-white/60">
                       <div className="flex items-center gap-2">
                         <Avatar
-                          src={heroArticle.author.image || undefined}
-                          fallback={heroArticle.author.name}
+                          src={(heroArticle.aiPersona?.image || heroArticle.author.image) || undefined}
+                          fallback={heroArticle.aiPersona?.name || heroArticle.author.name}
                           size="xs"
                         />
-                        <span>{heroArticle.author.name}</span>
+                        <span>{heroArticle.aiPersona?.name || heroArticle.author.name}</span>
                       </div>
                       <span className="flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5" />
@@ -301,11 +301,11 @@ export default async function HomePage() {
                   <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border">
                     <div className="flex items-center gap-2">
                       <Avatar
-                        src={article.author.image || undefined}
-                        fallback={article.author.name}
+                        src={(article.aiPersona?.image || article.author.image) || undefined}
+                        fallback={article.aiPersona?.name || article.author.name}
                         size="xs"
                       />
-                      <span>{article.author.name}</span>
+                      <span>{article.aiPersona?.name || article.author.name}</span>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="flex items-center gap-1">

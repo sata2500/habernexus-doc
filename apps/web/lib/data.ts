@@ -14,6 +14,7 @@ export const getHeroArticle = cache(async () => {
     include: {
       category: true,
       author: true,
+      aiPersona: true,
     },
   });
 });
@@ -28,6 +29,7 @@ export const getTrendingArticles = cache(async (limit: number = 4) => {
     include: {
       category: true,
       author: true,
+      aiPersona: true,
     },
   });
 });
@@ -42,6 +44,7 @@ export const getLatestArticles = cache(async (limit: number = 6) => {
     include: {
       category: true,
       author: true,
+      aiPersona: true,
     },
   });
 });
@@ -69,6 +72,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
     include: {
       author: true,
       category: true,
+      aiPersona: true,
       tags: { include: { tag: true } }
     }
   });
@@ -83,7 +87,7 @@ export const getCategoryWithArticles = cache(async (slug: string) => {
       articles: {
         where: { status: "PUBLISHED" },
         orderBy: { publishedAt: "desc" },
-        include: { author: true, category: true }
+        include: { author: true, category: true, aiPersona: true }
       }
     }
   });
@@ -102,7 +106,7 @@ export const searchArticles = cache(async (query: string) => {
       ]
     },
     orderBy: { publishedAt: "desc" },
-    include: { author: true, category: true }
+    include: { author: true, category: true, aiPersona: true }
   });
 });
 

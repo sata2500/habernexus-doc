@@ -24,10 +24,12 @@ interface Category {
 interface Persona {
   id: string;
   name: string;
+  role: string | null;
+  image: string | null;
   description: string | null;
   prompt: string;
   imagePrompt: string;
-  categories: Category[];
+  categories: { category: Category }[];
 }
 
 interface Props {
@@ -44,6 +46,8 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
   // Form State
   const [formData, setFormData] = useState({
     name: "",
+    role: "Haber Editörü",
+    image: "",
     description: "",
     prompt: "",
     imagePrompt: "",
@@ -53,6 +57,8 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
   const resetForm = () => {
     setFormData({
       name: "",
+      role: "Haber Editörü",
+      image: "",
       description: "",
       prompt: "",
       imagePrompt: "",
@@ -65,10 +71,12 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
   const handleEdit = (persona: Persona) => {
     setFormData({
       name: persona.name,
+      role: persona.role || "Haber Editörü",
+      image: persona.image || "",
       description: persona.description || "",
       prompt: persona.prompt,
       imagePrompt: persona.imagePrompt,
-      categoryIds: persona.categories.map(c => c.id),
+      categoryIds: persona.categories.map(c => c.category.id),
     });
     setEditingId(persona.id);
     setIsAdding(false);
@@ -168,24 +176,61 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-bold">Persona Adı</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Örn: Spor Editörü, Magazin Yazarı..."
-                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-bold">Persona Adı</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                    placeholder="Örn: Caner KÖSE"
+                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-bold">Ünvan / Rol</label>
+                  <input
+                    type="text"
+                    value={formData.role}
+                    onChange={e => setFormData({ ...formData, role: e.target.value })}
+                    placeholder="Örn: Teknoloji Editörü"
+                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                  />
+                </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-sm font-bold">Açıklama</label>
+                <label className="text-sm font-bold flex items-center gap-2">
+                  <ImageIcon className="h-4 w-4 text-blue-500" />
+                  Profil Fotoğrafı URL
+                </label>
+                <div className="flex gap-4 items-center">
+                  <div className="h-16 w-16 rounded-2xl bg-muted border border-border flex-shrink-0 overflow-hidden">
+                    {formData.image ? (
+                      <img src={formData.image} alt="Profil" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full flex items-center justify-center text-muted-foreground">
+                        <ImageIcon className="h-6 w-6" />
+                      </div>
+                    )}
+                  </div>
+                  <input
+                    type="text"
+                    value={formData.image}
+                    onChange={e => setFormData({ ...formData, image: e.target.value })}
+                    placeholder="https://... (Kare bir fotoğraf önerilir)"
+                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-sm font-bold">Kısa Açıklama</label>
                 <textarea
                   value={formData.description}
                   onChange={e => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Bu persona hangi tarzda yazar? (İsteğe bağlı)"
-                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all h-24 resize-none"
+                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all h-20 resize-none"
                 />
               </div>
 
@@ -205,11 +250,10 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
                       {cat.name}
                     </button>
                   ))}
-                  {allCategories.length === 0 && <p className="text-xs text-muted-foreground p-2">Kategori bulunamadı.</p>}
                 </div>
                 <p className="text-[10px] text-muted-foreground flex items-center gap-1">
                   <Info className="h-3 w-3" />
-                  Bir kategori seçildiğinde, o kategoriye ait haberler bu persona ile yazılır.
+                  Bu kategoriye atanmış birden fazla persona varsa, sırayla (rotasyonla) yazarlar.
                 </p>
               </div>
             </div>
@@ -266,8 +310,18 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
         {personas.map(persona => (
           <div key={persona.id} className="glass-strong rounded-3xl border border-border p-6 hover:border-primary-500/30 transition-all group flex flex-col h-full shadow-lg">
             <div className="flex items-start justify-between mb-4">
-              <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500">
-                <Users className="h-5 w-5" />
+              <div className="flex items-center gap-3">
+                <div className="h-14 w-14 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center overflow-hidden">
+                  {persona.image ? (
+                    <img src={persona.image} alt={persona.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <Users className="h-6 w-6 text-primary-500" />
+                  )}
+                </div>
+                <div>
+                  <h4 className="font-bold text-lg leading-tight">{persona.name}</h4>
+                  <p className="text-xs text-primary-500 font-bold">{persona.role || "Haber Editörü"}</p>
+                </div>
               </div>
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
@@ -285,17 +339,16 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
               </div>
             </div>
 
-            <h4 className="font-bold text-lg mb-1">{persona.name}</h4>
             <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{persona.description || "Açıklama yok."}</p>
 
             <div className="mt-auto space-y-4">
               <div className="space-y-2">
-                <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Kategoriler</p>
+                <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Aktif Kategoriler</p>
                 <div className="flex flex-wrap gap-1">
                   {persona.categories.length > 0 ? (
                     persona.categories.map(c => (
-                      <span key={c.id} className="px-2 py-0.5 bg-muted rounded-md text-[10px] font-bold">
-                        {c.name}
+                      <span key={c.category.id} className="px-2 py-0.5 bg-muted rounded-md text-[10px] font-bold">
+                        {c.category.name}
                       </span>
                     ))
                   ) : (

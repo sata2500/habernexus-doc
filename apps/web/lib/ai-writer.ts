@@ -131,28 +131,50 @@ export async function writeArticleWithAI(suggestionId: string) {
     const writerModelName = settings?.aiWriterModel || "gemini-2.5-flash";
     const imageModelName = settings?.aiWriterImageModel || "imagen-3.0-generate-002";
 
-    // ── Persona & Kategori Zekası ──
-    let systemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın. Haberleri Türkçe, akıcı, SEO uyumlu ve en az 500 kelimelik yaz.";
+    // ── Persona & Kategori Zekası (Gelişmiş Rotasyon) ──
+    const globalSystemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın. Haberleri Türkçe, akıcı, SEO uyumlu ve en az 500 kelimelik yaz.";
+    let systemPrompt = globalSystemPrompt;
     let imagePromptBase = settings?.aiWriterImagePrompt || "Professional, photorealistic news cover image.";
     let categoryId: string | null = null;
+    let aiPersonaId: string | null = null;
 
     if (suggestion.aiAnalysis && (suggestion.aiAnalysis as any).suggestedCategory) {
       const suggestedCatName = (suggestion.aiAnalysis as any).suggestedCategory;
       
-      // İsme göre kategoriyi bul (ve personayı da getir)
+      // Kategoriyi bul
       const category = await prisma.category.findFirst({
         where: { name: { contains: suggestedCatName, mode: 'insensitive' } },
-        include: { aiPersona: true }
       });
 
       if (category) {
         categoryId = category.id;
         console.log(`[AI Writer] Kategori tespit edildi: ${category.name}`);
         
-        if (category.aiPersona) {
-          systemPrompt = category.aiPersona.prompt;
-          imagePromptBase = category.aiPersona.imagePrompt;
-          console.log(`[AI Writer] Persona aktif: ${category.aiPersona.name}`);
+        // Bu kategoriye atanmış aktif personaları bul (en eski kullanılan ilk sırada)
+        const personaLink = await prisma.aiPersonaOnCategory.findFirst({
+          where: { 
+            categoryId: category.id,
+            persona: { isActive: true }
+          },
+          orderBy: { lastUsedAt: 'asc' },
+          include: { persona: true }
+        });
+
+        if (personaLink) {
+          const persona = personaLink.persona;
+          aiPersonaId = persona.id;
+          
+          // TALİMAT: Genel prompt + Persona promptu birleştir
+          systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları (Bu kimlikle yaz):\n${persona.prompt}`;
+          imagePromptBase = persona.imagePrompt;
+          
+          console.log(`[AI Writer] Persona seçildi (Rotasyon): ${persona.name}`);
+          
+          // Rotasyon zamanını güncelle
+          await prisma.aiPersonaOnCategory.update({
+            where: { personaId_categoryId: { personaId: persona.id, categoryId: category.id } },
+            data: { lastUsedAt: new Date() }
+          });
         }
       }
     }
@@ -168,7 +190,7 @@ export async function writeArticleWithAI(suggestionId: string) {
       Makaleyi h2, p, strong etiketleri kullanarak formatla.
     `;
 
-    // Retries for Text Generation
+    // ... (Metin üretim kısmı aynı kalıyor)
     let content = "";
     for (let i = 0; i < 3; i++) {
       try {
@@ -193,7 +215,7 @@ export async function writeArticleWithAI(suggestionId: string) {
 
     if (!content) throw new Error("Yapay zeka metin üretemedi.");
 
-    // 3. Görsel Üret - Pollinations.ai ile tamamen ücretsiz
+    // 3. Görsel Üret
     let imagePrompt = `
       ${imagePromptBase}
       News headline: "${suggestion.title}"
@@ -202,7 +224,7 @@ export async function writeArticleWithAI(suggestionId: string) {
       Do NOT include any text or watermarks in the image.
     `;
 
-    // Yeni Özellik: RSS kaynağında görsel varsa ve ayarlardan "İlham Al" açıksa, ondan ilham al
+    // ... (Görsel üretim kısmı aynı kalıyor)
     if (suggestion.imageUrl && settings?.aiWriterUseRssImage !== false) {
       const base64Image = await fetchImageAsBase64(suggestion.imageUrl);
       if (base64Image) {
@@ -234,7 +256,6 @@ export async function writeArticleWithAI(suggestionId: string) {
     let imageUrl: string | null | undefined = suggestion.imageUrl;
     let generatedImageUrl = null;
     
-    // Model adına göre Google Premium API veya Ücretsiz Pollinations API kullan
     if (imageModelName.includes("gemini") || imageModelName.includes("imagen")) {
       generatedImageUrl = await generateImageWithImagen(imageModelName, imagePrompt);
     } else {
@@ -249,13 +270,12 @@ export async function writeArticleWithAI(suggestionId: string) {
     const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
     if (!adminUser) throw new Error("Admin kullanıcı bulunamadı.");
 
-    // Üretilen AI görselini Admin Medya Kütüphanesine ekle
     if (generatedImageUrl) {
       await prisma.media.create({
         data: {
           url: generatedImageUrl,
           filename: `AI_Cover_${Date.now()}.png`,
-          size: 0, // Dış bağlantı olduğu için tahmini/0
+          size: 0,
           mimeType: "image/png",
           status: "RAW",
           userId: adminUser.id,
@@ -275,6 +295,7 @@ export async function writeArticleWithAI(suggestionId: string) {
         coverImage: imageUrl,
         status: "PUBLISHED",
         authorId: adminUser.id,
+        aiPersonaId: aiPersonaId, // Personayı bağla
         categoryId: categoryId,
         publishedAt: new Date(),
         lang: suggestion.source.language || "tr",

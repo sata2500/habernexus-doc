@@ -7,9 +7,13 @@ export async function getPersonas() {
   return await prisma.aiPersona.findMany({
     include: {
       categories: {
-        select: {
-          id: true,
-          name: true,
+        include: {
+          category: {
+            select: {
+              id: true,
+              name: true,
+            }
+          }
         }
       }
     },
@@ -19,6 +23,8 @@ export async function getPersonas() {
 
 export async function createPersona(data: {
   name: string;
+  role?: string;
+  image?: string;
   description: string;
   prompt: string;
   imagePrompt: string;
@@ -31,7 +37,9 @@ export async function createPersona(data: {
       data: {
         ...personaData,
         categories: {
-          connect: categoryIds.map((id) => ({ id })),
+          create: categoryIds.map((id) => ({
+            category: { connect: { id } }
+          })),
         },
       },
     });
@@ -39,12 +47,15 @@ export async function createPersona(data: {
     revalidatePath("/admin/ai-writer/personas");
     return { success: true };
   } catch (error: any) {
+    console.error("Create Persona Error:", error);
     return { success: false, error: error.message };
   }
 }
 
 export async function updatePersona(id: string, data: {
   name: string;
+  role?: string;
+  image?: string;
   description: string;
   prompt: string;
   imagePrompt: string;
@@ -53,12 +64,20 @@ export async function updatePersona(id: string, data: {
   try {
     const { categoryIds, ...personaData } = data;
     
+    // Önce mevcut ilişkileri temizle
+    await prisma.aiPersonaOnCategory.deleteMany({
+      where: { personaId: id }
+    });
+
+    // Yeni verilerle güncelle ve ilişkileri kur
     await prisma.aiPersona.update({
       where: { id },
       data: {
         ...personaData,
         categories: {
-          set: categoryIds.map((id) => ({ id })),
+          create: categoryIds.map((id) => ({
+            category: { connect: { id } }
+          })),
         },
       },
     });
@@ -66,6 +85,7 @@ export async function updatePersona(id: string, data: {
     revalidatePath("/admin/ai-writer/personas");
     return { success: true };
   } catch (error: any) {
+    console.error("Update Persona Error:", error);
     return { success: false, error: error.message };
   }
 }
@@ -78,6 +98,7 @@ export async function deletePersona(id: string) {
     revalidatePath("/admin/ai-writer/personas");
     return { success: true };
   } catch (error: any) {
+    console.error("Delete Persona Error:", error);
     return { success: false, error: error.message };
   }
 }

@@ -104,8 +104,8 @@ export default async function ArticlePage({ params }: { params: Params }) {
         coverImage={article.coverImage}
         datePublished={article.publishedAt}
         dateModified={article.updatedAt}
-        authorName={article.author.name}
-        authorImage={article.author.image}
+        authorName={article.aiPersona?.name || article.author.name}
+        authorImage={article.aiPersona?.image || article.author.image}
         categoryName={article.category?.name}
         tags={article.tags?.map((t) => t.tag.name)}
         wordCount={wordCount}
@@ -172,13 +172,13 @@ export default async function ArticlePage({ params }: { params: Params }) {
         <div className="flex items-center justify-between border-t border-b border-border py-4">
           <div className="flex items-center gap-3">
             <Avatar
-              src={article.author.image || undefined}
-              fallback={article.author.name}
+              src={(article.aiPersona?.image || article.author.image) || undefined}
+              fallback={article.aiPersona?.name || article.author.name}
               size="md"
             />
             <div className="text-left">
-              <p className="font-semibold">{article.author.name}</p>
-              <p className="text-sm text-muted-foreground">Yazar</p>
+              <p className="font-semibold">{article.aiPersona?.name || article.author.name}</p>
+              <p className="text-sm text-muted-foreground">{article.aiPersona?.role || "Yazar"}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -211,19 +211,19 @@ export default async function ArticlePage({ params }: { params: Params }) {
       <section className="bg-muted/30 rounded-2xl p-6 md:p-8 mb-12 border border-border">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
           <Avatar
-            src={article.author.image || undefined}
-            fallback={article.author.name}
+            src={(article.aiPersona?.image || article.author.image) || undefined}
+            fallback={article.aiPersona?.name || article.author.name}
             size="lg"
             className="ring-4 ring-background"
           />
           <div className="flex-1 space-y-3">
             <div>
-              <h3 className="text-xl font-bold font-(family-name:--font-outfit)">{article.author.name}</h3>
-              <p className="text-sm text-primary-600 font-medium">Haber Nexus Yazarı</p>
+              <h3 className="text-xl font-bold font-(family-name:--font-outfit)">{article.aiPersona?.name || article.author.name}</h3>
+              <p className="text-sm text-primary-600 font-medium">{article.aiPersona?.role || "Haber Nexus Yazarı"}</p>
             </div>
-            {article.author.bio ? (
+            {(article.aiPersona?.description || article.author.bio) ? (
               <p className="text-muted-foreground leading-relaxed">
-                {article.author.bio}
+                {article.aiPersona?.description || article.author.bio}
               </p>
             ) : (
               <p className="text-sm text-muted-foreground italic">
