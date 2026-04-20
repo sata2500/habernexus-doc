@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Sparkles, Save, Loader2, Wand2, Image as ImageIcon, AlertCircle } from "lucide-react";
+import { Sparkles, Save, Loader2, Wand2, Image as ImageIcon } from "lucide-react";
 import { updateAiWriterSettings } from "../../rss-feeds/actions";
+
+interface AiModel {
+  id: string;
+  name: string;
+  description: string | null;
+  type: "TEXT" | "IMAGE" | "MULTIMODAL";
+  isFree: boolean;
+}
 
 interface Props {
   initialPrompt: string;
@@ -10,31 +18,8 @@ interface Props {
   initialModel: string;
   initialImageModel: string;
   initialUseRssImage: boolean;
+  availableModels: AiModel[];
 }
-
-const MODELS = [
-  { id: "google/gemini-2.0-flash-001", name: "Gemini 2.0 Flash (Önerilen - Hızlı)", type: "free" },
-  { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet (En Kaliteli Yazım)", type: "paid" },
-  { id: "meta-llama/llama-3.3-70b-instruct", name: "Llama 3.3 70B (Güçlü & Ücretsiz)", type: "free" },
-  { id: "openai/gpt-4o", name: "GPT-4o (Standart)", type: "paid" },
-  { id: "deepseek/deepseek-chat", name: "DeepSeek V3 (Ekonomik)", type: "free" },
-  { id: "google/gemini-pro-1.5", name: "Gemini 1.5 Pro", type: "paid" },
-];
-
-const IMAGE_MODELS = [
-  {
-    id: "flux",
-    name: "🎨 Flux (Pollinations)",
-    desc: "Ücretsiz • En yüksek kalite ve gerçekçilik (Sınırsız)",
-    type: "free",
-  },
-  {
-    id: "turbo",
-    name: "⚡ Turbo (Pollinations)",
-    desc: "Ücretsiz • Çok hızlı üretim, iyi kalite (Sınırsız)",
-    type: "free",
-  },
-];
 
 export function AiWriterSettingsCard({
   initialPrompt,
@@ -42,6 +27,7 @@ export function AiWriterSettingsCard({
   initialModel,
   initialImageModel,
   initialUseRssImage,
+  availableModels,
 }: Props) {
   const [prompt, setPrompt] = useState(initialPrompt);
   const [imagePrompt, setImagePrompt] = useState(initialImagePrompt);
@@ -51,10 +37,12 @@ export function AiWriterSettingsCard({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  const textModels = availableModels.filter(m => m.type === "TEXT" || m.type === "MULTIMODAL");
+  const imageModels = availableModels.filter(m => m.type === "IMAGE");
+
   const handleSave = async () => {
     setLoading(true);
     setSuccess(false);
-    // Provider parametresi backend'den kaldırıldığı için gönderilmiyor
     const res = await (updateAiWriterSettings as any)({ prompt, imagePrompt, model, imageModel, useRssImage });
     if (res.success) {
       setSuccess(true);
@@ -73,7 +61,7 @@ export function AiWriterSettingsCard({
           </div>
           <div>
             <h3 className="font-bold font-(family-name:--font-outfit)">AI Yazar Ayarları</h3>
-            <p className="text-xs text-muted-foreground">Tüm modeller OpenRouter üzerinden çalışmaktadır.</p>
+            <p className="text-xs text-muted-foreground">Modeller veritabanından dinamik olarak çekilir.</p>
           </div>
         </div>
         <button
@@ -98,13 +86,17 @@ export function AiWriterSettingsCard({
             onChange={(e) => setModel(e.target.value)}
             className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-purple-500/50"
           >
-            {MODELS.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.name}
-              </option>
-            ))}
+            {textModels.length > 0 ? (
+              textModels.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.name} {m.isFree ? "(Ücretsiz)" : ""}
+                </option>
+              ))
+            ) : (
+              <option disabled>Aktif model bulunamadı</option>
+            )}
           </select>
-          <p className="text-xs text-muted-foreground">Seçilen model OpenRouter üzerinden makale üretimi için kullanılır.</p>
+          <p className="text-xs text-muted-foreground">Model Merkezi üzerinden aktif ettiğiniz modeller burada listelenir.</p>
         </div>
 
         {/* ── Görsel Modeli ── */}
@@ -114,20 +106,26 @@ export function AiWriterSettingsCard({
             Görsel Üretim Motoru
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {IMAGE_MODELS.map((m) => (
-              <button
-                key={m.id}
-                onClick={() => setImageModel(m.id)}
-                className={`p-4 rounded-2xl border text-left transition-all ${
-                  imageModel === m.id
-                    ? "bg-blue-500/10 border-blue-500 shadow-sm"
-                    : "bg-muted/30 border-border hover:border-blue-500/30"
-                }`}
-              >
-                <p className="text-sm font-bold">{m.name}</p>
-                <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{m.desc}</p>
-              </button>
-            ))}
+            {imageModels.length > 0 ? (
+              imageModels.map((m) => (
+                <button
+                  key={m.id}
+                  onClick={() => setImageModel(m.id)}
+                  className={`p-4 rounded-2xl border text-left transition-all ${
+                    imageModel === m.id
+                      ? "bg-blue-500/10 border-blue-500 shadow-sm"
+                      : "bg-muted/30 border-border hover:border-blue-500/30"
+                  }`}
+                >
+                  <p className="text-sm font-bold">{m.name}</p>
+                  <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed line-clamp-1">{m.id}</p>
+                </button>
+              ))
+            ) : (
+              <p className="text-xs text-muted-foreground col-span-2 p-4 bg-muted/20 rounded-2xl border border-dashed border-border text-center">
+                Aktif görsel modeli bulunamadı. Model Merkezi'nden ekleyebilirsiniz.
+              </p>
+            )}
           </div>
         </div>
 

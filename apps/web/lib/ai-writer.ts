@@ -47,6 +47,41 @@ async function generateContentWithOpenRouter(model: string, messages: any[]): Pr
 }
 
 /**
+ * OpenRouter API kullanarak görsel üretir.
+ */
+async function generateImageWithOpenRouter(model: string, prompt: string): Promise<string | null> {
+  try {
+    const apiKey = process.env.OPENROUTER_API_KEY || "";
+    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: [{ role: "user", content: prompt }],
+        modalities: ["image"]
+      })
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error?.message || "OpenRouter Image Error");
+
+    // OpenRouter görseli genelliklechoices[0].message.content içindeki bir URL veya base64 olarak döndürür
+    // Not: Bazı modeller farklı formatlarda dönebilir, bu genel bir yaklaşımdır.
+    const imageContent = data.choices?.[0]?.message?.content;
+    if (imageContent && (imageContent.startsWith("http") || imageContent.startsWith("data:image"))) {
+      return imageContent;
+    }
+    return null;
+  } catch (err) {
+    console.error("OpenRouter Image Generation Hatası:", err);
+    return null;
+  }
+}
+
+/**
  * Pollinations.ai kullanarak tamamen ücretsiz görsel üretir.
  */
 async function generateImageWithPollinations(
@@ -186,7 +221,16 @@ export async function writeArticleWithAI(suggestionId: string) {
       }
     }
 
-    const generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
+    let generatedImageUrl = null;
+    
+    // Model tipine göre üretim yap (Veritabanından kontrol et)
+    const modelInfo = await prisma.aiModel.findUnique({ where: { id: imageModelName } });
+    if (modelInfo?.type === "IMAGE") {
+      generatedImageUrl = await generateImageWithOpenRouter(imageModelName, imagePrompt);
+    } else {
+      generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
+    }
+
     let imageUrl = generatedImageUrl || suggestion.imageUrl;
 
     // 4. Kaydet

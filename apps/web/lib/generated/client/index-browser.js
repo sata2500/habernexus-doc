@@ -357,6 +357,17 @@ exports.Prisma.AiPersonaOnCategoryScalarFieldEnum = {
   lastUsedAt: 'lastUsedAt'
 };
 
+exports.Prisma.AiModelScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  type: 'type',
+  isFree: 'isFree',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -398,6 +409,12 @@ exports.RssItemStatus = exports.$Enums.RssItemStatus = {
   DISMISSED: 'DISMISSED'
 };
 
+exports.AiModelType = exports.$Enums.AiModelType = {
+  TEXT: 'TEXT',
+  IMAGE: 'IMAGE',
+  MULTIMODAL: 'MULTIMODAL'
+};
+
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
@@ -418,7 +435,8 @@ exports.Prisma.ModelName = {
   RssFeedItem: 'RssFeedItem',
   SystemSettings: 'SystemSettings',
   AiPersona: 'AiPersona',
-  AiPersonaOnCategory: 'AiPersonaOnCategory'
+  AiPersonaOnCategory: 'AiPersonaOnCategory',
+  AiModel: 'AiModel'
 };
 
 /**

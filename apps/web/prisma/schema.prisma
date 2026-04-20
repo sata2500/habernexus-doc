@@ -345,3 +345,20 @@ model AiPersonaOnCategory {
 
   @@id([personaId, categoryId])
 }
+
+enum AiModelType {
+  TEXT
+  IMAGE
+  MULTIMODAL
+}
+
+model AiModel {
+  id          String      @id // OpenRouter model ID (örn: "openai/gpt-4")
+  name        String
+  description String?     @db.Text
+  type        AiModelType @default(TEXT)
+  isFree      Boolean     @default(false)
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}

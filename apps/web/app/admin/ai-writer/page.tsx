@@ -1,11 +1,16 @@
 import { getSystemSettings } from "../rss-feeds/cron-actions";
 import { AiWriterSettingsCard } from "./components/AiWriterSettingsCard";
 import { AiWriterAutomationCard } from "./components/AiWriterAutomationCard";
-import { Wand2, Sparkles, BrainCircuit, Rocket, Users } from "lucide-react";
+import { Wand2, Sparkles, BrainCircuit, Rocket, Users, Cpu } from "lucide-react";
 import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
 export default async function AdminAiWriterPage() {
   const settings = await getSystemSettings();
+  const allModels = await prisma.aiModel.findMany({
+    where: { isActive: true },
+    orderBy: { type: "asc" }
+  });
 
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -22,13 +27,22 @@ export default async function AdminAiWriterPage() {
             Gemini 3.1 ve 2.5 Flash modellerini kullanarak tam otomatik haber araştırma, yazım ve görsel üretim süreçlerini yönetin.
           </p>
         </div>
-        <Link 
-          href="/admin/ai-writer/personas"
-          className="flex items-center gap-2 px-5 py-2.5 bg-muted hover:bg-muted/80 rounded-2xl font-bold text-sm transition-all active:scale-95 border border-border"
-        >
-          <Users className="h-4 w-4 text-primary-500" />
-          Personaları Yönet
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link 
+            href="/admin/ai-writer/models"
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-primary-500/20"
+          >
+            <Cpu className="h-4 w-4" />
+            Model Merkezi
+          </Link>
+          <Link 
+            href="/admin/ai-writer/personas"
+            className="flex items-center gap-2 px-5 py-2.5 bg-muted hover:bg-muted/80 rounded-2xl font-bold text-sm transition-all active:scale-95 border border-border"
+          >
+            <Users className="h-4 w-4 text-primary-500" />
+            Personaları Yönet
+          </Link>
+        </div>
       </div>
 
       {/* ── İstatistikler / Bilgi ── */}
@@ -69,6 +83,7 @@ export default async function AdminAiWriterPage() {
           initialModel={settings.aiWriterModel}
           initialImageModel={settings.aiWriterImageModel}
           initialUseRssImage={settings.aiWriterUseRssImage}
+          availableModels={allModels as any}
         />
         <AiWriterAutomationCard 
           enabled={settings.aiWriterAutoEnabled}
