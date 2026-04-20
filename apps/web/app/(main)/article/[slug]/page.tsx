@@ -172,12 +172,12 @@ export default async function ArticlePage({ params }: { params: Params }) {
         <div className="flex items-center justify-between border-t border-b border-border py-4">
           <div className="flex items-center gap-3">
             <Avatar
-              src={(article.aiPersona?.image || article.author.image) || undefined}
-              fallback={article.aiPersona?.name || article.author.name}
+              src={(article.aiPersona?.image || article.author?.image) || undefined}
+              fallback={article.aiPersona?.name || article.author?.name || "Yazar"}
               size="md"
             />
             <div className="text-left">
-              <p className="font-semibold">{article.aiPersona?.name || article.author.name}</p>
+              <p className="font-semibold">{article.aiPersona?.name || article.author?.name || "Bilinmeyen Yazar"}</p>
               <p className="text-sm text-muted-foreground">{article.aiPersona?.role || "Yazar"}</p>
             </div>
           </div>

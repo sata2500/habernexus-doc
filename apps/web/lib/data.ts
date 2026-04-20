@@ -8,106 +8,141 @@ const isMissingDb = !process.env.DATABASE_URL;
 // Kapak haberi
 export const getHeroArticle = cache(async () => {
   if (isMissingDb) return null;
-  return await prisma.article.findFirst({
-    where: { status: "PUBLISHED" },
-    orderBy: { publishedAt: "desc" },
-    include: {
-      category: true,
-      author: true,
-      aiPersona: true,
-    },
-  });
+  try {
+    return await prisma.article.findFirst({
+      where: { status: "PUBLISHED" },
+      orderBy: { publishedAt: "desc" },
+      include: {
+        category: true,
+        author: true,
+        aiPersona: true,
+      },
+    });
+  } catch (e) {
+    console.error("getHeroArticle error:", e);
+    return null;
+  }
 });
 
 // Trend haberler
 export const getTrendingArticles = cache(async (limit: number = 4) => {
   if (isMissingDb) return [];
-  return await prisma.article.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { viewCount: "desc" },
-    take: limit,
-    include: {
-      category: true,
-      author: true,
-      aiPersona: true,
-    },
-  });
+  try {
+    return await prisma.article.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { viewCount: "desc" },
+      take: limit,
+      include: {
+        category: true,
+        author: true,
+        aiPersona: true,
+      },
+    });
+  } catch (e) {
+    console.error("getTrendingArticles error:", e);
+    return [];
+  }
 });
 
 // Son haberler
 export const getLatestArticles = cache(async (limit: number = 6) => {
   if (isMissingDb) return [];
-  return await prisma.article.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { publishedAt: "desc" },
-    take: limit,
-    include: {
-      category: true,
-      author: true,
-      aiPersona: true,
-    },
-  });
+  try {
+    return await prisma.article.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { publishedAt: "desc" },
+      take: limit,
+      include: {
+        category: true,
+        author: true,
+        aiPersona: true,
+      },
+    });
+  } catch (e) {
+    console.error("getLatestArticles error:", e);
+    return [];
+  }
 });
 
 // Kategoriler ve onlara ait yayınlanmış makale sayısı
 export const getCategoriesWithCount = cache(async () => {
   if (isMissingDb) return [];
-  return await prisma.category.findMany({
-    include: {
-      _count: {
-        select: { articles: { where: { status: "PUBLISHED" } } },
+  try {
+    return await prisma.category.findMany({
+      include: {
+        _count: {
+          select: { articles: { where: { status: "PUBLISHED" } } },
+        },
       },
-    },
-    orderBy: {
-      order: "asc", 
-    },
-  });
+      orderBy: {
+        order: "asc", 
+      },
+    });
+  } catch (e) {
+    console.error("getCategoriesWithCount error:", e);
+    return [];
+  }
 });
 
 // Tekil Makale Detayı Çekimi
 export const getArticleBySlug = cache(async (slug: string) => {
   if (isMissingDb) return null;
-  return await prisma.article.findUnique({
-    where: { slug, status: "PUBLISHED" },
-    include: {
-      author: true,
-      category: true,
-      aiPersona: true,
-      tags: { include: { tag: true } }
-    }
-  });
+  try {
+    return await prisma.article.findUnique({
+      where: { slug, status: "PUBLISHED" },
+      include: {
+        author: true,
+        category: true,
+        aiPersona: true,
+        tags: { include: { tag: true } }
+      }
+    });
+  } catch (e) {
+    console.error(`getArticleBySlug error (${slug}):`, e);
+    return null;
+  }
 });
 
 // Tekil Kategori ve İlgili Güncel Haberleri Çekimi
 export const getCategoryWithArticles = cache(async (slug: string) => {
   if (isMissingDb) return null;
-  return await prisma.category.findUnique({
-    where: { slug },
-    include: {
-      articles: {
-        where: { status: "PUBLISHED" },
-        orderBy: { publishedAt: "desc" },
-        include: { author: true, category: true, aiPersona: true }
+  try {
+    return await prisma.category.findUnique({
+      where: { slug },
+      include: {
+        articles: {
+          where: { status: "PUBLISHED" },
+          orderBy: { publishedAt: "desc" },
+          include: { author: true, category: true, aiPersona: true }
+        }
       }
-    }
-  });
+    });
+  } catch (e) {
+    console.error(`getCategoryWithArticles error (${slug}):`, e);
+    return null;
+  }
 });
 
 // Arama Motoru
 export const searchArticles = cache(async (query: string) => {
   if (isMissingDb) return [];
-  return await prisma.article.findMany({
-    where: {
-      status: "PUBLISHED",
-      OR: [
-        { title: { contains: query } },
-        { excerpt: { contains: query } },
-        { content: { contains: query } }
-      ]
-    },
-    orderBy: { publishedAt: "desc" },
-    include: { author: true, category: true, aiPersona: true }
-  });
+  try {
+    return await prisma.article.findMany({
+      where: {
+        status: "PUBLISHED",
+        OR: [
+          { title: { contains: query } },
+          { excerpt: { contains: query } },
+          { content: { contains: query } }
+        ]
+      },
+      orderBy: { publishedAt: "desc" },
+      include: { author: true, category: true, aiPersona: true }
+    });
+  } catch (e) {
+    console.error("searchArticles error:", e);
+    return [];
+  }
 });
 
 // UI'da "dk okuma" değerlerini göstermek için basit bir yardımcı fonksiyon

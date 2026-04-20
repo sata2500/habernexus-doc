@@ -51,6 +51,7 @@ async function generateContentWithOpenRouter(model: string, messages: any[]): Pr
  */
 async function generateImageWithOpenRouter(model: string, prompt: string): Promise<string | null> {
   try {
+    console.log(`[AI Writer] OpenRouter görsel üretimi: model=${model}`);
     const apiKey = process.env.OPENROUTER_API_KEY || "";
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
@@ -87,44 +88,6 @@ async function generateImageWithOpenRouter(model: string, prompt: string): Promi
   }
 }
 
-/**
- * Pollinations.ai kullanarak tamamen ücretsiz görsel üretir.
- */
-async function generateImageWithPollinations(
-  modelName: string,
-  prompt: string,
-  retries = 3
-): Promise<string | null> {
-  for (let i = 0; i < retries; i++) {
-    try {
-      console.log(`[AI Writer] Görsel üretimi deneniyor (Pollinations): model=${modelName}, deneme=${i + 1}`);
-      
-      const seed = Math.floor(Math.random() * 1000000);
-      const encodedPrompt = encodeURIComponent(prompt);
-      const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1280&height=720&nologo=true&seed=${seed}&model=${modelName === 'default' ? '' : modelName}`;
-
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`Pollinations API hatası: ${response.status}`);
-
-      const buffer = Buffer.from(await response.arrayBuffer());
-      const { url: blobUrl } = await put(`articles/ai-${Date.now()}.png`, buffer, {
-        access: "public",
-        contentType: "image/png",
-      });
-      
-      console.log("[AI Writer] Görsel başarıyla üretildi (Pollinations):", blobUrl);
-      return blobUrl;
-    } catch (error: any) {
-      if (i < retries - 1) {
-        await sleep(3000);
-        continue;
-      }
-      return null;
-    }
-  }
-  return null;
-}
-
 export async function writeArticleWithAI(suggestionId: string) {
   try {
     const suggestion = await prisma.rssFeedItem.findUnique({
@@ -136,7 +99,7 @@ export async function writeArticleWithAI(suggestionId: string) {
 
     const settings = await prisma.systemSettings.findFirst();
     const writerModelName = settings?.aiWriterModel || "google/gemini-2.0-flash-001";
-    const imageModelName = settings?.aiWriterImageModel || "flux";
+    const imageModelName = settings?.aiWriterImageModel || "openai/dall-e-3";
 
     // ── Persona & Kategori Zekası ──
     const globalSystemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın.";
@@ -227,16 +190,7 @@ export async function writeArticleWithAI(suggestionId: string) {
       }
     }
 
-    let generatedImageUrl = null;
-    
-    // Model tipine göre üretim yap (Veritabanından kontrol et)
-    const modelInfo = await prisma.aiModel.findUnique({ where: { id: imageModelName } });
-    if (modelInfo?.type === "IMAGE") {
-      generatedImageUrl = await generateImageWithOpenRouter(imageModelName, imagePrompt);
-    } else {
-      generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
-    }
-
+    let generatedImageUrl = await generateImageWithOpenRouter(imageModelName, imagePrompt);
     let imageUrl = generatedImageUrl;
 
     // Eğer AI görsel üretmediyse veya hata oluştuysa RSS görselini kullan ve sisteme kaydet
