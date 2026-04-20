@@ -237,17 +237,37 @@ export async function writeArticleWithAI(suggestionId: string) {
       generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
     }
 
-    let imageUrl = generatedImageUrl || suggestion.imageUrl;
+    let imageUrl = generatedImageUrl;
+
+    // Eğer AI görsel üretmediyse veya hata oluştuysa RSS görselini kullan ve sisteme kaydet
+    if (!imageUrl && suggestion.imageUrl) {
+      try {
+        console.log("[AI Writer] Orijinal RSS görseli sisteme aktarılıyor...");
+        const res = await fetch(suggestion.imageUrl);
+        if (res.ok) {
+          const buffer = Buffer.from(await res.arrayBuffer());
+          const { url: blobUrl } = await put(`articles/rss-${Date.now()}.png`, buffer, {
+            access: "public",
+            contentType: "image/png",
+          });
+          imageUrl = blobUrl;
+        }
+      } catch (e) {
+        console.warn("[AI Writer] RSS görseli aktarılamadı, orijinal URL kullanılacak:", e);
+        imageUrl = suggestion.imageUrl;
+      }
+    }
 
     // 4. Kaydet
     const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
     if (!adminUser) throw new Error("Admin kullanıcı bulunamadı.");
 
-    if (generatedImageUrl) {
+    // Medya kütüphanesine ekle (AI üretimi veya aktarılan RSS görseli)
+    if (imageUrl && imageUrl.includes("public.blob.vercel-storage.com")) {
       await prisma.media.create({
         data: {
-          url: generatedImageUrl,
-          filename: `AI_Cover_${Date.now()}.png`,
+          url: imageUrl,
+          filename: imageUrl.split('/').pop() || `Cover_${Date.now()}.png`,
           size: 0,
           mimeType: "image/png",
           status: "RAW",
