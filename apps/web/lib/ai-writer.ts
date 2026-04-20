@@ -128,10 +128,34 @@ export async function writeArticleWithAI(suggestionId: string) {
     if (!suggestion) throw new Error("Öneri bulunamadı.");
 
     const settings = await prisma.systemSettings.findFirst();
-    const systemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın. Haberleri Türkçe, akıcı, SEO uyumlu ve en az 500 kelimelik yaz.";
-    const imagePromptBase = settings?.aiWriterImagePrompt || "Professional, photorealistic news cover image.";
     const writerModelName = settings?.aiWriterModel || "gemini-2.5-flash";
-    const imageModelName = settings?.aiWriterImageModel || "imagen-3.0-generate-002"; // Varsayılan Imagen Modeli
+    const imageModelName = settings?.aiWriterImageModel || "imagen-3.0-generate-002";
+
+    // ── Persona & Kategori Zekası ──
+    let systemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın. Haberleri Türkçe, akıcı, SEO uyumlu ve en az 500 kelimelik yaz.";
+    let imagePromptBase = settings?.aiWriterImagePrompt || "Professional, photorealistic news cover image.";
+    let categoryId: string | null = null;
+
+    if (suggestion.aiAnalysis && (suggestion.aiAnalysis as any).suggestedCategory) {
+      const suggestedCatName = (suggestion.aiAnalysis as any).suggestedCategory;
+      
+      // İsme göre kategoriyi bul (ve personayı da getir)
+      const category = await prisma.category.findFirst({
+        where: { name: { contains: suggestedCatName, mode: 'insensitive' } },
+        include: { aiPersona: true }
+      });
+
+      if (category) {
+        categoryId = category.id;
+        console.log(`[AI Writer] Kategori tespit edildi: ${category.name}`);
+        
+        if (category.aiPersona) {
+          systemPrompt = category.aiPersona.prompt;
+          imagePromptBase = category.aiPersona.imagePrompt;
+          console.log(`[AI Writer] Persona aktif: ${category.aiPersona.name}`);
+        }
+      }
+    }
 
     // 2. Metin Üret - @google/genai ile (Google Search Grounding dahil)
     const textPrompt = `
@@ -251,8 +275,9 @@ export async function writeArticleWithAI(suggestionId: string) {
         coverImage: imageUrl,
         status: "PUBLISHED",
         authorId: adminUser.id,
+        categoryId: categoryId,
         publishedAt: new Date(),
-        lang: "tr",
+        lang: suggestion.source.language || "tr",
       },
     });
 

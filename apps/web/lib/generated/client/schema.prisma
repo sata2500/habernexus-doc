@@ -97,17 +97,19 @@ model Article {
 }
 
 model Category {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  slug        String    @unique
+  id          String     @id @default(cuid())
+  name        String     @unique
+  slug        String     @unique
   description String?
   color       String?
   icon        String?
-  order       Int       @default(0)
-  lang        String    @default("tr")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  order       Int        @default(0)
+  lang        String     @default("tr")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
   articles    Article[]
+  personaId   String?
+  aiPersona   AiPersona? @relation(fields: [personaId], references: [id], onDelete: SetNull)
 }
 
 model Tag {
@@ -314,4 +316,16 @@ model SystemSettings {
   qStashAiWriterId    String? // QStash üzerindeki görev ID'si
 
   updatedAt DateTime @updatedAt
+}
+
+/// AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)
+model AiPersona {
+  id          String     @id @default(cuid())
+  name        String     @unique // "Spor Editörü", "Ekonomi Uzmanı" vb.
+  description String?
+  prompt      String     @db.Text
+  imagePrompt String     @db.Text
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  categories  Category[] // Bir persona birden fazla kategoriye hizmet edebilir
 }

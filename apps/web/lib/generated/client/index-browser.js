@@ -197,7 +197,8 @@ exports.Prisma.CategoryScalarFieldEnum = {
   order: 'order',
   lang: 'lang',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  personaId: 'personaId'
 };
 
 exports.Prisma.TagScalarFieldEnum = {
@@ -337,6 +338,16 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.AiPersonaScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  prompt: 'prompt',
+  imagePrompt: 'imagePrompt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -396,7 +407,8 @@ exports.Prisma.ModelName = {
   SupportMessage: 'SupportMessage',
   RssFeedSource: 'RssFeedSource',
   RssFeedItem: 'RssFeedItem',
-  SystemSettings: 'SystemSettings'
+  SystemSettings: 'SystemSettings',
+  AiPersona: 'AiPersona'
 };
 
 /**
