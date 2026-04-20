@@ -10,29 +10,17 @@ interface Props {
   initialModel: string;
   initialImageModel: string;
   initialUseRssImage: boolean;
-  initialProvider: string;
 }
 
-// ── Metin Yazım Modelleri (Google Search Grounding destekli) ──────────────────
-const TEXT_MODELS = [
-  { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (Ücretsiz - Önerilen)", type: "free" },
-  { id: "gemini-3.1-flash", name: "Gemini 3.1 Flash (Ücretsiz)", type: "free" },
-  { id: "gemini-3.1-flash-lite", name: "Gemini 3.1 Flash-Lite (Ücretsiz - Ekonomik)", type: "free" },
-  { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro (Ücretli)", type: "paid" },
-  { id: "gemini-3.1-pro", name: "Gemini 3.1 Pro (Ücretli - En Zeki)", type: "paid" },
+const MODELS = [
+  { id: "google/gemini-2.0-flash-001", name: "Gemini 2.0 Flash (Önerilen - Hızlı)", type: "free" },
+  { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet (En Kaliteli Yazım)", type: "paid" },
+  { id: "meta-llama/llama-3.3-70b-instruct", name: "Llama 3.3 70B (Güçlü & Ücretsiz)", type: "free" },
+  { id: "openai/gpt-4o", name: "GPT-4o (Standart)", type: "paid" },
+  { id: "deepseek/deepseek-chat", name: "DeepSeek V3 (Ekonomik)", type: "free" },
+  { id: "google/gemini-pro-1.5", name: "Gemini 1.5 Pro", type: "paid" },
 ];
 
-const OPENROUTER_MODELS = [
-  { id: "google/gemini-2.0-flash-001", name: "Gemini 2.0 Flash (Hızlı - Ücretsiz)", type: "free" },
-  { id: "anthropic/claude-3.5-sonnet", name: "Claude 3.5 Sonnet (En Zeki Yazım)", type: "paid" },
-  { id: "meta-llama/llama-3.3-70b-instruct", name: "Llama 3.3 70B (Çok Güçlü)", type: "free" },
-  { id: "openai/gpt-4o", name: "GPT-4o (Standart Zeka)", type: "paid" },
-  { id: "deepseek/deepseek-chat", name: "DeepSeek V3 (Hızlı & Ekonomik)", type: "free" },
-  { id: "google/gemini-pro-1.5", name: "Gemini 1.5 Pro (OpenRouter)", type: "paid" },
-];
-
-// ── Görsel Üretim Modelleri (Pollinations.ai & Premium) ─────────────────────────
-// Kaynak: Ücretsiz modeller için Pollinations.ai, ücretliler için Google AI Studio
 const IMAGE_MODELS = [
   {
     id: "flux",
@@ -46,24 +34,6 @@ const IMAGE_MODELS = [
     desc: "Ücretsiz • Çok hızlı üretim, iyi kalite (Sınırsız)",
     type: "free",
   },
-  {
-    id: "gemini-2.5-flash-image",
-    name: "🍌 Nano Banana (Gemini 2.5 Image)",
-    desc: "Ücretli • Multimodal altyapı (Sadece Tier 1+ Faturalı)",
-    type: "paid",
-  },
-  {
-    id: "gemini-3.1-flash-image-preview",
-    name: "🍌🍌 Nano Banana 2 (Gemini 3.1 Image)",
-    desc: "Ücretli • Pro seviye zeka + Flash hızı (Sadece Tier 1+)",
-    type: "paid",
-  },
-  {
-    id: "imagen-3.0-generate-002",
-    name: "🖼️ Imagen 3.0",
-    desc: "Ücretli • Gerçekçi Imagen altyapısı (Sadece Tier 1+)",
-    type: "paid",
-  },
 ];
 
 export function AiWriterSettingsCard({
@@ -72,9 +42,7 @@ export function AiWriterSettingsCard({
   initialModel,
   initialImageModel,
   initialUseRssImage,
-  initialProvider,
 }: Props) {
-  const [provider, setProvider] = useState(initialProvider);
   const [prompt, setPrompt] = useState(initialPrompt);
   const [imagePrompt, setImagePrompt] = useState(initialImagePrompt);
   const [model, setModel] = useState(initialModel);
@@ -83,12 +51,11 @@ export function AiWriterSettingsCard({
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const selectedImageModel = IMAGE_MODELS.find(m => m.id === imageModel);
-
   const handleSave = async () => {
     setLoading(true);
     setSuccess(false);
-    const res = await updateAiWriterSettings({ prompt, imagePrompt, model, imageModel, useRssImage, provider });
+    // Provider parametresi backend'den kaldırıldığı için gönderilmiyor
+    const res = await (updateAiWriterSettings as any)({ prompt, imagePrompt, model, imageModel, useRssImage });
     if (res.success) {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -105,8 +72,8 @@ export function AiWriterSettingsCard({
             <Wand2 className="h-5 w-5 text-purple-500" />
           </div>
           <div>
-            <h3 className="font-bold font-(family-name:--font-outfit)">AI Yazar & Model Seçimi</h3>
-            <p className="text-xs text-muted-foreground">Metin ve Görsel Üretim Motorlarını Yönetin</p>
+            <h3 className="font-bold font-(family-name:--font-outfit)">AI Yazar Ayarları</h3>
+            <p className="text-xs text-muted-foreground">Tüm modeller OpenRouter üzerinden çalışmaktadır.</p>
           </div>
         </div>
         <button
@@ -120,40 +87,6 @@ export function AiWriterSettingsCard({
       </div>
 
       <div className="p-6 space-y-8">
-        {/* ── Hizmet Sağlayıcı Seçimi ── */}
-        <div className="space-y-4 p-4 bg-muted/20 rounded-2xl border border-border">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="font-bold text-sm">Hizmet Sağlayıcı</p>
-              <p className="text-xs text-muted-foreground">Yapay zeka modellerinin hangi servis üzerinden çağrılacağını seçin.</p>
-            </div>
-            <div className="flex p-1 bg-muted rounded-xl border border-border">
-              <button
-                onClick={() => {
-                  setProvider("GOOGLE");
-                  setModel("gemini-2.5-flash");
-                }}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  provider === "GOOGLE" ? "bg-primary-600 text-white shadow-md" : "hover:bg-muted-foreground/10"
-                }`}
-              >
-                Google GenAI
-              </button>
-              <button
-                onClick={() => {
-                  setProvider("OPENROUTER");
-                  setModel("google/gemini-2.0-flash-001");
-                }}
-                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                  provider === "OPENROUTER" ? "bg-primary-600 text-white shadow-md" : "hover:bg-muted-foreground/10"
-                }`}
-              >
-                OpenRouter
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* ── Metin Modeli ── */}
         <div className="space-y-2">
           <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
@@ -165,105 +98,75 @@ export function AiWriterSettingsCard({
             onChange={(e) => setModel(e.target.value)}
             className="w-full bg-muted/30 border border-border rounded-xl px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-purple-500/50"
           >
-            {(provider === "GOOGLE" ? TEXT_MODELS : OPENROUTER_MODELS).map((m) => (
+            {MODELS.map((m) => (
               <option key={m.id} value={m.id}>
                 {m.name}
               </option>
             ))}
           </select>
-          <p className="text-xs text-muted-foreground">
-            {provider === "GOOGLE" 
-              ? "Google Search grounding ile internetten araştırarak haber makalesi yazar."
-              : "OpenRouter üzerinden seçilen model ile haber makalesi yazar."}
-          </p>
+          <p className="text-xs text-muted-foreground">Seçilen model OpenRouter üzerinden makale üretimi için kullanılır.</p>
         </div>
 
         {/* ── Görsel Modeli ── */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
             <ImageIcon className="h-3.5 w-3.5 text-blue-500" />
-            Görsel Üretim Modeli (Pollinations.ai)
+            Görsel Üretim Motoru
           </label>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {IMAGE_MODELS.map((m) => (
               <button
                 key={m.id}
                 onClick={() => setImageModel(m.id)}
-                className={`w-full text-left px-4 py-3 rounded-xl border transition-all ${
+                className={`p-4 rounded-2xl border text-left transition-all ${
                   imageModel === m.id
-                    ? "border-blue-500/60 bg-blue-500/10 ring-1 ring-blue-500/40"
-                    : "border-border bg-muted/20 hover:bg-muted/40"
+                    ? "bg-blue-500/10 border-blue-500 shadow-sm"
+                    : "bg-muted/30 border-border hover:border-blue-500/30"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-bold">{m.name}</span>
-                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                    m.type === "free"
-                      ? "bg-green-500/10 text-green-500"
-                      : "bg-amber-500/10 text-amber-600"
-                  }`}>
-                    {m.type === "free" ? "Ücretsiz" : "Ücretli"}
-                  </span>
-                </div>
-                <p className="text-xs text-muted-foreground mt-0.5">{m.desc}</p>
+                <p className="text-sm font-bold">{m.name}</p>
+                <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">{m.desc}</p>
               </button>
             ))}
           </div>
         </div>
 
-        {/* ── Seçilen görsel model uyarısı ── */}
-        {selectedImageModel?.type === "free" && (
-          <div className="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-3 flex items-start gap-2 text-xs text-muted-foreground">
-            <AlertCircle className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
-            <span>
-              <strong>Limitsiz Üretim:</strong> Pollinations.ai API Key gerektirmez ve tamamen ücretsizdir. Kotalara takılmadan yüksek çözünürlüklü kapak görselleri üretebilirsiniz.
-            </span>
+        {/* ── Prompt Ayarları ── */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Yazar Talimatı (Prompt)</label>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              className="w-full h-32 bg-muted/30 border border-border rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary-500/50 resize-none font-mono"
+            />
           </div>
-        )}
-
-        {/* ── RSS Görseli İlhamı Toggle ── */}
-        <label className="flex items-center gap-3 cursor-pointer bg-muted/20 p-4 rounded-xl border border-border hover:bg-muted/40 transition-colors">
-          <input
-            type="checkbox"
-            checked={useRssImage}
-            onChange={(e) => setUseRssImage(e.target.checked)}
-            className="w-5 h-5 rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-          />
-          <div className="flex flex-col">
-            <span className="text-sm font-bold">Orijinal Görselden İlham Al (Image-to-Image)</span>
-            <span className="text-xs text-muted-foreground">Eğer RSS haberinde bir görsel varsa, AI bu görselin renklerini ve içeriğini kopyalayarak yepyeni telifsiz bir kapak fotoğrafı üretir.</span>
+          <div className="space-y-2">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Görsel Talimatı (Prompt)</label>
+            <textarea
+              value={imagePrompt}
+              onChange={(e) => setImagePrompt(e.target.value)}
+              className="w-full h-32 bg-muted/30 border border-border rounded-xl px-3 py-2 text-xs outline-none focus:ring-2 focus:ring-primary-500/50 resize-none font-mono"
+            />
           </div>
-        </label>
-
-        {/* ── Makale Promptu ── */}
-        <div className="space-y-2">
-          <label className="text-sm font-bold flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-purple-500" />
-            Makale Yazım Talimatı (System Prompt)
-          </label>
-          <textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            rows={5}
-            className="w-full bg-muted/30 border border-border rounded-2xl p-4 text-sm focus:ring-2 focus:ring-purple-500/50 outline-none transition-all resize-none"
-            placeholder="Örn: Sen profesyonel bir haber yazarısın. Haberleri Türkçe, akıcı, SEO uyumlu yaz..."
-          />
         </div>
 
-        {/* ── Görsel Promptu ── */}
-        <div className="space-y-2">
-          <label className="text-sm font-bold flex items-center gap-2">
-            <ImageIcon className="h-4 w-4 text-blue-500" />
-            Görsel Üretim Talimatı (İngilizce önerilir)
-          </label>
-          <textarea
-            value={imagePrompt}
-            onChange={(e) => setImagePrompt(e.target.value)}
-            rows={3}
-            className="w-full bg-muted/30 border border-border rounded-2xl p-4 text-sm focus:ring-2 focus:ring-blue-500/50 outline-none transition-all resize-none"
-            placeholder="Örn: Professional, photorealistic editorial news photography. Dramatic lighting, high quality..."
-          />
-          <p className="text-xs text-muted-foreground">Haberin başlığı bu talimata otomatik eklenir. İngilizce promptlar görsel modellerinde daha iyi sonuç verir.</p>
+        <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border">
+          <div className="flex items-center gap-3">
+            <div className={`h-8 w-8 rounded-lg flex items-center justify-center transition-colors ${useRssImage ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}>
+              <ImageIcon className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-sm font-bold">RSS Görselini Referans Al</p>
+              <p className="text-[10px] text-muted-foreground">Varsa haber kaynağındaki görseli baz alarak yeni görsel üretir.</p>
+            </div>
+          </div>
+          <button
+            onClick={() => setUseRssImage(!useRssImage)}
+            className={`w-12 h-6 rounded-full transition-all relative ${useRssImage ? "bg-primary-600" : "bg-muted"}`}
+          >
+            <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-all ${useRssImage ? "translate-x-6" : ""}`} />
+          </button>
         </div>
       </div>
     </div>

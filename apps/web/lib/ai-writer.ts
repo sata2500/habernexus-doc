@@ -1,15 +1,11 @@
-import { GoogleGenAI } from "@google/genai";
 import { prisma } from "./prisma";
 import { put } from "@vercel/blob";
 import { slugify } from "./utils";
 
-// TEK KÜTÜPHANE: @google/genai (Nisan 2026 standardı)
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY || "" });
-
 // Yardımcı: Belirli bir süre bekle (ms)
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Yardımcı: URL'den görseli indirip base64'e çevirir (Gemini analizi için)
+// Yardımcı: URL'den görseli indirip base64'e çevirir (Vision analizi için)
 async function fetchImageAsBase64(url: string): Promise<string | null> {
   try {
     const res = await fetch(url);
@@ -22,105 +18,9 @@ async function fetchImageAsBase64(url: string): Promise<string | null> {
 }
 
 /**
- * Resmi @google/genai SDK ile görsel üretir (Tier 1+ Ücretli Hesaplar için).
+ * OpenRouter API kullanarak içerik üretir.
  */
-async function generateImageWithImagen(
-  modelName: string,
-  prompt: string,
-  retries = 3
-): Promise<string | null> {
-  for (let i = 0; i < retries; i++) {
-    try {
-      console.log(`[AI Writer] Görsel üretimi deneniyor (Premium): model=${modelName}, deneme=${i + 1}`);
-
-      const response = await ai.models.generateImages({
-        model: modelName,
-        prompt: prompt,
-        config: {
-          numberOfImages: 1,
-          outputMimeType: "image/png",
-        },
-      });
-
-      const image = response.generatedImages?.[0];
-      if (image?.image?.imageBytes) {
-        const buffer = Buffer.from(image.image.imageBytes, "base64");
-        const { url } = await put(`articles/ai-${Date.now()}.png`, buffer, {
-          access: "public",
-          contentType: "image/png",
-        });
-        console.log("[AI Writer] Görsel başarıyla üretildi (Premium):", url);
-        return url;
-      }
-
-      console.warn("[AI Writer] Model görsel döndürmedi.");
-      return null;
-    } catch (error: any) {
-      const isQuota = error.message?.includes("429") || error.message?.includes("quota") || error.message?.includes("Too Many Requests");
-      if (isQuota && i < retries - 1) {
-        const waitMs = Math.pow(2, i + 1) * 5000;
-        console.warn(`[AI Writer] Kota hatası, Imagen limitlerine takıldı. ${waitMs}ms bekleniyor...`);
-        await sleep(waitMs);
-        continue;
-      }
-      console.error(`[AI Writer] Görsel üretim hatası:`, error.message);
-      return null;
-    }
-  }
-  return null;
-}
-
-/**
- * Pollinations.ai kullanarak tamamen ücretsiz görsel üretir.
- * Kredi kartı veya API Key gerektirmez. Kotalara takılmaz.
- */
-async function generateImageWithPollinations(
-  modelName: string,
-  prompt: string,
-  retries = 3
-): Promise<string | null> {
-  for (let i = 0; i < retries; i++) {
-    try {
-      console.log(`[AI Writer] Görsel üretimi deneniyor (Pollinations): model=${modelName}, deneme=${i + 1}`);
-      
-      const seed = Math.floor(Math.random() * 1000000);
-      const encodedPrompt = encodeURIComponent(prompt);
-      // modelName parametresi "flux", "turbo" veya "default" olabilir
-      const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1280&height=720&nologo=true&seed=${seed}&model=${modelName === 'default' ? '' : modelName}`;
-
-      const response = await fetch(url);
-      
-      if (!response.ok) {
-        throw new Error(`Pollinations API hatası: ${response.status}`);
-      }
-
-      const buffer = Buffer.from(await response.arrayBuffer());
-      
-      const { url: blobUrl } = await put(`articles/ai-${Date.now()}.png`, buffer, {
-        access: "public",
-        contentType: "image/png",
-      });
-      
-      console.log("[AI Writer] Görsel başarıyla üretildi (Pollinations):", blobUrl);
-      return blobUrl;
-
-    } catch (error: any) {
-      console.warn(`[AI Writer] Görsel üretim hatası, 3 saniye bekleniyor... (${error.message})`);
-      if (i < retries - 1) {
-        await sleep(3000);
-        continue;
-      }
-      console.error(`[AI Writer] Pollinations görsel üretimi tamamen başarısız oldu:`, error.message);
-      return null; // Görsel hatası makaleyi patlatmasın
-    }
-  }
-  return null;
-}
-
-/**
- * OpenRouter API kullanarak içerik üretir (Claude, GPT, Llama vb. desteği için).
- */
-async function generateContentWithOpenRouter(model: string, prompt: string): Promise<string> {
+async function generateContentWithOpenRouter(model: string, messages: any[]): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY || "";
   if (!apiKey) throw new Error("OPENROUTER_API_KEY eksik.");
 
@@ -134,7 +34,8 @@ async function generateContentWithOpenRouter(model: string, prompt: string): Pro
     },
     body: JSON.stringify({
       model: model,
-      messages: [{ role: "user", content: prompt }],
+      messages: messages,
+      response_format: { type: "text" }
     })
   });
 
@@ -145,9 +46,46 @@ async function generateContentWithOpenRouter(model: string, prompt: string): Pro
   return data.choices?.[0]?.message?.content || "";
 }
 
+/**
+ * Pollinations.ai kullanarak tamamen ücretsiz görsel üretir.
+ */
+async function generateImageWithPollinations(
+  modelName: string,
+  prompt: string,
+  retries = 3
+): Promise<string | null> {
+  for (let i = 0; i < retries; i++) {
+    try {
+      console.log(`[AI Writer] Görsel üretimi deneniyor (Pollinations): model=${modelName}, deneme=${i + 1}`);
+      
+      const seed = Math.floor(Math.random() * 1000000);
+      const encodedPrompt = encodeURIComponent(prompt);
+      const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1280&height=720&nologo=true&seed=${seed}&model=${modelName === 'default' ? '' : modelName}`;
+
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`Pollinations API hatası: ${response.status}`);
+
+      const buffer = Buffer.from(await response.arrayBuffer());
+      const { url: blobUrl } = await put(`articles/ai-${Date.now()}.png`, buffer, {
+        access: "public",
+        contentType: "image/png",
+      });
+      
+      console.log("[AI Writer] Görsel başarıyla üretildi (Pollinations):", blobUrl);
+      return blobUrl;
+    } catch (error: any) {
+      if (i < retries - 1) {
+        await sleep(3000);
+        continue;
+      }
+      return null;
+    }
+  }
+  return null;
+}
+
 export async function writeArticleWithAI(suggestionId: string) {
   try {
-    // 1. Öneriyi ve ayarları getir
     const suggestion = await prisma.rssFeedItem.findUnique({
       where: { id: suggestionId },
       include: { source: true },
@@ -156,35 +94,26 @@ export async function writeArticleWithAI(suggestionId: string) {
     if (!suggestion) throw new Error("Öneri bulunamadı.");
 
     const settings = await prisma.systemSettings.findFirst();
-    const writerModelName = settings?.aiWriterModel || "gemini-2.5-flash";
-    const imageModelName = settings?.aiWriterImageModel || "imagen-3.0-generate-002";
+    const writerModelName = settings?.aiWriterModel || "google/gemini-2.0-flash-001";
+    const imageModelName = settings?.aiWriterImageModel || "flux";
 
-    // ── Persona & Kategori Zekası (Gelişmiş Rotasyon) ──
-    const globalSystemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın. Haberleri Türkçe, akıcı, SEO uyumlu ve en az 500 kelimelik yaz.";
+    // ── Persona & Kategori Zekası ──
+    const globalSystemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın.";
     let systemPrompt = globalSystemPrompt;
-    let imagePromptBase = settings?.aiWriterImagePrompt || "Professional, photorealistic news cover image.";
+    let imagePromptBase = settings?.aiWriterImagePrompt || "Professional news cover image.";
     let categoryId: string | null = null;
     let aiPersonaId: string | null = null;
-    let personaModelName: string | null = null;
 
     if (suggestion.aiAnalysis && (suggestion.aiAnalysis as any).suggestedCategory) {
       const suggestedCatName = (suggestion.aiAnalysis as any).suggestedCategory;
-      
-      // Kategoriyi bul
       const category = await prisma.category.findFirst({
         where: { name: { contains: suggestedCatName, mode: 'insensitive' } },
       });
 
       if (category) {
         categoryId = category.id;
-        console.log(`[AI Writer] Kategori tespit edildi: ${category.name}`);
-        
-        // Bu kategoriye atanmış aktif personaları bul (en eski kullanılan ilk sırada)
         const personaLink = await prisma.aiPersonaOnCategory.findFirst({
-          where: { 
-            categoryId: category.id,
-            persona: { isActive: true }
-          },
+          where: { categoryId: category.id, persona: { isActive: true } },
           orderBy: { lastUsedAt: 'asc' },
           include: { persona: true }
         });
@@ -192,15 +121,9 @@ export async function writeArticleWithAI(suggestionId: string) {
         if (personaLink) {
           const persona = personaLink.persona;
           aiPersonaId = persona.id;
-          personaModelName = persona.modelName;
-          
-          // TALİMAT: Genel prompt + Persona promptu birleştir
-          systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları (Bu kimlikle yaz):\n${persona.prompt}`;
+          systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları:\n${persona.prompt}`;
           imagePromptBase = persona.imagePrompt;
           
-          console.log(`[AI Writer] Persona seçildi (Rotasyon): ${persona.name}${personaModelName ? ` [Model: ${personaModelName}]` : ''}`);
-          
-          // Rotasyon zamanını güncelle
           await prisma.aiPersonaOnCategory.update({
             where: { personaId_categoryId: { personaId: persona.id, categoryId: category.id } },
             data: { lastUsedAt: new Date() }
@@ -209,47 +132,25 @@ export async function writeArticleWithAI(suggestionId: string) {
       }
     }
 
-    // 2. Metin Üret - @google/genai ile (Google Search Grounding dahil)
+    // 2. Metin Üret
     const textPrompt = `
       Konu: ${suggestion.title}
       Kaynak Özet: ${suggestion.excerpt || ""}
-      
-      ${systemPrompt}
-      
-      Lütfen bu konuyu Google'da araştır ve en az 500 kelimelik, SEO uyumlu, HTML formatında profesyonel bir haber makalesi yaz.
-      Makaleyi h2, p, strong etiketleri kullanarak formatla.
+      Talimat: ${systemPrompt}
+      Format: HTML (h2, p, strong). En az 500 kelime.
     `;
 
-    // ... (Metin üretim kısmı aynı kalıyor)
     let content = "";
-    const effectiveModel = personaModelName || writerModelName;
-    const provider = settings?.aiProvider || "GOOGLE";
-
     for (let i = 0; i < 3; i++) {
       try {
-        console.log(`[AI Writer] Metin üretiliyor: Provider=${provider}, Model=${effectiveModel}, Deneme=${i + 1}`);
-        
-        if (provider === "OPENROUTER") {
-          content = await generateContentWithOpenRouter(effectiveModel, textPrompt);
-        } else {
-          const textResponse = await ai.models.generateContent({
-            model: effectiveModel,
-            contents: textPrompt,
-            config: {
-              tools: [{ googleSearch: {} }],
-            },
-          });
-          content = textResponse.text || "";
-        }
+        console.log(`[AI Writer] Metin üretiliyor: Model=${writerModelName}, Deneme=${i + 1}`);
+        content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }]);
         break;
       } catch (err: any) {
         const errorMsg = String(err);
         const isRetryable = errorMsg.includes("429") || errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE") || errorMsg.includes("high demand") || errorMsg.includes("timeout");
-        
         if (isRetryable && i < 2) {
-          const waitMs = (errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE")) ? 10000 : 5000;
-          console.warn(`[AI Writer] Metin üretiminde geçici hata, ${waitMs / 1000}sn bekleniyor...`);
-          await sleep(waitMs);
+          await sleep(errorMsg.includes("503") ? 10000 : 5000);
           continue;
         }
         throw err;
@@ -259,57 +160,36 @@ export async function writeArticleWithAI(suggestionId: string) {
     if (!content) throw new Error("Yapay zeka metin üretemedi.");
 
     // 3. Görsel Üret
-    let imagePrompt = `
-      ${imagePromptBase}
-      News headline: "${suggestion.title}"
-      Create a professional, high-quality, photorealistic news cover image for this article.
-      Style: Editorial photography, dramatic lighting, 16:9 aspect ratio.
-      Do NOT include any text or watermarks in the image.
-    `;
+    let imagePrompt = `${imagePromptBase}\nNews headline: "${suggestion.title}"\nStyle: Photorealistic, 16:9, no text.`;
 
-    // ... (Görsel üretim kısmı aynı kalıyor)
     if (suggestion.imageUrl && settings?.aiWriterUseRssImage !== false) {
       const base64Image = await fetchImageAsBase64(suggestion.imageUrl);
       if (base64Image) {
         try {
-          console.log("[AI Writer] Orijinal görsel analiz ediliyor (İlham alma)...");
-          const visionResponse = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: [
-              "Describe this image in extreme detail in English. I will use your description as a prompt to generate a highly realistic and professional editorial photograph. Focus on the main subjects, colors, lighting, action, and mood. Make it sound like a prompt for Midjourney. Do NOT include any text or watermarks.",
-              {
-                inlineData: {
-                  data: base64Image,
-                  mimeType: "image/jpeg",
-                },
-              },
-            ],
-          });
-
-          if (visionResponse.text) {
-            imagePrompt = visionResponse.text + " -- 16:9 aspect ratio, photorealistic high quality news photography, no text, no watermarks.";
-            console.log("[AI Writer] Görselden ilham alınan yeni prompt oluşturuldu!");
+          console.log("[AI Writer] Orijinal görsel analiz ediliyor (OpenRouter Vision)...");
+          const visionModel = "google/gemini-2.0-flash-001";
+          const visionResponse = await generateContentWithOpenRouter(visionModel, [
+            {
+              role: "user",
+              content: [
+                { type: "text", text: "Describe this image in detail for a professional news photography prompt. Focus on mood and subjects. No text." },
+                { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
+              ]
+            }
+          ]);
+          if (visionResponse) {
+            imagePrompt = visionResponse + " -- photorealistic, 16:9, no text.";
           }
         } catch (e: any) {
-          console.warn("[AI Writer] Görselden ilham alma başarısız oldu, varsayılan prompt kullanılacak:", e.message);
+          console.warn("[AI Writer] Vision analizi başarısız:", e.message);
         }
       }
     }
 
-    let imageUrl: string | null | undefined = suggestion.imageUrl;
-    let generatedImageUrl = null;
-    
-    if (imageModelName.includes("gemini") || imageModelName.includes("imagen")) {
-      generatedImageUrl = await generateImageWithImagen(imageModelName, imagePrompt);
-    } else {
-      generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
-    }
+    const generatedImageUrl = await generateImageWithPollinations(imageModelName, imagePrompt);
+    let imageUrl = generatedImageUrl || suggestion.imageUrl;
 
-    if (generatedImageUrl) {
-      imageUrl = generatedImageUrl;
-    }
-
-    // 4. Makaleyi ve Medyayı Kaydet
+    // 4. Kaydet
     const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
     if (!adminUser) throw new Error("Admin kullanıcı bulunamadı.");
 
@@ -338,14 +218,13 @@ export async function writeArticleWithAI(suggestionId: string) {
         coverImage: imageUrl,
         status: "PUBLISHED",
         authorId: adminUser.id,
-        aiPersonaId: aiPersonaId, // Personayı bağla
-        categoryId: categoryId,
+        aiPersonaId,
+        categoryId,
         publishedAt: new Date(),
         lang: suggestion.source.language || "tr",
       },
     });
 
-    // 5. Öneriyi "Kullanıldı" olarak işaretle
     await prisma.rssFeedItem.update({
       where: { id: suggestionId },
       data: { usedForArticle: true },
@@ -358,9 +237,6 @@ export async function writeArticleWithAI(suggestionId: string) {
   }
 }
 
-/**
- * Belirtilen sayıda en yüksek puanlı haberi otomatik olarak yazar.
- */
 export async function writeBatchArticlesWithAI(count: number = 3) {
   const suggestions = await prisma.rssFeedItem.findMany({
     where: {
@@ -374,17 +250,9 @@ export async function writeBatchArticlesWithAI(count: number = 3) {
 
   const results = [];
   for (let i = 0; i < suggestions.length; i++) {
-    const suggestion = suggestions[i];
-    const result = await writeArticleWithAI(suggestion.id);
-    results.push({ id: suggestion.id, ...result });
-
-    // Kota limitlerini (429 Too Many Requests) aşmamak için her haber arasında 15 SANİYE bekle
-    // Not: Görsel (Imagen) limitleri çok daha katı olabilir.
-    if (i < suggestions.length - 1) {
-      console.log(`[AI Writer Batch] ${i + 1}. haber bitti. 15 saniye bekleniyor...`);
-      await sleep(15000);
-    }
+    const result = await writeArticleWithAI(suggestions[i].id);
+    results.push({ id: suggestions[i].id, ...result });
+    if (i < suggestions.length - 1) await sleep(15000);
   }
-
   return results;
 }

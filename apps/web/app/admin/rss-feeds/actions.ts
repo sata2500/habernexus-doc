@@ -152,12 +152,10 @@ export async function updateAiWriterSettings(data: {
   model: string;
   imageModel: string;
   useRssImage: boolean;
-  provider: string;
 }) {
   await prisma.systemSettings.update({
     where: { id: "global" },
     data: {
-      aiProvider: data.provider,
       aiWriterPrompt: data.prompt,
       aiWriterImagePrompt: data.imagePrompt,
       aiWriterModel: data.model,
