@@ -68,11 +68,17 @@ async function generateImageWithOpenRouter(model: string, prompt: string): Promi
     const data = await response.json();
     if (!response.ok) throw new Error(data.error?.message || "OpenRouter Image Error");
 
-    // OpenRouter görseli genelliklechoices[0].message.content içindeki bir URL veya base64 olarak döndürür
-    // Not: Bazı modeller farklı formatlarda dönebilir, bu genel bir yaklaşımdır.
     const imageContent = data.choices?.[0]?.message?.content;
     if (imageContent && (imageContent.startsWith("http") || imageContent.startsWith("data:image"))) {
-      return imageContent;
+      // Görseli indir ve Vercel Blob'a kaydet (Kalıcılık ve Optimizasyon için)
+      console.log("[AI Writer] OpenRouter görseli Blob'a aktarılıyor...");
+      const res = await fetch(imageContent);
+      const buffer = Buffer.from(await res.arrayBuffer());
+      const { url: blobUrl } = await put(`articles/ai-or-${Date.now()}.png`, buffer, {
+        access: "public",
+        contentType: "image/png",
+      });
+      return blobUrl;
     }
     return null;
   } catch (err) {

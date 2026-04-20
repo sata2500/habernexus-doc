@@ -72,6 +72,9 @@
   --z-modal-backdrop: 300;
   --z-modal: 400;
   --z-toast: 500;
+
+  /* Dark Mode Strategy */
+  --dark-mode: selector([data-theme="dark"]);
 }
 
 /* ============================================
