@@ -204,9 +204,13 @@ export async function writeArticleWithAI(suggestionId: string) {
         content = textResponse.text || "";
         break;
       } catch (err: any) {
-        if (err.message?.includes("429") && i < 2) {
-          console.warn("[AI Writer] Metin üretiminde 429 hatası, 5sn bekleniyor...");
-          await sleep(5000);
+        const errorMsg = String(err);
+        const isRetryable = errorMsg.includes("429") || errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE") || errorMsg.includes("high demand");
+        
+        if (isRetryable && i < 2) {
+          const waitMs = errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE") ? 10000 : 5000;
+          console.warn(`[AI Writer] Metin üretiminde geçici hata (${errorMsg.includes("429") ? "429" : "503"}), ${waitMs/1000}sn bekleniyor... Deneme: ${i+1}`);
+          await sleep(waitMs);
           continue;
         }
         throw err;
