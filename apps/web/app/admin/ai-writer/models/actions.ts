@@ -24,25 +24,23 @@ export async function syncModelsFromOpenRouter() {
       const isFree = parseFloat(m.pricing?.prompt || "0") === 0 && 
                      parseFloat(m.pricing?.completion || "0") === 0;
 
-      // Model Tipi Belirleme (OpenRouter Modalities Analizi)
-      let type: "TEXT" | "IMAGE" | "MULTIMODAL" = "TEXT";
-      const modelId = m.id.toLowerCase();
-      const modelName = m.name.toLowerCase();
-      
-      // 1. İsim/ID Kontrolü (Görsel Modelleri için)
-      const imageKeywords = ["stable-diffusion", "flux", "dall-e", "midjourney", "imagen", "vision", "video", "multimodal"];
-      if (imageKeywords.some(kw => modelId.includes(kw) || modelName.includes(kw))) {
-        if (modelId.includes("vision") || modelId.includes("multimodal")) {
-          type = "MULTIMODAL";
-        } else {
-          type = "IMAGE";
-        }
-      }
+      // Yetenek ve Modalite Analizi
+      const inputModalities = m.architecture?.input_modalities || ["text"];
+      const outputModalities = m.architecture?.output_modalities || ["text"];
+      const supportedParameters = m.supported_parameters || [];
+      const hasSearchPricing = m.pricing?.web_search !== undefined;
 
-      // 2. Modality Kontrolü (Varsa)
-      const modalities = m.architecture?.modality || "";
-      if (modalities.includes("image")) {
+      const supportsSearch = supportedParameters.includes("tools") || hasSearchPricing;
+      const supportsVision = inputModalities.includes("image") && outputModalities.includes("text");
+      const supportsT2I = outputModalities.includes("image");
+      const supportsI2I = inputModalities.includes("image") && outputModalities.includes("image");
+
+      // Model Tipi Belirleme
+      let type: "TEXT" | "IMAGE" | "MULTIMODAL" = "TEXT";
+      if (supportsT2I || supportsI2I) {
         type = "IMAGE";
+      } else if (supportsVision) {
+        type = "MULTIMODAL";
       }
 
       await prisma.aiModel.upsert({
@@ -51,7 +49,13 @@ export async function syncModelsFromOpenRouter() {
           name: m.name,
           description: m.description,
           isFree,
-          type, // Tipini de güncelle
+          type,
+          inputModalities,
+          outputModalities,
+          supportsSearch,
+          supportsVision,
+          supportsT2I,
+          supportsI2I,
         },
         create: {
           id: m.id,
@@ -60,6 +64,12 @@ export async function syncModelsFromOpenRouter() {
           type,
           isFree,
           isActive: false,
+          inputModalities,
+          outputModalities,
+          supportsSearch,
+          supportsVision,
+          supportsT2I,
+          supportsI2I,
         }
       });
       updatedCount++;

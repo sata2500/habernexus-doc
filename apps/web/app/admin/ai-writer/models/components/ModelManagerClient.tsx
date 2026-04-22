@@ -29,6 +29,10 @@ interface AiModel {
   type: "TEXT" | "IMAGE" | "MULTIMODAL";
   isFree: boolean;
   isActive: boolean;
+  supportsSearch: boolean;
+  supportsVision: boolean;
+  supportsT2I: boolean;
+  supportsI2I: boolean;
 }
 
 interface Props {
@@ -38,12 +42,18 @@ interface Props {
 export function ModelManagerClient({ initialModels }: Props) {
   const [models, setModels] = useState(initialModels);
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<"ALL" | "TEXT" | "IMAGE" | "MULTIMODAL">("ALL");
+  const [filter, setFilter] = useState<"ALL" | "TEXT" | "T2I" | "I2I" | "VISION">("ALL");
   const [syncing, setSyncing] = useState(false);
 
   const filteredModels = models.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(search.toLowerCase()) || m.id.toLowerCase().includes(search.toLowerCase());
-    const matchesFilter = filter === "ALL" || m.type === filter;
+    
+    let matchesFilter = true;
+    if (filter === "TEXT") matchesFilter = m.type === "TEXT";
+    else if (filter === "T2I") matchesFilter = m.supportsT2I;
+    else if (filter === "I2I") matchesFilter = m.supportsI2I;
+    else if (filter === "VISION") matchesFilter = m.supportsVision;
+
     return matchesSearch && matchesFilter;
   });
 
@@ -120,12 +130,12 @@ export function ModelManagerClient({ initialModels }: Props) {
           />
         </div>
 
-        <div className="flex p-1 bg-muted/30 border border-border rounded-2xl">
-          {(["ALL", "TEXT", "IMAGE", "MULTIMODAL"] as const).map((t) => (
+        <div className="flex p-1 bg-muted/30 border border-border rounded-2xl overflow-x-auto no-scrollbar">
+          {(["ALL", "TEXT", "T2I", "I2I", "VISION"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setFilter(t)}
-              className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all ${
+              className={`flex-1 min-w-[60px] py-2 px-3 rounded-xl text-[10px] font-bold transition-all ${
                 filter === t ? "bg-primary-600 text-white shadow-md" : "hover:bg-muted-foreground/10"
               }`}
             >
@@ -176,17 +186,32 @@ export function ModelManagerClient({ initialModels }: Props) {
                 {m.description || "Açıklama bulunmuyor."}
               </p>
 
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 {m.isFree && (
-                  <span className="px-2 py-0.5 bg-green-500/10 text-green-600 rounded-md text-[10px] font-bold border border-green-500/20">Ücretsiz</span>
+                  <span className="px-2 py-0.5 bg-green-500/10 text-green-600 rounded-md text-[9px] font-bold border border-green-500/20">Ücretsiz</span>
                 )}
+                {m.supportsSearch && (
+                  <span className="px-2 py-0.5 bg-amber-500/10 text-amber-600 rounded-md text-[9px] font-bold border border-amber-500/20 flex items-center gap-1">
+                    <Search className="h-2.5 w-2.5" />
+                    Google Search
+                  </span>
+                )}
+                {m.supportsI2I && (
+                  <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-md text-[9px] font-bold border border-blue-500/20">i2i</span>
+                )}
+                {m.supportsVision && (
+                  <span className="px-2 py-0.5 bg-purple-500/10 text-purple-600 rounded-md text-[9px] font-bold border border-purple-500/20">Vision</span>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-2">
                 <select
                   value={m.type}
                   onChange={(e) => handleUpdateType(m.id, e.target.value as any)}
-                  className="bg-muted/50 border border-border rounded-lg px-2 py-1 text-[10px] font-bold outline-none cursor-pointer"
+                  className="w-full bg-muted/50 border border-border rounded-lg px-2 py-1.5 text-[10px] font-bold outline-none cursor-pointer"
                 >
                   <option value="TEXT">Metin (LLM)</option>
-                  <option value="IMAGE">Görsel (T2I)</option>
+                  <option value="IMAGE">Görsel (T2I/i2i)</option>
                   <option value="MULTIMODAL">Gelişmiş (Vision)</option>
                 </select>
               </div>

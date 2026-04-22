@@ -354,12 +354,21 @@ enum AiModelType {
 }
 
 model AiModel {
-  id          String      @id // OpenRouter model ID (örn: "openai/gpt-4")
-  name        String
-  description String?     @db.Text
-  type        AiModelType @default(TEXT)
-  isFree      Boolean     @default(false)
-  isActive    Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  id                String      @id // OpenRouter model ID (örn: "openai/gpt-4")
+  name              String
+  description       String?     @db.Text
+  type              AiModelType @default(TEXT)
+  isFree            Boolean     @default(false)
+  isActive          Boolean     @default(true)
+  
+  // Yetenekler ve Modaliteler
+  inputModalities   Json?       // ["text", "image"]
+  outputModalities  Json?       // ["text", "image"]
+  supportsSearch    Boolean     @default(false)
+  supportsVision    Boolean     @default(false)
+  supportsT2I       Boolean     @default(false)
+  supportsI2I       Boolean     @default(false)
+  
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
 }
