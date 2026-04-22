@@ -312,28 +312,31 @@ model SystemSettings {
   aiWriterUseRssImage Boolean @default(true)
 
   // AI Writer Otomasyonu
-  aiWriterAutoEnabled Boolean @default(false)
-  aiWriterAutoCount   Int     @default(3)
-  aiWriterAutoCron    String  @default("0 */6 * * *") // 6 saatte bir
-  qStashAiWriterId    String? // QStash üzerindeki görev ID'si
+  aiWriterAutoEnabled   Boolean @default(false)
+  aiWriterAutoCount     Int     @default(3)
+  aiWriterAutoCron      String  @default("0 */6 * * *") // 6 saatte bir
+  qStashAiWriterId      String? // QStash üzerindeki görev ID'si
+  aiWriterSearchEnabled Boolean @default(false)
 
   updatedAt DateTime @updatedAt
 }
 
 /// AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)
 model AiPersona {
-  id          String                @id @default(cuid())
-  name        String                @unique // "Caner KÖSE" vb.
-  role        String?               @default("Haber Editörü")
-  image       String? // Profil resmi URL
-  description String?
-  prompt      String                @db.Text
-  imagePrompt String                @db.Text
-  isActive    Boolean               @default(true)
-  createdAt   DateTime              @default(now())
-  updatedAt   DateTime              @updatedAt
-  categories  AiPersonaOnCategory[]
-  articles    Article[]
+  id              String                @id @default(cuid())
+  name            String                @unique // "Caner KÖSE" vb.
+  role            String?               @default("Haber Editörü")
+  image           String? // Profil resmi URL
+  description     String?
+  prompt          String                @db.Text
+  imagePrompt     String                @db.Text
+  useGoogleSearch Boolean               @default(false)
+  useRssImage     Boolean               @default(true)
+  isActive        Boolean               @default(true)
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  categories      AiPersonaOnCategory[]
+  articles        Article[]
 }
 
 model AiPersonaOnCategory {

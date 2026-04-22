@@ -335,6 +335,7 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   aiWriterAutoCount: 'aiWriterAutoCount',
   aiWriterAutoCron: 'aiWriterAutoCron',
   qStashAiWriterId: 'qStashAiWriterId',
+  aiWriterSearchEnabled: 'aiWriterSearchEnabled',
   updatedAt: 'updatedAt'
 };
 
@@ -346,6 +347,8 @@ exports.Prisma.AiPersonaScalarFieldEnum = {
   description: 'description',
   prompt: 'prompt',
   imagePrompt: 'imagePrompt',
+  useGoogleSearch: 'useGoogleSearch',
+  useRssImage: 'useRssImage',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

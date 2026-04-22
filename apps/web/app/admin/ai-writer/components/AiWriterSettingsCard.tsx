@@ -31,6 +31,7 @@ interface Props {
   initialModel: string;
   initialImageModel: string;
   initialUseRssImage: boolean;
+  initialSearchEnabled: boolean;
   availableModels: AiModel[];
 }
 
@@ -141,6 +142,7 @@ export function AiWriterSettingsCard({
   initialModel,
   initialImageModel,
   initialUseRssImage,
+  initialSearchEnabled,
   availableModels,
 }: Props) {
   const [prompt, setPrompt] = useState(initialPrompt);
@@ -148,6 +150,7 @@ export function AiWriterSettingsCard({
   const [model, setModel] = useState(initialModel);
   const [imageModel, setImageModel] = useState(initialImageModel);
   const [useRssImage, setUseRssImage] = useState(initialUseRssImage);
+  const [searchEnabled, setSearchEnabled] = useState(initialSearchEnabled);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -157,7 +160,7 @@ export function AiWriterSettingsCard({
   const handleSave = async () => {
     setLoading(true);
     setSuccess(false);
-    const res = await (updateAiWriterSettings as any)({ prompt, imagePrompt, model, imageModel, useRssImage });
+    const res = await (updateAiWriterSettings as any)({ prompt, imagePrompt, model, imageModel, useRssImage, searchEnabled });
     if (res.success) {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -263,19 +266,22 @@ export function AiWriterSettingsCard({
             </button>
           </div>
           
-          <div className="flex-1 w-full flex items-center justify-between p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 opacity-50 cursor-not-allowed">
+          <div className="flex-1 w-full flex items-center justify-between p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-900">
              <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center">
+              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${searchEnabled ? "bg-amber-500/10 text-amber-500" : "bg-neutral-500/10 text-neutral-500"}`}>
                 <Sparkles className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm font-bold">Google Arama Desteği</p>
-                <p className="text-[10px] text-neutral-400">Yakında: Haberleri internetten araştırır.</p>
+                <p className="text-sm font-bold dark:text-neutral-200 text-neutral-900">Google Arama Desteği</p>
+                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">Haberleri internetten araştırır ve doğrular.</p>
               </div>
             </div>
-            <div className="w-14 h-7 rounded-full bg-neutral-300 dark:bg-neutral-800 relative">
-               <div className="absolute top-1 left-1 w-5 h-5 bg-white rounded-full" />
-            </div>
+            <button
+              onClick={() => setSearchEnabled(!searchEnabled)}
+              className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${searchEnabled ? "bg-primary-600" : "bg-neutral-300 dark:bg-neutral-800"}`}
+            >
+              <div className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-all shadow-md ${searchEnabled ? "translate-x-7" : ""}`} />
+            </button>
           </div>
         </div>
       </div>

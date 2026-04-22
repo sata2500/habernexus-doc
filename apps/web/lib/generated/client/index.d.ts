@@ -22370,6 +22370,7 @@ export namespace Prisma {
     aiWriterAutoCount: number | null
     aiWriterAutoCron: string | null
     qStashAiWriterId: string | null
+    aiWriterSearchEnabled: boolean | null
     updatedAt: Date | null
   }
 
@@ -22390,6 +22391,7 @@ export namespace Prisma {
     aiWriterAutoCount: number | null
     aiWriterAutoCron: string | null
     qStashAiWriterId: string | null
+    aiWriterSearchEnabled: boolean | null
     updatedAt: Date | null
   }
 
@@ -22410,6 +22412,7 @@ export namespace Prisma {
     aiWriterAutoCount: number
     aiWriterAutoCron: number
     qStashAiWriterId: number
+    aiWriterSearchEnabled: number
     updatedAt: number
     _all: number
   }
@@ -22442,6 +22445,7 @@ export namespace Prisma {
     aiWriterAutoCount?: true
     aiWriterAutoCron?: true
     qStashAiWriterId?: true
+    aiWriterSearchEnabled?: true
     updatedAt?: true
   }
 
@@ -22462,6 +22466,7 @@ export namespace Prisma {
     aiWriterAutoCount?: true
     aiWriterAutoCron?: true
     qStashAiWriterId?: true
+    aiWriterSearchEnabled?: true
     updatedAt?: true
   }
 
@@ -22482,6 +22487,7 @@ export namespace Prisma {
     aiWriterAutoCount?: true
     aiWriterAutoCron?: true
     qStashAiWriterId?: true
+    aiWriterSearchEnabled?: true
     updatedAt?: true
     _all?: true
   }
@@ -22589,6 +22595,7 @@ export namespace Prisma {
     aiWriterAutoCount: number
     aiWriterAutoCron: string
     qStashAiWriterId: string | null
+    aiWriterSearchEnabled: boolean
     updatedAt: Date
     _count: SystemSettingsCountAggregateOutputType | null
     _avg: SystemSettingsAvgAggregateOutputType | null
@@ -22628,6 +22635,7 @@ export namespace Prisma {
     aiWriterAutoCount?: boolean
     aiWriterAutoCron?: boolean
     qStashAiWriterId?: boolean
+    aiWriterSearchEnabled?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22648,6 +22656,7 @@ export namespace Prisma {
     aiWriterAutoCount?: boolean
     aiWriterAutoCron?: boolean
     qStashAiWriterId?: boolean
+    aiWriterSearchEnabled?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22668,6 +22677,7 @@ export namespace Prisma {
     aiWriterAutoCount?: boolean
     aiWriterAutoCron?: boolean
     qStashAiWriterId?: boolean
+    aiWriterSearchEnabled?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -22688,10 +22698,11 @@ export namespace Prisma {
     aiWriterAutoCount?: boolean
     aiWriterAutoCron?: boolean
     qStashAiWriterId?: boolean
+    aiWriterSearchEnabled?: boolean
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "aiWriterSearchEnabled" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -22713,6 +22724,7 @@ export namespace Prisma {
       aiWriterAutoCount: number
       aiWriterAutoCron: string
       qStashAiWriterId: string | null
+      aiWriterSearchEnabled: boolean
       updatedAt: Date
     }, ExtArgs["result"]["systemSettings"]>
     composites: {}
@@ -23153,6 +23165,7 @@ export namespace Prisma {
     readonly aiWriterAutoCount: FieldRef<"SystemSettings", 'Int'>
     readonly aiWriterAutoCron: FieldRef<"SystemSettings", 'String'>
     readonly qStashAiWriterId: FieldRef<"SystemSettings", 'String'>
+    readonly aiWriterSearchEnabled: FieldRef<"SystemSettings", 'Boolean'>
     readonly updatedAt: FieldRef<"SystemSettings", 'DateTime'>
   }
     
@@ -23543,6 +23556,8 @@ export namespace Prisma {
     description: string | null
     prompt: string | null
     imagePrompt: string | null
+    useGoogleSearch: boolean | null
+    useRssImage: boolean | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -23556,6 +23571,8 @@ export namespace Prisma {
     description: string | null
     prompt: string | null
     imagePrompt: string | null
+    useGoogleSearch: boolean | null
+    useRssImage: boolean | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -23569,6 +23586,8 @@ export namespace Prisma {
     description: number
     prompt: number
     imagePrompt: number
+    useGoogleSearch: number
+    useRssImage: number
     isActive: number
     createdAt: number
     updatedAt: number
@@ -23584,6 +23603,8 @@ export namespace Prisma {
     description?: true
     prompt?: true
     imagePrompt?: true
+    useGoogleSearch?: true
+    useRssImage?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -23597,6 +23618,8 @@ export namespace Prisma {
     description?: true
     prompt?: true
     imagePrompt?: true
+    useGoogleSearch?: true
+    useRssImage?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -23610,6 +23633,8 @@ export namespace Prisma {
     description?: true
     prompt?: true
     imagePrompt?: true
+    useGoogleSearch?: true
+    useRssImage?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -23696,6 +23721,8 @@ export namespace Prisma {
     description: string | null
     prompt: string
     imagePrompt: string
+    useGoogleSearch: boolean
+    useRssImage: boolean
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -23726,6 +23753,8 @@ export namespace Prisma {
     description?: boolean
     prompt?: boolean
     imagePrompt?: boolean
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -23742,6 +23771,8 @@ export namespace Prisma {
     description?: boolean
     prompt?: boolean
     imagePrompt?: boolean
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -23755,6 +23786,8 @@ export namespace Prisma {
     description?: boolean
     prompt?: boolean
     imagePrompt?: boolean
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -23768,12 +23801,14 @@ export namespace Prisma {
     description?: boolean
     prompt?: boolean
     imagePrompt?: boolean
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type AiPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "role" | "image" | "description" | "prompt" | "imagePrompt" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["aiPersona"]>
+  export type AiPersonaOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "role" | "image" | "description" | "prompt" | "imagePrompt" | "useGoogleSearch" | "useRssImage" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["aiPersona"]>
   export type AiPersonaInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     categories?: boolean | AiPersona$categoriesArgs<ExtArgs>
     articles?: boolean | AiPersona$articlesArgs<ExtArgs>
@@ -23796,6 +23831,8 @@ export namespace Prisma {
       description: string | null
       prompt: string
       imagePrompt: string
+      useGoogleSearch: boolean
+      useRssImage: boolean
       isActive: boolean
       createdAt: Date
       updatedAt: Date
@@ -24231,6 +24268,8 @@ export namespace Prisma {
     readonly description: FieldRef<"AiPersona", 'String'>
     readonly prompt: FieldRef<"AiPersona", 'String'>
     readonly imagePrompt: FieldRef<"AiPersona", 'String'>
+    readonly useGoogleSearch: FieldRef<"AiPersona", 'Boolean'>
+    readonly useRssImage: FieldRef<"AiPersona", 'Boolean'>
     readonly isActive: FieldRef<"AiPersona", 'Boolean'>
     readonly createdAt: FieldRef<"AiPersona", 'DateTime'>
     readonly updatedAt: FieldRef<"AiPersona", 'DateTime'>
@@ -27057,6 +27096,7 @@ export namespace Prisma {
     aiWriterAutoCount: 'aiWriterAutoCount',
     aiWriterAutoCron: 'aiWriterAutoCron',
     qStashAiWriterId: 'qStashAiWriterId',
+    aiWriterSearchEnabled: 'aiWriterSearchEnabled',
     updatedAt: 'updatedAt'
   };
 
@@ -27071,6 +27111,8 @@ export namespace Prisma {
     description: 'description',
     prompt: 'prompt',
     imagePrompt: 'imagePrompt',
+    useGoogleSearch: 'useGoogleSearch',
+    useRssImage: 'useRssImage',
     isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -28584,6 +28626,7 @@ export namespace Prisma {
     aiWriterAutoCount?: IntFilter<"SystemSettings"> | number
     aiWriterAutoCron?: StringFilter<"SystemSettings"> | string
     qStashAiWriterId?: StringNullableFilter<"SystemSettings"> | string | null
+    aiWriterSearchEnabled?: BoolFilter<"SystemSettings"> | boolean
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }
 
@@ -28604,6 +28647,7 @@ export namespace Prisma {
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrderInput | SortOrder
+    aiWriterSearchEnabled?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -28627,6 +28671,7 @@ export namespace Prisma {
     aiWriterAutoCount?: IntFilter<"SystemSettings"> | number
     aiWriterAutoCron?: StringFilter<"SystemSettings"> | string
     qStashAiWriterId?: StringNullableFilter<"SystemSettings"> | string | null
+    aiWriterSearchEnabled?: BoolFilter<"SystemSettings"> | boolean
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }, "id">
 
@@ -28647,6 +28692,7 @@ export namespace Prisma {
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrderInput | SortOrder
+    aiWriterSearchEnabled?: SortOrder
     updatedAt?: SortOrder
     _count?: SystemSettingsCountOrderByAggregateInput
     _avg?: SystemSettingsAvgOrderByAggregateInput
@@ -28675,6 +28721,7 @@ export namespace Prisma {
     aiWriterAutoCount?: IntWithAggregatesFilter<"SystemSettings"> | number
     aiWriterAutoCron?: StringWithAggregatesFilter<"SystemSettings"> | string
     qStashAiWriterId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
+    aiWriterSearchEnabled?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
     updatedAt?: DateTimeWithAggregatesFilter<"SystemSettings"> | Date | string
   }
 
@@ -28689,6 +28736,8 @@ export namespace Prisma {
     description?: StringNullableFilter<"AiPersona"> | string | null
     prompt?: StringFilter<"AiPersona"> | string
     imagePrompt?: StringFilter<"AiPersona"> | string
+    useGoogleSearch?: BoolFilter<"AiPersona"> | boolean
+    useRssImage?: BoolFilter<"AiPersona"> | boolean
     isActive?: BoolFilter<"AiPersona"> | boolean
     createdAt?: DateTimeFilter<"AiPersona"> | Date | string
     updatedAt?: DateTimeFilter<"AiPersona"> | Date | string
@@ -28704,6 +28753,8 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    useGoogleSearch?: SortOrder
+    useRssImage?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -28722,6 +28773,8 @@ export namespace Prisma {
     description?: StringNullableFilter<"AiPersona"> | string | null
     prompt?: StringFilter<"AiPersona"> | string
     imagePrompt?: StringFilter<"AiPersona"> | string
+    useGoogleSearch?: BoolFilter<"AiPersona"> | boolean
+    useRssImage?: BoolFilter<"AiPersona"> | boolean
     isActive?: BoolFilter<"AiPersona"> | boolean
     createdAt?: DateTimeFilter<"AiPersona"> | Date | string
     updatedAt?: DateTimeFilter<"AiPersona"> | Date | string
@@ -28737,6 +28790,8 @@ export namespace Prisma {
     description?: SortOrderInput | SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    useGoogleSearch?: SortOrder
+    useRssImage?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -28756,6 +28811,8 @@ export namespace Prisma {
     description?: StringNullableWithAggregatesFilter<"AiPersona"> | string | null
     prompt?: StringWithAggregatesFilter<"AiPersona"> | string
     imagePrompt?: StringWithAggregatesFilter<"AiPersona"> | string
+    useGoogleSearch?: BoolWithAggregatesFilter<"AiPersona"> | boolean
+    useRssImage?: BoolWithAggregatesFilter<"AiPersona"> | boolean
     isActive?: BoolWithAggregatesFilter<"AiPersona"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"AiPersona"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"AiPersona"> | Date | string
@@ -30326,6 +30383,7 @@ export namespace Prisma {
     aiWriterAutoCount?: number
     aiWriterAutoCron?: string
     qStashAiWriterId?: string | null
+    aiWriterSearchEnabled?: boolean
     updatedAt?: Date | string
   }
 
@@ -30346,6 +30404,7 @@ export namespace Prisma {
     aiWriterAutoCount?: number
     aiWriterAutoCron?: string
     qStashAiWriterId?: string | null
+    aiWriterSearchEnabled?: boolean
     updatedAt?: Date | string
   }
 
@@ -30366,6 +30425,7 @@ export namespace Prisma {
     aiWriterAutoCount?: IntFieldUpdateOperationsInput | number
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
     qStashAiWriterId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiWriterSearchEnabled?: BoolFieldUpdateOperationsInput | boolean
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -30386,6 +30446,7 @@ export namespace Prisma {
     aiWriterAutoCount?: IntFieldUpdateOperationsInput | number
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
     qStashAiWriterId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiWriterSearchEnabled?: BoolFieldUpdateOperationsInput | boolean
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -30406,6 +30467,7 @@ export namespace Prisma {
     aiWriterAutoCount?: number
     aiWriterAutoCron?: string
     qStashAiWriterId?: string | null
+    aiWriterSearchEnabled?: boolean
     updatedAt?: Date | string
   }
 
@@ -30426,6 +30488,7 @@ export namespace Prisma {
     aiWriterAutoCount?: IntFieldUpdateOperationsInput | number
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
     qStashAiWriterId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiWriterSearchEnabled?: BoolFieldUpdateOperationsInput | boolean
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -30446,6 +30509,7 @@ export namespace Prisma {
     aiWriterAutoCount?: IntFieldUpdateOperationsInput | number
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
     qStashAiWriterId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiWriterSearchEnabled?: BoolFieldUpdateOperationsInput | boolean
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -30457,6 +30521,8 @@ export namespace Prisma {
     description?: string | null
     prompt: string
     imagePrompt: string
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30472,6 +30538,8 @@ export namespace Prisma {
     description?: string | null
     prompt: string
     imagePrompt: string
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30487,6 +30555,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    useGoogleSearch?: BoolFieldUpdateOperationsInput | boolean
+    useRssImage?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30502,6 +30572,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    useGoogleSearch?: BoolFieldUpdateOperationsInput | boolean
+    useRssImage?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30517,6 +30589,8 @@ export namespace Prisma {
     description?: string | null
     prompt: string
     imagePrompt: string
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -30530,6 +30604,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    useGoogleSearch?: BoolFieldUpdateOperationsInput | boolean
+    useRssImage?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -30543,6 +30619,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    useGoogleSearch?: BoolFieldUpdateOperationsInput | boolean
+    useRssImage?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -31727,6 +31805,7 @@ export namespace Prisma {
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrder
+    aiWriterSearchEnabled?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -31752,6 +31831,7 @@ export namespace Prisma {
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrder
+    aiWriterSearchEnabled?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -31772,6 +31852,7 @@ export namespace Prisma {
     aiWriterAutoCount?: SortOrder
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrder
+    aiWriterSearchEnabled?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -31788,6 +31869,8 @@ export namespace Prisma {
     description?: SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    useGoogleSearch?: SortOrder
+    useRssImage?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -31801,6 +31884,8 @@ export namespace Prisma {
     description?: SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    useGoogleSearch?: SortOrder
+    useRssImage?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -31814,6 +31899,8 @@ export namespace Prisma {
     description?: SortOrder
     prompt?: SortOrder
     imagePrompt?: SortOrder
+    useGoogleSearch?: SortOrder
+    useRssImage?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -33849,6 +33936,8 @@ export namespace Prisma {
     description?: string | null
     prompt: string
     imagePrompt: string
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -33863,6 +33952,8 @@ export namespace Prisma {
     description?: string | null
     prompt: string
     imagePrompt: string
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -34051,6 +34142,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    useGoogleSearch?: BoolFieldUpdateOperationsInput | boolean
+    useRssImage?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -34065,6 +34158,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    useGoogleSearch?: BoolFieldUpdateOperationsInput | boolean
+    useRssImage?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35362,6 +35457,8 @@ export namespace Prisma {
     description?: string | null
     prompt: string
     imagePrompt: string
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35376,6 +35473,8 @@ export namespace Prisma {
     description?: string | null
     prompt: string
     imagePrompt: string
+    useGoogleSearch?: boolean
+    useRssImage?: boolean
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35439,6 +35538,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    useGoogleSearch?: BoolFieldUpdateOperationsInput | boolean
+    useRssImage?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35453,6 +35554,8 @@ export namespace Prisma {
     description?: NullableStringFieldUpdateOperationsInput | string | null
     prompt?: StringFieldUpdateOperationsInput | string
     imagePrompt?: StringFieldUpdateOperationsInput | string
+    useGoogleSearch?: BoolFieldUpdateOperationsInput | boolean
+    useRssImage?: BoolFieldUpdateOperationsInput | boolean
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

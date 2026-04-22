@@ -83,6 +83,7 @@ export default async function AdminAiWriterPage() {
           initialModel={settings.aiWriterModel}
           initialImageModel={settings.aiWriterImageModel}
           initialUseRssImage={settings.aiWriterUseRssImage}
+          initialSearchEnabled={settings.aiWriterSearchEnabled}
           availableModels={allModels as any}
         />
         <AiWriterAutomationCard 

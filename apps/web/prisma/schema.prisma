@@ -316,6 +316,7 @@ model SystemSettings {
   aiWriterAutoCount   Int      @default(3)
   aiWriterAutoCron    String   @default("0 */6 * * *") // 6 saatte bir
   qStashAiWriterId    String?  // QStash üzerindeki görev ID'si
+  aiWriterSearchEnabled Boolean  @default(false)
   
   updatedAt          DateTime @updatedAt
 }
@@ -329,6 +330,8 @@ model AiPersona {
   description String?    
   prompt      String     @db.Text
   imagePrompt String     @db.Text
+  useGoogleSearch Boolean    @default(false)
+  useRssImage     Boolean    @default(true)
   isActive    Boolean    @default(true)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt

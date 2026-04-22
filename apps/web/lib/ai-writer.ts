@@ -20,9 +20,19 @@ async function fetchImageAsBase64(url: string): Promise<string | null> {
 /**
  * OpenRouter API kullanarak içerik üretir.
  */
-async function generateContentWithOpenRouter(model: string, messages: any[]): Promise<string> {
+async function generateContentWithOpenRouter(model: string, messages: any[], tools?: any[]): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY || "";
   if (!apiKey) throw new Error("OPENROUTER_API_KEY eksik.");
+
+  const body: any = {
+    model: model,
+    messages: messages,
+    response_format: { type: "text" }
+  };
+
+  if (tools && tools.length > 0) {
+    body.tools = tools;
+  }
 
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
@@ -32,11 +42,7 @@ async function generateContentWithOpenRouter(model: string, messages: any[]): Pr
       "X-Title": "Haber Nexus",
       "Content-Type": "application/json"
     },
-    body: JSON.stringify({
-      model: model,
-      messages: messages,
-      response_format: { type: "text" }
-    })
+    body: JSON.stringify(body)
   });
 
   const data = await response.json();
@@ -49,10 +55,16 @@ async function generateContentWithOpenRouter(model: string, messages: any[]): Pr
 /**
  * OpenRouter API kullanarak görsel üretir.
  */
-async function generateImageWithOpenRouter(model: string, prompt: string): Promise<string | null> {
+async function generateImageWithOpenRouter(model: string, prompt: string, referenceImageUrl?: string): Promise<string | null> {
   try {
-    console.log(`[AI Writer] OpenRouter görsel üretimi: model=${model}`);
+    console.log(`[AI Writer] OpenRouter görsel üretimi: model=${model}, referans=${!!referenceImageUrl}`);
     const apiKey = process.env.OPENROUTER_API_KEY || "";
+    
+    const content: any[] = [{ type: "text", text: prompt }];
+    if (referenceImageUrl) {
+      content.push({ type: "image_url", image_url: { url: referenceImageUrl } });
+    }
+
     const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -61,7 +73,7 @@ async function generateImageWithOpenRouter(model: string, prompt: string): Promi
       },
       body: JSON.stringify({
         model: model,
-        messages: [{ role: "user", content: prompt }],
+        messages: [{ role: "user", content: content }],
         modalities: ["image"]
       })
     });
@@ -107,6 +119,10 @@ export async function writeArticleWithAI(suggestionId: string) {
     let imagePromptBase = settings?.aiWriterImagePrompt || "Professional news cover image.";
     let categoryId: string | null = null;
     let aiPersonaId: string | null = null;
+    
+    // Özellik bayrakları (Varsayılan global ayarlar)
+    let useGoogleSearch = settings?.aiWriterSearchEnabled || false;
+    let useRssImage = settings?.aiWriterUseRssImage !== false;
 
     if (suggestion.aiAnalysis && (suggestion.aiAnalysis as any).suggestedCategory) {
       const suggestedCatName = (suggestion.aiAnalysis as any).suggestedCategory;
@@ -128,6 +144,10 @@ export async function writeArticleWithAI(suggestionId: string) {
           systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları:\n${persona.prompt}`;
           imagePromptBase = persona.imagePrompt;
           
+          // Persona özel ayarlarını uygula
+          useGoogleSearch = persona.useGoogleSearch;
+          useRssImage = persona.useRssImage;
+          
           await prisma.aiPersonaOnCategory.update({
             where: { personaId_categoryId: { personaId: persona.id, categoryId: category.id } },
             data: { lastUsedAt: new Date() }
@@ -144,11 +164,14 @@ export async function writeArticleWithAI(suggestionId: string) {
       Format: HTML (h2, p, strong). En az 500 kelime.
     `;
 
+    // Google Arama Tool'u hazırla
+    const tools = useGoogleSearch ? [{ type: "openrouter:web_search" }] : undefined;
+
     let content = "";
     for (let i = 0; i < 3; i++) {
       try {
-        console.log(`[AI Writer] Metin üretiliyor: Model=${writerModelName}, Deneme=${i + 1}`);
-        content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }]);
+        console.log(`[AI Writer] Metin üretiliyor: Model=${writerModelName}, Deneme=${i + 1}, Arama=${useGoogleSearch}`);
+        content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }], tools);
         break;
       } catch (err: any) {
         const errorMsg = String(err);
@@ -164,33 +187,10 @@ export async function writeArticleWithAI(suggestionId: string) {
     if (!content) throw new Error("Yapay zeka metin üretemedi.");
 
     // 3. Görsel Üret
-    let imagePrompt = `${imagePromptBase}\nNews headline: "${suggestion.title}"\nStyle: Photorealistic, 16:9, no text.`;
+    const finalImagePrompt = `${imagePromptBase}\nNews headline: "${suggestion.title}"\nStyle: Photorealistic, 16:9, no text.`;
+    const referenceUrl = useRssImage && suggestion.imageUrl ? suggestion.imageUrl : undefined;
 
-    if (suggestion.imageUrl && settings?.aiWriterUseRssImage !== false) {
-      const base64Image = await fetchImageAsBase64(suggestion.imageUrl);
-      if (base64Image) {
-        try {
-          console.log("[AI Writer] Orijinal görsel analiz ediliyor (OpenRouter Vision)...");
-          const visionModel = "google/gemini-2.0-flash-001";
-          const visionResponse = await generateContentWithOpenRouter(visionModel, [
-            {
-              role: "user",
-              content: [
-                { type: "text", text: "Describe this image in detail for a professional news photography prompt. Focus on mood and subjects. No text." },
-                { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
-              ]
-            }
-          ]);
-          if (visionResponse) {
-            imagePrompt = visionResponse + " -- photorealistic, 16:9, no text.";
-          }
-        } catch (e: any) {
-          console.warn("[AI Writer] Vision analizi başarısız:", e.message);
-        }
-      }
-    }
-
-    let generatedImageUrl = await generateImageWithOpenRouter(imageModelName, imagePrompt);
+    let generatedImageUrl = await generateImageWithOpenRouter(imageModelName, finalImagePrompt, referenceUrl);
     let imageUrl = generatedImageUrl;
 
     // Eğer AI görsel üretmediyse veya hata oluştuysa RSS görselini kullan ve sisteme kaydet

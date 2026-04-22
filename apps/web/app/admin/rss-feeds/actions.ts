@@ -152,6 +152,7 @@ export async function updateAiWriterSettings(data: {
   model: string;
   imageModel: string;
   useRssImage: boolean;
+  searchEnabled: boolean;
 }) {
   await prisma.systemSettings.update({
     where: { id: "global" },
@@ -161,6 +162,7 @@ export async function updateAiWriterSettings(data: {
       aiWriterModel: data.model,
       aiWriterImageModel: data.imageModel,
       aiWriterUseRssImage: data.useRssImage,
+      aiWriterSearchEnabled: data.searchEnabled,
     },
   });
   revalidatePath("/admin/rss-feeds");
