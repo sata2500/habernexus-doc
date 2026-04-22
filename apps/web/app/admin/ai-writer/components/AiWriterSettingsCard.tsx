@@ -221,7 +221,7 @@ export function AiWriterSettingsCard({
             options={imageModels}
           />
           <StylishSelect 
-            label="RSS Analizör Modeli"
+            label="AI Analiz ve Özet Modeli"
             icon={Search}
             value={analyzerModel}
             onChange={setAnalyzerModel}

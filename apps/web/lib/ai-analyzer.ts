@@ -24,11 +24,14 @@ function cleanJson(text: string) {
  * OpenRouter API üzerinden analiz yapar.
  */
 async function callOpenRouter(prompt: string): Promise<string> {
-  const settings = await prisma.systemSettings.findUnique({ where: { id: "global" } });
+  const settings = await prisma.systemSettings.findFirst(); // findUnique yerine findFirst daha güvenli
   const model = settings?.aiAnalyzerModel || "google/gemini-2.0-flash-001";
   const apiKey = process.env.OPENROUTER_API_KEY;
 
-  if (!apiKey) throw new Error("OPENROUTER_API_KEY bulunamadı.");
+  if (!apiKey) {
+    console.error("[AI Analysis] HATA: OPENROUTER_API_KEY bulunamadı. Lütfen .env dosyasını veya Vercel ayarlarını kontrol edin.");
+    throw new Error("OPENROUTER_API_KEY bulunamadı.");
+  }
 
   console.log(`[AI Analyzer] İstek gönderiliyor. Model: ${model}`);
 
@@ -133,12 +136,14 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "su
       }
       return { analyzed, covered, lowScore, aiUsed: true };
     } catch (err) {
-      console.error("[AI Analyzer] Kritik Hata:", err);
+      console.error("[AI Analysis] Kritik Hata:", err);
       // Hata durumunda fallback'e devam et
     }
+  } else {
+    console.warn("[AI Analysis] OPENROUTER_API_KEY bulunamadı, yapay zeka analizi atlanıyor.");
   }
 
-  console.log("[AI Analyzer] Fallback (kural tabanlı) puanlama yapılıyor...");
+  console.log("[AI Analysis] Fallback (kural tabanlı) puanlama yapılıyor...");
   // Fallback
   for (const item of pendingItems) {
     const score = fallbackScore(item.title, item.excerpt || "", item.publishedAt);

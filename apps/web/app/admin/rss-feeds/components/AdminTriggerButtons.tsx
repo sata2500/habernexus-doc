@@ -31,8 +31,8 @@ export function AdminTriggerButtons() {
     if (res.success) {
       const msg =
         "analyzed" in res
-          ? `✓ Analiz tamamlandı: ${res.analyzed} önerildi, ${res.covered} kapsandı, ${res.lowScore} düşük puan. ${!res.aiUsed ? "(AI aktif değil, fallback kullanıldı)" : ""}`
-          : "✓ Analiz tamamlandı.";
+          ? `✓ İşlem tamamlandı: ${res.analyzed} analiz edildi. ${!res.aiUsed ? "(Yapay Zeka API anahtarı eksik veya hata oluştu, kural tabanlı puanlama kullanıldı)" : ""}`
+          : "✓ İşlem tamamlandı.";
       setMessage(msg);
     } else {
       setMessage(`⚠ Hata: ${res.error}`);
@@ -57,7 +57,7 @@ export function AdminTriggerButtons() {
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-medium text-sm transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-primary-500/20"
         >
           {analyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-          {analyzing ? "Analiz ediliyor..." : "AI Analiz Çalıştır"}
+          {analyzing ? "Analiz ediliyor..." : "AI Analiz ve Özet"}
         </button>
       </div>
       {message && (
