@@ -31,7 +31,7 @@ export function AdminTriggerButtons() {
     if (res.success) {
       const msg =
         "analyzed" in res
-          ? `✓ İşlem tamamlandı: ${res.analyzed} analiz edildi. ${!res.aiUsed ? "(Yapay Zeka API anahtarı eksik veya hata oluştu, kural tabanlı puanlama kullanıldı)" : ""}`
+          ? `✓ İşlem tamamlandı: ${res.analyzed} analiz edildi. ${!res.aiUsed ? `(Yapay Zeka atlandı: ${res.error || "Bilinmeyen hata"})` : ""}`
           : "✓ İşlem tamamlandı.";
       setMessage(msg);
     } else {

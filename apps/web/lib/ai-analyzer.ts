@@ -73,7 +73,13 @@ function fallbackScore(title: string, excerpt: string, publishedAt: Date | null)
 
 export async function analyzeRssBatch() {
   const apiKey = process.env.OPENROUTER_API_KEY;
+  console.log("[AI Analysis] Analiz işlemi başlatıldı.");
   
+  if (!apiKey) {
+    console.error("[AI Analysis] HATA: OPENROUTER_API_KEY ortam değişkeni bulunamadı!");
+    return { analyzed: 0, covered: 0, lowScore: 0, aiUsed: false, error: "API anahtarı bulunamadı." };
+  }
+
   const recentArticles = await prisma.article.findMany({
     where: { status: "PUBLISHED", publishedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
     select: { title: true },
@@ -88,20 +94,19 @@ export async function analyzeRssBatch() {
   });
 
   if (pendingItems.length === 0) {
-    console.log("[AI Analyzer] Analiz edilecek bekleyen haber yok.");
+    console.log("[AI Analysis] Analiz edilecek bekleyen haber yok.");
     return { analyzed: 0, covered: 0, lowScore: 0, aiUsed: false };
   }
 
-  console.log(`[AI Analyzer] ${pendingItems.length} haber analiz ediliyor...`);
+  console.log(`[AI Analysis] ${pendingItems.length} haber analiz ediliyor...`);
 
   let analyzed = 0, covered = 0, lowScore = 0;
 
-  if (apiKey) {
-    try {
-      const existingTitles = recentArticles.map((a) => `- ${a.title}`).join("\n") || "(yok)";
-      const newItems = pendingItems.map((item) => `ID: ${item.id}\nBaşlık: ${item.title}\nKaynak: ${item.source.name}\nÖzet: ${item.excerpt || ""}`).join("\n\n---\n\n");
+  try {
+    const existingTitles = recentArticles.map((a) => `- ${a.title}`).join("\n") || "(yok)";
+    const newItems = pendingItems.map((item) => `ID: ${item.id}\nBaşlık: ${item.title}\nKaynak: ${item.source.name}\nÖzet: ${item.excerpt || ""}`).join("\n\n---\n\n");
 
-      const prompt = `Aşağıdaki haberleri analiz et ve JSON formatında döndür.
+    const prompt = `Aşağıdaki haberleri analiz et ve JSON formatında döndür.
 Sistemdeki son haberler (mükerrer kontrolü için):
 ${existingTitles}
 
@@ -111,50 +116,59 @@ ${newItems}
 Görev: Her haber için bir puan (0-100), mükerrerlik durumu ve kategori önerisi belirle.
 Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "suggestedTitles": ["..."], "suggestedCategory": "...", "reasoning": "..." } ] }`;
 
-      const aiResponse = await callOpenRouter(prompt);
-      const cleanedJson = cleanJson(aiResponse);
-      const result: GeminiResponse = JSON.parse(cleanedJson);
-
-      if (!result.items || !Array.isArray(result.items)) {
-        throw new Error("Geçersiz JSON yapısı");
-      }
-
-      for (const item of result.items) {
-        const status = item.isCovered ? "COVERED" : item.score < SCORE_THRESHOLD ? "LOW_SCORE" : "ANALYZED";
-        if (status === "COVERED") covered++;
-        if (status === "LOW_SCORE") lowScore++;
-        
-        await prisma.rssFeedItem.update({
-          where: { id: item.id },
-          data: {
-            aiScore: item.score,
-            aiAnalysis: item as any,
-            status,
-          },
-        });
-        analyzed++;
-      }
-      return { analyzed, covered, lowScore, aiUsed: true };
-    } catch (err) {
-      console.error("[AI Analysis] Kritik Hata:", err);
-      // Hata durumunda fallback'e devam et
+    const aiResponse = await callOpenRouter(prompt);
+    const cleanedJson = cleanJson(aiResponse);
+    let result: GeminiResponse;
+    
+    try {
+      result = JSON.parse(cleanedJson);
+    } catch (parseErr) {
+      console.error("[AI Analysis] JSON Ayrıştırma Hatası. Ham Yanıt:", aiResponse);
+      throw new Error("Yapay zeka geçersiz bir yanıt döndürdü.");
     }
-  } else {
-    console.warn("[AI Analysis] OPENROUTER_API_KEY bulunamadı, yapay zeka analizi atlanıyor.");
-  }
 
-  console.log("[AI Analysis] Fallback (kural tabanlı) puanlama yapılıyor...");
-  // Fallback
-  for (const item of pendingItems) {
-    const score = fallbackScore(item.title, item.excerpt || "", item.publishedAt);
-    await prisma.rssFeedItem.update({
-      where: { id: item.id },
-      data: { aiScore: score, status: score < SCORE_THRESHOLD ? "LOW_SCORE" : "ANALYZED" },
-    });
-    analyzed++;
-  }
+    if (!result.items || !Array.isArray(result.items)) {
+      throw new Error("Yapay zeka yanıtı beklenen formatta değil (items dizisi bulunamadı).");
+    }
 
-  return { analyzed, covered, lowScore, aiUsed: false };
+    for (const item of result.items) {
+      const status = item.isCovered ? "COVERED" : item.score < SCORE_THRESHOLD ? "LOW_SCORE" : "ANALYZED";
+      if (status === "COVERED") covered++;
+      if (status === "LOW_SCORE") lowScore++;
+      
+      await prisma.rssFeedItem.update({
+        where: { id: item.id },
+        data: {
+          aiScore: item.score,
+          aiAnalysis: item as any,
+          status,
+        },
+      });
+      analyzed++;
+    }
+    return { analyzed, covered, lowScore, aiUsed: true };
+  } catch (err: any) {
+    console.error("[AI Analysis] Kritik Hata:", err);
+    
+    // Hata durumunda fallback'e devam et ama hatayı da bildir
+    console.log("[AI Analysis] Fallback (kural tabanlı) puanlama yapılıyor...");
+    for (const item of pendingItems) {
+      const score = fallbackScore(item.title, item.excerpt || "", item.publishedAt);
+      await prisma.rssFeedItem.update({
+        where: { id: item.id },
+        data: { aiScore: score, status: score < SCORE_THRESHOLD ? "LOW_SCORE" : "ANALYZED" },
+      });
+      analyzed++;
+    }
+
+    return { 
+      analyzed, 
+      covered, 
+      lowScore, 
+      aiUsed: false, 
+      error: err.message || String(err) 
+    };
+  }
 }
 
 /**

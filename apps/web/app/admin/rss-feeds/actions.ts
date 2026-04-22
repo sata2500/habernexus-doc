@@ -78,6 +78,7 @@ export async function triggerAiAnalysis() {
   try {
     const result = await analyzeRssBatch();
     revalidatePath("/admin/rss-feeds");
+    // Hata mesajı varsa onu da döndür ki UI'da görelim
     return { success: true, ...result };
   } catch (err) {
     return { success: false, error: String(err) };
