@@ -33,15 +33,8 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
     setRunning(true);
     const res = await triggerBatchAiWriter(count);
     
-    if (res.success && res.results) {
-      const successes = res.results.filter((r: any) => r.success).length;
-      const failures = res.results.filter((r: any) => !r.success);
-      
-      if (failures.length > 0) {
-        alert(`${successes} haber başarıyla yazıldı. ${failures.length} haberde hata oluştu.\n\nHatalar:\n${failures.map((f: any) => f.error).join('\n')}`);
-      } else {
-        alert(`${successes} haber başarıyla yazıldı ve yayınlandı!`);
-      }
+    if (res.success) {
+      alert(`${res.enqueued} haber başarıyla kuyruğa eklendi. Arka planda yazılıp yayına alınacaktır.`);
     } else {
       alert("Hata: " + res.error);
     }
