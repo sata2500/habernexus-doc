@@ -28,8 +28,6 @@ export async function createPersona(data: {
   description: string;
   prompt: string;
   imagePrompt: string;
-  useGoogleSearch: boolean;
-  useRssImage: boolean;
   categoryIds: string[];
 }) {
   try {
@@ -61,8 +59,6 @@ export async function updatePersona(id: string, data: {
   description: string;
   prompt: string;
   imagePrompt: string;
-  useGoogleSearch: boolean;
-  useRssImage: boolean;
   categoryIds: string[];
 }) {
   try {

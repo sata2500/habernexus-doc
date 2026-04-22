@@ -30,8 +30,6 @@ interface Persona {
   description: string | null;
   prompt: string;
   imagePrompt: string;
-  useGoogleSearch: boolean;
-  useRssImage: boolean;
   categories: { category: Category }[];
 }
 
@@ -54,8 +52,6 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
     description: "",
     prompt: "",
     imagePrompt: "",
-    useGoogleSearch: false,
-    useRssImage: true,
     categoryIds: [] as string[],
   });
 
@@ -67,8 +63,6 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
       description: "",
       prompt: "",
       imagePrompt: "",
-      useGoogleSearch: false,
-      useRssImage: true,
       categoryIds: [],
     });
     setIsAdding(false);
@@ -83,8 +77,6 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
       description: persona.description || "",
       prompt: persona.prompt,
       imagePrompt: persona.imagePrompt,
-      useGoogleSearch: persona.useGoogleSearch,
-      useRssImage: persona.useRssImage,
       categoryIds: persona.categories.map(c => c.category.id),
     });
     setEditingId(persona.id);
@@ -293,43 +285,6 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
                   className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all h-32 font-mono text-xs leading-relaxed"
                 />
               </div>
-
-              {/* ── Ek Persona Ayarları ── */}
-              <div className="grid grid-cols-2 gap-4 pt-2">
-                <button
-                  onClick={() => setFormData({ ...formData, useGoogleSearch: !formData.useGoogleSearch })}
-                  className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
-                    formData.useGoogleSearch 
-                      ? "bg-amber-500/10 border-amber-500/30 text-amber-600" 
-                      : "bg-muted/20 border-border text-muted-foreground"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4" />
-                    <span className="text-xs font-bold">Google Arama</span>
-                  </div>
-                  <div className={`w-8 h-4 rounded-full relative transition-colors ${formData.useGoogleSearch ? "bg-amber-500" : "bg-muted"}`}>
-                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${formData.useGoogleSearch ? "translate-x-4" : ""}`} />
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => setFormData({ ...formData, useRssImage: !formData.useRssImage })}
-                  className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${
-                    formData.useRssImage 
-                      ? "bg-blue-500/10 border-blue-500/30 text-blue-600" 
-                      : "bg-muted/20 border-border text-muted-foreground"
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <ImageIcon className="h-4 w-4" />
-                    <span className="text-xs font-bold">Görsel Referans</span>
-                  </div>
-                  <div className={`w-8 h-4 rounded-full relative transition-colors ${formData.useRssImage ? "bg-blue-500" : "bg-muted"}`}>
-                    <div className={`absolute top-0.5 left-0.5 w-3 h-3 bg-white rounded-full transition-transform ${formData.useRssImage ? "translate-x-4" : ""}`} />
-                  </div>
-                </button>
-              </div>
             </div>
           </div>
 
@@ -404,17 +359,6 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
                     </span>
                   )}
                 </div>
-              </div>
-
-              <div className="flex items-center gap-4 border-t border-border/50 pt-4">
-                 <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[9px] font-bold ${persona.useGoogleSearch ? "bg-amber-500/10 text-amber-600 border border-amber-500/20" : "bg-muted text-muted-foreground"}`}>
-                    <Sparkles className="h-3 w-3" />
-                    SEARCH {persona.useGoogleSearch ? "ON" : "OFF"}
-                 </div>
-                 <div className={`flex items-center gap-1.5 px-2 py-1 rounded-md text-[9px] font-bold ${persona.useRssImage ? "bg-blue-500/10 text-blue-600 border border-blue-500/20" : "bg-muted text-muted-foreground"}`}>
-                    <ImageIcon className="h-3 w-3" />
-                    REF {persona.useRssImage ? "ON" : "OFF"}
-                 </div>
               </div>
 
               <button

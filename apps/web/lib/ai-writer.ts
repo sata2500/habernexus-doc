@@ -120,9 +120,9 @@ export async function writeArticleWithAI(suggestionId: string) {
     let categoryId: string | null = null;
     let aiPersonaId: string | null = null;
     
-    // Özellik bayrakları (Varsayılan global ayarlar)
-    let useGoogleSearch = settings?.aiWriterSearchEnabled || false;
-    let useRssImage = settings?.aiWriterUseRssImage !== false;
+    // Özellik bayrakları (Sadece global ayarlar)
+    const useGoogleSearch = settings?.aiWriterSearchEnabled || false;
+    const useRssImage = settings?.aiWriterUseRssImage !== false;
 
     if (suggestion.aiAnalysis && (suggestion.aiAnalysis as any).suggestedCategory) {
       const suggestedCatName = (suggestion.aiAnalysis as any).suggestedCategory;
@@ -143,10 +143,6 @@ export async function writeArticleWithAI(suggestionId: string) {
           aiPersonaId = persona.id;
           systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları:\n${persona.prompt}`;
           imagePromptBase = persona.imagePrompt;
-          
-          // Persona özel ayarlarını uygula
-          useGoogleSearch = persona.useGoogleSearch;
-          useRssImage = persona.useRssImage;
           
           await prisma.aiPersonaOnCategory.update({
             where: { personaId_categoryId: { personaId: persona.id, categoryId: category.id } },
