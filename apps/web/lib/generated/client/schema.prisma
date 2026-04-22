@@ -304,6 +304,9 @@ model SystemSettings {
   qStashAnalyzeId    String?
   qStashNewsletterId String? // QStash Newsletter Task ID
 
+  // AI Analizör (RSS Puanlama & Özetleme)
+  aiAnalyzerModel String @default("google/gemini-2.0-flash-001")
+
   // AI Writer Ayarları
   aiWriterModel       String  @default("google/gemini-2.0-flash-001")
   aiWriterImageModel  String  @default("gemini-2.5-flash-image")
@@ -323,20 +326,18 @@ model SystemSettings {
 
 /// AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)
 model AiPersona {
-  id              String                @id @default(cuid())
-  name            String                @unique // "Caner KÖSE" vb.
-  role            String?               @default("Haber Editörü")
-  image           String? // Profil resmi URL
-  description     String?
-  prompt          String                @db.Text
-  imagePrompt     String                @db.Text
-  useGoogleSearch Boolean               @default(false)
-  useRssImage     Boolean               @default(true)
-  isActive        Boolean               @default(true)
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-  categories      AiPersonaOnCategory[]
-  articles        Article[]
+  id          String                @id @default(cuid())
+  name        String                @unique // "Caner KÖSE" vb.
+  role        String?               @default("Haber Editörü")
+  image       String? // Profil resmi URL
+  description String?
+  prompt      String                @db.Text
+  imagePrompt String                @db.Text
+  isActive    Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
+  categories  AiPersonaOnCategory[]
+  articles    Article[]
 }
 
 model AiPersonaOnCategory {
@@ -362,6 +363,15 @@ model AiModel {
   type        AiModelType @default(TEXT)
   isFree      Boolean     @default(false)
   isActive    Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+
+  // Yetenekler ve Modaliteler
+  inputModalities  Json? // ["text", "image"]
+  outputModalities Json? // ["text", "image"]
+  supportsSearch   Boolean @default(false)
+  supportsVision   Boolean @default(false)
+  supportsT2I      Boolean @default(false)
+  supportsI2I      Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

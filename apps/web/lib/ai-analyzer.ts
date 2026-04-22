@@ -23,6 +23,9 @@ interface GeminiResponse {
  * OpenRouter API üzerinden analiz yapar.
  */
 async function callOpenRouter(prompt: string): Promise<string> {
+  const settings = await prisma.systemSettings.findFirst();
+  const model = settings?.aiAnalyzerModel || "google/gemini-2.0-flash-001";
+
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -32,7 +35,7 @@ async function callOpenRouter(prompt: string): Promise<string> {
       "X-Title": "Haber Nexus Analysis"
     },
     body: JSON.stringify({
-      model: "google/gemini-2.0-flash-001",
+      model: model,
       messages: [{ role: "user", content: prompt }],
       response_format: { type: "json_object" }
     })

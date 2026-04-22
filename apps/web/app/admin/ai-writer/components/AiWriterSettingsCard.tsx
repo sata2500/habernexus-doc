@@ -32,6 +32,7 @@ interface Props {
   initialImageModel: string;
   initialUseRssImage: boolean;
   initialSearchEnabled: boolean;
+  initialAnalyzerModel: string;
   availableModels: AiModel[];
 }
 
@@ -143,6 +144,7 @@ export function AiWriterSettingsCard({
   initialImageModel,
   initialUseRssImage,
   initialSearchEnabled,
+  initialAnalyzerModel,
   availableModels,
 }: Props) {
   const [prompt, setPrompt] = useState(initialPrompt);
@@ -151,6 +153,7 @@ export function AiWriterSettingsCard({
   const [imageModel, setImageModel] = useState(initialImageModel);
   const [useRssImage, setUseRssImage] = useState(initialUseRssImage);
   const [searchEnabled, setSearchEnabled] = useState(initialSearchEnabled);
+  const [analyzerModel, setAnalyzerModel] = useState(initialAnalyzerModel);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
@@ -160,7 +163,15 @@ export function AiWriterSettingsCard({
   const handleSave = async () => {
     setLoading(true);
     setSuccess(false);
-    const res = await (updateAiWriterSettings as any)({ prompt, imagePrompt, model, imageModel, useRssImage, searchEnabled });
+    const res = await (updateAiWriterSettings as any)({ 
+      prompt, 
+      imagePrompt, 
+      model, 
+      imageModel, 
+      useRssImage, 
+      searchEnabled,
+      analyzerModel
+    });
     if (res.success) {
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);
@@ -193,7 +204,7 @@ export function AiWriterSettingsCard({
 
       <div className="p-8 space-y-10">
         {/* ── Modeller Seksiyonu ── */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <StylishSelect 
             label="Makale Yazım Modeli"
             icon={Zap}
@@ -207,6 +218,13 @@ export function AiWriterSettingsCard({
             value={imageModel}
             onChange={setImageModel}
             options={imageModels}
+          />
+          <StylishSelect 
+            label="RSS Analizör Modeli"
+            icon={Search}
+            value={analyzerModel}
+            onChange={setAnalyzerModel}
+            options={textModels}
           />
         </div>
 

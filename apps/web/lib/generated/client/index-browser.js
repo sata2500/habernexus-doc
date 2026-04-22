@@ -326,6 +326,7 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   qStashScanId: 'qStashScanId',
   qStashAnalyzeId: 'qStashAnalyzeId',
   qStashNewsletterId: 'qStashNewsletterId',
+  aiAnalyzerModel: 'aiAnalyzerModel',
   aiWriterModel: 'aiWriterModel',
   aiWriterImageModel: 'aiWriterImageModel',
   aiWriterPrompt: 'aiWriterPrompt',
@@ -347,8 +348,6 @@ exports.Prisma.AiPersonaScalarFieldEnum = {
   description: 'description',
   prompt: 'prompt',
   imagePrompt: 'imagePrompt',
-  useGoogleSearch: 'useGoogleSearch',
-  useRssImage: 'useRssImage',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -367,6 +366,12 @@ exports.Prisma.AiModelScalarFieldEnum = {
   type: 'type',
   isFree: 'isFree',
   isActive: 'isActive',
+  inputModalities: 'inputModalities',
+  outputModalities: 'outputModalities',
+  supportsSearch: 'supportsSearch',
+  supportsVision: 'supportsVision',
+  supportsT2I: 'supportsT2I',
+  supportsI2I: 'supportsI2I',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
