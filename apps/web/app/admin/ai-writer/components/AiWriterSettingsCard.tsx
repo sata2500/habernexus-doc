@@ -12,7 +12,8 @@ import {
   Cpu,
   Zap,
   Info,
-  MessageSquare
+  MessageSquare,
+  Search
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { updateAiWriterSettings } from "../../rss-feeds/actions";
