@@ -24,6 +24,10 @@ interface AiModel {
   description: string | null;
   type: "TEXT" | "IMAGE" | "MULTIMODAL";
   isFree: boolean;
+  supportsSearch: boolean;
+  supportsVision: boolean;
+  supportsT2I: boolean;
+  supportsI2I: boolean;
 }
 
 interface Props {
@@ -84,9 +88,17 @@ function StylishSelect({
           <span className="truncate dark:text-neutral-100 text-neutral-900">
             {selectedOption ? selectedOption.name : "Model Seçin..."}
           </span>
-          {selectedOption?.isFree && (
-            <span className="px-1.5 py-0.5 bg-green-500/10 text-green-600 text-[10px] rounded-md font-bold border border-green-500/20">Ücretsiz</span>
-          )}
+          <div className="flex items-center gap-1 shrink-0">
+            {selectedOption?.isFree && (
+              <span className="px-1.5 py-0.5 bg-green-500/10 text-green-600 text-[9px] rounded-md font-bold border border-green-500/10">FREE</span>
+            )}
+            {selectedOption?.supportsSearch && (
+              <span className="px-1.5 py-0.5 bg-blue-500/10 text-blue-600 text-[9px] rounded-md font-bold border border-blue-500/10">SEARCH</span>
+            )}
+            {selectedOption?.supportsVision && (
+              <span className="px-1.5 py-0.5 bg-purple-500/10 text-purple-600 text-[9px] rounded-md font-bold border border-purple-500/10">VISION</span>
+            )}
+          </div>
         </div>
         <ChevronDown className={`h-4 w-4 text-neutral-400 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
       </button>
@@ -118,9 +130,13 @@ function StylishSelect({
                       </span>
                       {value === opt.id && <Check className="h-4 w-4 text-primary-500" />}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-[10px] text-neutral-400 font-mono truncate flex-1">{opt.id}</span>
-                      {opt.isFree && <span className="text-[9px] font-bold text-green-500">FREE</span>}
+                    <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
+                      <span className="text-[9px] text-neutral-400 font-mono truncate max-w-[150px]">{opt.id}</span>
+                      {opt.isFree && <span className="px-1 py-0 bg-green-500/10 text-green-600 text-[8px] rounded font-bold border border-green-500/10">FREE</span>}
+                      {opt.supportsSearch && <span className="px-1 py-0 bg-blue-500/10 text-blue-600 text-[8px] rounded font-bold border border-blue-500/10">SEARCH</span>}
+                      {opt.supportsVision && <span className="px-1 py-0 bg-purple-500/10 text-purple-600 text-[8px] rounded font-bold border border-purple-500/10">VISION</span>}
+                      {opt.supportsT2I && <span className="px-1 py-0 bg-orange-500/10 text-orange-600 text-[8px] rounded font-bold border border-orange-500/10">T2I</span>}
+                      {opt.supportsI2I && <span className="px-1 py-0 bg-pink-500/10 text-pink-600 text-[8px] rounded font-bold border border-pink-500/10">I2I</span>}
                     </div>
                   </button>
                 ))
@@ -205,7 +221,7 @@ export function AiWriterSettingsCard({
 
       <div className="p-8 space-y-10">
         {/* ── Modeller Seksiyonu ── */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 max-w-2xl">
           <StylishSelect 
             label="Makale Yazım Modeli"
             icon={Zap}
