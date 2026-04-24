@@ -188,9 +188,23 @@ export async function triggerBatchAiWriter(count: number) {
       return { success: false, error: "Yazılacak yeni haber önerisi bulunamadı." };
     }
 
+    const APP_URL = getAppUrl();
+    const isLocal = APP_URL.includes("localhost");
+    const hasQStash = !!process.env.QSTASH_TOKEN;
+
+    // EĞER LOCALHOST'taysak veya QStash yoksa doğrudan yaz (Senkron Fallback)
+    if (isLocal || !hasQStash) {
+      console.log(`[AI Writer] Yerel ortam tespit edildi, ${suggestions.length} haber sırayla yazılıyor...`);
+      const results = await writeBatchArticlesWithAI(count);
+      revalidatePath("/admin/ai-writer");
+      revalidatePath("/admin/rss-feeds");
+      revalidatePath("/");
+      return { success: true, enqueued: results.length, mode: "sync", results };
+    }
+
+    // Prodüksiyon ortamında QStash kuyruğuna ekle
     const { Client } = await import("@upstash/qstash");
     const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
-    const APP_URL = getAppUrl();
 
     const results = [];
     for (const item of suggestions) {
@@ -206,7 +220,7 @@ export async function triggerBatchAiWriter(count: number) {
     }
 
     revalidatePath("/admin/ai-writer");
-    return { success: true, enqueued: results.length, results };
+    return { success: true, enqueued: results.length, mode: "async", results };
   } catch (err) {
     return { success: false, error: String(err) };
   }
