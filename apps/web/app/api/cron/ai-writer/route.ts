@@ -1,15 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { Client } from "@upstash/qstash";
+import { Client, Receiver } from "@upstash/qstash";
 import { getAppUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
-const APP_URL = getAppUrl();
+const receiver = new Receiver({
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "",
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "",
+});
 
 export async function POST(req: NextRequest) {
+  // İmza Doğrulaması
+  const signature = req.headers.get("upstash-signature");
+  const bodyText = await req.text();
+  const isValid = await receiver.verify({
+    signature: signature || "",
+    body: bodyText,
+  }).catch(() => false);
+
+  if (!isValid) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+
   try {
+    const APP_URL = getAppUrl();
     const settings = await prisma.systemSettings.findUnique({
       where: { id: "global" },
     });
@@ -40,8 +56,6 @@ export async function POST(req: NextRequest) {
         await qstash.publishJSON({
           url: `${APP_URL}/api/ai-writer/worker`,
           body: { suggestionId: item.id },
-          // Her haber arasında hafif bir gecikme ekleyebiliriz (isteğe bağlı)
-          // delay: i * 30 
         });
         results.push({ id: item.id, status: "ENQUEUED" });
       } catch (err) {
@@ -61,7 +75,6 @@ export async function POST(req: NextRequest) {
   }
 }
 
-// GET isteğine de izin ver (test amaçlı)
 export async function GET(req: NextRequest) {
-  return POST(req);
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }

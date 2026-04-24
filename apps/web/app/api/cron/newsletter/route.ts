@@ -2,35 +2,44 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/mail";
 import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
-import { verifySignature } from "@upstash/qstash/nextjs";
+import { Receiver } from "@upstash/qstash";
+
+const receiver = new Receiver({
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "",
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "",
+});
 
 /**
  * Dinamik Saatli Haber Bülteni Otomasyonu (QStash Webhook)
- * 
- * QStash tarafından her saat başı tetiklenir (0 * * * *).
- * O anki saati (Türkiye saati ile) hesaplar ve sadece "newsletterTime"
- * alanı bu saate eşit olan abonelere e-posta gönderir.
  */
-async function handler(req: NextRequest) {
+export async function POST(req: NextRequest) {
+  // İmza Doğrulaması
+  const signature = req.headers.get("upstash-signature");
+  const bodyText = await req.text();
+  const isValid = await receiver.verify({
+    signature: signature || "",
+    body: bodyText,
+  }).catch(() => false);
+
+  if (!isValid) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+
   try {
     // 1. Mevcut Saati Bul (Türkiye saati ile - UTC+3)
-    // Örn: 08:00, 12:00, 18:00
     const turkeyTime = new Date().toLocaleTimeString("tr-TR", {
       timeZone: "Europe/Istanbul",
       hour: "2-digit",
       minute: "2-digit",
     });
-    // Sadece saati alıp ":00" ekleyelim (Örn: "08:15" ise "08:00" kabul edilsin)
     const currentHourString = turkeyTime.split(":")[0] + ":00";
 
-    // 2. Alıcı Listesini Oluştur (Sadece bu saatte mail almak isteyenler)
-    // a. Misafir Aboneler
+    // 2. Alıcı Listesini Oluştur
     const guestSubscribers = await prisma.subscriber.findMany({
       where: { isActive: true, newsletterTime: currentHourString },
       select: { email: true, unsubscribeToken: true },
     });
 
-    // b. Kayıtlı Üyeler
     const userSubscribers = await prisma.user.findMany({
       where: { newsletterSubscribed: true, newsletterTime: currentHourString },
       select: { email: true, id: true },
@@ -48,8 +57,8 @@ async function handler(req: NextRequest) {
         status: "PUBLISHED",
         publishedAt: { gte: twentyFourHoursAgo },
       },
-      take: 7, // En güncel 7 haberi alalım
-      orderBy: { viewCount: "desc" }, // En çok ilgi çekenleri üste alalım
+      take: 7, 
+      orderBy: { viewCount: "desc" }, 
       include: { category: { select: { name: true } } },
     });
 
@@ -97,7 +106,6 @@ async function handler(req: NextRequest) {
   }
 }
 
-export const POST = verifySignature(handler, {
-  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "dummy",
-  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "dummy",
-});
+export async function GET(req: NextRequest) {
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
+}

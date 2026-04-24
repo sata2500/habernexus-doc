@@ -96,11 +96,21 @@ export function calculateReadingTime(content: string): number {
  * Get the absolute application URL, handling Vercel environments
  */
 export function getAppUrl() {
+  // Öncelik 1: Manuel tanımlanmış ve localhost olmayan URL
   if (process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes("localhost")) {
-    return process.env.NEXT_PUBLIC_APP_URL;
+    return process.env.NEXT_PUBLIC_APP_URL.replace(/\/$/, "");
   }
+  
+  // Öncelik 2: Vercel Üretim URL'i
+  if (process.env.VERCEL_PROJECT_PRODUCTION_URL) {
+    return `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`;
+  }
+  
+  // Öncelik 3: Vercel Dağıtım URL'i (Preview vb.)
   if (process.env.VERCEL_URL) {
     return `https://${process.env.VERCEL_URL}`;
   }
+  
+  // Fallback: Yerel geliştirme
   return process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 }
