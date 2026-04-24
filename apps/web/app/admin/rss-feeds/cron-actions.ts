@@ -3,9 +3,10 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { Client } from "@upstash/qstash";
+import { getAppUrl } from "@/lib/utils";
 
 const qstashClient = new Client({ token: process.env.QSTASH_TOKEN || "dummy" });
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+const APP_URL = getAppUrl();
 
 // QStash API Key'in tanımlı olup olmadığını kontrol et
 const QSTASH_ENABLED = !!process.env.QSTASH_TOKEN;

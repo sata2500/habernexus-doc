@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { scanRssSource } from "@/lib/rss-scanner";
 import { analyzeRssBatch } from "@/lib/ai-analyzer";
 import { writeArticleWithAI, writeBatchArticlesWithAI } from "@/lib/ai-writer";
+import { getAppUrl } from "@/lib/utils";
 
 export async function getRssSources() {
   return prisma.rssFeedSource.findMany({
@@ -189,7 +190,7 @@ export async function triggerBatchAiWriter(count: number) {
 
     const { Client } = await import("@upstash/qstash");
     const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
-    const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+    const APP_URL = getAppUrl();
 
     const results = [];
     for (const item of suggestions) {
@@ -254,7 +255,7 @@ export async function updateAiWriterAutomation(data: {
 async function setupAiWriterCron(cron: string) {
   const { Client } = await import("@upstash/qstash");
   const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
-  const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+  const APP_URL = getAppUrl();
   
   const settings = await prisma.systemSettings.findUnique({ where: { id: "global" } });
   if (settings?.qStashAiWriterId) {

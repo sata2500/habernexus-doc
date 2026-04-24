@@ -1,11 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Client } from "@upstash/qstash";
+import { getAppUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
 const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+const APP_URL = getAppUrl();
 
 export async function POST(req: NextRequest) {
   try {
