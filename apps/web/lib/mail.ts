@@ -3,10 +3,9 @@ import * as React from "react";
 
 /**
  * Gönderici Bilgileri
- * Not: Resend Free Tier'da sadece onboarding@resend.dev üzerinden gönderim yapılabilir.
- * Eğer domain doğrulanmamışsa, "Haber Nexus <...>" formatı bazen hata verebilir.
+ * Not: Bu adresten gönderim yapabilmek için Resend üzerinden domain doğrulaması gereklidir.
  */
-const FROM_EMAIL = "onboarding@resend.dev";
+const FROM_EMAIL = "Haber Nexus <brief@habernexus.com>";
 
 interface SendMailOptions {
   to: string | string[];
