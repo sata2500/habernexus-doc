@@ -1,14 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { scanAllActiveSources } from "@/lib/rss-scanner";
-import { verifySignature } from "@upstash/qstash/nextjs";
+import { Receiver } from "@upstash/qstash";
+
+const receiver = new Receiver({
+  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "",
+  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "",
+});
 
 /**
  * RSS Tarama QStash Webhook
- *
- * Upstash QStash tarafından tetiklenir.
- * Tüm aktif RSS kaynaklarını tarar ve yeni öğeleri PENDING olarak DB'ye kaydeder.
  */
-async function handler(req: NextRequest) {
+export async function POST(req: NextRequest) {
+  // İmza Doğrulaması
+  const signature = req.headers.get("upstash-signature");
+  const bodyText = await req.text();
+  const isValid = await receiver.verify({
+    signature: signature || "",
+    body: bodyText,
+  }).catch(() => false);
+
+  if (!isValid) {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  }
+
   try {
     const result = await scanAllActiveSources();
 
@@ -26,8 +40,7 @@ async function handler(req: NextRequest) {
   }
 }
 
-export const POST = verifySignature(handler, {
-  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "dummy",
-  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "dummy",
-});
+export async function GET(req: NextRequest) {
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
+}
 
