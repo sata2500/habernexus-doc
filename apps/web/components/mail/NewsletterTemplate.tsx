@@ -39,9 +39,9 @@ export const NewsletterTemplate = ({
 
   return (
     <Html>
-      <Head />
-      <Preview>{previewText}</Preview>
       <Tailwind>
+        <Head />
+        <Preview>{previewText}</Preview>
         <Body className="bg-white font-sans py-10">
           <Container className="mx-auto p-5 w-[600px] border border-solid border-[#eaeaea] rounded-3xl overflow-hidden shadow-sm">
             {/* Header */}
@@ -73,7 +73,7 @@ export const NewsletterTemplate = ({
               </Heading>
               
               {articles.map((article) => (
-                <Section key={article.slug} className="mb-8 p-4 rounded-2xl hover:bg-[#f8fafc] border border-transparent hover:border-[#f1f5f9] transition-all">
+                <Section key={article.slug} className="mb-8 p-4 rounded-2xl border border-transparent">
                   {article.coverImage && (
                     <Link href={`${BASE_URL}/article/${article.slug}`}>
                       <Img
@@ -91,7 +91,7 @@ export const NewsletterTemplate = ({
                       </Text>
                     )}
                     <Link href={`${BASE_URL}/article/${article.slug}`}>
-                      <Heading className="text-[#0f172a] text-lg font-bold m-0 leading-tight hover:text-[#2563eb]">
+                      <Heading className="text-[#0f172a] text-lg font-bold m-0 leading-tight">
                         {article.title}
                       </Heading>
                     </Link>
@@ -115,7 +115,7 @@ export const NewsletterTemplate = ({
             <Section className="text-center pb-10">
               <Text className="text-[#94a3b8] text-[11px] leading-relaxed">
                 Bu bülten, Haber Nexus aboneliğiniz kapsamında gönderilmiştir.<br />
-                Her sabah saat 08:30&apos;da en önemli gelişmeleri sizinle paylaşıyoruz.
+                Her sabah en önemli gelişmeleri sizinle paylaşıyoruz.
               </Text>
               <div className="mt-4 flex justify-center gap-4">
                 <Link href={`${BASE_URL}/about`} className="text-[#64748b] text-[11px] font-medium border-r border-[#eaeaea] pr-4">Hakkımızda</Link>
