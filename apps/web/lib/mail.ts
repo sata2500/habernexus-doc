@@ -3,10 +3,10 @@ import * as React from "react";
 
 /**
  * Gönderici Bilgileri
+ * Not: Resend Free Tier'da sadece onboarding@resend.dev üzerinden gönderim yapılabilir.
+ * Eğer domain doğrulanmamışsa, "Haber Nexus <...>" formatı bazen hata verebilir.
  */
-const FROM_EMAIL = process.env.NEXT_PUBLIC_APP_NAME
-  ? `${process.env.NEXT_PUBLIC_APP_NAME} <onboarding@resend.dev>`
-  : "Haber Nexus <onboarding@resend.dev>";
+const FROM_EMAIL = "onboarding@resend.dev";
 
 interface SendMailOptions {
   to: string | string[];
@@ -18,15 +18,13 @@ interface SendMailOptions {
 
 /**
  * Merkezi Mail Gönderim Fonksiyonu.
- * Resend istemcisi tek seferinde oluşturulur (module-level singleton).
  */
 export async function sendEmail({ to, subject, react, from, replyTo }: SendMailOptions) {
   if (!process.env.RESEND_API_KEY) {
-    console.warn("RESEND_API_KEY bulunamadı. Mail gönderimi atlanıyor.");
+    console.warn("[Mail] RESEND_API_KEY bulunamadı. Mail gönderimi atlanıyor.");
     return { success: false, error: "API Key missing" };
   }
 
-  // Singleton pattern — her çağrıda yeni istemci oluşturulmuyor.
   const resend = new Resend(process.env.RESEND_API_KEY);
 
   try {
@@ -39,13 +37,21 @@ export async function sendEmail({ to, subject, react, from, replyTo }: SendMailO
     });
 
     if (error) {
-      console.error("Resend error:", error);
+      console.error("[Mail] Resend API hatası:", error);
       return { success: false, error: error.message };
     }
 
     return { success: true, data };
-  } catch (err) {
-    console.error("Mail send exception:", err);
-    return { success: false, error: "Unexpected error" };
+  } catch (err: any) {
+    // Beklenmedik hataları (ağ hatası, geçersiz parametre vb.) detaylıca logla
+    console.error("[Mail] Kritik mail gönderim hatası:", {
+      message: err?.message,
+      stack: err?.stack,
+      error: err
+    });
+    return { 
+      success: false, 
+      error: err?.message || "E-posta gönderilirken beklenmedik bir sistem hatası oluştu." 
+    };
   }
 }
