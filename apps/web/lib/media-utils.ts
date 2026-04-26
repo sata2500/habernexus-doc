@@ -72,6 +72,12 @@ export async function optimizeMedia(mediaId: string) {
       data: { image: newUrl },
     });
 
+    // AI Persona profil resimleri
+    await prisma.aiPersona.updateMany({
+      where: { image: oldUrl },
+      data: { image: newUrl },
+    });
+
     return { success: true, url: newUrl };
   } catch (error) {
     console.error("Optimization error:", error);

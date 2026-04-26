@@ -16,6 +16,7 @@ import {
   Sparkles
 } from "lucide-react";
 import { createPersona, updatePersona, deletePersona } from "../actions";
+import { ImageUploader } from "@/components/ui/ImageUploader";
 
 interface Category {
   id: string;
@@ -203,26 +204,19 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
               <div className="space-y-2">
                 <label className="text-sm font-bold flex items-center gap-2">
                   <ImageIcon className="h-4 w-4 text-blue-500" />
-                  Profil Fotoğrafı URL
+                  Profil Fotoğrafı
                 </label>
-                <div className="flex gap-4 items-center">
-                  <div className="h-16 w-16 rounded-2xl bg-muted border border-border flex-shrink-0 overflow-hidden">
-                    {formData.image ? (
-                      <img src={formData.image} alt="Profil" className="h-full w-full object-cover" />
-                    ) : (
-                      <div className="h-full w-full flex items-center justify-center text-muted-foreground">
-                        <ImageIcon className="h-6 w-6" />
-                      </div>
-                    )}
-                  </div>
-                  <input
-                    type="text"
-                    value={formData.image}
-                    onChange={e => setFormData({ ...formData, image: e.target.value })}
-                    placeholder="https://... (Kare bir fotoğraf önerilir)"
-                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                  />
-                </div>
+                <ImageUploader
+                  value={formData.image}
+                  onChange={(url) => setFormData({ ...formData, image: url })}
+                  type="profile"
+                  aspectRatio="square"
+                  autoOptimize={true}
+                  className="w-full"
+                />
+                <p className="text-[10px] text-muted-foreground italic">
+                  Yüklenen görseller otomatik olarak WebP formatına çevrilir ve optimize edilir.
+                </p>
               </div>
 
               <div className="space-y-2">
