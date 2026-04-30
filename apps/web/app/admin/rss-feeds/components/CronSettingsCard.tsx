@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Clock, CheckCircle2, Loader2, AlertCircle, Database } from "lucide-react";
+import { Clock, CheckCircle2, Loader2, AlertCircle, Database, Trash2 } from "lucide-react";
 import { updateCronSchedule, setupNewsletterCron, updateRssRetention } from "../cron-actions";
+import { triggerRssCleanup } from "../actions";
 
 type Props = {
   scanCron: string;
@@ -37,7 +38,7 @@ export function CronSettingsCard({
   const [analyzeCron, setAnalyzeCron] = useState(initialAnalyze);
   const [retentionDays, setRetentionDays] = useState(initialRetention);
   const [hasNewsletter, setHasNewsletter] = useState(initialHasNewsletter);
-  const [loadingType, setLoadingType] = useState<"scan" | "analyze" | "newsletter" | "retention" | null>(null);
+  const [loadingType, setLoadingType] = useState<"scan" | "analyze" | "newsletter" | "retention" | "cleanup" | null>(null);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   const handleNewsletterSetup = async () => {
@@ -87,6 +88,23 @@ export function CronSettingsCard({
       setMessage({ type: "error", text: res.error || "Temizlik süresi güncellenemedi." });
       setRetentionDays(initialRetention);
     }
+    setLoadingType(null);
+    setTimeout(() => setMessage(null), 5000);
+  };
+
+  const handleManualCleanup = async () => {
+    if (!confirm("Eski (süresi geçmiş) haber taslaklarını kalıcı olarak silmek istiyor musunuz?")) return;
+    
+    setLoadingType("cleanup");
+    setMessage(null);
+
+    const res = await triggerRssCleanup();
+    if (res.success) {
+      setMessage({ type: "success", text: `✓ Manuel temizlik tamamlandı: ${res.count} öğe silindi.` });
+    } else {
+      setMessage({ type: "error", text: res.error || "Temizlik sırasında hata oluştu." });
+    }
+    
     setLoadingType(null);
     setTimeout(() => setMessage(null), 5000);
   };
@@ -171,16 +189,26 @@ export function CronSettingsCard({
             <p className="text-xs text-muted-foreground mb-2">
               İşlenmiş, reddedilmiş veya ilgi çekmeyen (Düşük Puanlı) eski haberler ne kadar süre saklanıp silinsin?
             </p>
-            <select
-              value={retentionDays}
-              onChange={(e) => handleRetentionUpdate(Number(e.target.value))}
-              disabled={loadingType !== null}
-              className="w-full sm:w-1/2 px-3 py-2.5 rounded-xl bg-background border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm disabled:opacity-50"
-            >
-              {RETENTION_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>{opt.label}</option>
-              ))}
-            </select>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <select
+                value={retentionDays}
+                onChange={(e) => handleRetentionUpdate(Number(e.target.value))}
+                disabled={loadingType !== null}
+                className="flex-1 sm:max-w-[240px] px-3 py-2.5 rounded-xl bg-background border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm disabled:opacity-50"
+              >
+                {RETENTION_OPTIONS.map((opt) => (
+                  <option key={opt.value} value={opt.value}>{opt.label}</option>
+                ))}
+              </select>
+              <button
+                onClick={handleManualCleanup}
+                disabled={loadingType !== null}
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white text-sm font-medium rounded-xl transition-all disabled:opacity-50"
+              >
+                {loadingType === "cleanup" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                {loadingType === "cleanup" ? "Temizleniyor..." : "Şimdi Temizle"}
+              </button>
+            </div>
           </div>
 
           {/* Newsletter Setup */}
@@ -212,3 +240,4 @@ export function CronSettingsCard({
     </div>
   );
 }
+
