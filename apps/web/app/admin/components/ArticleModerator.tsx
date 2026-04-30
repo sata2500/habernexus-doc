@@ -58,8 +58,9 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
   // Filtrelenmiş liste
   const filteredArticles = useMemo(() => {
     return articles.filter(article => {
+      const authorName = article.author.name || "İsimsiz Yazar";
       const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           article.author.name.toLowerCase().includes(searchQuery.toLowerCase());
+                           authorName.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = statusFilter === "all" || article.status === statusFilter;
       const matchesCategory = categoryFilter === "all" || article.category?.id === categoryFilter;
       
@@ -69,7 +70,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
 
   // Seçim işlemleri
   const toggleSelectAll = () => {
-    if (selectedIds.size === filteredArticles.length) {
+    if (selectedIds.size === filteredArticles.length && filteredArticles.length > 0) {
       setSelectedIds(new Set());
     } else {
       setSelectedIds(new Set(filteredArticles.map(a => a.id)));
@@ -229,6 +230,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
               const { label, variant, icon } = getStatusInfo(article.status);
               const isLoading = actionId?.startsWith(article.id) || isPending;
               const isSelected = selectedIds.has(article.id);
+              const authorName = article.author.name || "İsimsiz Yazar";
 
               return (
                 <div 
@@ -254,7 +256,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                       {article.title}
                     </p>
                     <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
-                      <span className="font-medium">{article.author.name}</span>
+                      <span className="font-medium">{authorName}</span>
                       <span>•</span>
                       {article.category && (
                         <span 
