@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo, useTransition } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { 
@@ -11,9 +11,14 @@ import {
   AlertCircle,
   Loader2,
   Maximize2,
-  Image as ImageIcon
+  Search,
+  Filter,
+  Image as ImageIcon,
+  CheckSquare,
+  Square,
+  X
 } from "lucide-react";
-import { deleteMedia } from "@/app/actions/admin-media";
+import { deleteMedia, bulkDeleteMedia } from "@/app/actions/admin-media";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 
@@ -31,10 +36,25 @@ export interface MediaItem {
 
 export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[] }) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkProcessing, setIsBulkProcessing] = useState(false);
+  
+  // Arama ve Filtreleme
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("ALL");
 
+  // Filtrelenmiş Medya
+  const filteredMedia = useMemo(() => {
+    return initialMedia.filter(m => {
+      const matchesSearch = m.filename.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesStatus = statusFilter === "ALL" || m.status === statusFilter;
+      return matchesSearch && matchesStatus;
+    });
+  }, [initialMedia, searchQuery, statusFilter]);
+
+  // Seçim İşlemleri
   const toggleSelect = (id: string) => {
     setSelectedIds(prev => {
       const next = new Set(prev);
@@ -44,15 +64,24 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
     });
   };
 
-  const selectAllRaw = () => {
-    const rawIds = initialMedia
-      .filter(m => m.status === "RAW")
+  const selectByStatus = (status: "RAW" | "OPTIMIZED" | "FAILED") => {
+    const ids = filteredMedia
+      .filter(m => m.status === status)
       .map(m => m.id);
-    setSelectedIds(new Set(rawIds));
+    setSelectedIds(new Set(ids));
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === filteredMedia.length && filteredMedia.length > 0) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(filteredMedia.map(m => m.id)));
+    }
   };
 
   const clearSelection = () => setSelectedIds(new Set());
 
+  // Tekli İşlemler
   const handleOptimize = async (id: string) => {
     setProcessingIds(prev => new Set(prev).add(id));
     try {
@@ -70,11 +99,23 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
     }
   };
 
+  const handleDelete = async (id: string) => {
+    if (!confirm("Bu medyayı silmek istediğinize emin misiniz?")) return;
+    startTransition(async () => {
+      try {
+        await deleteMedia(id);
+        router.refresh();
+      } catch (err) {
+        alert(err instanceof Error ? err.message : "Silme işlemi başarısız.");
+      }
+    });
+  };
+
+  // Toplu İşlemler
   const handleBulkOptimize = async () => {
     if (selectedIds.size === 0) return;
     setIsBulkProcessing(true);
     
-    // Sadece RAW olanları seçilenler içinden ayıkla
     const targetIds = Array.from(selectedIds).filter(id => {
       const item = initialMedia.find(m => m.id === id);
       return item?.status === "RAW";
@@ -89,14 +130,20 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
     router.refresh();
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Bu medyayı silmek istediğinize emin misiniz?")) return;
+  const handleBulkDelete = async () => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    if (!confirm(`${ids.length} medyayı kalıcı olarak silmek istediğinize emin misiniz?`)) return;
+
+    setIsBulkProcessing(true);
     try {
-      await deleteMedia(id);
+      await bulkDeleteMedia(ids);
+      setSelectedIds(new Set());
       router.refresh();
     } catch (err) {
-      const message = err instanceof Error ? err.message : "Silme işlemi başarısız.";
-      alert(message);
+      alert(err instanceof Error ? err.message : "Toplu silme başarısız.");
+    } finally {
+      setIsBulkProcessing(false);
     }
   };
 
@@ -109,27 +156,73 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
   };
 
   return (
-    <div className="relative pb-24">
-      {/* Üst İşlem Butonları */}
-      <div className="flex gap-2 mb-6">
-        <button 
-          onClick={selectAllRaw}
-          className="text-xs font-semibold px-4 py-2 bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 dark:hover:bg-neutral-700 rounded-lg transition-colors"
-        >
-          Tüm Hamları Seç
-        </button>
-        {selectedIds.size > 0 && (
-          <button 
-            onClick={clearSelection}
-            className="text-xs font-semibold px-4 py-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 rounded-lg transition-colors"
-          >
-            Seçimi Temizle ({selectedIds.size})
-          </button>
-        )}
+    <div className="relative pb-32">
+      {/* Filtre ve Arama Barı */}
+      <div className="flex flex-col md:flex-row gap-4 mb-8 p-4 bg-card border border-border rounded-2xl shadow-sm">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            placeholder="Dosya adıyla ara..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
+          />
+          {searchQuery && (
+            <button 
+              onClick={() => setSearchQuery("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
+        <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
+          {[
+            { label: "Tümü", value: "ALL" },
+            { label: "Ham", value: "RAW" },
+            { label: "Optimize", value: "OPTIMIZED" },
+            { label: "Hatalı", value: "FAILED" },
+          ].map(f => (
+            <button
+              key={f.value}
+              onClick={() => setStatusFilter(f.value)}
+              className={cn(
+                "px-4 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap",
+                statusFilter === f.value 
+                  ? "bg-primary-600 border-primary-600 text-white shadow-md shadow-primary-500/20" 
+                  : "bg-background border-border text-muted-foreground hover:border-primary-500/30"
+              )}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
       </div>
 
+      {/* Seçim Yardımcıları */}
+      <div className="flex flex-wrap items-center gap-3 mb-6 px-1">
+        <button 
+          onClick={toggleSelectAll}
+          className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-lg transition-colors"
+        >
+          {selectedIds.size === filteredMedia.length && filteredMedia.length > 0 ? (
+            <CheckSquare className="h-4 w-4 text-primary-500" />
+          ) : (
+            <Square className="h-4 w-4" />
+          )}
+          Tümünü Seç
+        </button>
+        <div className="h-4 w-[1px] bg-border mx-1" />
+        <button onClick={() => selectByStatus("RAW")} className="text-[10px] font-bold text-amber-600 hover:underline uppercase tracking-wider">Hamları Seç</button>
+        <button onClick={() => selectByStatus("OPTIMIZED")} className="text-[10px] font-bold text-green-600 hover:underline uppercase tracking-wider">Optimize Edilenleri Seç</button>
+        <button onClick={() => selectByStatus("FAILED")} className="text-[10px] font-bold text-red-600 hover:underline uppercase tracking-wider">Hatalıları Seç</button>
+      </div>
+
+      {/* Izgara Görünümü */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {initialMedia.map((item) => {
+        {filteredMedia.map((item) => {
           const isSelected = selectedIds.has(item.id);
           const isProcessing = processingIds.has(item.id);
 
@@ -141,7 +234,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
                 isSelected && "border-primary-500 ring-2 ring-primary-500/20 shadow-lg shadow-primary-500/10"
               )}
             >
-              {/* Seçim Checkbox */}
+              {/* Seçim Checkbox Overlay */}
               <div 
                 onClick={() => toggleSelect(item.id)}
                 className={cn(
@@ -169,19 +262,19 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
                 {/* Durum Rozeti */}
                 <div className="absolute top-3 left-3">
                   {item.status === "OPTIMIZED" ? (
-                    <Badge className="bg-green-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md">
+                    <Badge className="bg-green-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
                        <CheckCircle2 className="h-3 w-3" /> Optimize
                     </Badge>
                   ) : item.status === "RAW" ? (
-                    <Badge className="bg-amber-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md">
+                    <Badge className="bg-amber-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
                        <Clock className="h-3 w-3" /> Ham (Raw)
                     </Badge>
                   ) : item.status === "PROCESSING" || isProcessing ? (
-                    <Badge className="bg-primary-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md">
+                    <Badge className="bg-primary-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
                        <Loader2 className="h-3 w-3 animate-spin" /> İşleniyor
                     </Badge>
                   ) : (
-                    <Badge className="bg-red-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md">
+                    <Badge className="bg-red-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
                        <AlertCircle className="h-3 w-3" /> Başarısız
                     </Badge>
                   )}
@@ -211,7 +304,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
               {/* Bilgiler */}
               <div className="p-4 flex-1 flex flex-col gap-2">
                 <div className="flex flex-col">
-                  <span className="text-xs font-semibold truncate">
+                  <span className="text-xs font-bold truncate">
                     {item.filename.split("/").pop()}
                   </span>
                   <span className="text-[10px] text-muted-foreground/60">
@@ -244,10 +337,10 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
         })}
       </div>
 
-      {initialMedia.length === 0 && (
-        <div className="col-span-full py-20 flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed border-border rounded-3xl">
+      {filteredMedia.length === 0 && (
+        <div className="col-span-full py-20 flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed border-border rounded-3xl bg-muted/10">
           <ImageIcon className="h-12 w-12 mb-4 opacity-20" />
-          <p className="font-medium">Henüz medya yüklenmemiş.</p>
+          <p className="font-medium text-sm">Arama kriterlerine uygun medya bulunamadı.</p>
         </div>
       )}
 
@@ -255,9 +348,9 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
       {selectedIds.size > 0 && (
         <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 duration-300">
           <div className="bg-neutral-900 border border-neutral-800 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-8 backdrop-blur-xl">
-            <div className="flex flex-col">
+            <div className="flex flex-col min-w-[120px]">
               <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Toplu İşlem</span>
-              <span className="text-sm font-semibold">{selectedIds.size} öğe seçildi</span>
+              <span className="text-sm font-semibold text-primary-400">{selectedIds.size} öğe seçildi</span>
             </div>
             
             <div className="h-8 w-[1px] bg-neutral-800" />
@@ -268,17 +361,25 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
                 disabled={isBulkProcessing}
                 className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-primary-600/20 disabled:opacity-50"
               >
-                {isBulkProcessing ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    İşleniyor...
-                  </>
-                ) : (
-                  <>
-                    <Zap className="h-4 w-4 fill-current" />
-                    Seçilenleri Optimize Et
-                  </>
-                )}
+                {isBulkProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4 fill-current" />}
+                Optimize Et
+              </button>
+              
+              <button
+                onClick={handleBulkDelete}
+                disabled={isBulkProcessing}
+                className="flex items-center gap-2 px-5 py-2.5 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/30 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+              >
+                {isBulkProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                Sil
+              </button>
+
+              <button
+                onClick={clearSelection}
+                className="p-2.5 hover:bg-white/10 rounded-xl transition-colors"
+                title="Seçimi Temizle"
+              >
+                <X className="h-5 w-5" />
               </button>
             </div>
           </div>

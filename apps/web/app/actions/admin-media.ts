@@ -57,3 +57,46 @@ export async function deleteMedia(id: string) {
   revalidatePath("/");
   return { success: true };
 }
+
+export async function bulkDeleteMedia(ids: string[]) {
+  const reqHeaders = await headers();
+  const session = await auth.api.getSession({ headers: reqHeaders });
+
+  if (!session || session.user.role !== "ADMIN") {
+    throw new Error("Sadece adminler medya silebilir.");
+  }
+
+  const mediaItems = await prisma.media.findMany({
+    where: { id: { in: ids } }
+  });
+
+  if (mediaItems.length > 0) {
+    const urls = mediaItems.map(m => m.url);
+    
+    try {
+      await del(urls);
+    } catch (e) {
+      console.warn("Bazı bloblar silinemedi:", e);
+    }
+
+    // İlişkili tabloları temizle
+    await prisma.article.updateMany({
+      where: { coverImage: { in: urls } },
+      data: { coverImage: null }
+    });
+
+    await prisma.user.updateMany({
+      where: { image: { in: urls } },
+      data: { image: null }
+    });
+
+    await prisma.media.deleteMany({
+      where: { id: { in: ids } }
+    });
+  }
+
+  revalidatePath("/admin/media");
+  revalidatePath("/admin/articles");
+  revalidatePath("/");
+  return { success: true };
+}
