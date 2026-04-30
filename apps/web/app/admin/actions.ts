@@ -137,6 +137,32 @@ export async function deleteArticle(articleId: string) {
   return { success: true };
 }
 
+// Toplu makale durum güncelleme
+export async function bulkUpdateArticleStatus(articleIds: string[], status: string) {
+  await assertAdmin();
+  await prisma.article.updateMany({
+    where: { id: { in: articleIds } },
+    data: {
+      status,
+      publishedAt: status === "PUBLISHED" ? new Date() : null,
+    },
+  });
+  revalidatePath("/admin/articles");
+  revalidatePath("/");
+  return { success: true };
+}
+
+// Toplu makale silme
+export async function bulkDeleteArticles(articleIds: string[]) {
+  await assertAdmin();
+  await prisma.article.deleteMany({
+    where: { id: { in: articleIds } },
+  });
+  revalidatePath("/admin/articles");
+  revalidatePath("/");
+  return { success: true };
+}
+
 // Tüm kategorileri admin görünümü için getir
 export async function getAllCategoriesAdmin() {
   await assertAdmin();
