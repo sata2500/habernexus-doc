@@ -66,35 +66,45 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "No new articles found in last 24h. Skipping newsletter." });
     }
 
-    const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+    // 4. Alıcıları Birleştir (De-duplication)
+    // Eğer bir e-posta hem User hem de Subscriber tablosunda varsa, User (kayıtlı) olanı önceliklendir.
+    const subscribersMap = new Map<string, { email: string; unsubscribeUrl: string }>();
+
+    // Önce misafirleri ekle
+    guestSubscribers.forEach(sub => {
+      subscribersMap.set(sub.email.toLowerCase(), {
+        email: sub.email,
+        unsubscribeUrl: `${BASE_URL}/newsletter/unsubscribe?token=${sub.unsubscribeToken}`
+      });
+    });
+
+    // Sonra kayıtlı kullanıcıları ekle (aynı e-posta varsa üzerine yazar - öncelik User'da)
+    userSubscribers.forEach(user => {
+      subscribersMap.set(user.email.toLowerCase(), {
+        email: user.email,
+        unsubscribeUrl: `${BASE_URL}/dashboard/settings`
+      });
+    });
+
+    const uniqueSubscribers = Array.from(subscribersMap.values());
     let sentCount = 0;
 
-    // 4. E-postaları Gönder
-    const guestPromises = guestSubscribers.map(sub => {
-      const unsubscribeUrl = `${BASE_URL}/newsletter/unsubscribe?token=${sub.unsubscribeToken}`;
+    // 5. E-postaları Gönder
+    const emailPromises = uniqueSubscribers.map(sub => {
       return sendEmail({
         to: sub.email,
         subject: `Haber Nexus — ${new Date().toLocaleDateString("tr-TR")} Özetiniz`,
-        react: NewsletterTemplate({ articles: latestArticles, unsubscribeUrl }),
+        react: NewsletterTemplate({ articles: latestArticles, unsubscribeUrl: sub.unsubscribeUrl }),
       });
     });
 
-    const userPromises = userSubscribers.map(user => {
-      const unsubscribeUrl = `${BASE_URL}/dashboard/settings`; 
-      return sendEmail({
-        to: user.email,
-        subject: `Haber Nexus — ${new Date().toLocaleDateString("tr-TR")} Özetiniz`,
-        react: NewsletterTemplate({ articles: latestArticles, unsubscribeUrl }),
-      });
-    });
-
-    const results = await Promise.all([...guestPromises, ...userPromises]);
+    const results = await Promise.all(emailPromises);
     sentCount = results.filter(r => r.success).length;
 
     return NextResponse.json({
       success: true,
       sentCount,
-      totalScheduled: guestSubscribers.length + userSubscribers.length,
+      totalScheduled: uniqueSubscribers.length,
       articleCount: latestArticles.length,
       scheduledTime: currentHourString,
       timestamp: new Date().toISOString()
