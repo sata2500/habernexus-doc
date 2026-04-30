@@ -66,6 +66,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "No new articles found in last 24h. Skipping newsletter." });
     }
 
+    const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+    
     // 4. Alıcıları Birleştir (De-duplication)
     // Eğer bir e-posta hem User hem de Subscriber tablosunda varsa, User (kayıtlı) olanı önceliklendir.
     const subscribersMap = new Map<string, { email: string; unsubscribeUrl: string }>();
