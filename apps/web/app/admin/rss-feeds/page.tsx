@@ -1,18 +1,33 @@
 import { getRssSources, getRssSuggestions, getRssStats } from "./actions";
 import { getSystemSettings } from "./cron-actions";
+import { prisma } from "@/lib/prisma";
 import { FeedSourceManager } from "./components/FeedSourceManager";
 import { SuggestionsList } from "./components/SuggestionsList";
+import { SuggestionsFilter } from "./components/SuggestionsFilter";
 import { AdminTriggerButtons } from "./components/AdminTriggerButtons";
 import { CronSettingsCard } from "./components/CronSettingsCard";
 import { Rss, Sparkles, Database, CheckCircle2, X, BarChart3 } from "lucide-react";
 
-export default async function AdminRssFeedsPage() {
-  const [sources, suggestions, stats, systemSettings] = await Promise.all([
+export default async function AdminRssFeedsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ status?: string; search?: string; category?: string }>;
+}) {
+  const params = await searchParams;
+  
+  const [sources, suggestions, stats, systemSettings, categories] = await Promise.all([
     getRssSources(),
-    getRssSuggestions(),
+    getRssSuggestions({
+      status: params.status,
+      search: params.search,
+      category: params.category,
+    }),
     getRssStats(),
     getSystemSettings(),
+    prisma.category.findMany({ select: { name: true }, orderBy: { name: "asc" } }),
   ]);
+
+  const categoryNames = categories.map((c) => c.name);
 
   const statCards = [
     { label: "Toplam Öğe", value: stats.total, icon: Database, color: "text-blue-500 bg-blue-500/10" },
@@ -76,19 +91,21 @@ export default async function AdminRssFeedsPage() {
 
       {/* ── Öneri Listesi ── */}
       <section>
-        <div className="flex items-center gap-3 mb-2">
-          <h2 className="text-lg font-bold font-(family-name:--font-outfit) flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary-500" />
-            Aktif Haber Önerileri
-          </h2>
-          <span className="text-sm text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-            {suggestions.length} öneri
-          </span>
+        <div className="space-y-6">
+          <SuggestionsFilter categories={categoryNames} />
+          
+          <div className="flex items-center gap-3 mb-2">
+            <h2 className="text-lg font-bold font-(family-name:--font-outfit) flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-primary-500" />
+              Haber Önerileri
+            </h2>
+            <span className="text-sm text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+              {suggestions.length} sonuç
+            </span>
+          </div>
+          
+          <SuggestionsList suggestions={suggestions} />
         </div>
-        <p className="text-sm text-muted-foreground mb-4">
-          Yazarlara gösterilecek, AI tarafından puanlanmış haber konuları.
-        </p>
-        <SuggestionsList suggestions={suggestions} />
       </section>
     </div>
   );

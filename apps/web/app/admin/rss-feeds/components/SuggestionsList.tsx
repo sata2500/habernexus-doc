@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, X, CheckCheck, Sparkles, TrendingUp, Wand2, RefreshCw, AlertTriangle } from "lucide-react";
-import { dismissSuggestion, approveSuggestion, triggerAiWriter, reAnalyzeSuggestion } from "../actions";
+import { ExternalLink, X, CheckCheck, Sparkles, TrendingUp, Wand2, RefreshCw, AlertTriangle, Undo2 } from "lucide-react";
+import { dismissSuggestion, approveSuggestion, triggerAiWriter, reAnalyzeSuggestion, revertToAnalyzed } from "../actions";
 
 type SuggestionItem = {
   id: string;
@@ -13,6 +13,7 @@ type SuggestionItem = {
   publishedAt: Date | null;
   aiScore: number | null;
   aiAnalysis: unknown;
+  status: string;
   source: { name: string; url: string };
 };
 
@@ -81,12 +82,24 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
         return (
           <div
             key={item.id}
-            className={`relative bg-background rounded-2xl border border-border shadow-sm flex flex-col overflow-hidden transition-all hover:shadow-md hover:border-primary-500/30 ${
-              loadingId === item.id ? "opacity-50 pointer-events-none" : ""
-            }`}
+            className={`relative bg-background rounded-2xl border flex flex-col overflow-hidden transition-all hover:shadow-md ${
+              item.status === "APPROVED" ? "border-primary-500/50 bg-primary-500/5" :
+              item.status === "DISMISSED" ? "border-red-500/30 bg-red-500/5" :
+              "border-border hover:border-primary-500/30"
+            } ${loadingId === item.id ? "opacity-50 pointer-events-none" : ""}`}
           >
             {/* Score Badge */}
             <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
+              {item.status === "APPROVED" && (
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-500 text-white text-[10px] font-bold">
+                   Onaylandı
+                </div>
+              )}
+              {item.status === "DISMISSED" && (
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold">
+                   Reddedildi
+                </div>
+              )}
               {analysis?.isFallback && (
                 <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 border border-red-500/20" title="AI Analizi başarısız oldu, manuel bilgiler kullanılıyor.">
                   <AlertTriangle className="h-3 w-3" />
@@ -161,68 +174,84 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
 
             {/* Actions */}
             <div className="border-t border-border p-3 flex flex-wrap gap-2">
-              <button
-                onClick={() => handleApprove(item.id)}
-                disabled={loadingId !== null}
-                title="Yazar Masasına Gönder"
-                className="flex-1 text-center px-3 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-primary-500/20 disabled:opacity-50"
-              >
-                {loadingId === item.id ? (
-                  <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <CheckCheck className="h-3.5 w-3.5" />
-                )}
-                Haber Yazılsın
-              </button>
-              
-              <button
-                onClick={async () => {
-                  setLoadingId(item.id);
-                  const res = await triggerAiWriter(item.id);
-                  if (res.success) {
-                    setItems((prev) => prev.filter((i) => i.id !== item.id));
-                  } else {
-                    alert("AI Hatası: " + res.error);
-                  }
-                  setLoadingId(null);
-                }}
-                disabled={loadingId !== null}
-                title="Yapay Zeka İle Tam Otomatik Yaz"
-                className="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-purple-500/20 disabled:opacity-50"
-              >
-                {loadingId === item.id ? (
-                  <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                ) : (
-                  <Wand2 className="h-3.5 w-3.5" />
-                )}
-                AI Yazdır
-              </button>
+              {item.status === "ANALYZED" ? (
+                <>
+                  <button
+                    onClick={() => handleApprove(item.id)}
+                    disabled={loadingId !== null}
+                    title="Yazar Masasına Gönder"
+                    className="flex-1 text-center px-3 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-primary-500/20 disabled:opacity-50"
+                  >
+                    {loadingId === item.id ? (
+                      <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <CheckCheck className="h-3.5 w-3.5" />
+                    )}
+                    Haber Yazılsın
+                  </button>
+                  
+                  <button
+                    onClick={async () => {
+                      setLoadingId(item.id);
+                      const res = await triggerAiWriter(item.id);
+                      if (res.success) {
+                        setItems((prev) => prev.filter((i) => i.id !== item.id));
+                      } else {
+                        alert("AI Hatası: " + res.error);
+                      }
+                      setLoadingId(null);
+                    }}
+                    disabled={loadingId !== null}
+                    title="Yapay Zeka İle Tam Otomatik Yaz"
+                    className="px-3 py-2 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-semibold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-purple-500/20 disabled:opacity-50"
+                  >
+                    {loadingId === item.id ? (
+                      <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <Wand2 className="h-3.5 w-3.5" />
+                    )}
+                    AI Yazdır
+                  </button>
 
-              <button
-                onClick={async () => {
-                  setLoadingId(item.id);
-                  const res = await reAnalyzeSuggestion(item.id);
-                  if (res.success) {
-                    // Update current item with new analysis or refresh
+                  <button
+                    onClick={async () => {
+                      setLoadingId(item.id);
+                      const res = await reAnalyzeSuggestion(item.id);
+                      if (res.success) {
+                        window.location.reload();
+                      }
+                      setLoadingId(null);
+                    }}
+                    disabled={loadingId !== null}
+                    title="Yeniden AI Analizi Yap"
+                    className="px-3 py-2 rounded-xl bg-muted hover:bg-primary-50 text-muted-foreground hover:text-primary-600 transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className={`h-4 w-4 ${loadingId === item.id ? "animate-spin" : ""}`} />
+                  </button>
+
+                  <button
+                    onClick={() => handleDismiss(item.id)}
+                    disabled={loadingId !== null}
+                    title="İlginç Değil"
+                    className="px-3 py-2 rounded-xl bg-muted hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={async () => {
+                    setLoadingId(item.id);
+                    await revertToAnalyzed(item.id);
                     window.location.reload();
-                  }
-                  setLoadingId(null);
-                }}
-                disabled={loadingId !== null}
-                title="Yeniden AI Analizi Yap"
-                className="px-3 py-2 rounded-xl bg-muted hover:bg-primary-50 text-muted-foreground hover:text-primary-600 transition-all cursor-pointer disabled:opacity-50"
-              >
-                <RefreshCw className={`h-4 w-4 ${loadingId === item.id ? "animate-spin" : ""}`} />
-              </button>
-
-              <button
-                onClick={() => handleDismiss(item.id)}
-                disabled={loadingId !== null}
-                title="İlginç Değil"
-                className="px-3 py-2 rounded-xl bg-muted hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-all cursor-pointer disabled:opacity-50"
-              >
-                <X className="h-4 w-4" />
-              </button>
+                    setLoadingId(null);
+                  }}
+                  className="flex-1 text-center px-3 py-2 rounded-xl bg-muted hover:bg-muted/80 text-foreground text-xs font-semibold transition-all flex items-center justify-center gap-1.5 border border-border"
+                >
+                  <Undo2 className="h-3.5 w-3.5" />
+                  İşlemi Geri Al (Aktif Listeye Taşı)
+                </button>
+              )}
             </div>
           </div>
         );

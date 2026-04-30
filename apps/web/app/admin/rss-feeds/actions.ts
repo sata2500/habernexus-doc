@@ -112,22 +112,45 @@ export async function reAnalyzeSuggestion(id: string) {
 export async function getRssSuggestions(filters?: {
   status?: string;
   minScore?: number;
+  search?: string;
+  category?: string;
 }) {
+  const status = filters?.status || "ANALYZED";
+  
   return prisma.rssFeedItem.findMany({
     where: {
-      status: (filters?.status as "ANALYZED" | undefined) ?? "ANALYZED",
-      dismissed: false,
+      status: status as any,
+      ...(status === "ANALYZED" && { dismissed: false }), // ANALYZED durumunda dismissed olanları gösterme
       usedForArticle: false,
+      ...(filters?.search && {
+        OR: [
+          { title: { contains: filters.search, mode: "insensitive" } },
+          { excerpt: { contains: filters.search, mode: "insensitive" } },
+        ],
+      }),
+      ...(filters?.category && {
+        aiAnalysis: { path: ["suggestedCategory"], equals: filters.category },
+      }),
       ...(filters?.minScore !== undefined && {
         aiScore: { gte: filters.minScore },
       }),
     },
-    orderBy: { aiScore: "desc" },
-    take: 50,
+    orderBy: { publishedAt: "desc" },
+    take: 100,
     include: {
       source: { select: { name: true, url: true } },
     },
   });
+}
+
+export async function revertToAnalyzed(id: string) {
+  await prisma.rssFeedItem.update({
+    where: { id },
+    data: { status: "ANALYZED", dismissed: false },
+  });
+  revalidatePath("/admin/rss-feeds");
+  revalidatePath("/author/suggestions");
+  return { success: true };
 }
 
 export async function approveSuggestion(id: string) {
