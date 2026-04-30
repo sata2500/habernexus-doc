@@ -80,10 +80,21 @@ export async function analyzeRssBatch() {
     return { analyzed: 0, covered: 0, lowScore: 0, aiUsed: false, error: "API anahtarı bulunamadı." };
   }
 
+  // 1. Yayınlanmış son haberleri çek
   const recentArticles = await prisma.article.findMany({
     where: { status: "PUBLISHED", publishedAt: { gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) } },
     select: { title: true },
-    take: 50,
+    take: 40,
+  });
+
+  // 2. Halihazırda analiz edilmiş ama henüz yayınlanmamış son RSS önerilerini çek
+  const recentSuggestions = await prisma.rssFeedItem.findMany({
+    where: { 
+      status: { in: ["ANALYZED", "APPROVED"] },
+      publishedAt: { gte: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) }
+    },
+    select: { title: true },
+    take: 60,
   });
 
   const pendingItems = await prisma.rssFeedItem.findMany({
@@ -118,18 +129,24 @@ export async function analyzeRssBatch() {
   let analyzed = 0, covered = 0, lowScore = 0;
 
   try {
-    const existingTitles = recentArticles.map((a) => `- ${a.title}`).join("\n") || "(yok)";
+    const publishedTitles = recentArticles.map((a) => `- [Yayınlandı] ${a.title}`).join("\n");
+    const suggestionTitles = recentSuggestions.map((s) => `- [Öneri] ${s.title}`).join("\n");
+    const existingTitles = `${publishedTitles}\n${suggestionTitles}` || "(yok)";
+
     const newItems = pendingItems.map((item) => `ID: ${item.id}\nBaşlık: ${item.title}\nKaynak: ${item.source.name}\nÖzet: ${item.excerpt || ""}`).join("\n\n---\n\n");
 
     const prompt = `Aşağıdaki haberleri analiz et ve JSON formatında döndür.
-Sistemdeki son haberler (mükerrer kontrolü için):
+Sistemdeki mevcut konular (mükerrer kontrolü için - hem yayınlanmış hem öneri aşamasında):
 ${existingTitles}
 
 Yeni haberler:
 ${newItems}
 
-Görev: Her haber için bir puan (0-100), mükerrerlik durumu ve kategori önerisi belirle.
-DİKKAT: "suggestedCategory" alanı SADECE aşağıdaki listede bulunan kategori isimlerinden birini içermelidir. Başka bir kategori ismi uydurma.
+Görev:
+1. Her haber için bir puan (0-100), mükerrerlik durumu ve kategori önerisi belirle.
+2. "isCovered" alanı: Eğer haber yukarıdaki "Mevcut Konular" listesinden biriyle aynı konuyu işliyorsa veya BU LİSTE İÇİNDEKİ başka bir haberle aynıysa true yap.
+3. Eğer aynı haber batch içinde birden fazla gelmişse (farklı kaynaklardan), en iyisini (en detaylısını) ANALYZED yap, diğerlerini isCovered: true olarak işaretle.
+4. "suggestedCategory" alanı SADECE aşağıdaki listede bulunan kategori isimlerinden birini içermelidir.
 MEVCUT KATEGORİLER: ${categoryNames}
 
 Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "suggestedTitles": ["..."], "suggestedCategory": "...", "reasoning": "..." } ] }`;
