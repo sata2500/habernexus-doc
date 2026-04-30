@@ -135,7 +135,7 @@ export async function getRssSuggestions(filters?: {
         aiScore: { gte: filters.minScore },
       }),
     },
-    orderBy: { publishedAt: "desc" },
+    orderBy: [{ aiScore: "desc" }, { publishedAt: "desc" }],
     take: 100,
     include: {
       source: { select: { name: true, url: true } },

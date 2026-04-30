@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-const SCORE_THRESHOLD = 40; 
+const SCORE_THRESHOLD = 65; 
 const BATCH_SIZE = 15; 
 
 interface GeminiItemResult {
