@@ -104,7 +104,10 @@ export default async function AdminRssFeedsPage({
             </span>
           </div>
           
-          <SuggestionsList suggestions={suggestions} />
+          <SuggestionsList 
+            key={`${params.status}-${params.search}-${params.category}`} 
+            suggestions={suggestions} 
+          />
         </div>
       </section>
     </div>
