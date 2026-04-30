@@ -100,6 +100,12 @@ export async function analyzeRssBatch() {
 
   console.log(`[AI Analysis] ${pendingItems.length} haber analiz ediliyor...`);
 
+  // 1. Sistemdeki mevcut kategorileri çek
+  const categories = await prisma.category.findMany({
+    select: { name: true }
+  });
+  const categoryNames = categories.map(c => c.name).join(", ") || "Genel, Gündem";
+
   let analyzed = 0, covered = 0, lowScore = 0;
 
   try {
@@ -114,6 +120,9 @@ Yeni haberler:
 ${newItems}
 
 Görev: Her haber için bir puan (0-100), mükerrerlik durumu ve kategori önerisi belirle.
+DİKKAT: "suggestedCategory" alanı SADECE aşağıdaki listede bulunan kategori isimlerinden birini içermelidir. Başka bir kategori ismi uydurma.
+MEVCUT KATEGORİLER: ${categoryNames}
+
 Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "suggestedTitles": ["..."], "suggestedCategory": "...", "reasoning": "..." } ] }`;
 
     const aiResponse = await callOpenRouter(prompt);

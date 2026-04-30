@@ -126,9 +126,18 @@ export async function writeArticleWithAI(suggestionId: string) {
 
     if (suggestion.aiAnalysis && (suggestion.aiAnalysis as any).suggestedCategory) {
       const suggestedCatName = (suggestion.aiAnalysis as any).suggestedCategory;
-      const category = await prisma.category.findFirst({
-        where: { name: { contains: suggestedCatName, mode: 'insensitive' } },
+      
+      // Önce tam eşleşme dene
+      let category = await prisma.category.findUnique({
+        where: { name: suggestedCatName },
       });
+
+      // Bulunamazsa kısmi/insensitive dene
+      if (!category) {
+        category = await prisma.category.findFirst({
+          where: { name: { contains: suggestedCatName, mode: 'insensitive' } },
+        });
+      }
 
       if (category) {
         categoryId = category.id;
