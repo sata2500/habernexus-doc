@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { WebSiteJsonLd, OrganizationJsonLd } from "@/components/seo/JsonLd";
@@ -15,6 +15,13 @@ const outfit = Outfit({
   subsets: ["latin", "latin-ext"],
   display: "swap",
 });
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fafbfc" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b0f1a" },
+  ],
+};
 
 export const metadata: Metadata = {
   title: {
@@ -42,10 +49,6 @@ export const metadata: Metadata = {
     apple: "/favicon.svg",
     shortcut: "/favicon.svg",
   },
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fafbfc" },
-    { media: "(prefers-color-scheme: dark)", color: "#0b0f1a" },
-  ],
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
   ),
