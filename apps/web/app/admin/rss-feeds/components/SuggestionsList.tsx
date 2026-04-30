@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, X, CheckCheck, Sparkles, TrendingUp, Wand2 } from "lucide-react";
-import { dismissSuggestion, approveSuggestion, triggerAiWriter } from "../actions";
+import { ExternalLink, X, CheckCheck, Sparkles, TrendingUp, Wand2, RefreshCw, AlertTriangle } from "lucide-react";
+import { dismissSuggestion, approveSuggestion, triggerAiWriter, reAnalyzeSuggestion } from "../actions";
 
 type SuggestionItem = {
   id: string;
@@ -74,6 +74,8 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
           suggestedTitles?: string[];
           suggestedCategory?: string;
           reasoning?: string;
+          isFallback?: boolean;
+          retryCount?: number;
         } | null;
 
         return (
@@ -84,7 +86,13 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
             }`}
           >
             {/* Score Badge */}
-            <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+            <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
+              {analysis?.isFallback && (
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 border border-red-500/20" title="AI Analizi başarısız oldu, manuel bilgiler kullanılıyor.">
+                  <AlertTriangle className="h-3 w-3" />
+                  <span className="text-[10px] font-bold">Fallback</span>
+                </div>
+              )}
               <ScoreBadge score={item.aiScore} />
             </div>
 
@@ -188,6 +196,23 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
                   <Wand2 className="h-3.5 w-3.5" />
                 )}
                 AI Yazdır
+              </button>
+
+              <button
+                onClick={async () => {
+                  setLoadingId(item.id);
+                  const res = await reAnalyzeSuggestion(item.id);
+                  if (res.success) {
+                    // Update current item with new analysis or refresh
+                    window.location.reload();
+                  }
+                  setLoadingId(null);
+                }}
+                disabled={loadingId !== null}
+                title="Yeniden AI Analizi Yap"
+                className="px-3 py-2 rounded-xl bg-muted hover:bg-primary-50 text-muted-foreground hover:text-primary-600 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <RefreshCw className={`h-4 w-4 ${loadingId === item.id ? "animate-spin" : ""}`} />
               </button>
 
               <button

@@ -87,7 +87,16 @@ export async function analyzeRssBatch() {
   });
 
   const pendingItems = await prisma.rssFeedItem.findMany({
-    where: { status: "PENDING", dismissed: false },
+    where: {
+      OR: [
+        { status: "PENDING" },
+        { 
+          status: "ANALYZED", 
+          aiAnalysis: { path: ["isFallback"], equals: true } 
+        }
+      ],
+      dismissed: false
+    },
     orderBy: { publishedAt: "desc" },
     take: BATCH_SIZE,
     include: { source: { select: { name: true, categoryHint: true } } },
@@ -159,13 +168,28 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "su
   } catch (err: any) {
     console.error("[AI Analysis] Kritik Hata:", err);
     
-    // Hata durumunda fallback'e devam et ama hatayı da bildir
+    // Hata durumunda fallback'e devam et
     console.log("[AI Analysis] Fallback (kural tabanlı) puanlama yapılıyor...");
     for (const item of pendingItems) {
       const score = fallbackScore(item.title, item.excerpt || "", item.publishedAt);
+      
+      // Eski retry count'u al
+      const prevAnalysis = item.aiAnalysis as any;
+      const retryCount = (prevAnalysis?.retryCount || 0) + 1;
+
       await prisma.rssFeedItem.update({
         where: { id: item.id },
-        data: { aiScore: score, status: score < SCORE_THRESHOLD ? "LOW_SCORE" : "ANALYZED" },
+        data: { 
+          aiScore: score, 
+          status: score < SCORE_THRESHOLD ? "LOW_SCORE" : "ANALYZED",
+          aiAnalysis: {
+            isFallback: true,
+            retryCount,
+            error: err.message || "AI Analysis Failed",
+            suggestedCategory: item.source.categoryHint || "Genel",
+            suggestedTitles: [item.title]
+          }
+        },
       });
       analyzed++;
     }

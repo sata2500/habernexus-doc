@@ -75,11 +75,34 @@ export async function triggerRssScan(sourceId?: string) {
   }
 }
 
-export async function triggerAiAnalysis() {
+export async function triggerAiAnalysis(itemId?: string) {
   try {
+    if (itemId) {
+      // Tek bir öğeyi analiz et
+      await prisma.rssFeedItem.update({
+        where: { id: itemId },
+        data: { status: "PENDING", aiAnalysis: {} }
+      });
+    }
+
     const result = await analyzeRssBatch();
     revalidatePath("/admin/rss-feeds");
-    // Hata mesajı varsa onu da döndür ki UI'da görelim
+    revalidatePath("/author/suggestions");
+    return { success: true, ...result };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function reAnalyzeSuggestion(id: string) {
+  try {
+    await prisma.rssFeedItem.update({
+      where: { id },
+      data: { status: "PENDING", aiAnalysis: {} },
+    });
+    const result = await analyzeRssBatch();
+    revalidatePath("/admin/rss-feeds");
+    revalidatePath("/author/suggestions");
     return { success: true, ...result };
   } catch (err) {
     return { success: false, error: String(err) };
