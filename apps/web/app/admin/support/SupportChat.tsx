@@ -154,6 +154,7 @@ export function SupportChat({ ticket }: Props) {
                         <div key={idx} className="flex flex-col gap-2">
                           {isImage ? (
                             <a href={att.url} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-lg border border-white/20 hover:border-white/40 transition-all">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
                               <img src={att.url} alt={att.name} className="max-w-full h-auto max-h-[300px] object-cover" />
                             </a>
                           ) : (

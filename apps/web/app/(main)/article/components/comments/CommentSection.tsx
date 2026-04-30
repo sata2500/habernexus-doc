@@ -34,6 +34,7 @@ export function CommentSection({ articleId }: Props) {
   }, [articleId]);
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchComments();
   }, [fetchComments]);
 

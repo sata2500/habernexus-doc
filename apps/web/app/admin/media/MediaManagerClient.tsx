@@ -6,12 +6,10 @@ import { Badge } from "@/components/ui/Badge";
 import { 
   Zap, 
   Trash2, 
-  ExternalLink, 
   CheckCircle2, 
   Clock, 
   AlertCircle,
   Loader2,
-  FileIcon,
   Maximize2,
   Image as ImageIcon
 } from "lucide-react";
@@ -158,6 +156,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
 
               {/* Görsel Önizleme */}
               <div className="relative aspect-video bg-muted overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={item.url} 
                   alt={item.filename}

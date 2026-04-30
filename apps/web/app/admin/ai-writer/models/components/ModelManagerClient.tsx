@@ -5,15 +5,13 @@ import {
   Cpu, 
   RefreshCw, 
   Search, 
-  Plus, 
   Trash2, 
   CheckCircle2, 
   XCircle, 
   Sparkles,
   Zap,
   Image as ImageIcon,
-  MessageSquare,
-  Filter
+  MessageSquare
 } from "lucide-react";
 import { 
   syncModelsFromOpenRouter, 
@@ -207,7 +205,7 @@ export function ModelManagerClient({ initialModels }: Props) {
               <div className="flex items-center gap-2">
                 <select
                   value={m.type}
-                  onChange={(e) => handleUpdateType(m.id, e.target.value as any)}
+                  onChange={(e) => handleUpdateType(m.id, e.target.value as "TEXT" | "IMAGE" | "MULTIMODAL")}
                   className="w-full bg-muted/50 border border-border rounded-lg px-2 py-1.5 text-[10px] font-bold outline-none cursor-pointer"
                 >
                   <option value="TEXT">Metin (LLM)</option>

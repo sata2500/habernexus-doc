@@ -119,7 +119,7 @@ export async function getRssSuggestions(filters?: {
   
   return prisma.rssFeedItem.findMany({
     where: {
-      status: status as any,
+      status: status as "PENDING" | "ANALYZED" | "APPROVED" | "COVERED" | "DISMISSED" | "LOW_SCORE",
       ...(status === "ANALYZED" && { dismissed: false }), // ANALYZED durumunda dismissed olanları gösterme
       usedForArticle: false,
       ...(filters?.search && {

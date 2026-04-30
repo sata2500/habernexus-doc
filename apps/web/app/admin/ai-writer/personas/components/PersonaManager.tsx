@@ -6,14 +6,12 @@ import {
   Plus, 
   Trash2, 
   Edit2, 
-  Check, 
   X, 
   Wand2, 
   Image as ImageIcon,
   ChevronRight,
   Info,
-  AlertCircle,
-  Sparkles
+  AlertCircle
 } from "lucide-react";
 import { createPersona, updatePersona, deletePersona } from "../actions";
 import { ImageUploader } from "@/components/ui/ImageUploader";
@@ -40,7 +38,6 @@ interface Props {
 }
 
 export function PersonaManager({ initialPersonas, allCategories }: Props) {
-  const [personas, setPersonas] = useState(initialPersonas);
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -109,7 +106,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
           alert(res.error || "Oluşturma başarısız.");
         }
       }
-    } catch (err) {
+    } catch {
       alert("Bir hata oluştu.");
     } finally {
       setLoading(false);
@@ -125,7 +122,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
         alert("Persona silindi.");
         window.location.reload();
       }
-    } catch (err) {
+    } catch {
       alert("Silme işlemi başarısız.");
     }
   };
@@ -302,12 +299,13 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
 
       {/* ── Personas Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {personas.map(persona => (
+        {initialPersonas.map(persona => (
           <div key={persona.id} className="glass-strong rounded-3xl border border-border p-6 hover:border-primary-500/30 transition-all group flex flex-col h-full shadow-lg">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="h-14 w-14 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center overflow-hidden">
                   {persona.image ? (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={persona.image} alt={persona.name} className="h-full w-full object-cover" />
                   ) : (
                     <Users className="h-6 w-6 text-primary-500" />
@@ -366,7 +364,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
           </div>
         ))}
 
-        {personas.length === 0 && !isAdding && (
+        {initialPersonas.length === 0 && !isAdding && (
           <div className="col-span-full py-20 text-center glass-strong rounded-3xl border border-dashed border-border">
             <Users className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
             <p className="text-muted-foreground">Henüz bir AI Personası tanımlanmamış.</p>

@@ -77,9 +77,9 @@ export async function syncModelsFromOpenRouter() {
     
     revalidatePath("/admin/ai-writer/models");
     return { success: true, count: updatedCount };
-  } catch (err: any) {
+  } catch (err) {
     console.error("Sync Error:", err);
-    return { success: false, error: err.message };
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
 
@@ -105,8 +105,8 @@ export async function upsertManualModel(data: {
     });
     revalidatePath("/admin/ai-writer/models");
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message };
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
 
@@ -118,8 +118,8 @@ export async function toggleModelActive(id: string, isActive: boolean) {
     });
     revalidatePath("/admin/ai-writer/models");
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message };
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
 
@@ -128,7 +128,7 @@ export async function deleteModel(id: string) {
     await prisma.aiModel.delete({ where: { id } });
     revalidatePath("/admin/ai-writer/models");
     return { success: true };
-  } catch (err: any) {
-    return { success: false, error: err.message };
+  } catch (err) {
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 }

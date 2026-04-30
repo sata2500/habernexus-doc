@@ -5,6 +5,18 @@ import { Wand2, Sparkles, BrainCircuit, Rocket, Users, Cpu } from "lucide-react"
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 
+interface AiModel {
+  id: string;
+  name: string;
+  description: string | null;
+  type: "TEXT" | "IMAGE" | "MULTIMODAL";
+  isFree: boolean;
+  supportsSearch: boolean;
+  supportsVision: boolean;
+  supportsT2I: boolean;
+  supportsI2I: boolean;
+}
+
 export default async function AdminAiWriterPage() {
   const settings = await getSystemSettings();
   const allModels = await prisma.aiModel.findMany({
@@ -85,7 +97,7 @@ export default async function AdminAiWriterPage() {
           initialUseRssImage={settings.aiWriterUseRssImage}
           initialSearchEnabled={settings.aiWriterSearchEnabled}
           initialAnalyzerModel={settings.aiAnalyzerModel}
-          availableModels={allModels as any}
+          availableModels={allModels as unknown as AiModel[]}
         />
         <AiWriterAutomationCard 
           enabled={settings.aiWriterAutoEnabled}

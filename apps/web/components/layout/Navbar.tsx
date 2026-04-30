@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 import {
   Search,
@@ -27,6 +27,7 @@ interface Category {
 
 export function Navbar({ categories = [] }: { categories?: Category[] }) {
   const pathname = usePathname();
+  const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -52,7 +53,9 @@ export function Navbar({ categories = [] }: { categories?: Category[] }) {
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && searchQuery.trim()) {
-      window.location.href = `/search?q=${encodeURIComponent(searchQuery.trim())}`;
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+      setSearchQuery("");
     }
   };
 
@@ -138,7 +141,7 @@ export function Navbar({ categories = [] }: { categories?: Category[] }) {
                         {session.user.name.split(" ")[0]}
                       </span>
                     </Link>
-                    <Button variant="ghost" size="sm" onClick={async () => { await signOut(); window.location.reload(); }} id="navbar-logout-button">
+                    <Button variant="ghost" size="sm" onClick={async () => { await signOut(); router.refresh(); }} id="navbar-logout-button">
                       Çıkış
                     </Button>
                   </>
@@ -265,7 +268,7 @@ export function Navbar({ categories = [] }: { categories?: Category[] }) {
                     onClick={async () => { 
                       await signOut(); 
                       setIsMobileMenuOpen(false); 
-                      window.location.reload(); 
+                      router.refresh(); 
                     }}
                   >
                     🚪 Çıkış Yap

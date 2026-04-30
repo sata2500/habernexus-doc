@@ -46,9 +46,9 @@ export async function createPersona(data: {
 
     revalidatePath("/admin/ai-writer/personas");
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Create Persona Error:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 }
 
@@ -84,9 +84,9 @@ export async function updatePersona(id: string, data: {
 
     revalidatePath("/admin/ai-writer/personas");
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Update Persona Error:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 }
 
@@ -97,8 +97,8 @@ export async function deletePersona(id: string) {
     });
     revalidatePath("/admin/ai-writer/personas");
     return { success: true };
-  } catch (error: any) {
+  } catch (error) {
     console.error("Delete Persona Error:", error);
-    return { success: false, error: error.message };
+    return { success: false, error: error instanceof Error ? error.message : String(error) };
   }
 }

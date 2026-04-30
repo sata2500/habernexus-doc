@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import type { LucideIcon } from "lucide-react";
 import { 
   Sparkles, 
   Save, 
@@ -55,7 +56,7 @@ function StylishSelect({
   value: string, 
   onChange: (val: string) => void,
   label: string,
-  icon: any
+  icon: LucideIcon
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -180,7 +181,8 @@ export function AiWriterSettingsCard({
   const handleSave = async () => {
     setLoading(true);
     setSuccess(false);
-    const res = await (updateAiWriterSettings as any)({ 
+    type UpdateResult = { success: boolean };
+    const res = await (updateAiWriterSettings as (...args: unknown[]) => Promise<UpdateResult>)({ 
       prompt, 
       imagePrompt, 
       model, 
@@ -324,9 +326,3 @@ export function AiWriterSettingsCard({
   );
 }
 
-// Global stiller için CSS eklenmesi gerekebilir veya tailwind ile çözülebilir
-const MessageSquareIcon = ({ className }: { className?: string }) => (
-  <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-  </svg>
-);
