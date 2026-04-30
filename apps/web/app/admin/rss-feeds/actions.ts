@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { scanRssSource } from "@/lib/rss-scanner";
-import { analyzeRssBatch } from "@/lib/ai-analyzer";
+import { analyzeRssBatch, cleanupOldItems } from "@/lib/ai-analyzer";
 import { writeArticleWithAI, writeBatchArticlesWithAI } from "@/lib/ai-writer";
 import { getAppUrl } from "@/lib/utils";
 
@@ -104,6 +104,16 @@ export async function reAnalyzeSuggestion(id: string) {
     revalidatePath("/admin/rss-feeds");
     revalidatePath("/author/suggestions");
     return { success: true, ...result };
+  } catch (err) {
+    return { success: false, error: String(err) };
+  }
+}
+
+export async function triggerRssCleanup() {
+  try {
+    const count = await cleanupOldItems();
+    revalidatePath("/admin/rss-feeds");
+    return { success: true, count };
   } catch (err) {
     return { success: false, error: String(err) };
   }
