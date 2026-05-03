@@ -24,8 +24,12 @@ function cleanJson(text: string) {
  * OpenRouter API üzerinden analiz yapar.
  */
 async function callOpenRouter(prompt: string): Promise<string> {
-  const settings = await prisma.systemSettings.findFirst(); // findUnique yerine findFirst daha güvenli
-  const model = settings?.aiAnalyzerModel || "google/gemini-2.0-flash-001";
+  const settings = await prisma.systemSettings.findFirst();
+  const model = settings?.aiAnalyzerModel;
+
+  if (!model) {
+    throw new Error("Analiz ve Özet (AI Analyzer) modeli seçilmemiş. Lütfen admin panelinden bir model seçin.");
+  }
   const apiKey = process.env.OPENROUTER_API_KEY;
 
   if (!apiKey) {
