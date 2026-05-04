@@ -24,12 +24,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 7.7.0
- * Query Engine version: 75cbdc1eb7150937890ad5465d861175c6624711
+ * Prisma Client JS version: 7.8.0
+ * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
  */
 Prisma.prismaVersion = {
-  client: "7.7.0",
-  engine: "75cbdc1eb7150937890ad5465d861175c6624711"
+  client: "7.8.0",
+  engine: "3c6e192761c0362d496ed980de936e2f3cebcd3a"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -359,6 +359,25 @@ exports.Prisma.AiPersonaOnCategoryScalarFieldEnum = {
   lastUsedAt: 'lastUsedAt'
 };
 
+exports.Prisma.SiteSettingsScalarFieldEnum = {
+  id: 'id',
+  siteName: 'siteName',
+  siteTagline: 'siteTagline',
+  siteDescription: 'siteDescription',
+  siteUrl: 'siteUrl',
+  logoText: 'logoText',
+  logoUrl: 'logoUrl',
+  faviconUrl: 'faviconUrl',
+  keywords: 'keywords',
+  socialTwitter: 'socialTwitter',
+  socialInstagram: 'socialInstagram',
+  socialYoutube: 'socialYoutube',
+  socialGithub: 'socialGithub',
+  footerCopyright: 'footerCopyright',
+  updatedAt: 'updatedAt',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.AiModelScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -444,6 +463,7 @@ exports.Prisma.ModelName = {
   SystemSettings: 'SystemSettings',
   AiPersona: 'AiPersona',
   AiPersonaOnCategory: 'AiPersonaOnCategory',
+  SiteSettings: 'SiteSettings',
   AiModel: 'AiModel'
 };
 

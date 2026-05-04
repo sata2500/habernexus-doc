@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
+import type { SiteSettings } from "@/lib/site-settings";
 
 
 interface Category {
@@ -25,7 +26,7 @@ interface Category {
   icon?: string | null;
 }
 
-export function Navbar({ categories = [] }: { categories?: Category[] }) {
+export function Navbar({ categories = [], settings }: { categories?: Category[], settings?: Partial<SiteSettings> }) {
   const pathname = usePathname();
   const router = useRouter();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -41,6 +42,12 @@ export function Navbar({ categories = [] }: { categories?: Category[] }) {
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const siteName = settings?.siteName || "Haber Nexus";
+  const logoText = settings?.logoText || "N";
+  const siteNameParts = siteName.split(" ");
+  const firstWord = siteNameParts[0];
+  const restWords = siteNameParts.slice(1).join(" ");
 
   const [prevPathname, setPrevPathname] = useState(pathname);
 
@@ -81,12 +88,12 @@ export function Navbar({ categories = [] }: { categories?: Category[] }) {
             >
               <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform">
                 <span className="text-white font-bold text-lg font-(family-name:--font-outfit)">
-                  N
+                  {logoText}
                 </span>
               </div>
               <span className="text-xl font-bold font-(family-name:--font-outfit) tracking-tight">
-                <span className="text-gradient">Haber</span>
-                <span className="text-foreground">Nexus</span>
+                <span className="text-gradient">{firstWord}</span>
+                {restWords && <span className="text-foreground"> {restWords}</span>}
               </span>
             </Link>
 

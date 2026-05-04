@@ -10,6 +10,7 @@ import {
   Loader2
 } from "lucide-react";
 import { motion } from "framer-motion";
+import type { SiteSettings } from "@/lib/site-settings";
 
 // --- Marka İkonları (Orijinal SVG) ---
 const XIcon = ({ className }: { className?: string }) => (
@@ -54,40 +55,7 @@ const footerLinks = {
   ],
 };
 
-const socialLinks = [
-  { 
-    icon: XIcon, 
-    href: "https://twitter.com", 
-    label: "X (Twitter)", 
-    hoverColor: "hover:text-[#1DA1F2]", 
-    hoverBg: "hover:bg-[#1DA1F2]/10",
-    glow: "hover:shadow-[0_0_20px_rgba(29,161,242,0.3)]"
-  },
-  { 
-    icon: InstagramIcon, 
-    href: "https://instagram.com", 
-    label: "Instagram", 
-    hoverColor: "hover:text-[#E4405F]", 
-    hoverBg: "hover:bg-[#E4405F]/10",
-    glow: "hover:shadow-[0_0_20px_rgba(228,64,95,0.3)]"
-  },
-  { 
-    icon: YoutubeIcon, 
-    href: "https://youtube.com", 
-    label: "YouTube", 
-    hoverColor: "hover:text-[#FF0000]", 
-    hoverBg: "hover:bg-[#FF0000]/10",
-    glow: "hover:shadow-[0_0_20px_rgba(255,0,0,0.3)]"
-  },
-  { 
-    icon: GithubIcon, 
-    href: "https://github.com", 
-    label: "GitHub", 
-    hoverColor: "hover:text-foreground", 
-    hoverBg: "hover:bg-neutral-500/10",
-    glow: "hover:shadow-[0_0_20px_rgba(120,120,120,0.2)]"
-  },
-];
+
 
 interface Category {
   id: string;
@@ -95,10 +63,37 @@ interface Category {
   slug: string;
 }
 
-export function Footer({ categories = [] }: { categories?: Category[] }) {
+export function Footer({ categories = [], settings }: { categories?: Category[], settings?: Partial<SiteSettings> }) {
   const [email, setEmail] = useState("");
   const [isPending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  const siteName = settings?.siteName || "Haber Nexus";
+  const logoText = settings?.logoText || "N";
+  const siteNameParts = siteName.split(" ");
+  const firstWord = siteNameParts[0];
+  const restWords = siteNameParts.slice(1).join(" ");
+  const description = settings?.siteDescription || "Yeni nesil haber platformu. Güvenilir, hızlı ve kişiselleştirilmiş haberlerle her zaman güncel kalın.";
+  const copyright = settings?.footerCopyright || `© ${new Date().getFullYear()} ${siteName}. Tüm hakları saklıdır.`;
+
+  const activeSocialLinks = [
+    { 
+      icon: XIcon, href: settings?.socialTwitter, label: "X (Twitter)", 
+      hoverColor: "hover:text-[#1DA1F2]", hoverBg: "hover:bg-[#1DA1F2]/10", glow: "hover:shadow-[0_0_20px_rgba(29,161,242,0.3)]"
+    },
+    { 
+      icon: InstagramIcon, href: settings?.socialInstagram, label: "Instagram", 
+      hoverColor: "hover:text-[#E4405F]", hoverBg: "hover:bg-[#E4405F]/10", glow: "hover:shadow-[0_0_20px_rgba(228,64,95,0.3)]"
+    },
+    { 
+      icon: YoutubeIcon, href: settings?.socialYoutube, label: "YouTube", 
+      hoverColor: "hover:text-[#FF0000]", hoverBg: "hover:bg-[#FF0000]/10", glow: "hover:shadow-[0_0_20px_rgba(255,0,0,0.3)]"
+    },
+    { 
+      icon: GithubIcon, href: settings?.socialGithub, label: "GitHub", 
+      hoverColor: "hover:text-foreground", hoverBg: "hover:bg-neutral-500/10", glow: "hover:shadow-[0_0_20px_rgba(120,120,120,0.2)]"
+    },
+  ].filter(link => !!link.href);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -126,17 +121,16 @@ export function Footer({ categories = [] }: { categories?: Category[] }) {
             <Link href="/" className="flex items-center gap-2 mb-4">
               <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center">
                 <span className="text-white font-bold text-lg font-(family-name:--font-outfit)">
-                  N
+                  {logoText}
                 </span>
               </div>
               <span className="text-xl font-bold font-(family-name:--font-outfit) tracking-tight">
-                <span className="text-gradient">Haber</span>
-                <span className="text-foreground">Nexus</span>
+                <span className="text-gradient">{firstWord}</span>
+                {restWords && <span className="text-foreground"> {restWords}</span>}
               </span>
             </Link>
             <p className="text-sm text-muted-foreground leading-relaxed mb-4">
-              Yeni nesil haber platformu. Güvenilir, hızlı ve kişiselleştirilmiş
-              haberlerle her zaman güncel kalın.
+              {description}
             </p>
 
             {/* Newsletter */}
@@ -234,17 +228,17 @@ export function Footer({ categories = [] }: { categories?: Category[] }) {
       <div className="border-t border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Haber Nexus. Tüm hakları saklıdır.
+            {copyright}
           </p>
 
           {/* Social Links */}
           <div className="flex items-center gap-4">
-            {socialLinks.map((social) => {
+            {activeSocialLinks.map((social) => {
               const Icon = social.icon;
               return (
                 <motion.a
                   key={social.label}
-                  href={social.href}
+                  href={social.href as string}
                   target="_blank"
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.15, y: -2 }}

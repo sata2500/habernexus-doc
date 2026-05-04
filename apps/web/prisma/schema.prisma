@@ -350,6 +350,26 @@ model AiPersonaOnCategory {
   @@id([personaId, categoryId])
 }
 
+/// Platform marka ve görünüm ayarları (Singleton - id her zaman "global")
+model SiteSettings {
+  id               String   @id @default("global")
+  siteName         String   @default("Haber Nexus")
+  siteTagline      String?  @default("Yeni Nesil Haber Platformu")
+  siteDescription  String?  @default("Gündemdeki en son haberleri, analizleri ve derinlemesine içerikleri keşfedin. Modern, hızlı ve kişiselleştirilmiş haber deneyimi.")
+  siteUrl          String?
+  logoText         String?  @default("N")
+  logoUrl          String?
+  faviconUrl       String?
+  keywords         String?  @default("haber,gündem,son dakika,analiz,Türkiye,dünya,teknoloji,spor")
+  socialTwitter    String?
+  socialInstagram  String?
+  socialYoutube    String?
+  socialGithub     String?
+  footerCopyright  String?
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+}
+
 enum AiModelType {
   TEXT
   IMAGE

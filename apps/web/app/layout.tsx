@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { WebSiteJsonLd, OrganizationJsonLd } from "@/components/seo/JsonLd";
+import { getSiteSettings } from "@/lib/site-settings";
 import "./globals.css";
 
 const inter = Inter({
@@ -23,77 +24,73 @@ export const viewport: Viewport = {
   ],
 };
 
-export const metadata: Metadata = {
-  title: {
-    default: "Haber Nexus — Yeni Nesil Haber Platformu",
-    template: "%s | Haber Nexus",
-  },
-  description:
-    "Haber Nexus ile gündemdeki en son haberleri, analizleri ve derinlemesine içerikleri keşfedin. Modern, hızlı ve kişiselleştirilmiş haber deneyimi.",
-  keywords: [
-    "haber",
-    "gündem",
-    "son dakika",
-    "analiz",
-    "Türkiye",
-    "dünya",
-    "teknoloji",
-    "spor",
-  ],
-  authors: [{ name: "Haber Nexus" }],
-  creator: "Haber Nexus",
-  icons: {
-    icon: [
-      { url: "/favicon.svg", type: "image/svg+xml" },
-    ],
-    apple: "/favicon.svg",
-    shortcut: "/favicon.svg",
-  },
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
-  ),
-  alternates: {
-    types: {
-      "application/rss+xml": [
-        {
-          url: "/rss.xml",
-          title: "Haber Nexus RSS Akışı (Genel)",
-        },
-        {
-          url: "/rss/tr",
-          title: "Haber Nexus RSS Akışı (Türkçe)",
-        },
-        {
-          url: "/rss/en",
-          title: "Haber Nexus RSS Feed (English)",
-        },
-      ],
-    },
-  },
-  openGraph: {
-    type: "website",
-    locale: "tr_TR",
-    siteName: "Haber Nexus",
-    title: "Haber Nexus — Yeni Nesil Haber Platformu",
-    description:
-      "Gündemdeki en son haberleri, analizleri ve derinlemesine içerikleri keşfedin.",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Haber Nexus",
-    description: "Yeni nesil haber platformu",
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
 
-export default function RootLayout({
+  const siteName = settings.siteName || "Haber Nexus";
+  const siteTagline = settings.siteTagline || "Yeni Nesil Haber Platformu";
+  const siteDescription =
+    settings.siteDescription ||
+    "Gündemdeki en son haberleri, analizleri ve derinlemesine içerikleri keşfedin. Modern, hızlı ve kişiselleştirilmiş haber deneyimi.";
+  const siteUrl =
+    settings.siteUrl ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    "http://localhost:3000";
+  const keywords = settings.keywords
+    ? settings.keywords.split(",").map((k) => k.trim())
+    : ["haber", "gündem", "son dakika", "analiz", "Türkiye", "dünya", "teknoloji", "spor"];
+  const faviconUrl = settings.faviconUrl || "/favicon.svg";
+
+  return {
+    title: {
+      default: `${siteName} — ${siteTagline}`,
+      template: `%s | ${siteName}`,
+    },
+    description: siteDescription,
+    keywords,
+    authors: [{ name: siteName }],
+    creator: siteName,
+    icons: {
+      icon: [{ url: faviconUrl, type: faviconUrl.endsWith(".svg") ? "image/svg+xml" : "image/x-icon" }],
+      apple: faviconUrl,
+      shortcut: faviconUrl,
+    },
+    metadataBase: new URL(siteUrl),
+    alternates: {
+      types: {
+        "application/rss+xml": [
+          { url: "/rss.xml", title: `${siteName} RSS Akışı (Genel)` },
+          { url: "/rss/tr", title: `${siteName} RSS Akışı (Türkçe)` },
+          { url: "/rss/en", title: `${siteName} RSS Feed (English)` },
+        ],
+      },
+    },
+    openGraph: {
+      type: "website",
+      locale: "tr_TR",
+      siteName,
+      title: `${siteName} — ${siteTagline}`,
+      description: siteDescription,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: siteName,
+      description: siteTagline,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getSiteSettings();
+
   return (
     <html
       lang="tr"
@@ -101,8 +98,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col antialiased">
-        <WebSiteJsonLd />
-        <OrganizationJsonLd />
+        <WebSiteJsonLd settings={settings} />
+        <OrganizationJsonLd settings={settings} />
         <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>

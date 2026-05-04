@@ -8,8 +8,10 @@
  * @see https://schema.org/NewsArticle
  */
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-const SITE_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Haber Nexus";
+import type { SiteSettings } from "@/lib/site-settings";
+
+const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const DEFAULT_SITE_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Haber Nexus";
 
 // XSS koruması: JSON-LD içinde < karakterini escape et
 function safeJsonLd(data: Record<string, unknown>): string {
@@ -20,7 +22,10 @@ function safeJsonLd(data: Record<string, unknown>): string {
    WebSite JSON-LD — Root Layout için
    Google Sitelinks Search Box desteği
    ───────────────────────────────────────────── */
-export function WebSiteJsonLd() {
+export function WebSiteJsonLd({ settings }: { settings?: Partial<SiteSettings> }) {
+  const BASE_URL = settings?.siteUrl || DEFAULT_BASE_URL;
+  const SITE_NAME = settings?.siteName || DEFAULT_SITE_NAME;
+
   const data = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -48,8 +53,17 @@ export function WebSiteJsonLd() {
 /* ─────────────────────────────────────────────
    Organization JSON-LD — Root Layout için
    ───────────────────────────────────────────── */
-export function OrganizationJsonLd() {
-  const data = {
+export function OrganizationJsonLd({ settings }: { settings?: Partial<SiteSettings> }) {
+  const BASE_URL = settings?.siteUrl || DEFAULT_BASE_URL;
+  const SITE_NAME = settings?.siteName || DEFAULT_SITE_NAME;
+
+  const sameAs: string[] = [];
+  if (settings?.socialTwitter) sameAs.push(settings.socialTwitter);
+  if (settings?.socialInstagram) sameAs.push(settings.socialInstagram);
+  if (settings?.socialYoutube) sameAs.push(settings.socialYoutube);
+  if (settings?.socialGithub) sameAs.push(settings.socialGithub);
+
+  const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "NewsMediaOrganization",
     name: SITE_NAME,
@@ -60,13 +74,11 @@ export function OrganizationJsonLd() {
       width: 600,
       height: 60,
     },
-    sameAs: [
-      "https://twitter.com/habernexus",
-      "https://instagram.com/habernexus",
-      "https://youtube.com/habernexus",
-      "https://github.com/habernexus",
-    ],
   };
+
+  if (sameAs.length > 0) {
+    data.sameAs = sameAs;
+  }
 
   return (
     <script
@@ -75,6 +87,8 @@ export function OrganizationJsonLd() {
     />
   );
 }
+
+
 
 /* ─────────────────────────────────────────────
    NewsArticle JSON-LD — Makale Detay Sayfası
@@ -91,6 +105,7 @@ interface NewsArticleJsonLdProps {
   categoryName?: string | null;
   tags?: string[];
   wordCount?: number;
+  settings?: Partial<SiteSettings>;
 }
 
 export function NewsArticleJsonLd({
@@ -105,7 +120,17 @@ export function NewsArticleJsonLd({
   categoryName,
   tags = [],
   wordCount,
+  settings,
 }: NewsArticleJsonLdProps) {
+  const BASE_URL = settings?.siteUrl || DEFAULT_BASE_URL;
+  const SITE_NAME = settings?.siteName || DEFAULT_SITE_NAME;
+
+  const sameAs: string[] = [];
+  if (settings?.socialTwitter) sameAs.push(settings.socialTwitter);
+  if (settings?.socialInstagram) sameAs.push(settings.socialInstagram);
+  if (settings?.socialYoutube) sameAs.push(settings.socialYoutube);
+  if (settings?.socialGithub) sameAs.push(settings.socialGithub);
+
   const articleUrl = `${BASE_URL}/article/${slug}`;
 
   const data: Record<string, unknown> = {
@@ -134,7 +159,7 @@ export function NewsArticleJsonLd({
         width: 600,
         height: 60,
       },
-      sameAs: [
+      sameAs: sameAs.length > 0 ? sameAs : [
         "https://twitter.com/habernexus",
         "https://instagram.com/habernexus"
       ]
@@ -195,9 +220,12 @@ interface BreadcrumbItem {
 
 interface BreadcrumbJsonLdProps {
   items: BreadcrumbItem[];
+  settings?: Partial<SiteSettings>;
 }
 
-export function BreadcrumbJsonLd({ items }: BreadcrumbJsonLdProps) {
+export function BreadcrumbJsonLd({ items, settings }: BreadcrumbJsonLdProps) {
+  const BASE_URL = settings?.siteUrl || DEFAULT_BASE_URL;
+
   const data = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
