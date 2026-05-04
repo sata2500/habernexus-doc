@@ -31,6 +31,16 @@ interface SiteSettings {
   faviconUrl: string | null;
   primaryColorLight: string | null;
   primaryColorDark: string | null;
+  bgLight: string | null;
+  bgDark: string | null;
+  fgLight: string | null;
+  fgDark: string | null;
+  cardLight: string | null;
+  cardDark: string | null;
+  cardFgLight: string | null;
+  cardFgDark: string | null;
+  accentLight: string | null;
+  accentDark: string | null;
   keywords: string | null;
   socialTwitter: string | null;
   socialInstagram: string | null;
@@ -115,6 +125,16 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
     faviconUrl: initialSettings.faviconUrl || "",
     primaryColorLight: initialSettings.primaryColorLight || "#6366f1",
     primaryColorDark: initialSettings.primaryColorDark || "#818cf8",
+    bgLight: initialSettings.bgLight || "#fafbfc",
+    bgDark: initialSettings.bgDark || "#0b0f1a",
+    fgLight: initialSettings.fgLight || "#0f172a",
+    fgDark: initialSettings.fgDark || "#e8ecf4",
+    cardLight: initialSettings.cardLight || "#ffffff",
+    cardDark: initialSettings.cardDark || "#111827",
+    cardFgLight: initialSettings.cardFgLight || "#0f172a",
+    cardFgDark: initialSettings.cardFgDark || "#e8ecf4",
+    accentLight: initialSettings.accentLight || "#ea580c",
+    accentDark: initialSettings.accentDark || "#f97316",
     keywords: initialSettings.keywords || "",
     socialTwitter: initialSettings.socialTwitter || "",
     socialInstagram: initialSettings.socialInstagram || "",
@@ -352,47 +372,96 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
           </FieldGroup>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
-          <FieldGroup
-            label="Açık Tema Ana Rengi"
-            icon={Palette}
-            hint="Açık temada (Light Mode) vurgular için kullanılacak HEX kodu."
-          >
-            <div className="flex gap-3">
-              <input 
-                type="color" 
-                value={form.primaryColorLight} 
-                onChange={(e) => set("primaryColorLight")(e.target.value)}
-                className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0"
-              />
-              <TextInput
-                value={form.primaryColorLight}
-                onChange={set("primaryColorLight")}
-                placeholder="#6366f1"
-                maxLength={7}
-              />
-            </div>
-          </FieldGroup>
-          <FieldGroup
-            label="Koyu Tema Ana Rengi"
-            icon={Palette}
-            hint="Koyu temada (Dark Mode) vurgular için kullanılacak HEX kodu."
-          >
-            <div className="flex gap-3">
-              <input 
-                type="color" 
-                value={form.primaryColorDark} 
-                onChange={(e) => set("primaryColorDark")(e.target.value)}
-                className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0"
-              />
-              <TextInput
-                value={form.primaryColorDark}
-                onChange={set("primaryColorDark")}
-                placeholder="#818cf8"
-                maxLength={7}
-              />
-            </div>
-          </FieldGroup>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-border pt-6 mt-6">
+          {/* Açık Tema Grubu */}
+          <div className="space-y-4">
+            <h4 className="font-semibold text-sm flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
+              Açık Tema (Light Mode) Renkleri
+            </h4>
+            
+            <FieldGroup label="Ana (Primary) Renk" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.primaryColorLight} onChange={(e) => set("primaryColorLight")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.primaryColorLight} onChange={set("primaryColorLight")} placeholder="#6366f1" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Vurgu (Accent) Renk" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.accentLight} onChange={(e) => set("accentLight")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.accentLight} onChange={set("accentLight")} placeholder="#ea580c" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Genel Arka Plan (Background)" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.bgLight} onChange={(e) => set("bgLight")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.bgLight} onChange={set("bgLight")} placeholder="#fafbfc" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Genel Metin Rengi (Foreground)" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.fgLight} onChange={(e) => set("fgLight")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.fgLight} onChange={set("fgLight")} placeholder="#0f172a" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Panel/Kart Arka Planı" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.cardLight} onChange={(e) => set("cardLight")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.cardLight} onChange={set("cardLight")} placeholder="#ffffff" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Panel/Kart Metin Rengi" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.cardFgLight} onChange={(e) => set("cardFgLight")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.cardFgLight} onChange={set("cardFgLight")} placeholder="#0f172a" maxLength={7} />
+              </div>
+            </FieldGroup>
+          </div>
+
+          {/* Koyu Tema Grubu */}
+          <div className="space-y-4">
+            <h4 className="font-semibold text-sm flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-indigo-500"></div>
+              Koyu Tema (Dark Mode) Renkleri
+            </h4>
+            
+            <FieldGroup label="Ana (Primary) Renk" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.primaryColorDark} onChange={(e) => set("primaryColorDark")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.primaryColorDark} onChange={set("primaryColorDark")} placeholder="#818cf8" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Vurgu (Accent) Renk" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.accentDark} onChange={(e) => set("accentDark")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.accentDark} onChange={set("accentDark")} placeholder="#f97316" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Genel Arka Plan (Background)" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.bgDark} onChange={(e) => set("bgDark")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.bgDark} onChange={set("bgDark")} placeholder="#0b0f1a" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Genel Metin Rengi (Foreground)" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.fgDark} onChange={(e) => set("fgDark")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.fgDark} onChange={set("fgDark")} placeholder="#e8ecf4" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Panel/Kart Arka Planı" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.cardDark} onChange={(e) => set("cardDark")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.cardDark} onChange={set("cardDark")} placeholder="#111827" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Panel/Kart Metin Rengi" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.cardFgDark} onChange={(e) => set("cardFgDark")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.cardFgDark} onChange={set("cardFgDark")} placeholder="#e8ecf4" maxLength={7} />
+              </div>
+            </FieldGroup>
+          </div>
         </div>
       </section>
 

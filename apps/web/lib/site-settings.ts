@@ -30,8 +30,18 @@ export const getSiteSettings = cache(async () => {
       logoText: "N",
       logoUrl: null,
       faviconUrl: null,
-      primaryColorLight: "#6366f1", // Default indigo-500
-      primaryColorDark: "#818cf8", // Default indigo-400
+      primaryColorLight: "#6366f1",
+      primaryColorDark: "#818cf8",
+      bgLight: "#fafbfc",
+      bgDark: "#0b0f1a",
+      fgLight: "#0f172a",
+      fgDark: "#e8ecf4",
+      cardLight: "#ffffff",
+      cardDark: "#111827",
+      cardFgLight: "#0f172a",
+      cardFgDark: "#e8ecf4",
+      accentLight: "#ea580c", // Yaklaşık olarak oklch(0.65 0.22 30) (Warm vibrant)
+      accentDark: "#f97316", // Yaklaşık
       keywords: "haber,gündem,son dakika,analiz,Türkiye,dünya,teknoloji,spor",
       socialTwitter: null,
       socialInstagram: null,

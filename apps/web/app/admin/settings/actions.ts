@@ -24,6 +24,16 @@ export interface SiteSettingsInput {
   faviconUrl: string;
   primaryColorLight: string;
   primaryColorDark: string;
+  bgLight: string;
+  bgDark: string;
+  fgLight: string;
+  fgDark: string;
+  cardLight: string;
+  cardDark: string;
+  cardFgLight: string;
+  cardFgDark: string;
+  accentLight: string;
+  accentDark: string;
   keywords: string;
   socialTwitter: string;
   socialInstagram: string;
@@ -57,6 +67,16 @@ export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
     faviconUrl: data.faviconUrl?.trim() || null,
     primaryColorLight: data.primaryColorLight?.trim() || null,
     primaryColorDark: data.primaryColorDark?.trim() || null,
+    bgLight: data.bgLight?.trim() || null,
+    bgDark: data.bgDark?.trim() || null,
+    fgLight: data.fgLight?.trim() || null,
+    fgDark: data.fgDark?.trim() || null,
+    cardLight: data.cardLight?.trim() || null,
+    cardDark: data.cardDark?.trim() || null,
+    cardFgLight: data.cardFgLight?.trim() || null,
+    cardFgDark: data.cardFgDark?.trim() || null,
+    accentLight: data.accentLight?.trim() || null,
+    accentDark: data.accentDark?.trim() || null,
     keywords: data.keywords?.trim() || null,
     socialTwitter: data.socialTwitter?.trim() || null,
     socialInstagram: data.socialInstagram?.trim() || null,

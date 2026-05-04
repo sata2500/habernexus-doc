@@ -25876,6 +25876,16 @@ export namespace Prisma {
     faviconUrl: string | null
     primaryColorLight: string | null
     primaryColorDark: string | null
+    bgLight: string | null
+    bgDark: string | null
+    fgLight: string | null
+    fgDark: string | null
+    cardLight: string | null
+    cardDark: string | null
+    cardFgLight: string | null
+    cardFgDark: string | null
+    accentLight: string | null
+    accentDark: string | null
     keywords: string | null
     socialTwitter: string | null
     socialInstagram: string | null
@@ -25897,6 +25907,16 @@ export namespace Prisma {
     faviconUrl: string | null
     primaryColorLight: string | null
     primaryColorDark: string | null
+    bgLight: string | null
+    bgDark: string | null
+    fgLight: string | null
+    fgDark: string | null
+    cardLight: string | null
+    cardDark: string | null
+    cardFgLight: string | null
+    cardFgDark: string | null
+    accentLight: string | null
+    accentDark: string | null
     keywords: string | null
     socialTwitter: string | null
     socialInstagram: string | null
@@ -25918,6 +25938,16 @@ export namespace Prisma {
     faviconUrl: number
     primaryColorLight: number
     primaryColorDark: number
+    bgLight: number
+    bgDark: number
+    fgLight: number
+    fgDark: number
+    cardLight: number
+    cardDark: number
+    cardFgLight: number
+    cardFgDark: number
+    accentLight: number
+    accentDark: number
     keywords: number
     socialTwitter: number
     socialInstagram: number
@@ -25941,6 +25971,16 @@ export namespace Prisma {
     faviconUrl?: true
     primaryColorLight?: true
     primaryColorDark?: true
+    bgLight?: true
+    bgDark?: true
+    fgLight?: true
+    fgDark?: true
+    cardLight?: true
+    cardDark?: true
+    cardFgLight?: true
+    cardFgDark?: true
+    accentLight?: true
+    accentDark?: true
     keywords?: true
     socialTwitter?: true
     socialInstagram?: true
@@ -25962,6 +26002,16 @@ export namespace Prisma {
     faviconUrl?: true
     primaryColorLight?: true
     primaryColorDark?: true
+    bgLight?: true
+    bgDark?: true
+    fgLight?: true
+    fgDark?: true
+    cardLight?: true
+    cardDark?: true
+    cardFgLight?: true
+    cardFgDark?: true
+    accentLight?: true
+    accentDark?: true
     keywords?: true
     socialTwitter?: true
     socialInstagram?: true
@@ -25983,6 +26033,16 @@ export namespace Prisma {
     faviconUrl?: true
     primaryColorLight?: true
     primaryColorDark?: true
+    bgLight?: true
+    bgDark?: true
+    fgLight?: true
+    fgDark?: true
+    cardLight?: true
+    cardDark?: true
+    cardFgLight?: true
+    cardFgDark?: true
+    accentLight?: true
+    accentDark?: true
     keywords?: true
     socialTwitter?: true
     socialInstagram?: true
@@ -26077,6 +26137,16 @@ export namespace Prisma {
     faviconUrl: string | null
     primaryColorLight: string | null
     primaryColorDark: string | null
+    bgLight: string | null
+    bgDark: string | null
+    fgLight: string | null
+    fgDark: string | null
+    cardLight: string | null
+    cardDark: string | null
+    cardFgLight: string | null
+    cardFgDark: string | null
+    accentLight: string | null
+    accentDark: string | null
     keywords: string | null
     socialTwitter: string | null
     socialInstagram: string | null
@@ -26115,6 +26185,16 @@ export namespace Prisma {
     faviconUrl?: boolean
     primaryColorLight?: boolean
     primaryColorDark?: boolean
+    bgLight?: boolean
+    bgDark?: boolean
+    fgLight?: boolean
+    fgDark?: boolean
+    cardLight?: boolean
+    cardDark?: boolean
+    cardFgLight?: boolean
+    cardFgDark?: boolean
+    accentLight?: boolean
+    accentDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26136,6 +26216,16 @@ export namespace Prisma {
     faviconUrl?: boolean
     primaryColorLight?: boolean
     primaryColorDark?: boolean
+    bgLight?: boolean
+    bgDark?: boolean
+    fgLight?: boolean
+    fgDark?: boolean
+    cardLight?: boolean
+    cardDark?: boolean
+    cardFgLight?: boolean
+    cardFgDark?: boolean
+    accentLight?: boolean
+    accentDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26157,6 +26247,16 @@ export namespace Prisma {
     faviconUrl?: boolean
     primaryColorLight?: boolean
     primaryColorDark?: boolean
+    bgLight?: boolean
+    bgDark?: boolean
+    fgLight?: boolean
+    fgDark?: boolean
+    cardLight?: boolean
+    cardDark?: boolean
+    cardFgLight?: boolean
+    cardFgDark?: boolean
+    accentLight?: boolean
+    accentDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26178,6 +26278,16 @@ export namespace Prisma {
     faviconUrl?: boolean
     primaryColorLight?: boolean
     primaryColorDark?: boolean
+    bgLight?: boolean
+    bgDark?: boolean
+    fgLight?: boolean
+    fgDark?: boolean
+    cardLight?: boolean
+    cardDark?: boolean
+    cardFgLight?: boolean
+    cardFgDark?: boolean
+    accentLight?: boolean
+    accentDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26188,7 +26298,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type SiteSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTagline" | "siteDescription" | "siteUrl" | "logoText" | "logoUrl" | "faviconUrl" | "primaryColorLight" | "primaryColorDark" | "keywords" | "socialTwitter" | "socialInstagram" | "socialYoutube" | "socialGithub" | "footerCopyright" | "updatedAt" | "createdAt", ExtArgs["result"]["siteSettings"]>
+  export type SiteSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTagline" | "siteDescription" | "siteUrl" | "logoText" | "logoUrl" | "faviconUrl" | "primaryColorLight" | "primaryColorDark" | "bgLight" | "bgDark" | "fgLight" | "fgDark" | "cardLight" | "cardDark" | "cardFgLight" | "cardFgDark" | "accentLight" | "accentDark" | "keywords" | "socialTwitter" | "socialInstagram" | "socialYoutube" | "socialGithub" | "footerCopyright" | "updatedAt" | "createdAt", ExtArgs["result"]["siteSettings"]>
 
   export type $SiteSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SiteSettings"
@@ -26204,6 +26314,16 @@ export namespace Prisma {
       faviconUrl: string | null
       primaryColorLight: string | null
       primaryColorDark: string | null
+      bgLight: string | null
+      bgDark: string | null
+      fgLight: string | null
+      fgDark: string | null
+      cardLight: string | null
+      cardDark: string | null
+      cardFgLight: string | null
+      cardFgDark: string | null
+      accentLight: string | null
+      accentDark: string | null
       keywords: string | null
       socialTwitter: string | null
       socialInstagram: string | null
@@ -26645,6 +26765,16 @@ export namespace Prisma {
     readonly faviconUrl: FieldRef<"SiteSettings", 'String'>
     readonly primaryColorLight: FieldRef<"SiteSettings", 'String'>
     readonly primaryColorDark: FieldRef<"SiteSettings", 'String'>
+    readonly bgLight: FieldRef<"SiteSettings", 'String'>
+    readonly bgDark: FieldRef<"SiteSettings", 'String'>
+    readonly fgLight: FieldRef<"SiteSettings", 'String'>
+    readonly fgDark: FieldRef<"SiteSettings", 'String'>
+    readonly cardLight: FieldRef<"SiteSettings", 'String'>
+    readonly cardDark: FieldRef<"SiteSettings", 'String'>
+    readonly cardFgLight: FieldRef<"SiteSettings", 'String'>
+    readonly cardFgDark: FieldRef<"SiteSettings", 'String'>
+    readonly accentLight: FieldRef<"SiteSettings", 'String'>
+    readonly accentDark: FieldRef<"SiteSettings", 'String'>
     readonly keywords: FieldRef<"SiteSettings", 'String'>
     readonly socialTwitter: FieldRef<"SiteSettings", 'String'>
     readonly socialInstagram: FieldRef<"SiteSettings", 'String'>
@@ -28457,6 +28587,16 @@ export namespace Prisma {
     faviconUrl: 'faviconUrl',
     primaryColorLight: 'primaryColorLight',
     primaryColorDark: 'primaryColorDark',
+    bgLight: 'bgLight',
+    bgDark: 'bgDark',
+    fgLight: 'fgLight',
+    fgDark: 'fgDark',
+    cardLight: 'cardLight',
+    cardDark: 'cardDark',
+    cardFgLight: 'cardFgLight',
+    cardFgDark: 'cardFgDark',
+    accentLight: 'accentLight',
+    accentDark: 'accentDark',
     keywords: 'keywords',
     socialTwitter: 'socialTwitter',
     socialInstagram: 'socialInstagram',
@@ -30222,6 +30362,16 @@ export namespace Prisma {
     faviconUrl?: StringNullableFilter<"SiteSettings"> | string | null
     primaryColorLight?: StringNullableFilter<"SiteSettings"> | string | null
     primaryColorDark?: StringNullableFilter<"SiteSettings"> | string | null
+    bgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    bgDark?: StringNullableFilter<"SiteSettings"> | string | null
+    fgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    fgDark?: StringNullableFilter<"SiteSettings"> | string | null
+    cardLight?: StringNullableFilter<"SiteSettings"> | string | null
+    cardDark?: StringNullableFilter<"SiteSettings"> | string | null
+    cardFgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    cardFgDark?: StringNullableFilter<"SiteSettings"> | string | null
+    accentLight?: StringNullableFilter<"SiteSettings"> | string | null
+    accentDark?: StringNullableFilter<"SiteSettings"> | string | null
     keywords?: StringNullableFilter<"SiteSettings"> | string | null
     socialTwitter?: StringNullableFilter<"SiteSettings"> | string | null
     socialInstagram?: StringNullableFilter<"SiteSettings"> | string | null
@@ -30243,6 +30393,16 @@ export namespace Prisma {
     faviconUrl?: SortOrderInput | SortOrder
     primaryColorLight?: SortOrderInput | SortOrder
     primaryColorDark?: SortOrderInput | SortOrder
+    bgLight?: SortOrderInput | SortOrder
+    bgDark?: SortOrderInput | SortOrder
+    fgLight?: SortOrderInput | SortOrder
+    fgDark?: SortOrderInput | SortOrder
+    cardLight?: SortOrderInput | SortOrder
+    cardDark?: SortOrderInput | SortOrder
+    cardFgLight?: SortOrderInput | SortOrder
+    cardFgDark?: SortOrderInput | SortOrder
+    accentLight?: SortOrderInput | SortOrder
+    accentDark?: SortOrderInput | SortOrder
     keywords?: SortOrderInput | SortOrder
     socialTwitter?: SortOrderInput | SortOrder
     socialInstagram?: SortOrderInput | SortOrder
@@ -30267,6 +30427,16 @@ export namespace Prisma {
     faviconUrl?: StringNullableFilter<"SiteSettings"> | string | null
     primaryColorLight?: StringNullableFilter<"SiteSettings"> | string | null
     primaryColorDark?: StringNullableFilter<"SiteSettings"> | string | null
+    bgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    bgDark?: StringNullableFilter<"SiteSettings"> | string | null
+    fgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    fgDark?: StringNullableFilter<"SiteSettings"> | string | null
+    cardLight?: StringNullableFilter<"SiteSettings"> | string | null
+    cardDark?: StringNullableFilter<"SiteSettings"> | string | null
+    cardFgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    cardFgDark?: StringNullableFilter<"SiteSettings"> | string | null
+    accentLight?: StringNullableFilter<"SiteSettings"> | string | null
+    accentDark?: StringNullableFilter<"SiteSettings"> | string | null
     keywords?: StringNullableFilter<"SiteSettings"> | string | null
     socialTwitter?: StringNullableFilter<"SiteSettings"> | string | null
     socialInstagram?: StringNullableFilter<"SiteSettings"> | string | null
@@ -30288,6 +30458,16 @@ export namespace Prisma {
     faviconUrl?: SortOrderInput | SortOrder
     primaryColorLight?: SortOrderInput | SortOrder
     primaryColorDark?: SortOrderInput | SortOrder
+    bgLight?: SortOrderInput | SortOrder
+    bgDark?: SortOrderInput | SortOrder
+    fgLight?: SortOrderInput | SortOrder
+    fgDark?: SortOrderInput | SortOrder
+    cardLight?: SortOrderInput | SortOrder
+    cardDark?: SortOrderInput | SortOrder
+    cardFgLight?: SortOrderInput | SortOrder
+    cardFgDark?: SortOrderInput | SortOrder
+    accentLight?: SortOrderInput | SortOrder
+    accentDark?: SortOrderInput | SortOrder
     keywords?: SortOrderInput | SortOrder
     socialTwitter?: SortOrderInput | SortOrder
     socialInstagram?: SortOrderInput | SortOrder
@@ -30315,6 +30495,16 @@ export namespace Prisma {
     faviconUrl?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     primaryColorLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     primaryColorDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    bgLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    bgDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    fgLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    fgDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    cardLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    cardDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    cardFgLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    cardFgDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    accentLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    accentDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     keywords?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     socialTwitter?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     socialInstagram?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
@@ -32158,6 +32348,16 @@ export namespace Prisma {
     faviconUrl?: string | null
     primaryColorLight?: string | null
     primaryColorDark?: string | null
+    bgLight?: string | null
+    bgDark?: string | null
+    fgLight?: string | null
+    fgDark?: string | null
+    cardLight?: string | null
+    cardDark?: string | null
+    cardFgLight?: string | null
+    cardFgDark?: string | null
+    accentLight?: string | null
+    accentDark?: string | null
     keywords?: string | null
     socialTwitter?: string | null
     socialInstagram?: string | null
@@ -32179,6 +32379,16 @@ export namespace Prisma {
     faviconUrl?: string | null
     primaryColorLight?: string | null
     primaryColorDark?: string | null
+    bgLight?: string | null
+    bgDark?: string | null
+    fgLight?: string | null
+    fgDark?: string | null
+    cardLight?: string | null
+    cardDark?: string | null
+    cardFgLight?: string | null
+    cardFgDark?: string | null
+    accentLight?: string | null
+    accentDark?: string | null
     keywords?: string | null
     socialTwitter?: string | null
     socialInstagram?: string | null
@@ -32200,6 +32410,16 @@ export namespace Prisma {
     faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColorLight?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColorDark?: NullableStringFieldUpdateOperationsInput | string | null
+    bgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    bgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    fgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    fgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    cardLight?: NullableStringFieldUpdateOperationsInput | string | null
+    cardDark?: NullableStringFieldUpdateOperationsInput | string | null
+    cardFgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    cardFgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    accentLight?: NullableStringFieldUpdateOperationsInput | string | null
+    accentDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32221,6 +32441,16 @@ export namespace Prisma {
     faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColorLight?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColorDark?: NullableStringFieldUpdateOperationsInput | string | null
+    bgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    bgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    fgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    fgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    cardLight?: NullableStringFieldUpdateOperationsInput | string | null
+    cardDark?: NullableStringFieldUpdateOperationsInput | string | null
+    cardFgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    cardFgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    accentLight?: NullableStringFieldUpdateOperationsInput | string | null
+    accentDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32242,6 +32472,16 @@ export namespace Prisma {
     faviconUrl?: string | null
     primaryColorLight?: string | null
     primaryColorDark?: string | null
+    bgLight?: string | null
+    bgDark?: string | null
+    fgLight?: string | null
+    fgDark?: string | null
+    cardLight?: string | null
+    cardDark?: string | null
+    cardFgLight?: string | null
+    cardFgDark?: string | null
+    accentLight?: string | null
+    accentDark?: string | null
     keywords?: string | null
     socialTwitter?: string | null
     socialInstagram?: string | null
@@ -32263,6 +32503,16 @@ export namespace Prisma {
     faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColorLight?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColorDark?: NullableStringFieldUpdateOperationsInput | string | null
+    bgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    bgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    fgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    fgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    cardLight?: NullableStringFieldUpdateOperationsInput | string | null
+    cardDark?: NullableStringFieldUpdateOperationsInput | string | null
+    cardFgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    cardFgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    accentLight?: NullableStringFieldUpdateOperationsInput | string | null
+    accentDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32284,6 +32534,16 @@ export namespace Prisma {
     faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColorLight?: NullableStringFieldUpdateOperationsInput | string | null
     primaryColorDark?: NullableStringFieldUpdateOperationsInput | string | null
+    bgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    bgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    fgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    fgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    cardLight?: NullableStringFieldUpdateOperationsInput | string | null
+    cardDark?: NullableStringFieldUpdateOperationsInput | string | null
+    cardFgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    cardFgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    accentLight?: NullableStringFieldUpdateOperationsInput | string | null
+    accentDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33617,6 +33877,16 @@ export namespace Prisma {
     faviconUrl?: SortOrder
     primaryColorLight?: SortOrder
     primaryColorDark?: SortOrder
+    bgLight?: SortOrder
+    bgDark?: SortOrder
+    fgLight?: SortOrder
+    fgDark?: SortOrder
+    cardLight?: SortOrder
+    cardDark?: SortOrder
+    cardFgLight?: SortOrder
+    cardFgDark?: SortOrder
+    accentLight?: SortOrder
+    accentDark?: SortOrder
     keywords?: SortOrder
     socialTwitter?: SortOrder
     socialInstagram?: SortOrder
@@ -33638,6 +33908,16 @@ export namespace Prisma {
     faviconUrl?: SortOrder
     primaryColorLight?: SortOrder
     primaryColorDark?: SortOrder
+    bgLight?: SortOrder
+    bgDark?: SortOrder
+    fgLight?: SortOrder
+    fgDark?: SortOrder
+    cardLight?: SortOrder
+    cardDark?: SortOrder
+    cardFgLight?: SortOrder
+    cardFgDark?: SortOrder
+    accentLight?: SortOrder
+    accentDark?: SortOrder
     keywords?: SortOrder
     socialTwitter?: SortOrder
     socialInstagram?: SortOrder
@@ -33659,6 +33939,16 @@ export namespace Prisma {
     faviconUrl?: SortOrder
     primaryColorLight?: SortOrder
     primaryColorDark?: SortOrder
+    bgLight?: SortOrder
+    bgDark?: SortOrder
+    fgLight?: SortOrder
+    fgDark?: SortOrder
+    cardLight?: SortOrder
+    cardDark?: SortOrder
+    cardFgLight?: SortOrder
+    cardFgDark?: SortOrder
+    accentLight?: SortOrder
+    accentDark?: SortOrder
     keywords?: SortOrder
     socialTwitter?: SortOrder
     socialInstagram?: SortOrder

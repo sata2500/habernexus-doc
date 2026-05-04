@@ -362,6 +362,16 @@ model SiteSettings {
   faviconUrl        String?
   primaryColorLight String?
   primaryColorDark  String?
+  bgLight           String?
+  bgDark            String?
+  fgLight           String?
+  fgDark            String?
+  cardLight         String?
+  cardDark          String?
+  cardFgLight       String?
+  cardFgDark        String?
+  accentLight       String?
+  accentDark        String?
   keywords          String?  @default("haber,gündem,son dakika,analiz,Türkiye,dünya,teknoloji,spor")
   socialTwitter     String?
   socialInstagram   String?
