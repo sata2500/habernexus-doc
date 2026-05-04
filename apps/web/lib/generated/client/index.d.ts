@@ -25874,6 +25874,8 @@ export namespace Prisma {
     logoText: string | null
     logoUrl: string | null
     faviconUrl: string | null
+    primaryColorLight: string | null
+    primaryColorDark: string | null
     keywords: string | null
     socialTwitter: string | null
     socialInstagram: string | null
@@ -25893,6 +25895,8 @@ export namespace Prisma {
     logoText: string | null
     logoUrl: string | null
     faviconUrl: string | null
+    primaryColorLight: string | null
+    primaryColorDark: string | null
     keywords: string | null
     socialTwitter: string | null
     socialInstagram: string | null
@@ -25912,6 +25916,8 @@ export namespace Prisma {
     logoText: number
     logoUrl: number
     faviconUrl: number
+    primaryColorLight: number
+    primaryColorDark: number
     keywords: number
     socialTwitter: number
     socialInstagram: number
@@ -25933,6 +25939,8 @@ export namespace Prisma {
     logoText?: true
     logoUrl?: true
     faviconUrl?: true
+    primaryColorLight?: true
+    primaryColorDark?: true
     keywords?: true
     socialTwitter?: true
     socialInstagram?: true
@@ -25952,6 +25960,8 @@ export namespace Prisma {
     logoText?: true
     logoUrl?: true
     faviconUrl?: true
+    primaryColorLight?: true
+    primaryColorDark?: true
     keywords?: true
     socialTwitter?: true
     socialInstagram?: true
@@ -25971,6 +25981,8 @@ export namespace Prisma {
     logoText?: true
     logoUrl?: true
     faviconUrl?: true
+    primaryColorLight?: true
+    primaryColorDark?: true
     keywords?: true
     socialTwitter?: true
     socialInstagram?: true
@@ -26063,6 +26075,8 @@ export namespace Prisma {
     logoText: string | null
     logoUrl: string | null
     faviconUrl: string | null
+    primaryColorLight: string | null
+    primaryColorDark: string | null
     keywords: string | null
     socialTwitter: string | null
     socialInstagram: string | null
@@ -26099,6 +26113,8 @@ export namespace Prisma {
     logoText?: boolean
     logoUrl?: boolean
     faviconUrl?: boolean
+    primaryColorLight?: boolean
+    primaryColorDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26118,6 +26134,8 @@ export namespace Prisma {
     logoText?: boolean
     logoUrl?: boolean
     faviconUrl?: boolean
+    primaryColorLight?: boolean
+    primaryColorDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26137,6 +26155,8 @@ export namespace Prisma {
     logoText?: boolean
     logoUrl?: boolean
     faviconUrl?: boolean
+    primaryColorLight?: boolean
+    primaryColorDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26156,6 +26176,8 @@ export namespace Prisma {
     logoText?: boolean
     logoUrl?: boolean
     faviconUrl?: boolean
+    primaryColorLight?: boolean
+    primaryColorDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26166,7 +26188,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type SiteSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTagline" | "siteDescription" | "siteUrl" | "logoText" | "logoUrl" | "faviconUrl" | "keywords" | "socialTwitter" | "socialInstagram" | "socialYoutube" | "socialGithub" | "footerCopyright" | "updatedAt" | "createdAt", ExtArgs["result"]["siteSettings"]>
+  export type SiteSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTagline" | "siteDescription" | "siteUrl" | "logoText" | "logoUrl" | "faviconUrl" | "primaryColorLight" | "primaryColorDark" | "keywords" | "socialTwitter" | "socialInstagram" | "socialYoutube" | "socialGithub" | "footerCopyright" | "updatedAt" | "createdAt", ExtArgs["result"]["siteSettings"]>
 
   export type $SiteSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SiteSettings"
@@ -26180,6 +26202,8 @@ export namespace Prisma {
       logoText: string | null
       logoUrl: string | null
       faviconUrl: string | null
+      primaryColorLight: string | null
+      primaryColorDark: string | null
       keywords: string | null
       socialTwitter: string | null
       socialInstagram: string | null
@@ -26619,6 +26643,8 @@ export namespace Prisma {
     readonly logoText: FieldRef<"SiteSettings", 'String'>
     readonly logoUrl: FieldRef<"SiteSettings", 'String'>
     readonly faviconUrl: FieldRef<"SiteSettings", 'String'>
+    readonly primaryColorLight: FieldRef<"SiteSettings", 'String'>
+    readonly primaryColorDark: FieldRef<"SiteSettings", 'String'>
     readonly keywords: FieldRef<"SiteSettings", 'String'>
     readonly socialTwitter: FieldRef<"SiteSettings", 'String'>
     readonly socialInstagram: FieldRef<"SiteSettings", 'String'>
@@ -28429,6 +28455,8 @@ export namespace Prisma {
     logoText: 'logoText',
     logoUrl: 'logoUrl',
     faviconUrl: 'faviconUrl',
+    primaryColorLight: 'primaryColorLight',
+    primaryColorDark: 'primaryColorDark',
     keywords: 'keywords',
     socialTwitter: 'socialTwitter',
     socialInstagram: 'socialInstagram',
@@ -30192,6 +30220,8 @@ export namespace Prisma {
     logoText?: StringNullableFilter<"SiteSettings"> | string | null
     logoUrl?: StringNullableFilter<"SiteSettings"> | string | null
     faviconUrl?: StringNullableFilter<"SiteSettings"> | string | null
+    primaryColorLight?: StringNullableFilter<"SiteSettings"> | string | null
+    primaryColorDark?: StringNullableFilter<"SiteSettings"> | string | null
     keywords?: StringNullableFilter<"SiteSettings"> | string | null
     socialTwitter?: StringNullableFilter<"SiteSettings"> | string | null
     socialInstagram?: StringNullableFilter<"SiteSettings"> | string | null
@@ -30211,6 +30241,8 @@ export namespace Prisma {
     logoText?: SortOrderInput | SortOrder
     logoUrl?: SortOrderInput | SortOrder
     faviconUrl?: SortOrderInput | SortOrder
+    primaryColorLight?: SortOrderInput | SortOrder
+    primaryColorDark?: SortOrderInput | SortOrder
     keywords?: SortOrderInput | SortOrder
     socialTwitter?: SortOrderInput | SortOrder
     socialInstagram?: SortOrderInput | SortOrder
@@ -30233,6 +30265,8 @@ export namespace Prisma {
     logoText?: StringNullableFilter<"SiteSettings"> | string | null
     logoUrl?: StringNullableFilter<"SiteSettings"> | string | null
     faviconUrl?: StringNullableFilter<"SiteSettings"> | string | null
+    primaryColorLight?: StringNullableFilter<"SiteSettings"> | string | null
+    primaryColorDark?: StringNullableFilter<"SiteSettings"> | string | null
     keywords?: StringNullableFilter<"SiteSettings"> | string | null
     socialTwitter?: StringNullableFilter<"SiteSettings"> | string | null
     socialInstagram?: StringNullableFilter<"SiteSettings"> | string | null
@@ -30252,6 +30286,8 @@ export namespace Prisma {
     logoText?: SortOrderInput | SortOrder
     logoUrl?: SortOrderInput | SortOrder
     faviconUrl?: SortOrderInput | SortOrder
+    primaryColorLight?: SortOrderInput | SortOrder
+    primaryColorDark?: SortOrderInput | SortOrder
     keywords?: SortOrderInput | SortOrder
     socialTwitter?: SortOrderInput | SortOrder
     socialInstagram?: SortOrderInput | SortOrder
@@ -30277,6 +30313,8 @@ export namespace Prisma {
     logoText?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     logoUrl?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     faviconUrl?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    primaryColorLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    primaryColorDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     keywords?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     socialTwitter?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     socialInstagram?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
@@ -32118,6 +32156,8 @@ export namespace Prisma {
     logoText?: string | null
     logoUrl?: string | null
     faviconUrl?: string | null
+    primaryColorLight?: string | null
+    primaryColorDark?: string | null
     keywords?: string | null
     socialTwitter?: string | null
     socialInstagram?: string | null
@@ -32137,6 +32177,8 @@ export namespace Prisma {
     logoText?: string | null
     logoUrl?: string | null
     faviconUrl?: string | null
+    primaryColorLight?: string | null
+    primaryColorDark?: string | null
     keywords?: string | null
     socialTwitter?: string | null
     socialInstagram?: string | null
@@ -32156,6 +32198,8 @@ export namespace Prisma {
     logoText?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColorLight?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColorDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32175,6 +32219,8 @@ export namespace Prisma {
     logoText?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColorLight?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColorDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32194,6 +32240,8 @@ export namespace Prisma {
     logoText?: string | null
     logoUrl?: string | null
     faviconUrl?: string | null
+    primaryColorLight?: string | null
+    primaryColorDark?: string | null
     keywords?: string | null
     socialTwitter?: string | null
     socialInstagram?: string | null
@@ -32213,6 +32261,8 @@ export namespace Prisma {
     logoText?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColorLight?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColorDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32232,6 +32282,8 @@ export namespace Prisma {
     logoText?: NullableStringFieldUpdateOperationsInput | string | null
     logoUrl?: NullableStringFieldUpdateOperationsInput | string | null
     faviconUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColorLight?: NullableStringFieldUpdateOperationsInput | string | null
+    primaryColorDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33563,6 +33615,8 @@ export namespace Prisma {
     logoText?: SortOrder
     logoUrl?: SortOrder
     faviconUrl?: SortOrder
+    primaryColorLight?: SortOrder
+    primaryColorDark?: SortOrder
     keywords?: SortOrder
     socialTwitter?: SortOrder
     socialInstagram?: SortOrder
@@ -33582,6 +33636,8 @@ export namespace Prisma {
     logoText?: SortOrder
     logoUrl?: SortOrder
     faviconUrl?: SortOrder
+    primaryColorLight?: SortOrder
+    primaryColorDark?: SortOrder
     keywords?: SortOrder
     socialTwitter?: SortOrder
     socialInstagram?: SortOrder
@@ -33601,6 +33657,8 @@ export namespace Prisma {
     logoText?: SortOrder
     logoUrl?: SortOrder
     faviconUrl?: SortOrder
+    primaryColorLight?: SortOrder
+    primaryColorDark?: SortOrder
     keywords?: SortOrder
     socialTwitter?: SortOrder
     socialInstagram?: SortOrder

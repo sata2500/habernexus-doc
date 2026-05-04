@@ -30,6 +30,8 @@ export const getSiteSettings = cache(async () => {
       logoText: "N",
       logoUrl: null,
       faviconUrl: null,
+      primaryColorLight: "#6366f1", // Default indigo-500
+      primaryColorDark: "#818cf8", // Default indigo-400
       keywords: "haber,gündem,son dakika,analiz,Türkiye,dünya,teknoloji,spor",
       socialTwitter: null,
       socialInstagram: null,

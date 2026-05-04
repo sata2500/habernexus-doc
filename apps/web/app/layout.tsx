@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { DynamicThemeColors } from "@/components/layout/DynamicThemeColors";
 import { WebSiteJsonLd, OrganizationJsonLd } from "@/components/seo/JsonLd";
 import { getSiteSettings } from "@/lib/site-settings";
 import "./globals.css";
@@ -98,6 +99,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col antialiased">
+        <DynamicThemeColors settings={settings} />
         <WebSiteJsonLd settings={settings} />
         <OrganizationJsonLd settings={settings} />
         <ThemeProvider>{children}</ThemeProvider>

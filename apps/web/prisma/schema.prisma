@@ -360,6 +360,8 @@ model SiteSettings {
   logoText         String?  @default("N")
   logoUrl          String?
   faviconUrl       String?
+  primaryColorLight String?
+  primaryColorDark  String?
   keywords         String?  @default("haber,gündem,son dakika,analiz,Türkiye,dünya,teknoloji,spor")
   socialTwitter    String?
   socialInstagram  String?

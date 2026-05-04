@@ -86,11 +86,17 @@ export function Navbar({ categories = [], settings }: { categories?: Category[],
               className="flex items-center gap-2 group"
               id="navbar-logo"
             >
-              <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform">
-                <span className="text-white font-bold text-lg font-(family-name:--font-outfit)">
-                  {logoText}
-                </span>
-              </div>
+              {settings?.logoUrl ? (
+                <div className="h-9 w-9 relative rounded-xl overflow-hidden group-hover:scale-105 transition-transform shrink-0 border border-border/50">
+                  <img src={settings.logoUrl} alt={siteName} className="object-cover w-full h-full" />
+                </div>
+              ) : (
+                <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform shrink-0">
+                  <span className="text-white font-bold text-lg font-(family-name:--font-outfit)">
+                    {logoText}
+                  </span>
+                </div>
+              )}
               <span className="text-xl font-bold font-(family-name:--font-outfit) tracking-tight">
                 <span className="text-gradient">{firstWord}</span>
                 {restWords && <span className="text-foreground"> {restWords}</span>}

@@ -2,8 +2,10 @@
 
 import { useState, useTransition } from "react";
 import { updateSiteSettings, type SiteSettingsInput } from "../actions";
+import { ImageUploader } from "@/components/ui/ImageUploader";
 import {
   Globe,
+  Palette,
   Type,
   Hash,
   Link2,
@@ -27,6 +29,8 @@ interface SiteSettings {
   logoText: string | null;
   logoUrl: string | null;
   faviconUrl: string | null;
+  primaryColorLight: string | null;
+  primaryColorDark: string | null;
   keywords: string | null;
   socialTwitter: string | null;
   socialInstagram: string | null;
@@ -109,6 +113,8 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
     logoText: initialSettings.logoText || "N",
     logoUrl: initialSettings.logoUrl || "",
     faviconUrl: initialSettings.faviconUrl || "",
+    primaryColorLight: initialSettings.primaryColorLight || "#6366f1",
+    primaryColorDark: initialSettings.primaryColorDark || "#818cf8",
     keywords: initialSettings.keywords || "",
     socialTwitter: initialSettings.socialTwitter || "",
     socialInstagram: initialSettings.socialInstagram || "",
@@ -145,9 +151,15 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
       <div className="bg-muted/30 border border-border rounded-2xl p-5 space-y-3">
         <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Canlı Önizleme</p>
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-lg">{logoLetter}</span>
-          </div>
+          {form.logoUrl ? (
+            <div className="h-10 w-10 relative rounded-xl overflow-hidden shadow-lg border border-border flex shrink-0">
+               <img src={form.logoUrl} alt="Logo" className="object-cover w-full h-full" />
+            </div>
+          ) : (
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shrink-0" style={{ backgroundColor: form.primaryColorLight }}>
+              <span className="text-white font-bold text-lg">{logoLetter}</span>
+            </div>
+          )}
           <div>
             <p className="font-bold text-lg leading-none">{previewName}</p>
             {form.siteTagline && (
@@ -304,34 +316,82 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
         </FieldGroup>
       </section>
 
-      {/* Gelişmiş */}
+      {/* Medya ve Marka Görselleri */}
       <section className="space-y-5">
         <h3 className="text-base font-bold font-(family-name:--font-outfit) flex items-center gap-2 border-b border-border pb-3">
-          <Link2 className="h-4 w-4 text-muted-foreground" />
-          Gelişmiş Ayarlar
+          <Palette className="h-4 w-4 text-primary-500" />
+          Medya ve Tema Renkleri
         </h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FieldGroup
-            label="Favicon URL"
+            label="Platform Logosu (Resim)"
             icon={Link2}
-            hint="Boş bırakırsanız /favicon.svg kullanılır"
+            hint="Boş bırakırsanız harfli ikon (text) kullanılır. Vercel Blob ile yüklenir."
           >
-            <TextInput
-              value={form.faviconUrl}
-              onChange={set("faviconUrl")}
-              placeholder="https://cdn.example.com/favicon.ico"
+            <ImageUploader
+              value={form.logoUrl}
+              onChange={set("logoUrl")}
+              type="article"
+              aspectRatio="video"
+              className="mt-2"
             />
           </FieldGroup>
           <FieldGroup
-            label="Logo URL"
+            label="Favicon"
             icon={Link2}
-            hint="SVG/PNG logo URL'si. Boş bırakırsanız harf logo kullanılır"
+            hint="Tarayıcı sekmesinde görünen ikon (Kare). Boş bırakılırsa varsayılan svg kullanılır."
           >
-            <TextInput
-              value={form.logoUrl}
-              onChange={set("logoUrl")}
-              placeholder="https://cdn.example.com/logo.svg"
+            <ImageUploader
+              value={form.faviconUrl}
+              onChange={set("faviconUrl")}
+              type="profile"
+              aspectRatio="square"
+              className="mt-2"
             />
+          </FieldGroup>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
+          <FieldGroup
+            label="Açık Tema Ana Rengi"
+            icon={Palette}
+            hint="Açık temada (Light Mode) vurgular için kullanılacak HEX kodu."
+          >
+            <div className="flex gap-3">
+              <input 
+                type="color" 
+                value={form.primaryColorLight} 
+                onChange={(e) => set("primaryColorLight")(e.target.value)}
+                className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0"
+              />
+              <TextInput
+                value={form.primaryColorLight}
+                onChange={set("primaryColorLight")}
+                placeholder="#6366f1"
+                maxLength={7}
+              />
+            </div>
+          </FieldGroup>
+          <FieldGroup
+            label="Koyu Tema Ana Rengi"
+            icon={Palette}
+            hint="Koyu temada (Dark Mode) vurgular için kullanılacak HEX kodu."
+          >
+            <div className="flex gap-3">
+              <input 
+                type="color" 
+                value={form.primaryColorDark} 
+                onChange={(e) => set("primaryColorDark")(e.target.value)}
+                className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0"
+              />
+              <TextInput
+                value={form.primaryColorDark}
+                onChange={set("primaryColorDark")}
+                placeholder="#818cf8"
+                maxLength={7}
+              />
+            </div>
           </FieldGroup>
         </div>
       </section>

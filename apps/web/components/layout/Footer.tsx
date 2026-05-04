@@ -119,11 +119,17 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
-              <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center">
-                <span className="text-white font-bold text-lg font-(family-name:--font-outfit)">
-                  {logoText}
-                </span>
-              </div>
+              {settings?.logoUrl ? (
+                <div className="h-9 w-9 relative rounded-xl overflow-hidden shrink-0 border border-border/50">
+                  <img src={settings.logoUrl} alt={siteName} className="object-cover w-full h-full" />
+                </div>
+              ) : (
+                <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center shrink-0">
+                  <span className="text-white font-bold text-lg font-(family-name:--font-outfit)">
+                    {logoText}
+                  </span>
+                </div>
+              )}
               <span className="text-xl font-bold font-(family-name:--font-outfit) tracking-tight">
                 <span className="text-gradient">{firstWord}</span>
                 {restWords && <span className="text-foreground"> {restWords}</span>}

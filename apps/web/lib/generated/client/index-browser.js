@@ -368,6 +368,8 @@ exports.Prisma.SiteSettingsScalarFieldEnum = {
   logoText: 'logoText',
   logoUrl: 'logoUrl',
   faviconUrl: 'faviconUrl',
+  primaryColorLight: 'primaryColorLight',
+  primaryColorDark: 'primaryColorDark',
   keywords: 'keywords',
   socialTwitter: 'socialTwitter',
   socialInstagram: 'socialInstagram',

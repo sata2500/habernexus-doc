@@ -22,6 +22,8 @@ export interface SiteSettingsInput {
   logoText: string;
   logoUrl: string;
   faviconUrl: string;
+  primaryColorLight: string;
+  primaryColorDark: string;
   keywords: string;
   socialTwitter: string;
   socialInstagram: string;
@@ -53,6 +55,8 @@ export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
     logoText: data.logoText?.trim()?.charAt(0)?.toUpperCase() || "N",
     logoUrl: data.logoUrl?.trim() || null,
     faviconUrl: data.faviconUrl?.trim() || null,
+    primaryColorLight: data.primaryColorLight?.trim() || null,
+    primaryColorDark: data.primaryColorDark?.trim() || null,
     keywords: data.keywords?.trim() || null,
     socialTwitter: data.socialTwitter?.trim() || null,
     socialInstagram: data.socialInstagram?.trim() || null,
