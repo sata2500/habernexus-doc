@@ -74,7 +74,7 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
       </div>
 
       <div className="p-8 space-y-8">
-        <div className="flex items-center justify-between p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-900">
+        <div className="flex items-center justify-between p-5 bg-[var(--card)] text-[var(--card-fg)] rounded-[1.5rem] border border-border transition-all hover:bg-black/5 dark:hover:bg-white/5">
           <div>
             <p className="font-bold text-sm dark:text-neutral-200 text-neutral-900">Otomatik Yazım Durumu</p>
             <p className="text-xs text-neutral-500 dark:text-neutral-400 font-medium">Aktif edildiğinde sistem belirlenen aralıklarla haber yazar.</p>
@@ -96,7 +96,7 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
             <select
               value={count}
               onChange={(e) => setCount(Number(e.target.value))}
-              className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[1.25rem] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-500/30 transition-all dark:text-neutral-200 text-neutral-800 appearance-none"
+              className="w-full bg-[var(--card)] text-[var(--card-fg)] border border-border rounded-[1.25rem] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-500/30 transition-all appearance-none shadow-sm"
             >
               {[1, 2, 3, 5, 10].map(n => (
                 <option key={n} value={n}>{n} Haber</option>
@@ -111,7 +111,7 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
             <select
               value={cron}
               onChange={(e) => setCron(e.target.value)}
-              className="w-full bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-[1.25rem] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-500/30 transition-all dark:text-neutral-200 text-neutral-800 appearance-none"
+              className="w-full bg-[var(--card)] text-[var(--card-fg)] border border-border rounded-[1.25rem] px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-amber-500/30 transition-all appearance-none shadow-sm"
             >
               <option value="0 * * * *">Her Saat Başı</option>
               <option value="0 */2 * * *">2 Saatte Bir</option>

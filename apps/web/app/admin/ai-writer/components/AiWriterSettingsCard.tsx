@@ -82,11 +82,11 @@ function StylishSelect({
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3.5 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl text-sm font-medium shadow-sm hover:border-primary-500/50 transition-all outline-none text-left"
+        className="w-full flex items-center justify-between px-4 py-3.5 bg-[var(--card)] text-[var(--card-fg)] border border-border rounded-2xl text-sm font-medium shadow-sm hover:border-[var(--color-primary-500)]/50 transition-all outline-none text-left"
       >
         <div className="flex items-center gap-3 overflow-hidden">
           <div className="h-2 w-2 rounded-full bg-primary-500 shrink-0 shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" />
-          <span className="truncate dark:text-neutral-100 text-neutral-900">
+          <span className="truncate">
             {selectedOption ? selectedOption.name : "Model Seçin..."}
           </span>
           <div className="flex items-center gap-1 shrink-0">
@@ -110,7 +110,7 @@ function StylishSelect({
             initial={{ opacity: 0, y: 10, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            className="absolute z-50 w-full mt-2 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 rounded-2xl shadow-2xl overflow-hidden"
+            className="absolute z-50 w-full mt-2 bg-[var(--card)] text-[var(--card-fg)] border border-border rounded-2xl shadow-2xl overflow-hidden"
           >
             <div className="max-h-72 overflow-y-auto custom-scrollbar p-2">
               {options.length > 0 ? (
@@ -121,12 +121,12 @@ function StylishSelect({
                       onChange(opt.id);
                       setIsOpen(false);
                     }}
-                    className={`w-full flex flex-col gap-0.5 px-4 py-3 rounded-xl text-left transition-all hover:bg-neutral-100 dark:hover:bg-neutral-800 group ${
-                      value === opt.id ? "bg-primary-50 dark:bg-primary-500/10" : ""
+                    className={`w-full flex flex-col gap-0.5 px-4 py-3 rounded-xl text-left transition-all hover:bg-black/5 dark:hover:bg-white/5 group ${
+                      value === opt.id ? "bg-[var(--color-primary-500)]/10" : ""
                     }`}
                   >
                     <div className="flex items-center justify-between w-full">
-                      <span className={`text-sm font-bold truncate ${value === opt.id ? "text-primary-600 dark:text-primary-400" : "text-neutral-700 dark:text-neutral-200"}`}>
+                      <span className={`text-sm font-bold truncate ${value === opt.id ? "text-[var(--color-primary-500)]" : "text-[var(--card-fg)]"}`}>
                         {opt.name}
                       </span>
                       {value === opt.id && <Check className="h-4 w-4 text-primary-500" />}
@@ -258,7 +258,7 @@ export function AiWriterSettingsCard({
               <textarea
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
-                className="w-full h-48 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-[1.5rem] px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-primary-500/30 transition-all resize-none dark:text-neutral-200 text-neutral-800 group-hover:border-primary-500/20"
+                className="w-full h-48 bg-[var(--card)] border border-border rounded-[1.5rem] px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/30 transition-all resize-none text-[var(--card-fg)] group-hover:border-[var(--color-primary-500)]/20"
               />
               <div className="absolute bottom-4 right-4 h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 <Info className="h-4 w-4 text-neutral-400" />
@@ -274,7 +274,7 @@ export function AiWriterSettingsCard({
               <textarea
                 value={imagePrompt}
                 onChange={(e) => setImagePrompt(e.target.value)}
-                className="w-full h-48 bg-neutral-50 dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 rounded-[1.5rem] px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-primary-500/30 transition-all resize-none dark:text-neutral-200 text-neutral-800 group-hover:border-primary-500/20"
+                className="w-full h-48 bg-[var(--card)] border border-border rounded-[1.5rem] px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/30 transition-all resize-none text-[var(--card-fg)] group-hover:border-[var(--color-primary-500)]/20"
               />
               <div className="absolute bottom-4 right-4 h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 <Info className="h-4 w-4 text-neutral-400" />
@@ -285,7 +285,7 @@ export function AiWriterSettingsCard({
 
         {/* ── Ek Seçenekler ── */}
         <div className="flex flex-col sm:flex-row items-center gap-4">
-          <div className="flex-1 w-full flex items-center justify-between p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-900">
+          <div className="flex-1 w-full flex items-center justify-between p-5 bg-[var(--card)] text-[var(--card-fg)] rounded-[1.5rem] border border-border transition-all hover:bg-black/5 dark:hover:bg-white/5">
             <div className="flex items-center gap-4">
               <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${useRssImage ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}>
                 <ImageIcon className="h-6 w-6" />
@@ -303,7 +303,7 @@ export function AiWriterSettingsCard({
             </button>
           </div>
           
-          <div className="flex-1 w-full flex items-center justify-between p-5 bg-neutral-50 dark:bg-neutral-900/50 rounded-[1.5rem] border border-neutral-200 dark:border-neutral-800 transition-all hover:bg-neutral-100 dark:hover:bg-neutral-900">
+          <div className="flex-1 w-full flex items-center justify-between p-5 bg-[var(--card)] text-[var(--card-fg)] rounded-[1.5rem] border border-border transition-all hover:bg-black/5 dark:hover:bg-white/5">
              <div className="flex items-center gap-4">
               <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${searchEnabled ? "bg-amber-500/10 text-amber-500" : "bg-neutral-500/10 text-neutral-500"}`}>
                 <Sparkles className="h-6 w-6" />
