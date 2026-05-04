@@ -25886,6 +25886,10 @@ export namespace Prisma {
     cardFgDark: string | null
     accentLight: string | null
     accentDark: string | null
+    sidebarBgLight: string | null
+    sidebarBgDark: string | null
+    sidebarFgLight: string | null
+    sidebarFgDark: string | null
     keywords: string | null
     socialTwitter: string | null
     socialInstagram: string | null
@@ -25917,6 +25921,10 @@ export namespace Prisma {
     cardFgDark: string | null
     accentLight: string | null
     accentDark: string | null
+    sidebarBgLight: string | null
+    sidebarBgDark: string | null
+    sidebarFgLight: string | null
+    sidebarFgDark: string | null
     keywords: string | null
     socialTwitter: string | null
     socialInstagram: string | null
@@ -25948,6 +25956,10 @@ export namespace Prisma {
     cardFgDark: number
     accentLight: number
     accentDark: number
+    sidebarBgLight: number
+    sidebarBgDark: number
+    sidebarFgLight: number
+    sidebarFgDark: number
     keywords: number
     socialTwitter: number
     socialInstagram: number
@@ -25981,6 +25993,10 @@ export namespace Prisma {
     cardFgDark?: true
     accentLight?: true
     accentDark?: true
+    sidebarBgLight?: true
+    sidebarBgDark?: true
+    sidebarFgLight?: true
+    sidebarFgDark?: true
     keywords?: true
     socialTwitter?: true
     socialInstagram?: true
@@ -26012,6 +26028,10 @@ export namespace Prisma {
     cardFgDark?: true
     accentLight?: true
     accentDark?: true
+    sidebarBgLight?: true
+    sidebarBgDark?: true
+    sidebarFgLight?: true
+    sidebarFgDark?: true
     keywords?: true
     socialTwitter?: true
     socialInstagram?: true
@@ -26043,6 +26063,10 @@ export namespace Prisma {
     cardFgDark?: true
     accentLight?: true
     accentDark?: true
+    sidebarBgLight?: true
+    sidebarBgDark?: true
+    sidebarFgLight?: true
+    sidebarFgDark?: true
     keywords?: true
     socialTwitter?: true
     socialInstagram?: true
@@ -26147,6 +26171,10 @@ export namespace Prisma {
     cardFgDark: string | null
     accentLight: string | null
     accentDark: string | null
+    sidebarBgLight: string | null
+    sidebarBgDark: string | null
+    sidebarFgLight: string | null
+    sidebarFgDark: string | null
     keywords: string | null
     socialTwitter: string | null
     socialInstagram: string | null
@@ -26195,6 +26223,10 @@ export namespace Prisma {
     cardFgDark?: boolean
     accentLight?: boolean
     accentDark?: boolean
+    sidebarBgLight?: boolean
+    sidebarBgDark?: boolean
+    sidebarFgLight?: boolean
+    sidebarFgDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26226,6 +26258,10 @@ export namespace Prisma {
     cardFgDark?: boolean
     accentLight?: boolean
     accentDark?: boolean
+    sidebarBgLight?: boolean
+    sidebarBgDark?: boolean
+    sidebarFgLight?: boolean
+    sidebarFgDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26257,6 +26293,10 @@ export namespace Prisma {
     cardFgDark?: boolean
     accentLight?: boolean
     accentDark?: boolean
+    sidebarBgLight?: boolean
+    sidebarBgDark?: boolean
+    sidebarFgLight?: boolean
+    sidebarFgDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26288,6 +26328,10 @@ export namespace Prisma {
     cardFgDark?: boolean
     accentLight?: boolean
     accentDark?: boolean
+    sidebarBgLight?: boolean
+    sidebarBgDark?: boolean
+    sidebarFgLight?: boolean
+    sidebarFgDark?: boolean
     keywords?: boolean
     socialTwitter?: boolean
     socialInstagram?: boolean
@@ -26298,7 +26342,7 @@ export namespace Prisma {
     createdAt?: boolean
   }
 
-  export type SiteSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTagline" | "siteDescription" | "siteUrl" | "logoText" | "logoUrl" | "faviconUrl" | "primaryColorLight" | "primaryColorDark" | "bgLight" | "bgDark" | "fgLight" | "fgDark" | "cardLight" | "cardDark" | "cardFgLight" | "cardFgDark" | "accentLight" | "accentDark" | "keywords" | "socialTwitter" | "socialInstagram" | "socialYoutube" | "socialGithub" | "footerCopyright" | "updatedAt" | "createdAt", ExtArgs["result"]["siteSettings"]>
+  export type SiteSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "siteName" | "siteTagline" | "siteDescription" | "siteUrl" | "logoText" | "logoUrl" | "faviconUrl" | "primaryColorLight" | "primaryColorDark" | "bgLight" | "bgDark" | "fgLight" | "fgDark" | "cardLight" | "cardDark" | "cardFgLight" | "cardFgDark" | "accentLight" | "accentDark" | "sidebarBgLight" | "sidebarBgDark" | "sidebarFgLight" | "sidebarFgDark" | "keywords" | "socialTwitter" | "socialInstagram" | "socialYoutube" | "socialGithub" | "footerCopyright" | "updatedAt" | "createdAt", ExtArgs["result"]["siteSettings"]>
 
   export type $SiteSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SiteSettings"
@@ -26324,6 +26368,10 @@ export namespace Prisma {
       cardFgDark: string | null
       accentLight: string | null
       accentDark: string | null
+      sidebarBgLight: string | null
+      sidebarBgDark: string | null
+      sidebarFgLight: string | null
+      sidebarFgDark: string | null
       keywords: string | null
       socialTwitter: string | null
       socialInstagram: string | null
@@ -26775,6 +26823,10 @@ export namespace Prisma {
     readonly cardFgDark: FieldRef<"SiteSettings", 'String'>
     readonly accentLight: FieldRef<"SiteSettings", 'String'>
     readonly accentDark: FieldRef<"SiteSettings", 'String'>
+    readonly sidebarBgLight: FieldRef<"SiteSettings", 'String'>
+    readonly sidebarBgDark: FieldRef<"SiteSettings", 'String'>
+    readonly sidebarFgLight: FieldRef<"SiteSettings", 'String'>
+    readonly sidebarFgDark: FieldRef<"SiteSettings", 'String'>
     readonly keywords: FieldRef<"SiteSettings", 'String'>
     readonly socialTwitter: FieldRef<"SiteSettings", 'String'>
     readonly socialInstagram: FieldRef<"SiteSettings", 'String'>
@@ -28597,6 +28649,10 @@ export namespace Prisma {
     cardFgDark: 'cardFgDark',
     accentLight: 'accentLight',
     accentDark: 'accentDark',
+    sidebarBgLight: 'sidebarBgLight',
+    sidebarBgDark: 'sidebarBgDark',
+    sidebarFgLight: 'sidebarFgLight',
+    sidebarFgDark: 'sidebarFgDark',
     keywords: 'keywords',
     socialTwitter: 'socialTwitter',
     socialInstagram: 'socialInstagram',
@@ -30372,6 +30428,10 @@ export namespace Prisma {
     cardFgDark?: StringNullableFilter<"SiteSettings"> | string | null
     accentLight?: StringNullableFilter<"SiteSettings"> | string | null
     accentDark?: StringNullableFilter<"SiteSettings"> | string | null
+    sidebarBgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    sidebarBgDark?: StringNullableFilter<"SiteSettings"> | string | null
+    sidebarFgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    sidebarFgDark?: StringNullableFilter<"SiteSettings"> | string | null
     keywords?: StringNullableFilter<"SiteSettings"> | string | null
     socialTwitter?: StringNullableFilter<"SiteSettings"> | string | null
     socialInstagram?: StringNullableFilter<"SiteSettings"> | string | null
@@ -30403,6 +30463,10 @@ export namespace Prisma {
     cardFgDark?: SortOrderInput | SortOrder
     accentLight?: SortOrderInput | SortOrder
     accentDark?: SortOrderInput | SortOrder
+    sidebarBgLight?: SortOrderInput | SortOrder
+    sidebarBgDark?: SortOrderInput | SortOrder
+    sidebarFgLight?: SortOrderInput | SortOrder
+    sidebarFgDark?: SortOrderInput | SortOrder
     keywords?: SortOrderInput | SortOrder
     socialTwitter?: SortOrderInput | SortOrder
     socialInstagram?: SortOrderInput | SortOrder
@@ -30437,6 +30501,10 @@ export namespace Prisma {
     cardFgDark?: StringNullableFilter<"SiteSettings"> | string | null
     accentLight?: StringNullableFilter<"SiteSettings"> | string | null
     accentDark?: StringNullableFilter<"SiteSettings"> | string | null
+    sidebarBgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    sidebarBgDark?: StringNullableFilter<"SiteSettings"> | string | null
+    sidebarFgLight?: StringNullableFilter<"SiteSettings"> | string | null
+    sidebarFgDark?: StringNullableFilter<"SiteSettings"> | string | null
     keywords?: StringNullableFilter<"SiteSettings"> | string | null
     socialTwitter?: StringNullableFilter<"SiteSettings"> | string | null
     socialInstagram?: StringNullableFilter<"SiteSettings"> | string | null
@@ -30468,6 +30536,10 @@ export namespace Prisma {
     cardFgDark?: SortOrderInput | SortOrder
     accentLight?: SortOrderInput | SortOrder
     accentDark?: SortOrderInput | SortOrder
+    sidebarBgLight?: SortOrderInput | SortOrder
+    sidebarBgDark?: SortOrderInput | SortOrder
+    sidebarFgLight?: SortOrderInput | SortOrder
+    sidebarFgDark?: SortOrderInput | SortOrder
     keywords?: SortOrderInput | SortOrder
     socialTwitter?: SortOrderInput | SortOrder
     socialInstagram?: SortOrderInput | SortOrder
@@ -30505,6 +30577,10 @@ export namespace Prisma {
     cardFgDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     accentLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     accentDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    sidebarBgLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    sidebarBgDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    sidebarFgLight?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
+    sidebarFgDark?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     keywords?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     socialTwitter?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
     socialInstagram?: StringNullableWithAggregatesFilter<"SiteSettings"> | string | null
@@ -32358,6 +32434,10 @@ export namespace Prisma {
     cardFgDark?: string | null
     accentLight?: string | null
     accentDark?: string | null
+    sidebarBgLight?: string | null
+    sidebarBgDark?: string | null
+    sidebarFgLight?: string | null
+    sidebarFgDark?: string | null
     keywords?: string | null
     socialTwitter?: string | null
     socialInstagram?: string | null
@@ -32389,6 +32469,10 @@ export namespace Prisma {
     cardFgDark?: string | null
     accentLight?: string | null
     accentDark?: string | null
+    sidebarBgLight?: string | null
+    sidebarBgDark?: string | null
+    sidebarFgLight?: string | null
+    sidebarFgDark?: string | null
     keywords?: string | null
     socialTwitter?: string | null
     socialInstagram?: string | null
@@ -32420,6 +32504,10 @@ export namespace Prisma {
     cardFgDark?: NullableStringFieldUpdateOperationsInput | string | null
     accentLight?: NullableStringFieldUpdateOperationsInput | string | null
     accentDark?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarBgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarBgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarFgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarFgDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32451,6 +32539,10 @@ export namespace Prisma {
     cardFgDark?: NullableStringFieldUpdateOperationsInput | string | null
     accentLight?: NullableStringFieldUpdateOperationsInput | string | null
     accentDark?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarBgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarBgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarFgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarFgDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32482,6 +32574,10 @@ export namespace Prisma {
     cardFgDark?: string | null
     accentLight?: string | null
     accentDark?: string | null
+    sidebarBgLight?: string | null
+    sidebarBgDark?: string | null
+    sidebarFgLight?: string | null
+    sidebarFgDark?: string | null
     keywords?: string | null
     socialTwitter?: string | null
     socialInstagram?: string | null
@@ -32513,6 +32609,10 @@ export namespace Prisma {
     cardFgDark?: NullableStringFieldUpdateOperationsInput | string | null
     accentLight?: NullableStringFieldUpdateOperationsInput | string | null
     accentDark?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarBgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarBgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarFgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarFgDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -32544,6 +32644,10 @@ export namespace Prisma {
     cardFgDark?: NullableStringFieldUpdateOperationsInput | string | null
     accentLight?: NullableStringFieldUpdateOperationsInput | string | null
     accentDark?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarBgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarBgDark?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarFgLight?: NullableStringFieldUpdateOperationsInput | string | null
+    sidebarFgDark?: NullableStringFieldUpdateOperationsInput | string | null
     keywords?: NullableStringFieldUpdateOperationsInput | string | null
     socialTwitter?: NullableStringFieldUpdateOperationsInput | string | null
     socialInstagram?: NullableStringFieldUpdateOperationsInput | string | null
@@ -33887,6 +33991,10 @@ export namespace Prisma {
     cardFgDark?: SortOrder
     accentLight?: SortOrder
     accentDark?: SortOrder
+    sidebarBgLight?: SortOrder
+    sidebarBgDark?: SortOrder
+    sidebarFgLight?: SortOrder
+    sidebarFgDark?: SortOrder
     keywords?: SortOrder
     socialTwitter?: SortOrder
     socialInstagram?: SortOrder
@@ -33918,6 +34026,10 @@ export namespace Prisma {
     cardFgDark?: SortOrder
     accentLight?: SortOrder
     accentDark?: SortOrder
+    sidebarBgLight?: SortOrder
+    sidebarBgDark?: SortOrder
+    sidebarFgLight?: SortOrder
+    sidebarFgDark?: SortOrder
     keywords?: SortOrder
     socialTwitter?: SortOrder
     socialInstagram?: SortOrder
@@ -33949,6 +34061,10 @@ export namespace Prisma {
     cardFgDark?: SortOrder
     accentLight?: SortOrder
     accentDark?: SortOrder
+    sidebarBgLight?: SortOrder
+    sidebarBgDark?: SortOrder
+    sidebarFgLight?: SortOrder
+    sidebarFgDark?: SortOrder
     keywords?: SortOrder
     socialTwitter?: SortOrder
     socialInstagram?: SortOrder

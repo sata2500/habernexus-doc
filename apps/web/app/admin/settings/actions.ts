@@ -34,6 +34,10 @@ export interface SiteSettingsInput {
   cardFgDark: string;
   accentLight: string;
   accentDark: string;
+  sidebarBgLight: string;
+  sidebarBgDark: string;
+  sidebarFgLight: string;
+  sidebarFgDark: string;
   keywords: string;
   socialTwitter: string;
   socialInstagram: string;
@@ -77,6 +81,10 @@ export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
     cardFgDark: data.cardFgDark?.trim() || null,
     accentLight: data.accentLight?.trim() || null,
     accentDark: data.accentDark?.trim() || null,
+    sidebarBgLight: data.sidebarBgLight?.trim() || null,
+    sidebarBgDark: data.sidebarBgDark?.trim() || null,
+    sidebarFgLight: data.sidebarFgLight?.trim() || null,
+    sidebarFgDark: data.sidebarFgDark?.trim() || null,
     keywords: data.keywords?.trim() || null,
     socialTwitter: data.socialTwitter?.trim() || null,
     socialInstagram: data.socialInstagram?.trim() || null,

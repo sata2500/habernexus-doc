@@ -41,6 +41,10 @@ interface SiteSettings {
   cardFgDark: string | null;
   accentLight: string | null;
   accentDark: string | null;
+  sidebarBgLight: string | null;
+  sidebarBgDark: string | null;
+  sidebarFgLight: string | null;
+  sidebarFgDark: string | null;
   keywords: string | null;
   socialTwitter: string | null;
   socialInstagram: string | null;
@@ -135,6 +139,10 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
     cardFgDark: initialSettings.cardFgDark || "#e8ecf4",
     accentLight: initialSettings.accentLight || "#ea580c",
     accentDark: initialSettings.accentDark || "#f97316",
+    sidebarBgLight: initialSettings.sidebarBgLight || "#ffffff",
+    sidebarBgDark: initialSettings.sidebarBgDark || "#0a0a0a",
+    sidebarFgLight: initialSettings.sidebarFgLight || "#0f172a",
+    sidebarFgDark: initialSettings.sidebarFgDark || "#ffffff",
     keywords: initialSettings.keywords || "",
     socialTwitter: initialSettings.socialTwitter || "",
     socialInstagram: initialSettings.socialInstagram || "",
@@ -416,6 +424,18 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
                 <TextInput value={form.cardFgLight} onChange={set("cardFgLight")} placeholder="#0f172a" maxLength={7} />
               </div>
             </FieldGroup>
+            <FieldGroup label="Sol Menü/Sidebar Arka Planı" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.sidebarBgLight} onChange={(e) => set("sidebarBgLight")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.sidebarBgLight} onChange={set("sidebarBgLight")} placeholder="#ffffff" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Sol Menü/Sidebar Metin Rengi" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.sidebarFgLight} onChange={(e) => set("sidebarFgLight")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.sidebarFgLight} onChange={set("sidebarFgLight")} placeholder="#0f172a" maxLength={7} />
+              </div>
+            </FieldGroup>
           </div>
 
           {/* Koyu Tema Grubu */}
@@ -459,6 +479,18 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
               <div className="flex gap-3">
                 <input type="color" value={form.cardFgDark} onChange={(e) => set("cardFgDark")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
                 <TextInput value={form.cardFgDark} onChange={set("cardFgDark")} placeholder="#e8ecf4" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Sol Menü/Sidebar Arka Planı" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.sidebarBgDark} onChange={(e) => set("sidebarBgDark")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.sidebarBgDark} onChange={set("sidebarBgDark")} placeholder="#0a0a0a" maxLength={7} />
+              </div>
+            </FieldGroup>
+            <FieldGroup label="Sol Menü/Sidebar Metin Rengi" icon={Palette}>
+              <div className="flex gap-3">
+                <input type="color" value={form.sidebarFgDark} onChange={(e) => set("sidebarFgDark")(e.target.value)} className="h-11 w-16 rounded-xl border border-border cursor-pointer bg-card p-1 shrink-0" />
+                <TextInput value={form.sidebarFgDark} onChange={set("sidebarFgDark")} placeholder="#ffffff" maxLength={7} />
               </div>
             </FieldGroup>
           </div>

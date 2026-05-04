@@ -372,6 +372,10 @@ model SiteSettings {
   cardFgDark        String?
   accentLight       String?
   accentDark        String?
+  sidebarBgLight    String?
+  sidebarBgDark     String?
+  sidebarFgLight    String?
+  sidebarFgDark     String?
   keywords          String?  @default("haber,gündem,son dakika,analiz,Türkiye,dünya,teknoloji,spor")
   socialTwitter     String?
   socialInstagram   String?

@@ -35,14 +35,14 @@ export default async function AuthorLayout({ children }: { children: React.React
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex flex-col md:flex-row gap-8">
       {/* ── Yazar Sol Navigasyonu ────────────────────────── */}
       <aside className="w-full md:w-64 shrink-0">
-        <div className="bg-neutral-900 dark:bg-neutral-950 text-white rounded-2xl p-5 border border-neutral-800 shadow-soft sticky top-24">
+        <div className="rounded-2xl p-5 border border-border shadow-soft sticky top-24 transition-colors duration-300" style={{ backgroundColor: "var(--sidebar-bg)", color: "var(--sidebar-fg)" }}>
           <div className="flex items-center gap-3 mb-8 px-2">
             <div className="h-10 w-10 rounded-xl bg-primary-500/20 border border-primary-500/30 flex items-center justify-center">
               <PenTool className="h-5 w-5 text-primary-400" />
             </div>
             <div>
               <h2 className="font-bold font-(family-name:--font-outfit) leading-none">Yazar Masası</h2>
-              <span className="text-xs text-neutral-400 capitalize">{(session.user.role ?? "author").toLowerCase()}</span>
+              <span className="text-xs opacity-70 capitalize">{(session.user.role ?? "author").toLowerCase()}</span>
             </div>
           </div>
           
@@ -53,7 +53,7 @@ export default async function AuthorLayout({ children }: { children: React.React
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-neutral-400 hover:bg-neutral-800 hover:text-white transition-all"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium opacity-80 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all"
                 >
                   <Icon className="h-4 w-4" />
                   {item.name}
@@ -62,16 +62,16 @@ export default async function AuthorLayout({ children }: { children: React.React
             })}
           </nav>
 
-          <div className="mt-8 pt-6 border-t border-neutral-800 px-2 space-y-2">
+          <div className="mt-8 pt-6 border-t border-border/20 px-2 space-y-2">
             <Link
               href="/"
-              className="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors cursor-pointer"
+              className="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium opacity-80 hover:opacity-100 transition-colors cursor-pointer"
             >
                <Home className="h-4 w-4" /> Ana Sayfaya Dön
             </Link>
             <Link
               href="/dashboard/profile"
-              className="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium text-neutral-400 hover:text-white transition-colors cursor-pointer group"
+              className="flex items-center gap-3 w-full px-2 py-2 text-sm font-medium opacity-80 hover:opacity-100 transition-colors cursor-pointer group"
             >
                <UserCircle className="h-4 w-4 group-hover:scale-110 transition-transform" /> Profil Ayarlarına Dön
             </Link>

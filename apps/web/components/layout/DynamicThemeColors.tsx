@@ -10,6 +10,8 @@ export function DynamicThemeColors({ settings }: { settings: Partial<SiteSetting
   const cardL = settings.cardLight;
   const cardFgL = settings.cardFgLight;
   const accentL = settings.accentLight;
+  const sidebarBgL = settings.sidebarBgLight;
+  const sidebarFgL = settings.sidebarFgLight;
 
   // Koyu Tema Renkleri
   const primaryD = settings.primaryColorDark;
@@ -18,6 +20,8 @@ export function DynamicThemeColors({ settings }: { settings: Partial<SiteSetting
   const cardD = settings.cardDark;
   const cardFgD = settings.cardFgDark;
   const accentD = settings.accentDark;
+  const sidebarBgD = settings.sidebarBgDark;
+  const sidebarFgD = settings.sidebarFgDark;
 
   const cssString = `
     :root {
@@ -37,6 +41,8 @@ export function DynamicThemeColors({ settings }: { settings: Partial<SiteSetting
       ${cardL ? `--card: ${cardL} !important;
       --surface: ${cardL} !important;` : ""}
       ${cardFgL ? `--card-fg: ${cardFgL} !important;` : ""}
+      ${sidebarBgL ? `--sidebar-bg: ${sidebarBgL} !important;` : ""}
+      ${sidebarFgL ? `--sidebar-fg: ${sidebarFgL} !important;` : ""}
     }
     
     [data-theme="dark"] {
@@ -56,6 +62,8 @@ export function DynamicThemeColors({ settings }: { settings: Partial<SiteSetting
       ${cardD ? `--card: ${cardD} !important;
       --surface: ${cardD} !important;` : ""}
       ${cardFgD ? `--card-fg: ${cardFgD} !important;` : ""}
+      ${sidebarBgD ? `--sidebar-bg: ${sidebarBgD} !important;` : ""}
+      ${sidebarFgD ? `--sidebar-fg: ${sidebarFgD} !important;` : ""}
     }
 
     @media (prefers-color-scheme: dark) {
@@ -76,6 +84,8 @@ export function DynamicThemeColors({ settings }: { settings: Partial<SiteSetting
         ${cardD ? `--card: ${cardD} !important;
         --surface: ${cardD} !important;` : ""}
         ${cardFgD ? `--card-fg: ${cardFgD} !important;` : ""}
+        ${sidebarBgD ? `--sidebar-bg: ${sidebarBgD} !important;` : ""}
+        ${sidebarFgD ? `--sidebar-fg: ${sidebarFgD} !important;` : ""}
       }
     }
   `;

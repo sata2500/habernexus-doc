@@ -40,8 +40,12 @@ export const getSiteSettings = cache(async () => {
       cardDark: "#111827",
       cardFgLight: "#0f172a",
       cardFgDark: "#e8ecf4",
-      accentLight: "#ea580c", // Yaklaşık olarak oklch(0.65 0.22 30) (Warm vibrant)
-      accentDark: "#f97316", // Yaklaşık
+      accentLight: "#ea580c",
+      accentDark: "#f97316",
+      sidebarBgLight: "#ffffff",
+      sidebarBgDark: "#0a0a0a",
+      sidebarFgLight: "#0f172a",
+      sidebarFgDark: "#ffffff",
       keywords: "haber,gündem,son dakika,analiz,Türkiye,dünya,teknoloji,spor",
       socialTwitter: null,
       socialInstagram: null,
