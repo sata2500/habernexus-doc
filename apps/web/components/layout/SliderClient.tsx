@@ -12,13 +12,19 @@ interface SliderClientProps {
   interval?: number;
   autoPlay?: boolean;
   height?: string;
+  mobileHeight?: string;
+  titleSize?: string;
+  descriptionSize?: string;
 }
 
 export function SliderClient({ 
   slides, 
   interval = 5000, 
   autoPlay = true,
-  height = "500px" 
+  height = "500px",
+  mobileHeight = "300px",
+  titleSize = "2.5rem",
+  descriptionSize = "1rem"
 }: SliderClientProps) {
   const [current, setCurrent] = useState(0);
   const [itemsToShow, setItemsToShow] = useState(1);
@@ -68,8 +74,10 @@ export function SliderClient({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black"
-      style={{ height }}
+      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black transition-all duration-500"
+      style={{ 
+        height: typeof window !== 'undefined' && window.innerWidth < 768 ? mobileHeight : height 
+      } as any}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -119,40 +127,48 @@ export function SliderClient({
                   src={slide.imageUrl}
                   alt={slide.title || ""}
                   fill
-                  className="object-contain p-4 md:p-8"
+                  className="object-contain p-2 md:p-6"
                   priority={index < itemsToShow}
                 />
               </div>
 
-              {/* Gradient Overlay */}
-              <div className="absolute inset-0 z-20 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+              {/* Gradient Overlay (Localized to bottom of the contained image area) */}
+              <div className="absolute inset-0 z-20 bg-linear-to-t from-black/70 via-transparent to-transparent" />
 
-              {/* Content */}
-              <div className="absolute inset-0 z-30 flex items-end pb-8 md:pb-12 px-6 md:px-8">
+              {/* Content - Positioned to stay within image safe area */}
+              <div className="absolute inset-0 z-30 flex items-end justify-center pb-6 md:pb-10 px-4">
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="max-w-full space-y-2 md:space-y-4"
+                  className="w-full max-w-[90%] md:max-w-[80%] space-y-1 md:space-y-3 text-center"
                 >
                   {slide.title && (
-                    <h2 className="text-xl md:text-2xl lg:text-3xl font-bold text-white font-(family-name:--font-outfit) leading-tight drop-shadow-lg line-clamp-2">
-                      {slide.title}
+                    <h2 
+                      className="font-bold text-white font-(family-name:--font-outfit) leading-tight drop-shadow-xl line-clamp-2"
+                      style={{ fontSize: `calc(${titleSize} * 0.7)` }} // Responsive scale
+                    >
+                      <span className="md:hidden" style={{ fontSize: '1.25rem' }}>{slide.title}</span>
+                      <span className="hidden md:inline" style={{ fontSize: titleSize }}>{slide.title}</span>
                     </h2>
                   )}
                   {slide.description && itemsToShow === 1 && (
-                    <p className="text-white/80 text-sm md:text-base line-clamp-2 max-w-xl font-medium leading-relaxed drop-shadow-md">
-                      {slide.description}
+                    <p 
+                      className="text-white/90 line-clamp-2 font-medium leading-relaxed drop-shadow-md mx-auto"
+                      style={{ fontSize: `calc(${descriptionSize} * 0.8)` }}
+                    >
+                      <span className="md:hidden" style={{ fontSize: '0.875rem' }}>{slide.description}</span>
+                      <span className="hidden md:inline" style={{ fontSize: descriptionSize }}>{slide.description}</span>
                     </p>
                   )}
                   
                   {slide.link && (
-                    <div className="pt-2">
+                    <div className="pt-2 md:pt-4">
                       <Link 
                         href={slide.link!}
-                        className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold text-xs md:text-sm hover:bg-white hover:text-black transition-all shadow-xl group/btn"
+                        className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold text-[10px] md:text-sm hover:bg-white hover:text-black transition-all shadow-xl group/btn"
                       >
-                        Detaylar
+                        İncele
                         <ArrowRight className="h-3 w-3 md:h-4 md:w-4 group-hover/btn:translate-x-1 transition-transform" />
                       </Link>
                     </div>
@@ -168,27 +184,27 @@ export function SliderClient({
       {slides.length > itemsToShow && (
         <>
           {/* Arrows */}
-          <div className="absolute inset-y-0 left-4 flex items-center z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-y-0 left-2 md:left-4 flex items-center z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button 
               onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-              className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white flex items-center justify-center hover:bg-primary-500 transition-all shadow-2xl"
+              className="h-8 w-8 md:h-12 md:w-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white flex items-center justify-center hover:bg-primary-500 transition-all shadow-2xl"
               aria-label="Önceki"
             >
-              <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
+              <ChevronLeft className="h-4 w-4 md:h-6 md:w-6" />
             </button>
           </div>
-          <div className="absolute inset-y-0 right-4 flex items-center z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute inset-y-0 right-2 md:right-4 flex items-center z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button 
               onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-              className="h-10 w-10 md:h-12 md:w-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white flex items-center justify-center hover:bg-primary-500 transition-all shadow-2xl"
+              className="h-8 w-8 md:h-12 md:w-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white flex items-center justify-center hover:bg-primary-500 transition-all shadow-2xl"
               aria-label="Sonraki"
             >
-              <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
+              <ChevronRight className="h-4 w-4 md:h-6 md:w-6" />
             </button>
           </div>
 
           {/* Dots & Progress */}
-          <div className="absolute bottom-4 md:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-40">
+          <div className="absolute bottom-2 md:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-40">
             {Array.from({ length: totalPages }).map((_, idx) => (
               <button
                 key={idx}

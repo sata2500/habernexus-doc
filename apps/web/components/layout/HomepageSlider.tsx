@@ -20,6 +20,9 @@ export async function HomepageSlider() {
         interval={slider.interval}
         autoPlay={slider.autoPlay}
         height={slider.height || "500px"}
+        mobileHeight={(slider as any).mobileHeight || "300px"}
+        titleSize={(slider as any).titleSize || "2.5rem"}
+        descriptionSize={(slider as any).descriptionSize || "1rem"}
       />
     </section>
   );

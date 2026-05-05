@@ -416,9 +416,12 @@ model Slider {
   id        String   @id @default("homepage") // Use "homepage" as default ID for the main slider
   name      String   @unique
   autoPlay  Boolean  @default(true)
-  interval  Int      @default(5000)
-  height    String?  @default("500px")
-  isActive  Boolean  @default(true)
+  interval      Int      @default(5000)
+  height        String?  @default("500px")
+  mobileHeight  String?  @default("300px")
+  titleSize     String?  @default("2rem")
+  descriptionSize String? @default("1rem")
+  isActive      Boolean  @default(true)
   slides    Slide[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

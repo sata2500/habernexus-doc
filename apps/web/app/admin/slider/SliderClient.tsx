@@ -151,7 +151,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Yükseklik (Masaüstü)</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Masaüstü Yükseklik</label>
             <div className="relative">
               <Layout className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input 
@@ -159,19 +159,55 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 value={slider.height || ""} 
                 onChange={(e) => setSlider({...slider, height: e.target.value})}
                 className="w-full h-11 pl-11 pr-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                placeholder="Örn: 500px veya 60vh"
+                placeholder="500px"
               />
             </div>
           </div>
 
-          <div className="flex items-end">
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Mobil Yükseklik</label>
+            <div className="relative">
+              <Layout className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input 
+                type="text" 
+                value={(slider as any).mobileHeight || ""} 
+                onChange={(e) => setSlider({...slider, mobileHeight: e.target.value} as any)}
+                className="w-full h-11 pl-11 pr-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                placeholder="300px"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Başlık Boyutu</label>
+            <input 
+              type="text" 
+              value={(slider as any).titleSize || ""} 
+              onChange={(e) => setSlider({...slider, titleSize: e.target.value} as any)}
+              className="w-full h-11 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+              placeholder="2.5rem"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Açıklama Boyutu</label>
+            <input 
+              type="text" 
+              value={(slider as any).descriptionSize || ""} 
+              onChange={(e) => setSlider({...slider, descriptionSize: e.target.value} as any)}
+              className="w-full h-11 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+              placeholder="1rem"
+            />
+          </div>
+
+          <div className="flex items-end lg:col-span-1">
             <Button 
               onClick={handleSliderUpdate} 
               disabled={loading}
               className="w-full h-11 rounded-xl gap-2 shadow-lg shadow-primary-500/20"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {success ? "Güncellendi" : "Ayarları Kaydet"}
+              {success ? "Güncellendi" : "Kaydet"}
             </Button>
           </div>
         </div>
