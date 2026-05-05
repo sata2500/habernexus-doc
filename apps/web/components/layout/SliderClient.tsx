@@ -59,7 +59,7 @@ export function SliderClient({
       scale: 1,
       transition: {
         duration: 0.8,
-        ease: [0.16, 1, 0.3, 1], // Custom cubic-bezier for "premium" feel
+        ease: [0.16, 1, 0.3, 1] as any, // Custom cubic-bezier for "premium" feel
       },
     },
     exit: (direction: number) => ({
@@ -69,7 +69,7 @@ export function SliderClient({
       scale: 0.9,
       transition: {
         duration: 0.8,
-        ease: [0.16, 1, 0.3, 1],
+        ease: [0.16, 1, 0.3, 1] as any,
       },
     }),
   };
@@ -83,10 +83,10 @@ export function SliderClient({
       transition: { 
         delay: 0.4, 
         duration: 0.6,
-        ease: "easeOut"
+        ease: "easeOut" as any
       } 
     },
-    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } as any }
   };
 
   return (
@@ -200,7 +200,7 @@ export function SliderClient({
                     animate={{ width: isHovering ? "100%" : "100%" }}
                     transition={{ 
                       duration: interval / 1000, 
-                      ease: "linear",
+                      ease: "linear" as any,
                       repeat: Infinity 
                     }}
                     className="absolute inset-0 bg-primary-500"

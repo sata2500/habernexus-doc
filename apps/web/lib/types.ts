@@ -2,7 +2,9 @@ import {
   StaticPage,
   Category, 
   Article, 
-  Comment 
+  Comment,
+  Slider,
+  Slide
 } from "./generated/client";
 
 /**
@@ -75,6 +77,6 @@ export type ActionResponse<T = any> = {
   data?: T;
 };
 
-export interface SliderWithSlides extends import("./generated/client").Slider {
-  slides: import("./generated/client").Slide[];
+export interface SliderWithSlides extends Slider {
+  slides: Slide[];
 }

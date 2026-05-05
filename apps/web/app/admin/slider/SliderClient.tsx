@@ -34,7 +34,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
   const handleSliderUpdate = async () => {
     setLoading(true);
     try {
-      const result = await updateSlider(slider.id, {
+      const result = await updateSlider((slider as any).id, {
         name: slider.name,
         autoPlay: slider.autoPlay,
         interval: slider.interval,
@@ -59,7 +59,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
     try {
       const result = await upsertSlide({
         ...editingSlide,
-        sliderId: slider.id,
+        sliderId: (slider as any).id,
       } as any);
 
       if (result.success && result.slide) {
@@ -281,6 +281,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                       value={editingSlide.imageUrl || ""} 
                       onChange={(url) => setEditingSlide({...editingSlide, imageUrl: url})}
                       type="article"
+                      autoOptimize={true}
                     />
                   </div>
 
