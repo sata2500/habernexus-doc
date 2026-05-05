@@ -12,19 +12,13 @@ interface SliderClientProps {
   interval?: number;
   autoPlay?: boolean;
   height?: string;
-  mobileHeight?: string;
-  titleSize?: string;
-  descriptionSize?: string;
 }
 
 export function SliderClient({ 
   slides, 
   interval = 5000, 
   autoPlay = true,
-  height = "500px",
-  mobileHeight = "300px",
-  titleSize = "2.5rem",
-  descriptionSize = "1rem"
+  height = "500px"
 }: SliderClientProps) {
   const [current, setCurrent] = useState(0);
   const [itemsToShow, setItemsToShow] = useState(1);
@@ -75,9 +69,7 @@ export function SliderClient({
     <div 
       ref={containerRef}
       className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black transition-all duration-500"
-      style={{ 
-        height: typeof window !== 'undefined' && window.innerWidth < 768 ? mobileHeight : height 
-      } as any}
+      style={{ height } as any}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -132,33 +124,25 @@ export function SliderClient({
                 />
               </div>
 
-              {/* Gradient Overlay (Localized to bottom of the contained image area) */}
+              {/* Gradient Overlay */}
               <div className="absolute inset-0 z-20 bg-linear-to-t from-black/70 via-transparent to-transparent" />
 
-              {/* Content - Positioned to stay within image safe area */}
-              <div className="absolute inset-0 z-30 flex items-end justify-center pb-6 md:pb-10 px-4">
+              {/* Content */}
+              <div className="absolute inset-0 z-30 flex items-end justify-center pb-8 md:pb-12 px-6 md:px-8">
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="w-full max-w-[90%] md:max-w-[80%] space-y-1 md:space-y-3 text-center"
+                  className="w-full max-w-[90%] md:max-w-[80%] space-y-2 md:space-y-4 text-center"
                 >
                   {slide.title && (
-                    <h2 
-                      className="font-bold text-white font-(family-name:--font-outfit) leading-tight drop-shadow-xl line-clamp-2"
-                      style={{ fontSize: `calc(${titleSize} * 0.7)` }} // Responsive scale
-                    >
-                      <span className="md:hidden" style={{ fontSize: '1.25rem' }}>{slide.title}</span>
-                      <span className="hidden md:inline" style={{ fontSize: titleSize }}>{slide.title}</span>
+                    <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white font-(family-name:--font-outfit) leading-tight drop-shadow-xl line-clamp-2">
+                      {slide.title}
                     </h2>
                   )}
                   {slide.description && itemsToShow === 1 && (
-                    <p 
-                      className="text-white/90 line-clamp-2 font-medium leading-relaxed drop-shadow-md mx-auto"
-                      style={{ fontSize: `calc(${descriptionSize} * 0.8)` }}
-                    >
-                      <span className="md:hidden" style={{ fontSize: '0.875rem' }}>{slide.description}</span>
-                      <span className="hidden md:inline" style={{ fontSize: descriptionSize }}>{slide.description}</span>
+                    <p className="text-white/90 text-sm md:text-lg line-clamp-2 font-medium leading-relaxed drop-shadow-md mx-auto max-w-2xl">
+                      {slide.description}
                     </p>
                   )}
                   
@@ -166,7 +150,7 @@ export function SliderClient({
                     <div className="pt-2 md:pt-4">
                       <Link 
                         href={slide.link!}
-                        className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold text-[10px] md:text-sm hover:bg-white hover:text-black transition-all shadow-xl group/btn"
+                        className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold text-xs md:text-sm hover:bg-white hover:text-black transition-all shadow-xl group/btn"
                       >
                         İncele
                         <ArrowRight className="h-3 w-3 md:h-4 md:w-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -204,7 +188,7 @@ export function SliderClient({
           </div>
 
           {/* Dots & Progress */}
-          <div className="absolute bottom-2 md:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2 z-40">
+          <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-40">
             {Array.from({ length: totalPages }).map((_, idx) => (
               <button
                 key={idx}

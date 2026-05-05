@@ -417,9 +417,6 @@ exports.Prisma.SliderScalarFieldEnum = {
   autoPlay: 'autoPlay',
   interval: 'interval',
   height: 'height',
-  mobileHeight: 'mobileHeight',
-  titleSize: 'titleSize',
-  descriptionSize: 'descriptionSize',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
