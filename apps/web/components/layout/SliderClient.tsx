@@ -97,12 +97,17 @@ export function SliderClient({
           mass: 1
         }}
         drag="x"
-        dragConstraints={{ left: 0, right: 0 }}
+        dragConstraints={{ left: -10000, right: 10000 }} // Büyük bir alan veriyoruz ki sürükleme doğal olsun
+        dragElastic={0.2}
+        onDragStart={() => setIsDragging(true)}
         onDragEnd={(_, info) => {
-          const swipeThreshold = 50;
-          if (info.offset.x > swipeThreshold) {
+          setIsDragging(false);
+          const velocityThreshold = 500;
+          const distanceThreshold = 100;
+          
+          if (info.velocity.x > velocityThreshold || info.offset.x > distanceThreshold) {
             prevSlide();
-          } else if (info.offset.x < -swipeThreshold) {
+          } else if (info.velocity.x < -velocityThreshold || info.offset.x < -distanceThreshold) {
             nextSlide();
           }
         }}
