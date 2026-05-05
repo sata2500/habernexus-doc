@@ -12,13 +12,15 @@ interface SliderClientProps {
   interval?: number;
   autoPlay?: boolean;
   height?: string;
+  mobileHeight?: string;
 }
 
 export function SliderClient({ 
   slides, 
   interval = 5000, 
   autoPlay = true,
-  height = "500px"
+  height = "500px",
+  mobileHeight = "300px"
 }: SliderClientProps) {
   const [current, setCurrent] = useState(0);
   const [itemsToShow, setItemsToShow] = useState(1);
@@ -68,11 +70,20 @@ export function SliderClient({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black transition-all duration-500"
-      style={{ height } as any}
+      className="slider-container relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black transition-all duration-500"
+      style={{ 
+        '--desktop-h': height,
+        '--mobile-h': mobileHeight 
+      } as any}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
+      {/* Inline style for dynamic height support across breakpoints */}
+      <style jsx>{`
+        .slider-container { height: ${mobileHeight}; }
+        @media (min-width: 768px) { .slider-container { height: ${height}; } }
+      `}</style>
+      
       <motion.div
         animate={{ x: `-${current * (100 / slides.length)}%` }}
         transition={{ 
@@ -93,16 +104,16 @@ export function SliderClient({
             nextSlide();
           }
         }}
-        className="flex h-full cursor-grab active:cursor-grabbing touch-pan-y"
+        className="flex h-full cursor-grab active:cursor-grabbing touch-pan-y justify-start items-stretch"
         style={{ width: `${(slides.length / itemsToShow) * 100}%` }}
       >
         {slides.map((slide, index) => (
           <div 
             key={slide.id} 
-            className="relative h-full px-1 md:px-2"
+            className="relative h-full px-1 md:px-2 flex-shrink-0"
             style={{ width: `${100 / slides.length}%` }}
           >
-            <div className="relative w-full h-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide">
+            <div className="relative w-full h-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide bg-zinc-900/50">
               {/* Background Blur Effect (Premium Look) */}
               <div className="absolute inset-0 z-0">
                 <Image
@@ -133,7 +144,7 @@ export function SliderClient({
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="w-full max-w-[90%] md:max-w-[80%] space-y-2 md:space-y-4 text-center"
+                  className="w-full max-w-[90%] md:max-w-[85%] space-y-2 md:space-y-4 text-center"
                 >
                   {slide.title && (
                     <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white font-(family-name:--font-outfit) leading-tight drop-shadow-xl line-clamp-2">

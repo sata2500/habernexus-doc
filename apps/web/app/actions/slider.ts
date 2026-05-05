@@ -11,6 +11,7 @@ const SliderSchema = z.object({
   autoPlay: z.boolean().default(true),
   interval: z.number().min(1000).default(5000),
   height: z.string().optional(),
+  mobileHeight: z.string().optional(),
   isActive: z.boolean().default(true),
 });
 

@@ -28554,6 +28554,7 @@ export namespace Prisma {
     autoPlay: boolean | null
     interval: number | null
     height: string | null
+    mobileHeight: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -28565,6 +28566,7 @@ export namespace Prisma {
     autoPlay: boolean | null
     interval: number | null
     height: string | null
+    mobileHeight: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -28576,6 +28578,7 @@ export namespace Prisma {
     autoPlay: number
     interval: number
     height: number
+    mobileHeight: number
     isActive: number
     createdAt: number
     updatedAt: number
@@ -28597,6 +28600,7 @@ export namespace Prisma {
     autoPlay?: true
     interval?: true
     height?: true
+    mobileHeight?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -28608,6 +28612,7 @@ export namespace Prisma {
     autoPlay?: true
     interval?: true
     height?: true
+    mobileHeight?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -28619,6 +28624,7 @@ export namespace Prisma {
     autoPlay?: true
     interval?: true
     height?: true
+    mobileHeight?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -28717,6 +28723,7 @@ export namespace Prisma {
     autoPlay: boolean
     interval: number
     height: string | null
+    mobileHeight: string | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -28747,6 +28754,7 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: boolean
     height?: boolean
+    mobileHeight?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -28760,6 +28768,7 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: boolean
     height?: boolean
+    mobileHeight?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -28771,6 +28780,7 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: boolean
     height?: boolean
+    mobileHeight?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -28782,12 +28792,13 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: boolean
     height?: boolean
+    mobileHeight?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SliderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "autoPlay" | "interval" | "height" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["slider"]>
+  export type SliderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "autoPlay" | "interval" | "height" | "mobileHeight" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["slider"]>
   export type SliderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     slides?: boolean | Slider$slidesArgs<ExtArgs>
     _count?: boolean | SliderCountOutputTypeDefaultArgs<ExtArgs>
@@ -28806,6 +28817,7 @@ export namespace Prisma {
       autoPlay: boolean
       interval: number
       height: string | null
+      mobileHeight: string | null
       isActive: boolean
       createdAt: Date
       updatedAt: Date
@@ -29238,6 +29250,7 @@ export namespace Prisma {
     readonly autoPlay: FieldRef<"Slider", 'Boolean'>
     readonly interval: FieldRef<"Slider", 'Int'>
     readonly height: FieldRef<"Slider", 'String'>
+    readonly mobileHeight: FieldRef<"Slider", 'String'>
     readonly isActive: FieldRef<"Slider", 'Boolean'>
     readonly createdAt: FieldRef<"Slider", 'DateTime'>
     readonly updatedAt: FieldRef<"Slider", 'DateTime'>
@@ -31241,6 +31254,7 @@ export namespace Prisma {
     autoPlay: 'autoPlay',
     interval: 'interval',
     height: 'height',
+    mobileHeight: 'mobileHeight',
     isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -33278,6 +33292,7 @@ export namespace Prisma {
     autoPlay?: BoolFilter<"Slider"> | boolean
     interval?: IntFilter<"Slider"> | number
     height?: StringNullableFilter<"Slider"> | string | null
+    mobileHeight?: StringNullableFilter<"Slider"> | string | null
     isActive?: BoolFilter<"Slider"> | boolean
     createdAt?: DateTimeFilter<"Slider"> | Date | string
     updatedAt?: DateTimeFilter<"Slider"> | Date | string
@@ -33290,6 +33305,7 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrderInput | SortOrder
+    mobileHeight?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -33305,6 +33321,7 @@ export namespace Prisma {
     autoPlay?: BoolFilter<"Slider"> | boolean
     interval?: IntFilter<"Slider"> | number
     height?: StringNullableFilter<"Slider"> | string | null
+    mobileHeight?: StringNullableFilter<"Slider"> | string | null
     isActive?: BoolFilter<"Slider"> | boolean
     createdAt?: DateTimeFilter<"Slider"> | Date | string
     updatedAt?: DateTimeFilter<"Slider"> | Date | string
@@ -33317,6 +33334,7 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrderInput | SortOrder
+    mobileHeight?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -33336,6 +33354,7 @@ export namespace Prisma {
     autoPlay?: BoolWithAggregatesFilter<"Slider"> | boolean
     interval?: IntWithAggregatesFilter<"Slider"> | number
     height?: StringNullableWithAggregatesFilter<"Slider"> | string | null
+    mobileHeight?: StringNullableWithAggregatesFilter<"Slider"> | string | null
     isActive?: BoolWithAggregatesFilter<"Slider"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Slider"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Slider"> | Date | string
@@ -35528,6 +35547,7 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: number
     height?: string | null
+    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35540,6 +35560,7 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: number
     height?: string | null
+    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35552,6 +35573,7 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35564,6 +35586,7 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35576,6 +35599,7 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: number
     height?: string | null
+    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -35587,6 +35611,7 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -35598,6 +35623,7 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -37085,6 +37111,7 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrder
+    mobileHeight?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -37100,6 +37127,7 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrder
+    mobileHeight?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -37111,6 +37139,7 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrder
+    mobileHeight?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -40908,6 +40937,7 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: number
     height?: string | null
+    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -40919,6 +40949,7 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: number
     height?: string | null
+    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -40946,6 +40977,7 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -40957,6 +40989,7 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
+    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string

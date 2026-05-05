@@ -151,7 +151,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
           </div>
 
           <div className="space-y-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Slayt Alanı Yüksekliği</label>
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Masaüstü Yükseklik</label>
             <div className="relative">
               <Layout className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <input 
@@ -160,6 +160,20 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 onChange={(e) => setSlider({...slider, height: e.target.value})}
                 className="w-full h-11 pl-11 pr-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
                 placeholder="Örn: 500px veya 60vh"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Mobil Yükseklik</label>
+            <div className="relative">
+              <Layout className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input 
+                type="text" 
+                value={(slider as any).mobileHeight || ""} 
+                onChange={(e) => setSlider({...slider, mobileHeight: e.target.value} as any)}
+                className="w-full h-11 pl-11 pr-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                placeholder="Örn: 300px veya 40vh"
               />
             </div>
           </div>

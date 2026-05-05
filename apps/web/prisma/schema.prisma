@@ -418,6 +418,7 @@ model Slider {
   autoPlay  Boolean  @default(true)
   interval      Int      @default(5000)
   height        String?  @default("500px")
+  mobileHeight  String?  @default("300px")
   isActive      Boolean  @default(true)
   slides    Slide[]
   createdAt DateTime @default(now())
