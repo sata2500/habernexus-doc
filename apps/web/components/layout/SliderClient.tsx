@@ -42,7 +42,7 @@ export function SliderClient({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [autoPlay, isHovering, interval, nextSlide, slides.length]);
+  }, [autoPlay, isHovering, interval, nextSlide, slides.length, current]); // 'current' eklendi: her değişimde zamanlayıcı sıfırlanır
 
   if (!slides.length) return null;
 
@@ -104,7 +104,18 @@ export function SliderClient({
           initial="enter"
           animate="center"
           exit="exit"
-          className="absolute inset-0 w-full h-full"
+          drag="x"
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={1}
+          onDragEnd={(_, info) => {
+            const swipeThreshold = 50;
+            if (info.offset.x > swipeThreshold) {
+              prevSlide();
+            } else if (info.offset.x < -swipeThreshold) {
+              nextSlide();
+            }
+          }}
+          className="absolute inset-0 w-full h-full cursor-grab active:cursor-grabbing touch-pan-y"
         >
           {/* Image */}
           <div className="relative w-full h-full">
@@ -196,12 +207,12 @@ export function SliderClient({
               >
                 {current === idx && autoPlay && (
                   <motion.div 
+                    key={current}
                     initial={{ width: 0 }}
-                    animate={{ width: isHovering ? "100%" : "100%" }}
+                    animate={{ width: isHovering ? "0%" : "100%" }}
                     transition={{ 
                       duration: interval / 1000, 
-                      ease: "linear" as any,
-                      repeat: Infinity 
+                      ease: "linear" as any
                     }}
                     className="absolute inset-0 bg-primary-500"
                   />

@@ -110,6 +110,19 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="space-y-2">
+            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Slider Durumu</label>
+            <div className="flex items-center gap-3 h-11 px-4 rounded-xl border border-border bg-background/50">
+              <input 
+                type="checkbox" 
+                checked={slider.isActive} 
+                onChange={(e) => setSlider({...slider, isActive: e.target.checked})}
+                className="h-5 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+              />
+              <span className="text-sm font-medium">{slider.isActive ? "Aktif" : "Devre Dışı"}</span>
+            </div>
+          </div>
+
+          <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Otomatik Oynat</label>
             <div className="flex items-center gap-3 h-11 px-4 rounded-xl border border-border bg-background/50">
               <input 
