@@ -23,15 +23,16 @@ export function SliderClient({
   mobileHeight = "300px"
 }: SliderClientProps) {
   const [current, setCurrent] = useState(0);
+  const [itemsToShow, setItemsToShow] = useState(1);
+  const [mounted, setMounted] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // We'll use a stable itemsToShow calculation that matches our CSS
-  const [itemsToShow, setItemsToShow] = useState(1);
-
+  // Set mounted to true on client-side
   useEffect(() => {
+    setMounted(true);
     const updateItems = () => {
       if (window.innerWidth >= 1536) setItemsToShow(3);
       else if (window.innerWidth >= 1024) setItemsToShow(2);
@@ -66,21 +67,13 @@ export function SliderClient({
   return (
     <div 
       ref={containerRef}
-      className="slider-wrapper relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black transition-all duration-500"
+      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black transition-all duration-500"
+      style={{ height: mounted && window.innerWidth < 768 ? mobileHeight : height } as any}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
-      <style jsx>{`
-        .slider-wrapper { height: ${mobileHeight}; }
-        @media (min-width: 768px) { .slider-wrapper { height: ${height}; } }
-        
-        .slide-item { width: 100%; }
-        @media (min-width: 1024px) { .slide-item { width: 50%; } }
-        @media (min-width: 1536px) { .slide-item { width: 33.333%; } }
-      `}</style>
-      
       <motion.div
-        animate={{ x: `-${current * (100 / itemsToShow)}%` }}
+        animate={{ x: mounted ? `-${current * (100 / itemsToShow)}%` : '0%' }}
         transition={{ 
           type: "spring", 
           stiffness: 150, 
@@ -88,7 +81,7 @@ export function SliderClient({
           mass: 1
         }}
         drag="x"
-        dragConstraints={{ left: -((slides.length - itemsToShow) * (100 / itemsToShow)), right: 0 }}
+        dragConstraints={containerRef}
         onDragStart={() => setIsDragging(true)}
         onDragEnd={(_, info) => {
           setIsDragging(false);
@@ -102,7 +95,8 @@ export function SliderClient({
         {slides.map((slide, index) => (
           <div 
             key={slide.id} 
-            className="slide-item relative h-full px-1 md:px-2 flex-shrink-0"
+            className="relative h-full px-1 md:px-2 flex-shrink-0"
+            style={{ width: `${100 / slides.length}%` }}
           >
             <div className="relative w-full h-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide bg-zinc-900/50">
               {/* Background Blur */}
@@ -121,7 +115,7 @@ export function SliderClient({
                   src={slide.imageUrl}
                   alt={slide.title || ""}
                   fill
-                  className="object-contain p-2 md:p-6"
+                  className="object-contain p-4 md:p-8"
                   priority={index < 3}
                 />
               </div>
@@ -129,29 +123,29 @@ export function SliderClient({
               {/* Gradient Overlay */}
               <div className="absolute inset-0 z-20 bg-linear-to-t from-black/80 via-transparent to-transparent" />
 
-              {/* Content - Adjusted padding for mobile */}
-              <div className="absolute inset-0 z-30 flex items-end justify-center pb-4 md:pb-12 px-6 md:px-8">
+              {/* Content */}
+              <div className="absolute inset-0 z-30 flex items-end justify-center pb-6 md:pb-12 px-6 md:px-8">
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
-                  className="w-full max-w-[90%] md:max-w-[85%] space-y-1.5 md:space-y-4 text-center"
+                  className="w-full max-w-[90%] md:max-w-[85%] space-y-2 md:space-y-4 text-center"
                 >
                   {slide.title && (
-                    <h2 className="text-lg md:text-3xl lg:text-4xl font-bold text-white font-(family-name:--font-outfit) leading-tight drop-shadow-xl line-clamp-2">
+                    <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white font-(family-name:--font-outfit) leading-tight drop-shadow-xl line-clamp-2">
                       {slide.title}
                     </h2>
                   )}
                   {slide.description && itemsToShow === 1 && (
-                    <p className="text-white/90 text-xs md:text-lg line-clamp-2 font-medium leading-relaxed drop-shadow-md mx-auto max-w-2xl hidden md:block">
+                    <p className="text-white/90 text-sm md:text-lg line-clamp-2 font-medium leading-relaxed drop-shadow-md mx-auto max-w-2xl hidden md:block">
                       {slide.description}
                     </p>
                   )}
                   
                   {slide.link && (
-                    <div className="pt-1 md:pt-4">
+                    <div className="pt-2 md:pt-4">
                       <Link 
                         href={slide.link!}
-                        className="inline-flex items-center gap-2 px-3 py-1.5 md:px-6 md:py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold text-[10px] md:text-sm hover:bg-white hover:text-black transition-all shadow-xl group/btn"
+                        className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 bg-white/10 backdrop-blur-md text-white border border-white/20 rounded-xl font-bold text-xs md:text-sm hover:bg-white hover:text-black transition-all shadow-xl group/btn"
                       >
                         İncele
                         <ArrowRight className="h-3 w-3 md:h-4 md:w-4 group-hover/btn:translate-x-1 transition-transform" />
@@ -189,7 +183,7 @@ export function SliderClient({
           </div>
 
           {/* Dots */}
-          <div className="absolute bottom-3 md:bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-40">
+          <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-40">
             {Array.from({ length: totalPages }).map((_, idx) => (
               <button
                 key={idx}
