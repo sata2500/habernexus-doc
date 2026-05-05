@@ -152,13 +152,15 @@ export function SliderClient({
                   )}
                   
                   {slide.link && (
-                    <div className="pt-2 md:pt-4">
+                    <div className="pt-3 md:pt-5">
                       <Link 
                         href={slide.link!}
-                        className="inline-flex items-center gap-2 px-5 py-2.5 md:px-8 md:py-4 bg-white text-black rounded-xl font-bold text-xs md:text-sm hover:bg-primary-500 hover:text-white transition-all shadow-xl group/btn"
+                        className="inline-flex items-center gap-3 px-6 py-2.5 md:px-10 md:py-4 bg-white/10 backdrop-blur-2xl text-white border border-white/20 rounded-2xl font-bold text-xs md:text-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 transition-all shadow-2xl shadow-black/40 group/btn"
                       >
                         İncele
-                        <ArrowRight className="h-3 w-3 md:h-4 md:w-4 group-hover/btn:translate-x-1 transition-transform" />
+                        <div className="bg-white/20 rounded-full p-1 group-hover/btn:bg-primary-500 transition-colors">
+                          <ArrowRight className="h-3 w-3 md:h-4 md:w-4 group-hover/btn:translate-x-0.5 transition-transform" />
+                        </div>
                       </Link>
                     </div>
                   )}
