@@ -14,6 +14,7 @@ const navItems = [
   { name: "Kullanıcılar", href: "/admin/users", icon: Users },
   { name: "Makaleler", href: "/admin/articles", icon: FileText },
   { name: "Sayfa Yönetimi", href: "/admin/pages", icon: LayoutTemplate },
+  { name: "Slider Yönetimi", href: "/admin/slider", icon: Image },
   { name: "Yorum Yönetimi", href: "/admin/comments", icon: MessageSquare },
   { name: "Destek Merkezi", href: "/admin/support", icon: Mail },
   { name: "Site Ayarları", href: "/admin/settings", icon: Settings2 },

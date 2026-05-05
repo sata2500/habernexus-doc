@@ -38,6 +38,8 @@ const IconMap: Record<string, LucideIcon> = {
   Zap,
 };
 
+import { HomepageSlider } from "@/components/layout/HomepageSlider";
+
 /* ============================================
    Helper
    ============================================ */
@@ -68,6 +70,9 @@ export default async function HomePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+      {/* ── Slider Section ────────────────────────── */}
+      <HomepageSlider />
+
       {/* ── Hero Section ────────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6" id="hero-section" aria-label="Öne Çıkan Haberler">
         {/* Main Hero */}

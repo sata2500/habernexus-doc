@@ -123,6 +123,16 @@ export type SiteSettings = $Result.DefaultSelection<Prisma.$SiteSettingsPayload>
  * 
  */
 export type AiModel = $Result.DefaultSelection<Prisma.$AiModelPayload>
+/**
+ * Model Slider
+ * 
+ */
+export type Slider = $Result.DefaultSelection<Prisma.$SliderPayload>
+/**
+ * Model Slide
+ * 
+ */
+export type Slide = $Result.DefaultSelection<Prisma.$SlidePayload>
 
 /**
  * Enums
@@ -512,6 +522,26 @@ export class PrismaClient<
     * ```
     */
   get aiModel(): Prisma.AiModelDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.slider`: Exposes CRUD operations for the **Slider** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Sliders
+    * const sliders = await prisma.slider.findMany()
+    * ```
+    */
+  get slider(): Prisma.SliderDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.slide`: Exposes CRUD operations for the **Slide** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more Slides
+    * const slides = await prisma.slide.findMany()
+    * ```
+    */
+  get slide(): Prisma.SlideDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -967,7 +997,9 @@ export namespace Prisma {
     AiPersona: 'AiPersona',
     AiPersonaOnCategory: 'AiPersonaOnCategory',
     SiteSettings: 'SiteSettings',
-    AiModel: 'AiModel'
+    AiModel: 'AiModel',
+    Slider: 'Slider',
+    Slide: 'Slide'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -983,7 +1015,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "systemSettings" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "systemSettings" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2615,6 +2647,154 @@ export namespace Prisma {
           }
         }
       }
+      Slider: {
+        payload: Prisma.$SliderPayload<ExtArgs>
+        fields: Prisma.SliderFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SliderFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SliderFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload>
+          }
+          findFirst: {
+            args: Prisma.SliderFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SliderFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload>
+          }
+          findMany: {
+            args: Prisma.SliderFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload>[]
+          }
+          create: {
+            args: Prisma.SliderCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload>
+          }
+          createMany: {
+            args: Prisma.SliderCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SliderCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload>[]
+          }
+          delete: {
+            args: Prisma.SliderDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload>
+          }
+          update: {
+            args: Prisma.SliderUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload>
+          }
+          deleteMany: {
+            args: Prisma.SliderDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SliderUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SliderUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload>[]
+          }
+          upsert: {
+            args: Prisma.SliderUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SliderPayload>
+          }
+          aggregate: {
+            args: Prisma.SliderAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSlider>
+          }
+          groupBy: {
+            args: Prisma.SliderGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SliderGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SliderCountArgs<ExtArgs>
+            result: $Utils.Optional<SliderCountAggregateOutputType> | number
+          }
+        }
+      }
+      Slide: {
+        payload: Prisma.$SlidePayload<ExtArgs>
+        fields: Prisma.SlideFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SlideFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SlideFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload>
+          }
+          findFirst: {
+            args: Prisma.SlideFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SlideFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload>
+          }
+          findMany: {
+            args: Prisma.SlideFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload>[]
+          }
+          create: {
+            args: Prisma.SlideCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload>
+          }
+          createMany: {
+            args: Prisma.SlideCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SlideCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload>[]
+          }
+          delete: {
+            args: Prisma.SlideDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload>
+          }
+          update: {
+            args: Prisma.SlideUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload>
+          }
+          deleteMany: {
+            args: Prisma.SlideDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SlideUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SlideUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload>[]
+          }
+          upsert: {
+            args: Prisma.SlideUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SlidePayload>
+          }
+          aggregate: {
+            args: Prisma.SlideAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSlide>
+          }
+          groupBy: {
+            args: Prisma.SlideGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SlideGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SlideCountArgs<ExtArgs>
+            result: $Utils.Optional<SlideCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -2745,6 +2925,8 @@ export namespace Prisma {
     aiPersonaOnCategory?: AiPersonaOnCategoryOmit
     siteSettings?: SiteSettingsOmit
     aiModel?: AiModelOmit
+    slider?: SliderOmit
+    slide?: SlideOmit
   }
 
   /* Types for Logging */
@@ -3146,6 +3328,37 @@ export namespace Prisma {
    */
   export type AiPersonaCountOutputTypeCountArticlesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ArticleWhereInput
+  }
+
+
+  /**
+   * Count Type SliderCountOutputType
+   */
+
+  export type SliderCountOutputType = {
+    slides: number
+  }
+
+  export type SliderCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    slides?: boolean | SliderCountOutputTypeCountSlidesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * SliderCountOutputType without action
+   */
+  export type SliderCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SliderCountOutputType
+     */
+    select?: SliderCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * SliderCountOutputType without action
+   */
+  export type SliderCountOutputTypeCountSlidesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SlideWhereInput
   }
 
 
@@ -28316,6 +28529,2342 @@ export namespace Prisma {
 
 
   /**
+   * Model Slider
+   */
+
+  export type AggregateSlider = {
+    _count: SliderCountAggregateOutputType | null
+    _avg: SliderAvgAggregateOutputType | null
+    _sum: SliderSumAggregateOutputType | null
+    _min: SliderMinAggregateOutputType | null
+    _max: SliderMaxAggregateOutputType | null
+  }
+
+  export type SliderAvgAggregateOutputType = {
+    interval: number | null
+  }
+
+  export type SliderSumAggregateOutputType = {
+    interval: number | null
+  }
+
+  export type SliderMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    autoPlay: boolean | null
+    interval: number | null
+    height: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SliderMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    autoPlay: boolean | null
+    interval: number | null
+    height: string | null
+    isActive: boolean | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SliderCountAggregateOutputType = {
+    id: number
+    name: number
+    autoPlay: number
+    interval: number
+    height: number
+    isActive: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SliderAvgAggregateInputType = {
+    interval?: true
+  }
+
+  export type SliderSumAggregateInputType = {
+    interval?: true
+  }
+
+  export type SliderMinAggregateInputType = {
+    id?: true
+    name?: true
+    autoPlay?: true
+    interval?: true
+    height?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SliderMaxAggregateInputType = {
+    id?: true
+    name?: true
+    autoPlay?: true
+    interval?: true
+    height?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SliderCountAggregateInputType = {
+    id?: true
+    name?: true
+    autoPlay?: true
+    interval?: true
+    height?: true
+    isActive?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SliderAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Slider to aggregate.
+     */
+    where?: SliderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sliders to fetch.
+     */
+    orderBy?: SliderOrderByWithRelationInput | SliderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SliderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sliders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sliders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Sliders
+    **/
+    _count?: true | SliderCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SliderAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SliderSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SliderMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SliderMaxAggregateInputType
+  }
+
+  export type GetSliderAggregateType<T extends SliderAggregateArgs> = {
+        [P in keyof T & keyof AggregateSlider]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSlider[P]>
+      : GetScalarType<T[P], AggregateSlider[P]>
+  }
+
+
+
+
+  export type SliderGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SliderWhereInput
+    orderBy?: SliderOrderByWithAggregationInput | SliderOrderByWithAggregationInput[]
+    by: SliderScalarFieldEnum[] | SliderScalarFieldEnum
+    having?: SliderScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SliderCountAggregateInputType | true
+    _avg?: SliderAvgAggregateInputType
+    _sum?: SliderSumAggregateInputType
+    _min?: SliderMinAggregateInputType
+    _max?: SliderMaxAggregateInputType
+  }
+
+  export type SliderGroupByOutputType = {
+    id: string
+    name: string
+    autoPlay: boolean
+    interval: number
+    height: string | null
+    isActive: boolean
+    createdAt: Date
+    updatedAt: Date
+    _count: SliderCountAggregateOutputType | null
+    _avg: SliderAvgAggregateOutputType | null
+    _sum: SliderSumAggregateOutputType | null
+    _min: SliderMinAggregateOutputType | null
+    _max: SliderMaxAggregateOutputType | null
+  }
+
+  type GetSliderGroupByPayload<T extends SliderGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SliderGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SliderGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SliderGroupByOutputType[P]>
+            : GetScalarType<T[P], SliderGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SliderSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    autoPlay?: boolean
+    interval?: boolean
+    height?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    slides?: boolean | Slider$slidesArgs<ExtArgs>
+    _count?: boolean | SliderCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slider"]>
+
+  export type SliderSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    autoPlay?: boolean
+    interval?: boolean
+    height?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["slider"]>
+
+  export type SliderSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    autoPlay?: boolean
+    interval?: boolean
+    height?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["slider"]>
+
+  export type SliderSelectScalar = {
+    id?: boolean
+    name?: boolean
+    autoPlay?: boolean
+    interval?: boolean
+    height?: boolean
+    isActive?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SliderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "autoPlay" | "interval" | "height" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["slider"]>
+  export type SliderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    slides?: boolean | Slider$slidesArgs<ExtArgs>
+    _count?: boolean | SliderCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type SliderIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type SliderIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $SliderPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Slider"
+    objects: {
+      slides: Prisma.$SlidePayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      autoPlay: boolean
+      interval: number
+      height: string | null
+      isActive: boolean
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["slider"]>
+    composites: {}
+  }
+
+  type SliderGetPayload<S extends boolean | null | undefined | SliderDefaultArgs> = $Result.GetResult<Prisma.$SliderPayload, S>
+
+  type SliderCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SliderFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SliderCountAggregateInputType | true
+    }
+
+  export interface SliderDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Slider'], meta: { name: 'Slider' } }
+    /**
+     * Find zero or one Slider that matches the filter.
+     * @param {SliderFindUniqueArgs} args - Arguments to find a Slider
+     * @example
+     * // Get one Slider
+     * const slider = await prisma.slider.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SliderFindUniqueArgs>(args: SelectSubset<T, SliderFindUniqueArgs<ExtArgs>>): Prisma__SliderClient<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Slider that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SliderFindUniqueOrThrowArgs} args - Arguments to find a Slider
+     * @example
+     * // Get one Slider
+     * const slider = await prisma.slider.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SliderFindUniqueOrThrowArgs>(args: SelectSubset<T, SliderFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SliderClient<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Slider that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SliderFindFirstArgs} args - Arguments to find a Slider
+     * @example
+     * // Get one Slider
+     * const slider = await prisma.slider.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SliderFindFirstArgs>(args?: SelectSubset<T, SliderFindFirstArgs<ExtArgs>>): Prisma__SliderClient<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Slider that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SliderFindFirstOrThrowArgs} args - Arguments to find a Slider
+     * @example
+     * // Get one Slider
+     * const slider = await prisma.slider.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SliderFindFirstOrThrowArgs>(args?: SelectSubset<T, SliderFindFirstOrThrowArgs<ExtArgs>>): Prisma__SliderClient<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Sliders that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SliderFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Sliders
+     * const sliders = await prisma.slider.findMany()
+     * 
+     * // Get first 10 Sliders
+     * const sliders = await prisma.slider.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sliderWithIdOnly = await prisma.slider.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SliderFindManyArgs>(args?: SelectSubset<T, SliderFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Slider.
+     * @param {SliderCreateArgs} args - Arguments to create a Slider.
+     * @example
+     * // Create one Slider
+     * const Slider = await prisma.slider.create({
+     *   data: {
+     *     // ... data to create a Slider
+     *   }
+     * })
+     * 
+     */
+    create<T extends SliderCreateArgs>(args: SelectSubset<T, SliderCreateArgs<ExtArgs>>): Prisma__SliderClient<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Sliders.
+     * @param {SliderCreateManyArgs} args - Arguments to create many Sliders.
+     * @example
+     * // Create many Sliders
+     * const slider = await prisma.slider.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SliderCreateManyArgs>(args?: SelectSubset<T, SliderCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Sliders and returns the data saved in the database.
+     * @param {SliderCreateManyAndReturnArgs} args - Arguments to create many Sliders.
+     * @example
+     * // Create many Sliders
+     * const slider = await prisma.slider.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Sliders and only return the `id`
+     * const sliderWithIdOnly = await prisma.slider.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SliderCreateManyAndReturnArgs>(args?: SelectSubset<T, SliderCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Slider.
+     * @param {SliderDeleteArgs} args - Arguments to delete one Slider.
+     * @example
+     * // Delete one Slider
+     * const Slider = await prisma.slider.delete({
+     *   where: {
+     *     // ... filter to delete one Slider
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SliderDeleteArgs>(args: SelectSubset<T, SliderDeleteArgs<ExtArgs>>): Prisma__SliderClient<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Slider.
+     * @param {SliderUpdateArgs} args - Arguments to update one Slider.
+     * @example
+     * // Update one Slider
+     * const slider = await prisma.slider.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SliderUpdateArgs>(args: SelectSubset<T, SliderUpdateArgs<ExtArgs>>): Prisma__SliderClient<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Sliders.
+     * @param {SliderDeleteManyArgs} args - Arguments to filter Sliders to delete.
+     * @example
+     * // Delete a few Sliders
+     * const { count } = await prisma.slider.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SliderDeleteManyArgs>(args?: SelectSubset<T, SliderDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sliders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SliderUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Sliders
+     * const slider = await prisma.slider.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SliderUpdateManyArgs>(args: SelectSubset<T, SliderUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Sliders and returns the data updated in the database.
+     * @param {SliderUpdateManyAndReturnArgs} args - Arguments to update many Sliders.
+     * @example
+     * // Update many Sliders
+     * const slider = await prisma.slider.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Sliders and only return the `id`
+     * const sliderWithIdOnly = await prisma.slider.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SliderUpdateManyAndReturnArgs>(args: SelectSubset<T, SliderUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Slider.
+     * @param {SliderUpsertArgs} args - Arguments to update or create a Slider.
+     * @example
+     * // Update or create a Slider
+     * const slider = await prisma.slider.upsert({
+     *   create: {
+     *     // ... data to create a Slider
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Slider we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SliderUpsertArgs>(args: SelectSubset<T, SliderUpsertArgs<ExtArgs>>): Prisma__SliderClient<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Sliders.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SliderCountArgs} args - Arguments to filter Sliders to count.
+     * @example
+     * // Count the number of Sliders
+     * const count = await prisma.slider.count({
+     *   where: {
+     *     // ... the filter for the Sliders we want to count
+     *   }
+     * })
+    **/
+    count<T extends SliderCountArgs>(
+      args?: Subset<T, SliderCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SliderCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Slider.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SliderAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SliderAggregateArgs>(args: Subset<T, SliderAggregateArgs>): Prisma.PrismaPromise<GetSliderAggregateType<T>>
+
+    /**
+     * Group by Slider.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SliderGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SliderGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SliderGroupByArgs['orderBy'] }
+        : { orderBy?: SliderGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SliderGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSliderGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Slider model
+   */
+  readonly fields: SliderFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Slider.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SliderClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    slides<T extends Slider$slidesArgs<ExtArgs> = {}>(args?: Subset<T, Slider$slidesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Slider model
+   */
+  interface SliderFieldRefs {
+    readonly id: FieldRef<"Slider", 'String'>
+    readonly name: FieldRef<"Slider", 'String'>
+    readonly autoPlay: FieldRef<"Slider", 'Boolean'>
+    readonly interval: FieldRef<"Slider", 'Int'>
+    readonly height: FieldRef<"Slider", 'String'>
+    readonly isActive: FieldRef<"Slider", 'Boolean'>
+    readonly createdAt: FieldRef<"Slider", 'DateTime'>
+    readonly updatedAt: FieldRef<"Slider", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Slider findUnique
+   */
+  export type SliderFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+    /**
+     * Filter, which Slider to fetch.
+     */
+    where: SliderWhereUniqueInput
+  }
+
+  /**
+   * Slider findUniqueOrThrow
+   */
+  export type SliderFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+    /**
+     * Filter, which Slider to fetch.
+     */
+    where: SliderWhereUniqueInput
+  }
+
+  /**
+   * Slider findFirst
+   */
+  export type SliderFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+    /**
+     * Filter, which Slider to fetch.
+     */
+    where?: SliderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sliders to fetch.
+     */
+    orderBy?: SliderOrderByWithRelationInput | SliderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Sliders.
+     */
+    cursor?: SliderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sliders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sliders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sliders.
+     */
+    distinct?: SliderScalarFieldEnum | SliderScalarFieldEnum[]
+  }
+
+  /**
+   * Slider findFirstOrThrow
+   */
+  export type SliderFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+    /**
+     * Filter, which Slider to fetch.
+     */
+    where?: SliderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sliders to fetch.
+     */
+    orderBy?: SliderOrderByWithRelationInput | SliderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Sliders.
+     */
+    cursor?: SliderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sliders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sliders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sliders.
+     */
+    distinct?: SliderScalarFieldEnum | SliderScalarFieldEnum[]
+  }
+
+  /**
+   * Slider findMany
+   */
+  export type SliderFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+    /**
+     * Filter, which Sliders to fetch.
+     */
+    where?: SliderWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Sliders to fetch.
+     */
+    orderBy?: SliderOrderByWithRelationInput | SliderOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Sliders.
+     */
+    cursor?: SliderWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Sliders from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Sliders.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Sliders.
+     */
+    distinct?: SliderScalarFieldEnum | SliderScalarFieldEnum[]
+  }
+
+  /**
+   * Slider create
+   */
+  export type SliderCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Slider.
+     */
+    data: XOR<SliderCreateInput, SliderUncheckedCreateInput>
+  }
+
+  /**
+   * Slider createMany
+   */
+  export type SliderCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Sliders.
+     */
+    data: SliderCreateManyInput | SliderCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Slider createManyAndReturn
+   */
+  export type SliderCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * The data used to create many Sliders.
+     */
+    data: SliderCreateManyInput | SliderCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Slider update
+   */
+  export type SliderUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Slider.
+     */
+    data: XOR<SliderUpdateInput, SliderUncheckedUpdateInput>
+    /**
+     * Choose, which Slider to update.
+     */
+    where: SliderWhereUniqueInput
+  }
+
+  /**
+   * Slider updateMany
+   */
+  export type SliderUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Sliders.
+     */
+    data: XOR<SliderUpdateManyMutationInput, SliderUncheckedUpdateManyInput>
+    /**
+     * Filter which Sliders to update
+     */
+    where?: SliderWhereInput
+    /**
+     * Limit how many Sliders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Slider updateManyAndReturn
+   */
+  export type SliderUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * The data used to update Sliders.
+     */
+    data: XOR<SliderUpdateManyMutationInput, SliderUncheckedUpdateManyInput>
+    /**
+     * Filter which Sliders to update
+     */
+    where?: SliderWhereInput
+    /**
+     * Limit how many Sliders to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Slider upsert
+   */
+  export type SliderUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Slider to update in case it exists.
+     */
+    where: SliderWhereUniqueInput
+    /**
+     * In case the Slider found by the `where` argument doesn't exist, create a new Slider with this data.
+     */
+    create: XOR<SliderCreateInput, SliderUncheckedCreateInput>
+    /**
+     * In case the Slider was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SliderUpdateInput, SliderUncheckedUpdateInput>
+  }
+
+  /**
+   * Slider delete
+   */
+  export type SliderDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+    /**
+     * Filter which Slider to delete.
+     */
+    where: SliderWhereUniqueInput
+  }
+
+  /**
+   * Slider deleteMany
+   */
+  export type SliderDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Sliders to delete
+     */
+    where?: SliderWhereInput
+    /**
+     * Limit how many Sliders to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Slider.slides
+   */
+  export type Slider$slidesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    where?: SlideWhereInput
+    orderBy?: SlideOrderByWithRelationInput | SlideOrderByWithRelationInput[]
+    cursor?: SlideWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: SlideScalarFieldEnum | SlideScalarFieldEnum[]
+  }
+
+  /**
+   * Slider without action
+   */
+  export type SliderDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slider
+     */
+    select?: SliderSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slider
+     */
+    omit?: SliderOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SliderInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model Slide
+   */
+
+  export type AggregateSlide = {
+    _count: SlideCountAggregateOutputType | null
+    _avg: SlideAvgAggregateOutputType | null
+    _sum: SlideSumAggregateOutputType | null
+    _min: SlideMinAggregateOutputType | null
+    _max: SlideMaxAggregateOutputType | null
+  }
+
+  export type SlideAvgAggregateOutputType = {
+    order: number | null
+  }
+
+  export type SlideSumAggregateOutputType = {
+    order: number | null
+  }
+
+  export type SlideMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    imageUrl: string | null
+    link: string | null
+    order: number | null
+    isActive: boolean | null
+    startTime: Date | null
+    endTime: Date | null
+    sliderId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SlideMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    description: string | null
+    imageUrl: string | null
+    link: string | null
+    order: number | null
+    isActive: boolean | null
+    startTime: Date | null
+    endTime: Date | null
+    sliderId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SlideCountAggregateOutputType = {
+    id: number
+    title: number
+    description: number
+    imageUrl: number
+    link: number
+    order: number
+    isActive: number
+    startTime: number
+    endTime: number
+    sliderId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SlideAvgAggregateInputType = {
+    order?: true
+  }
+
+  export type SlideSumAggregateInputType = {
+    order?: true
+  }
+
+  export type SlideMinAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    imageUrl?: true
+    link?: true
+    order?: true
+    isActive?: true
+    startTime?: true
+    endTime?: true
+    sliderId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SlideMaxAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    imageUrl?: true
+    link?: true
+    order?: true
+    isActive?: true
+    startTime?: true
+    endTime?: true
+    sliderId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SlideCountAggregateInputType = {
+    id?: true
+    title?: true
+    description?: true
+    imageUrl?: true
+    link?: true
+    order?: true
+    isActive?: true
+    startTime?: true
+    endTime?: true
+    sliderId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SlideAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Slide to aggregate.
+     */
+    where?: SlideWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Slides to fetch.
+     */
+    orderBy?: SlideOrderByWithRelationInput | SlideOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SlideWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Slides from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Slides.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned Slides
+    **/
+    _count?: true | SlideCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SlideAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SlideSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SlideMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SlideMaxAggregateInputType
+  }
+
+  export type GetSlideAggregateType<T extends SlideAggregateArgs> = {
+        [P in keyof T & keyof AggregateSlide]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSlide[P]>
+      : GetScalarType<T[P], AggregateSlide[P]>
+  }
+
+
+
+
+  export type SlideGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SlideWhereInput
+    orderBy?: SlideOrderByWithAggregationInput | SlideOrderByWithAggregationInput[]
+    by: SlideScalarFieldEnum[] | SlideScalarFieldEnum
+    having?: SlideScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SlideCountAggregateInputType | true
+    _avg?: SlideAvgAggregateInputType
+    _sum?: SlideSumAggregateInputType
+    _min?: SlideMinAggregateInputType
+    _max?: SlideMaxAggregateInputType
+  }
+
+  export type SlideGroupByOutputType = {
+    id: string
+    title: string | null
+    description: string | null
+    imageUrl: string
+    link: string | null
+    order: number
+    isActive: boolean
+    startTime: Date | null
+    endTime: Date | null
+    sliderId: string
+    createdAt: Date
+    updatedAt: Date
+    _count: SlideCountAggregateOutputType | null
+    _avg: SlideAvgAggregateOutputType | null
+    _sum: SlideSumAggregateOutputType | null
+    _min: SlideMinAggregateOutputType | null
+    _max: SlideMaxAggregateOutputType | null
+  }
+
+  type GetSlideGroupByPayload<T extends SlideGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SlideGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SlideGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SlideGroupByOutputType[P]>
+            : GetScalarType<T[P], SlideGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SlideSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    imageUrl?: boolean
+    link?: boolean
+    order?: boolean
+    isActive?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    sliderId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    slider?: boolean | SliderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slide"]>
+
+  export type SlideSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    imageUrl?: boolean
+    link?: boolean
+    order?: boolean
+    isActive?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    sliderId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    slider?: boolean | SliderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slide"]>
+
+  export type SlideSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    imageUrl?: boolean
+    link?: boolean
+    order?: boolean
+    isActive?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    sliderId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    slider?: boolean | SliderDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["slide"]>
+
+  export type SlideSelectScalar = {
+    id?: boolean
+    title?: boolean
+    description?: boolean
+    imageUrl?: boolean
+    link?: boolean
+    order?: boolean
+    isActive?: boolean
+    startTime?: boolean
+    endTime?: boolean
+    sliderId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SlideOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "imageUrl" | "link" | "order" | "isActive" | "startTime" | "endTime" | "sliderId" | "createdAt" | "updatedAt", ExtArgs["result"]["slide"]>
+  export type SlideInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    slider?: boolean | SliderDefaultArgs<ExtArgs>
+  }
+  export type SlideIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    slider?: boolean | SliderDefaultArgs<ExtArgs>
+  }
+  export type SlideIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    slider?: boolean | SliderDefaultArgs<ExtArgs>
+  }
+
+  export type $SlidePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "Slide"
+    objects: {
+      slider: Prisma.$SliderPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      title: string | null
+      description: string | null
+      imageUrl: string
+      link: string | null
+      order: number
+      isActive: boolean
+      startTime: Date | null
+      endTime: Date | null
+      sliderId: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["slide"]>
+    composites: {}
+  }
+
+  type SlideGetPayload<S extends boolean | null | undefined | SlideDefaultArgs> = $Result.GetResult<Prisma.$SlidePayload, S>
+
+  type SlideCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SlideFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SlideCountAggregateInputType | true
+    }
+
+  export interface SlideDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Slide'], meta: { name: 'Slide' } }
+    /**
+     * Find zero or one Slide that matches the filter.
+     * @param {SlideFindUniqueArgs} args - Arguments to find a Slide
+     * @example
+     * // Get one Slide
+     * const slide = await prisma.slide.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SlideFindUniqueArgs>(args: SelectSubset<T, SlideFindUniqueArgs<ExtArgs>>): Prisma__SlideClient<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one Slide that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SlideFindUniqueOrThrowArgs} args - Arguments to find a Slide
+     * @example
+     * // Get one Slide
+     * const slide = await prisma.slide.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SlideFindUniqueOrThrowArgs>(args: SelectSubset<T, SlideFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SlideClient<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Slide that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlideFindFirstArgs} args - Arguments to find a Slide
+     * @example
+     * // Get one Slide
+     * const slide = await prisma.slide.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SlideFindFirstArgs>(args?: SelectSubset<T, SlideFindFirstArgs<ExtArgs>>): Prisma__SlideClient<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first Slide that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlideFindFirstOrThrowArgs} args - Arguments to find a Slide
+     * @example
+     * // Get one Slide
+     * const slide = await prisma.slide.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SlideFindFirstOrThrowArgs>(args?: SelectSubset<T, SlideFindFirstOrThrowArgs<ExtArgs>>): Prisma__SlideClient<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more Slides that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlideFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all Slides
+     * const slides = await prisma.slide.findMany()
+     * 
+     * // Get first 10 Slides
+     * const slides = await prisma.slide.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const slideWithIdOnly = await prisma.slide.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SlideFindManyArgs>(args?: SelectSubset<T, SlideFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a Slide.
+     * @param {SlideCreateArgs} args - Arguments to create a Slide.
+     * @example
+     * // Create one Slide
+     * const Slide = await prisma.slide.create({
+     *   data: {
+     *     // ... data to create a Slide
+     *   }
+     * })
+     * 
+     */
+    create<T extends SlideCreateArgs>(args: SelectSubset<T, SlideCreateArgs<ExtArgs>>): Prisma__SlideClient<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many Slides.
+     * @param {SlideCreateManyArgs} args - Arguments to create many Slides.
+     * @example
+     * // Create many Slides
+     * const slide = await prisma.slide.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SlideCreateManyArgs>(args?: SelectSubset<T, SlideCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many Slides and returns the data saved in the database.
+     * @param {SlideCreateManyAndReturnArgs} args - Arguments to create many Slides.
+     * @example
+     * // Create many Slides
+     * const slide = await prisma.slide.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many Slides and only return the `id`
+     * const slideWithIdOnly = await prisma.slide.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SlideCreateManyAndReturnArgs>(args?: SelectSubset<T, SlideCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a Slide.
+     * @param {SlideDeleteArgs} args - Arguments to delete one Slide.
+     * @example
+     * // Delete one Slide
+     * const Slide = await prisma.slide.delete({
+     *   where: {
+     *     // ... filter to delete one Slide
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SlideDeleteArgs>(args: SelectSubset<T, SlideDeleteArgs<ExtArgs>>): Prisma__SlideClient<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one Slide.
+     * @param {SlideUpdateArgs} args - Arguments to update one Slide.
+     * @example
+     * // Update one Slide
+     * const slide = await prisma.slide.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SlideUpdateArgs>(args: SelectSubset<T, SlideUpdateArgs<ExtArgs>>): Prisma__SlideClient<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more Slides.
+     * @param {SlideDeleteManyArgs} args - Arguments to filter Slides to delete.
+     * @example
+     * // Delete a few Slides
+     * const { count } = await prisma.slide.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SlideDeleteManyArgs>(args?: SelectSubset<T, SlideDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Slides.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlideUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many Slides
+     * const slide = await prisma.slide.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SlideUpdateManyArgs>(args: SelectSubset<T, SlideUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more Slides and returns the data updated in the database.
+     * @param {SlideUpdateManyAndReturnArgs} args - Arguments to update many Slides.
+     * @example
+     * // Update many Slides
+     * const slide = await prisma.slide.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more Slides and only return the `id`
+     * const slideWithIdOnly = await prisma.slide.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SlideUpdateManyAndReturnArgs>(args: SelectSubset<T, SlideUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one Slide.
+     * @param {SlideUpsertArgs} args - Arguments to update or create a Slide.
+     * @example
+     * // Update or create a Slide
+     * const slide = await prisma.slide.upsert({
+     *   create: {
+     *     // ... data to create a Slide
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the Slide we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SlideUpsertArgs>(args: SelectSubset<T, SlideUpsertArgs<ExtArgs>>): Prisma__SlideClient<$Result.GetResult<Prisma.$SlidePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of Slides.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlideCountArgs} args - Arguments to filter Slides to count.
+     * @example
+     * // Count the number of Slides
+     * const count = await prisma.slide.count({
+     *   where: {
+     *     // ... the filter for the Slides we want to count
+     *   }
+     * })
+    **/
+    count<T extends SlideCountArgs>(
+      args?: Subset<T, SlideCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SlideCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a Slide.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlideAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SlideAggregateArgs>(args: Subset<T, SlideAggregateArgs>): Prisma.PrismaPromise<GetSlideAggregateType<T>>
+
+    /**
+     * Group by Slide.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SlideGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SlideGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SlideGroupByArgs['orderBy'] }
+        : { orderBy?: SlideGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SlideGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSlideGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the Slide model
+   */
+  readonly fields: SlideFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for Slide.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SlideClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    slider<T extends SliderDefaultArgs<ExtArgs> = {}>(args?: Subset<T, SliderDefaultArgs<ExtArgs>>): Prisma__SliderClient<$Result.GetResult<Prisma.$SliderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the Slide model
+   */
+  interface SlideFieldRefs {
+    readonly id: FieldRef<"Slide", 'String'>
+    readonly title: FieldRef<"Slide", 'String'>
+    readonly description: FieldRef<"Slide", 'String'>
+    readonly imageUrl: FieldRef<"Slide", 'String'>
+    readonly link: FieldRef<"Slide", 'String'>
+    readonly order: FieldRef<"Slide", 'Int'>
+    readonly isActive: FieldRef<"Slide", 'Boolean'>
+    readonly startTime: FieldRef<"Slide", 'DateTime'>
+    readonly endTime: FieldRef<"Slide", 'DateTime'>
+    readonly sliderId: FieldRef<"Slide", 'String'>
+    readonly createdAt: FieldRef<"Slide", 'DateTime'>
+    readonly updatedAt: FieldRef<"Slide", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * Slide findUnique
+   */
+  export type SlideFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    /**
+     * Filter, which Slide to fetch.
+     */
+    where: SlideWhereUniqueInput
+  }
+
+  /**
+   * Slide findUniqueOrThrow
+   */
+  export type SlideFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    /**
+     * Filter, which Slide to fetch.
+     */
+    where: SlideWhereUniqueInput
+  }
+
+  /**
+   * Slide findFirst
+   */
+  export type SlideFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    /**
+     * Filter, which Slide to fetch.
+     */
+    where?: SlideWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Slides to fetch.
+     */
+    orderBy?: SlideOrderByWithRelationInput | SlideOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Slides.
+     */
+    cursor?: SlideWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Slides from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Slides.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Slides.
+     */
+    distinct?: SlideScalarFieldEnum | SlideScalarFieldEnum[]
+  }
+
+  /**
+   * Slide findFirstOrThrow
+   */
+  export type SlideFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    /**
+     * Filter, which Slide to fetch.
+     */
+    where?: SlideWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Slides to fetch.
+     */
+    orderBy?: SlideOrderByWithRelationInput | SlideOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for Slides.
+     */
+    cursor?: SlideWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Slides from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Slides.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Slides.
+     */
+    distinct?: SlideScalarFieldEnum | SlideScalarFieldEnum[]
+  }
+
+  /**
+   * Slide findMany
+   */
+  export type SlideFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    /**
+     * Filter, which Slides to fetch.
+     */
+    where?: SlideWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of Slides to fetch.
+     */
+    orderBy?: SlideOrderByWithRelationInput | SlideOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing Slides.
+     */
+    cursor?: SlideWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` Slides from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` Slides.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of Slides.
+     */
+    distinct?: SlideScalarFieldEnum | SlideScalarFieldEnum[]
+  }
+
+  /**
+   * Slide create
+   */
+  export type SlideCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    /**
+     * The data needed to create a Slide.
+     */
+    data: XOR<SlideCreateInput, SlideUncheckedCreateInput>
+  }
+
+  /**
+   * Slide createMany
+   */
+  export type SlideCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many Slides.
+     */
+    data: SlideCreateManyInput | SlideCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * Slide createManyAndReturn
+   */
+  export type SlideCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * The data used to create many Slides.
+     */
+    data: SlideCreateManyInput | SlideCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Slide update
+   */
+  export type SlideUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    /**
+     * The data needed to update a Slide.
+     */
+    data: XOR<SlideUpdateInput, SlideUncheckedUpdateInput>
+    /**
+     * Choose, which Slide to update.
+     */
+    where: SlideWhereUniqueInput
+  }
+
+  /**
+   * Slide updateMany
+   */
+  export type SlideUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update Slides.
+     */
+    data: XOR<SlideUpdateManyMutationInput, SlideUncheckedUpdateManyInput>
+    /**
+     * Filter which Slides to update
+     */
+    where?: SlideWhereInput
+    /**
+     * Limit how many Slides to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * Slide updateManyAndReturn
+   */
+  export type SlideUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * The data used to update Slides.
+     */
+    data: XOR<SlideUpdateManyMutationInput, SlideUncheckedUpdateManyInput>
+    /**
+     * Filter which Slides to update
+     */
+    where?: SlideWhereInput
+    /**
+     * Limit how many Slides to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * Slide upsert
+   */
+  export type SlideUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    /**
+     * The filter to search for the Slide to update in case it exists.
+     */
+    where: SlideWhereUniqueInput
+    /**
+     * In case the Slide found by the `where` argument doesn't exist, create a new Slide with this data.
+     */
+    create: XOR<SlideCreateInput, SlideUncheckedCreateInput>
+    /**
+     * In case the Slide was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SlideUpdateInput, SlideUncheckedUpdateInput>
+  }
+
+  /**
+   * Slide delete
+   */
+  export type SlideDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+    /**
+     * Filter which Slide to delete.
+     */
+    where: SlideWhereUniqueInput
+  }
+
+  /**
+   * Slide deleteMany
+   */
+  export type SlideDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which Slides to delete
+     */
+    where?: SlideWhereInput
+    /**
+     * Limit how many Slides to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * Slide without action
+   */
+  export type SlideDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Slide
+     */
+    select?: SlideSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Slide
+     */
+    omit?: SlideOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: SlideInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -28684,6 +31233,38 @@ export namespace Prisma {
   };
 
   export type AiModelScalarFieldEnum = (typeof AiModelScalarFieldEnum)[keyof typeof AiModelScalarFieldEnum]
+
+
+  export const SliderScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    autoPlay: 'autoPlay',
+    interval: 'interval',
+    height: 'height',
+    isActive: 'isActive',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SliderScalarFieldEnum = (typeof SliderScalarFieldEnum)[keyof typeof SliderScalarFieldEnum]
+
+
+  export const SlideScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    description: 'description',
+    imageUrl: 'imageUrl',
+    link: 'link',
+    order: 'order',
+    isActive: 'isActive',
+    startTime: 'startTime',
+    endTime: 'endTime',
+    sliderId: 'sliderId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SlideScalarFieldEnum = (typeof SlideScalarFieldEnum)[keyof typeof SlideScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -30686,6 +33267,170 @@ export namespace Prisma {
     supportsI2I?: BoolWithAggregatesFilter<"AiModel"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"AiModel"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"AiModel"> | Date | string
+  }
+
+  export type SliderWhereInput = {
+    AND?: SliderWhereInput | SliderWhereInput[]
+    OR?: SliderWhereInput[]
+    NOT?: SliderWhereInput | SliderWhereInput[]
+    id?: StringFilter<"Slider"> | string
+    name?: StringFilter<"Slider"> | string
+    autoPlay?: BoolFilter<"Slider"> | boolean
+    interval?: IntFilter<"Slider"> | number
+    height?: StringNullableFilter<"Slider"> | string | null
+    isActive?: BoolFilter<"Slider"> | boolean
+    createdAt?: DateTimeFilter<"Slider"> | Date | string
+    updatedAt?: DateTimeFilter<"Slider"> | Date | string
+    slides?: SlideListRelationFilter
+  }
+
+  export type SliderOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    autoPlay?: SortOrder
+    interval?: SortOrder
+    height?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    slides?: SlideOrderByRelationAggregateInput
+  }
+
+  export type SliderWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    name?: string
+    AND?: SliderWhereInput | SliderWhereInput[]
+    OR?: SliderWhereInput[]
+    NOT?: SliderWhereInput | SliderWhereInput[]
+    autoPlay?: BoolFilter<"Slider"> | boolean
+    interval?: IntFilter<"Slider"> | number
+    height?: StringNullableFilter<"Slider"> | string | null
+    isActive?: BoolFilter<"Slider"> | boolean
+    createdAt?: DateTimeFilter<"Slider"> | Date | string
+    updatedAt?: DateTimeFilter<"Slider"> | Date | string
+    slides?: SlideListRelationFilter
+  }, "id" | "name">
+
+  export type SliderOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    autoPlay?: SortOrder
+    interval?: SortOrder
+    height?: SortOrderInput | SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SliderCountOrderByAggregateInput
+    _avg?: SliderAvgOrderByAggregateInput
+    _max?: SliderMaxOrderByAggregateInput
+    _min?: SliderMinOrderByAggregateInput
+    _sum?: SliderSumOrderByAggregateInput
+  }
+
+  export type SliderScalarWhereWithAggregatesInput = {
+    AND?: SliderScalarWhereWithAggregatesInput | SliderScalarWhereWithAggregatesInput[]
+    OR?: SliderScalarWhereWithAggregatesInput[]
+    NOT?: SliderScalarWhereWithAggregatesInput | SliderScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Slider"> | string
+    name?: StringWithAggregatesFilter<"Slider"> | string
+    autoPlay?: BoolWithAggregatesFilter<"Slider"> | boolean
+    interval?: IntWithAggregatesFilter<"Slider"> | number
+    height?: StringNullableWithAggregatesFilter<"Slider"> | string | null
+    isActive?: BoolWithAggregatesFilter<"Slider"> | boolean
+    createdAt?: DateTimeWithAggregatesFilter<"Slider"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Slider"> | Date | string
+  }
+
+  export type SlideWhereInput = {
+    AND?: SlideWhereInput | SlideWhereInput[]
+    OR?: SlideWhereInput[]
+    NOT?: SlideWhereInput | SlideWhereInput[]
+    id?: StringFilter<"Slide"> | string
+    title?: StringNullableFilter<"Slide"> | string | null
+    description?: StringNullableFilter<"Slide"> | string | null
+    imageUrl?: StringFilter<"Slide"> | string
+    link?: StringNullableFilter<"Slide"> | string | null
+    order?: IntFilter<"Slide"> | number
+    isActive?: BoolFilter<"Slide"> | boolean
+    startTime?: DateTimeNullableFilter<"Slide"> | Date | string | null
+    endTime?: DateTimeNullableFilter<"Slide"> | Date | string | null
+    sliderId?: StringFilter<"Slide"> | string
+    createdAt?: DateTimeFilter<"Slide"> | Date | string
+    updatedAt?: DateTimeFilter<"Slide"> | Date | string
+    slider?: XOR<SliderScalarRelationFilter, SliderWhereInput>
+  }
+
+  export type SlideOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    imageUrl?: SortOrder
+    link?: SortOrderInput | SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    startTime?: SortOrderInput | SortOrder
+    endTime?: SortOrderInput | SortOrder
+    sliderId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    slider?: SliderOrderByWithRelationInput
+  }
+
+  export type SlideWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SlideWhereInput | SlideWhereInput[]
+    OR?: SlideWhereInput[]
+    NOT?: SlideWhereInput | SlideWhereInput[]
+    title?: StringNullableFilter<"Slide"> | string | null
+    description?: StringNullableFilter<"Slide"> | string | null
+    imageUrl?: StringFilter<"Slide"> | string
+    link?: StringNullableFilter<"Slide"> | string | null
+    order?: IntFilter<"Slide"> | number
+    isActive?: BoolFilter<"Slide"> | boolean
+    startTime?: DateTimeNullableFilter<"Slide"> | Date | string | null
+    endTime?: DateTimeNullableFilter<"Slide"> | Date | string | null
+    sliderId?: StringFilter<"Slide"> | string
+    createdAt?: DateTimeFilter<"Slide"> | Date | string
+    updatedAt?: DateTimeFilter<"Slide"> | Date | string
+    slider?: XOR<SliderScalarRelationFilter, SliderWhereInput>
+  }, "id">
+
+  export type SlideOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrderInput | SortOrder
+    description?: SortOrderInput | SortOrder
+    imageUrl?: SortOrder
+    link?: SortOrderInput | SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    startTime?: SortOrderInput | SortOrder
+    endTime?: SortOrderInput | SortOrder
+    sliderId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SlideCountOrderByAggregateInput
+    _avg?: SlideAvgOrderByAggregateInput
+    _max?: SlideMaxOrderByAggregateInput
+    _min?: SlideMinOrderByAggregateInput
+    _sum?: SlideSumOrderByAggregateInput
+  }
+
+  export type SlideScalarWhereWithAggregatesInput = {
+    AND?: SlideScalarWhereWithAggregatesInput | SlideScalarWhereWithAggregatesInput[]
+    OR?: SlideScalarWhereWithAggregatesInput[]
+    NOT?: SlideScalarWhereWithAggregatesInput | SlideScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"Slide"> | string
+    title?: StringNullableWithAggregatesFilter<"Slide"> | string | null
+    description?: StringNullableWithAggregatesFilter<"Slide"> | string | null
+    imageUrl?: StringWithAggregatesFilter<"Slide"> | string
+    link?: StringNullableWithAggregatesFilter<"Slide"> | string | null
+    order?: IntWithAggregatesFilter<"Slide"> | number
+    isActive?: BoolWithAggregatesFilter<"Slide"> | boolean
+    startTime?: DateTimeNullableWithAggregatesFilter<"Slide"> | Date | string | null
+    endTime?: DateTimeNullableWithAggregatesFilter<"Slide"> | Date | string | null
+    sliderId?: StringWithAggregatesFilter<"Slide"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"Slide"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Slide"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -32777,6 +35522,191 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type SliderCreateInput = {
+    id?: string
+    name: string
+    autoPlay?: boolean
+    interval?: number
+    height?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slides?: SlideCreateNestedManyWithoutSliderInput
+  }
+
+  export type SliderUncheckedCreateInput = {
+    id?: string
+    name: string
+    autoPlay?: boolean
+    interval?: number
+    height?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slides?: SlideUncheckedCreateNestedManyWithoutSliderInput
+  }
+
+  export type SliderUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    autoPlay?: BoolFieldUpdateOperationsInput | boolean
+    interval?: IntFieldUpdateOperationsInput | number
+    height?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slides?: SlideUpdateManyWithoutSliderNestedInput
+  }
+
+  export type SliderUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    autoPlay?: BoolFieldUpdateOperationsInput | boolean
+    interval?: IntFieldUpdateOperationsInput | number
+    height?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slides?: SlideUncheckedUpdateManyWithoutSliderNestedInput
+  }
+
+  export type SliderCreateManyInput = {
+    id?: string
+    name: string
+    autoPlay?: boolean
+    interval?: number
+    height?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SliderUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    autoPlay?: BoolFieldUpdateOperationsInput | boolean
+    interval?: IntFieldUpdateOperationsInput | number
+    height?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SliderUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    autoPlay?: BoolFieldUpdateOperationsInput | boolean
+    interval?: IntFieldUpdateOperationsInput | number
+    height?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlideCreateInput = {
+    id?: string
+    title?: string | null
+    description?: string | null
+    imageUrl: string
+    link?: string | null
+    order?: number
+    isActive?: boolean
+    startTime?: Date | string | null
+    endTime?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    slider: SliderCreateNestedOneWithoutSlidesInput
+  }
+
+  export type SlideUncheckedCreateInput = {
+    id?: string
+    title?: string | null
+    description?: string | null
+    imageUrl: string
+    link?: string | null
+    order?: number
+    isActive?: boolean
+    startTime?: Date | string | null
+    endTime?: Date | string | null
+    sliderId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SlideUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    slider?: SliderUpdateOneRequiredWithoutSlidesNestedInput
+  }
+
+  export type SlideUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sliderId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlideCreateManyInput = {
+    id?: string
+    title?: string | null
+    description?: string | null
+    imageUrl: string
+    link?: string | null
+    order?: number
+    isActive?: boolean
+    startTime?: Date | string | null
+    endTime?: Date | string | null
+    sliderId: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SlideUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlideUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    sliderId?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -34139,6 +37069,115 @@ export namespace Prisma {
     _max?: NestedEnumAiModelTypeFilter<$PrismaModel>
   }
 
+  export type SlideListRelationFilter = {
+    every?: SlideWhereInput
+    some?: SlideWhereInput
+    none?: SlideWhereInput
+  }
+
+  export type SlideOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type SliderCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    autoPlay?: SortOrder
+    interval?: SortOrder
+    height?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SliderAvgOrderByAggregateInput = {
+    interval?: SortOrder
+  }
+
+  export type SliderMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    autoPlay?: SortOrder
+    interval?: SortOrder
+    height?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SliderMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    autoPlay?: SortOrder
+    interval?: SortOrder
+    height?: SortOrder
+    isActive?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SliderSumOrderByAggregateInput = {
+    interval?: SortOrder
+  }
+
+  export type SliderScalarRelationFilter = {
+    is?: SliderWhereInput
+    isNot?: SliderWhereInput
+  }
+
+  export type SlideCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    imageUrl?: SortOrder
+    link?: SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    sliderId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SlideAvgOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
+  export type SlideMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    imageUrl?: SortOrder
+    link?: SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    sliderId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SlideMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    description?: SortOrder
+    imageUrl?: SortOrder
+    link?: SortOrder
+    order?: SortOrder
+    isActive?: SortOrder
+    startTime?: SortOrder
+    endTime?: SortOrder
+    sliderId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SlideSumOrderByAggregateInput = {
+    order?: SortOrder
+  }
+
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
     connectOrCreate?: AccountCreateOrConnectWithoutUserInput | AccountCreateOrConnectWithoutUserInput[]
@@ -35143,6 +38182,62 @@ export namespace Prisma {
 
   export type EnumAiModelTypeFieldUpdateOperationsInput = {
     set?: $Enums.AiModelType
+  }
+
+  export type SlideCreateNestedManyWithoutSliderInput = {
+    create?: XOR<SlideCreateWithoutSliderInput, SlideUncheckedCreateWithoutSliderInput> | SlideCreateWithoutSliderInput[] | SlideUncheckedCreateWithoutSliderInput[]
+    connectOrCreate?: SlideCreateOrConnectWithoutSliderInput | SlideCreateOrConnectWithoutSliderInput[]
+    createMany?: SlideCreateManySliderInputEnvelope
+    connect?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+  }
+
+  export type SlideUncheckedCreateNestedManyWithoutSliderInput = {
+    create?: XOR<SlideCreateWithoutSliderInput, SlideUncheckedCreateWithoutSliderInput> | SlideCreateWithoutSliderInput[] | SlideUncheckedCreateWithoutSliderInput[]
+    connectOrCreate?: SlideCreateOrConnectWithoutSliderInput | SlideCreateOrConnectWithoutSliderInput[]
+    createMany?: SlideCreateManySliderInputEnvelope
+    connect?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+  }
+
+  export type SlideUpdateManyWithoutSliderNestedInput = {
+    create?: XOR<SlideCreateWithoutSliderInput, SlideUncheckedCreateWithoutSliderInput> | SlideCreateWithoutSliderInput[] | SlideUncheckedCreateWithoutSliderInput[]
+    connectOrCreate?: SlideCreateOrConnectWithoutSliderInput | SlideCreateOrConnectWithoutSliderInput[]
+    upsert?: SlideUpsertWithWhereUniqueWithoutSliderInput | SlideUpsertWithWhereUniqueWithoutSliderInput[]
+    createMany?: SlideCreateManySliderInputEnvelope
+    set?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+    disconnect?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+    delete?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+    connect?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+    update?: SlideUpdateWithWhereUniqueWithoutSliderInput | SlideUpdateWithWhereUniqueWithoutSliderInput[]
+    updateMany?: SlideUpdateManyWithWhereWithoutSliderInput | SlideUpdateManyWithWhereWithoutSliderInput[]
+    deleteMany?: SlideScalarWhereInput | SlideScalarWhereInput[]
+  }
+
+  export type SlideUncheckedUpdateManyWithoutSliderNestedInput = {
+    create?: XOR<SlideCreateWithoutSliderInput, SlideUncheckedCreateWithoutSliderInput> | SlideCreateWithoutSliderInput[] | SlideUncheckedCreateWithoutSliderInput[]
+    connectOrCreate?: SlideCreateOrConnectWithoutSliderInput | SlideCreateOrConnectWithoutSliderInput[]
+    upsert?: SlideUpsertWithWhereUniqueWithoutSliderInput | SlideUpsertWithWhereUniqueWithoutSliderInput[]
+    createMany?: SlideCreateManySliderInputEnvelope
+    set?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+    disconnect?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+    delete?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+    connect?: SlideWhereUniqueInput | SlideWhereUniqueInput[]
+    update?: SlideUpdateWithWhereUniqueWithoutSliderInput | SlideUpdateWithWhereUniqueWithoutSliderInput[]
+    updateMany?: SlideUpdateManyWithWhereWithoutSliderInput | SlideUpdateManyWithWhereWithoutSliderInput[]
+    deleteMany?: SlideScalarWhereInput | SlideScalarWhereInput[]
+  }
+
+  export type SliderCreateNestedOneWithoutSlidesInput = {
+    create?: XOR<SliderCreateWithoutSlidesInput, SliderUncheckedCreateWithoutSlidesInput>
+    connectOrCreate?: SliderCreateOrConnectWithoutSlidesInput
+    connect?: SliderWhereUniqueInput
+  }
+
+  export type SliderUpdateOneRequiredWithoutSlidesNestedInput = {
+    create?: XOR<SliderCreateWithoutSlidesInput, SliderUncheckedCreateWithoutSlidesInput>
+    connectOrCreate?: SliderCreateOrConnectWithoutSlidesInput
+    upsert?: SliderUpsertWithoutSlidesInput
+    connect?: SliderWhereUniqueInput
+    update?: XOR<XOR<SliderUpdateToOneWithWhereWithoutSlidesInput, SliderUpdateWithoutSlidesInput>, SliderUncheckedUpdateWithoutSlidesInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -37735,6 +40830,138 @@ export namespace Prisma {
     articles?: ArticleUncheckedUpdateManyWithoutCategoryNestedInput
   }
 
+  export type SlideCreateWithoutSliderInput = {
+    id?: string
+    title?: string | null
+    description?: string | null
+    imageUrl: string
+    link?: string | null
+    order?: number
+    isActive?: boolean
+    startTime?: Date | string | null
+    endTime?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SlideUncheckedCreateWithoutSliderInput = {
+    id?: string
+    title?: string | null
+    description?: string | null
+    imageUrl: string
+    link?: string | null
+    order?: number
+    isActive?: boolean
+    startTime?: Date | string | null
+    endTime?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SlideCreateOrConnectWithoutSliderInput = {
+    where: SlideWhereUniqueInput
+    create: XOR<SlideCreateWithoutSliderInput, SlideUncheckedCreateWithoutSliderInput>
+  }
+
+  export type SlideCreateManySliderInputEnvelope = {
+    data: SlideCreateManySliderInput | SlideCreateManySliderInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type SlideUpsertWithWhereUniqueWithoutSliderInput = {
+    where: SlideWhereUniqueInput
+    update: XOR<SlideUpdateWithoutSliderInput, SlideUncheckedUpdateWithoutSliderInput>
+    create: XOR<SlideCreateWithoutSliderInput, SlideUncheckedCreateWithoutSliderInput>
+  }
+
+  export type SlideUpdateWithWhereUniqueWithoutSliderInput = {
+    where: SlideWhereUniqueInput
+    data: XOR<SlideUpdateWithoutSliderInput, SlideUncheckedUpdateWithoutSliderInput>
+  }
+
+  export type SlideUpdateManyWithWhereWithoutSliderInput = {
+    where: SlideScalarWhereInput
+    data: XOR<SlideUpdateManyMutationInput, SlideUncheckedUpdateManyWithoutSliderInput>
+  }
+
+  export type SlideScalarWhereInput = {
+    AND?: SlideScalarWhereInput | SlideScalarWhereInput[]
+    OR?: SlideScalarWhereInput[]
+    NOT?: SlideScalarWhereInput | SlideScalarWhereInput[]
+    id?: StringFilter<"Slide"> | string
+    title?: StringNullableFilter<"Slide"> | string | null
+    description?: StringNullableFilter<"Slide"> | string | null
+    imageUrl?: StringFilter<"Slide"> | string
+    link?: StringNullableFilter<"Slide"> | string | null
+    order?: IntFilter<"Slide"> | number
+    isActive?: BoolFilter<"Slide"> | boolean
+    startTime?: DateTimeNullableFilter<"Slide"> | Date | string | null
+    endTime?: DateTimeNullableFilter<"Slide"> | Date | string | null
+    sliderId?: StringFilter<"Slide"> | string
+    createdAt?: DateTimeFilter<"Slide"> | Date | string
+    updatedAt?: DateTimeFilter<"Slide"> | Date | string
+  }
+
+  export type SliderCreateWithoutSlidesInput = {
+    id?: string
+    name: string
+    autoPlay?: boolean
+    interval?: number
+    height?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SliderUncheckedCreateWithoutSlidesInput = {
+    id?: string
+    name: string
+    autoPlay?: boolean
+    interval?: number
+    height?: string | null
+    isActive?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SliderCreateOrConnectWithoutSlidesInput = {
+    where: SliderWhereUniqueInput
+    create: XOR<SliderCreateWithoutSlidesInput, SliderUncheckedCreateWithoutSlidesInput>
+  }
+
+  export type SliderUpsertWithoutSlidesInput = {
+    update: XOR<SliderUpdateWithoutSlidesInput, SliderUncheckedUpdateWithoutSlidesInput>
+    create: XOR<SliderCreateWithoutSlidesInput, SliderUncheckedCreateWithoutSlidesInput>
+    where?: SliderWhereInput
+  }
+
+  export type SliderUpdateToOneWithWhereWithoutSlidesInput = {
+    where?: SliderWhereInput
+    data: XOR<SliderUpdateWithoutSlidesInput, SliderUncheckedUpdateWithoutSlidesInput>
+  }
+
+  export type SliderUpdateWithoutSlidesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    autoPlay?: BoolFieldUpdateOperationsInput | boolean
+    interval?: IntFieldUpdateOperationsInput | number
+    height?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SliderUncheckedUpdateWithoutSlidesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    autoPlay?: BoolFieldUpdateOperationsInput | boolean
+    interval?: IntFieldUpdateOperationsInput | number
+    height?: NullableStringFieldUpdateOperationsInput | string | null
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type AccountCreateManyUserInput = {
     id?: string
     accountId: string
@@ -38443,6 +41670,62 @@ export namespace Prisma {
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlideCreateManySliderInput = {
+    id?: string
+    title?: string | null
+    description?: string | null
+    imageUrl: string
+    link?: string | null
+    order?: number
+    isActive?: boolean
+    startTime?: Date | string | null
+    endTime?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SlideUpdateWithoutSliderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlideUncheckedUpdateWithoutSliderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SlideUncheckedUpdateManyWithoutSliderInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: NullableStringFieldUpdateOperationsInput | string | null
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    link?: NullableStringFieldUpdateOperationsInput | string | null
+    order?: IntFieldUpdateOperationsInput | number
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endTime?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

@@ -74,3 +74,7 @@ export type ActionResponse<T = any> = {
   error?: string;
   data?: T;
 };
+
+export interface SliderWithSlides extends import("./generated/client").Slider {
+  slides: import("./generated/client").Slide[];
+}

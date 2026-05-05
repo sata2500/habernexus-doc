@@ -411,6 +411,32 @@ exports.Prisma.AiModelScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SliderScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  autoPlay: 'autoPlay',
+  interval: 'interval',
+  height: 'height',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SlideScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  description: 'description',
+  imageUrl: 'imageUrl',
+  link: 'link',
+  order: 'order',
+  isActive: 'isActive',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  sliderId: 'sliderId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -480,7 +506,9 @@ exports.Prisma.ModelName = {
   AiPersona: 'AiPersona',
   AiPersonaOnCategory: 'AiPersonaOnCategory',
   SiteSettings: 'SiteSettings',
-  AiModel: 'AiModel'
+  AiModel: 'AiModel',
+  Slider: 'Slider',
+  Slide: 'Slide'
 };
 
 /**

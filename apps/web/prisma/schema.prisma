@@ -411,3 +411,34 @@ model AiModel {
   createdAt         DateTime    @default(now())
   updatedAt         DateTime    @updatedAt
 }
+
+model Slider {
+  id        String   @id @default("homepage") // Use "homepage" as default ID for the main slider
+  name      String   @unique
+  autoPlay  Boolean  @default(true)
+  interval  Int      @default(5000)
+  height    String?  @default("500px")
+  isActive  Boolean  @default(true)
+  slides    Slide[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Slide {
+  id          String    @id @default(cuid())
+  title       String?
+  description String?
+  imageUrl    String
+  link        String?
+  order       Int       @default(0)
+  isActive    Boolean   @default(true)
+  startTime   DateTime?
+  endTime     DateTime?
+  sliderId    String
+  slider      Slider    @relation(fields: [sliderId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([sliderId])
+  @@index([order])
+}

@@ -553,6 +553,51 @@ Reforma genel olarak olumlu yaklaşılıyor ancak uygulamanın başarısının, 
   });
 
   console.log("✅ 3 bookmark oluşturuldu");
+  
+  // --- Homepage Slider ---
+  const homepageSlider = await prisma.slider.upsert({
+    where: { id: "homepage" },
+    update: {},
+    create: {
+      id: "homepage",
+      name: "Ana Sayfa Slider",
+      autoPlay: true,
+      interval: 5000,
+      height: "500px",
+      isActive: true,
+    },
+  });
+
+  await prisma.slide.createMany({
+    data: [
+      {
+        title: "Haber Nexus'a Hoş Geldiniz",
+        description: "Yapay zeka destekli modern haber platformu ile gündemi keşfedin.",
+        imageUrl: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?q=80&w=2070&auto=format&fit=crop",
+        link: "/",
+        order: 0,
+        sliderId: homepageSlider.id,
+      },
+      {
+        title: "Kişiselleştirilmiş Haber Deneyimi",
+        description: "İlgi alanlarınıza göre özelleştirilmiş haber akışı ile sadece sizin için önemli olanları okuyun.",
+        imageUrl: "https://images.unsplash.com/photo-1495020689067-958852a7765e?q=80&w=2070&auto=format&fit=crop",
+        link: "/categories",
+        order: 1,
+        sliderId: homepageSlider.id,
+      },
+      {
+        title: "Yazar Masası Yayında",
+        description: "Kendi haberlerinizi oluşturun, yapay zeka ile zenginleştirin ve topluluğa sunun.",
+        imageUrl: "https://images.unsplash.com/photo-1488190211105-8b0e65b80b4e?q=80&w=2070&auto=format&fit=crop",
+        link: "/admin/ai-writer",
+        order: 2,
+        sliderId: homepageSlider.id,
+      },
+    ],
+  });
+
+  console.log("✅ Homepage Slider ve 3 slide oluşturuldu");
 
   console.log("\n🎉 Seed tamamlandı!\n");
   console.log("Test hesapları:");
