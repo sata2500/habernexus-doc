@@ -89,7 +89,7 @@ export function SliderClient({
       `}</style>
       
       <motion.div
-        animate={{ x: `-${current * (100 / itemsToShow)}%` }}
+        animate={{ x: `-${current * (100 / slides.length)}%` }}
         transition={{ 
           type: "spring", 
           stiffness: 150, 
