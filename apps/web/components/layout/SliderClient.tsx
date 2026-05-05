@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useMotionValue } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -24,20 +24,23 @@ export function SliderClient({
 }: SliderClientProps) {
   const [current, setCurrent] = useState(0);
   const [itemsToShow, setItemsToShow] = useState(1);
-  const [mounted, setMounted] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Set mounted to true on client-side
+  // Responsive items calculation
   useEffect(() => {
-    setMounted(true);
     const updateItems = () => {
-      if (window.innerWidth >= 1536) setItemsToShow(3);
-      else if (window.innerWidth >= 1024) setItemsToShow(2);
-      else setItemsToShow(1);
+      if (window.innerWidth >= 1536) { // 2xl (TV/Smart Board)
+        setItemsToShow(3);
+      } else if (window.innerWidth >= 1024) { // lg (Desktop)
+        setItemsToShow(2);
+      } else {
+        setItemsToShow(1);
+      }
     };
+
     updateItems();
     window.addEventListener("resize", updateItems);
     return () => window.removeEventListener("resize", updateItems);
@@ -67,18 +70,27 @@ export function SliderClient({
   return (
     <div 
       ref={containerRef}
-      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black transition-all duration-500"
-      style={{ height: mounted && window.innerWidth < 768 ? mobileHeight : height } as any}
+      className="slider-container relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black transition-all duration-500"
+      style={{ 
+        '--desktop-h': height,
+        '--mobile-h': mobileHeight 
+      } as any}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
+      {/* Inline style for dynamic height support across breakpoints */}
+      <style jsx>{`
+        .slider-container { height: ${mobileHeight}; }
+        @media (min-width: 768px) { .slider-container { height: ${height}; } }
+      `}</style>
+      
       <motion.div
-        animate={{ x: mounted ? `-${current * (100 / itemsToShow)}%` : '0%' }}
+        animate={{ x: `-${current * (100 / slides.length)}%` }}
         transition={{ 
           type: "spring", 
-          stiffness: 150, 
-          damping: 25,
-          mass: 1
+          stiffness: 200, 
+          damping: 30,
+          mass: 0.8
         }}
         drag="x"
         dragConstraints={containerRef}
@@ -86,10 +98,13 @@ export function SliderClient({
         onDragEnd={(_, info) => {
           setIsDragging(false);
           const swipeThreshold = 50;
-          if (info.offset.x > swipeThreshold) prevSlide();
-          else if (info.offset.x < -swipeThreshold) nextSlide();
+          if (info.offset.x > swipeThreshold) {
+            prevSlide();
+          } else if (info.offset.x < -swipeThreshold) {
+            nextSlide();
+          }
         }}
-        className="flex h-full cursor-grab active:cursor-grabbing touch-pan-y justify-start"
+        className="flex h-full cursor-grab active:cursor-grabbing touch-pan-y justify-start items-stretch"
         style={{ width: `${(slides.length / itemsToShow) * 100}%` }}
       >
         {slides.map((slide, index) => (
@@ -99,7 +114,7 @@ export function SliderClient({
             style={{ width: `${100 / slides.length}%` }}
           >
             <div className="relative w-full h-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide bg-zinc-900/50">
-              {/* Background Blur */}
+              {/* Background Blur Effect (Premium Look) */}
               <div className="absolute inset-0 z-0">
                 <Image
                   src={slide.imageUrl}
@@ -109,25 +124,26 @@ export function SliderClient({
                 />
               </div>
 
-              {/* Main Image */}
+              {/* Main Image (Contain to show whole image) */}
               <div className="relative z-10 w-full h-full flex items-center justify-center">
                 <Image
                   src={slide.imageUrl}
                   alt={slide.title || ""}
                   fill
-                  className="object-contain p-4 md:p-8"
-                  priority={index < 3}
+                  className="object-contain p-2 md:p-6"
+                  priority={index < itemsToShow}
                 />
               </div>
 
               {/* Gradient Overlay */}
-              <div className="absolute inset-0 z-20 bg-linear-to-t from-black/80 via-transparent to-transparent" />
+              <div className="absolute inset-0 z-20 bg-linear-to-t from-black/70 via-transparent to-transparent" />
 
               {/* Content */}
-              <div className="absolute inset-0 z-30 flex items-end justify-center pb-6 md:pb-12 px-6 md:px-8">
+              <div className="absolute inset-0 z-30 flex items-end justify-center pb-8 md:pb-12 px-6 md:px-8">
                 <motion.div 
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.1 }}
                   className="w-full max-w-[90%] md:max-w-[85%] space-y-2 md:space-y-4 text-center"
                 >
                   {slide.title && (
@@ -136,7 +152,7 @@ export function SliderClient({
                     </h2>
                   )}
                   {slide.description && itemsToShow === 1 && (
-                    <p className="text-white/90 text-sm md:text-lg line-clamp-2 font-medium leading-relaxed drop-shadow-md mx-auto max-w-2xl hidden md:block">
+                    <p className="text-white/90 text-sm md:text-lg line-clamp-2 font-medium leading-relaxed drop-shadow-md mx-auto max-w-2xl">
                       {slide.description}
                     </p>
                   )}
@@ -182,18 +198,31 @@ export function SliderClient({
             </button>
           </div>
 
-          {/* Dots */}
-          <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-40">
+          {/* Dots & Progress */}
+          <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 z-40">
             {Array.from({ length: totalPages }).map((_, idx) => (
               <button
                 key={idx}
                 onClick={() => setCurrent(idx)}
-                className="h-1 md:h-1.5 transition-all duration-300 rounded-full bg-white/20 overflow-hidden"
-                style={{ 
-                  width: current === idx ? "1.25rem" : "0.5rem",
-                  backgroundColor: current === idx ? "var(--color-primary-500)" : "rgba(255,255,255,0.2)"
-                }}
-              />
+                className="relative h-1 md:h-1.5 transition-all duration-300 rounded-full bg-white/20 overflow-hidden"
+                style={{ width: current === idx ? "1.5rem" : "0.5rem" }}
+              >
+                {current === idx && autoPlay && (
+                  <motion.div 
+                    key={current}
+                    initial={{ width: 0 }}
+                    animate={{ width: (isHovering || isDragging) ? "0%" : "100%" }}
+                    transition={{ 
+                      duration: interval / 1000, 
+                      ease: "linear" as any
+                    }}
+                    className="absolute inset-0 bg-primary-500"
+                  />
+                )}
+                {current === idx && !autoPlay && (
+                  <div className="absolute inset-0 bg-primary-500" />
+                )}
+              </button>
             ))}
           </div>
         </>
