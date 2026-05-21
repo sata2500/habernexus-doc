@@ -184,6 +184,11 @@ exports.Prisma.ArticleScalarFieldEnum = {
   aiPersonaId: 'aiPersonaId',
   publishedAt: 'publishedAt',
   lang: 'lang',
+  plagiarismRate: 'plagiarismRate',
+  seoScore: 'seoScore',
+  readabilityScore: 'readabilityScore',
+  qualityScore: 'qualityScore',
+  analysisReport: 'analysisReport',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

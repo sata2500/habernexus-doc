@@ -68,27 +68,35 @@ model Verification {
 }
 
 model Article {
-  id          String         @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
-  slug        String         @unique
+  slug        String    @unique
   content     String
   excerpt     String?
   coverImage  String?
-  status      String         @default("DRAFT")
-  viewCount   Int            @default(0)
+  status      String    @default("DRAFT")
+  viewCount   Int       @default(0)
   authorId    String
   categoryId  String?
   aiPersonaId String?
   publishedAt DateTime?
-  lang        String         @default("tr")
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  category    Category?      @relation(fields: [categoryId], references: [id])
-  aiPersona   AiPersona?     @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
-  bookmarks   Bookmark[]
-  comments    Comment[]
-  tags        TagOnArticle[]
+  lang        String    @default("tr")
+
+  // Analiz Sonuclari
+  plagiarismRate   Int?
+  seoScore         Int?
+  readabilityScore Int?
+  qualityScore     Int?
+  analysisReport   Json?
+
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  author    User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category  Category?      @relation(fields: [categoryId], references: [id])
+  aiPersona AiPersona?     @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
+  bookmarks Bookmark[]
+  comments  Comment[]
+  tags      TagOnArticle[]
 
   @@index([authorId])
   @@index([categoryId])

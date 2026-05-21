@@ -1,6 +1,7 @@
 import { prisma } from "./prisma";
 import { put } from "@vercel/blob";
 import { slugify } from "./utils";
+import { analyzeArticle } from "./article-analyzer";
 
 // Yardımcı: Belirli bir süre bekle (ms)
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -259,6 +260,70 @@ export async function writeArticleWithAI(suggestionId: string) {
       data: { usedForArticle: true },
     });
 
+    // Otomatik Analiz Tetikleme ve Yeniden Yazım (Rewrite) Kontrolü
+    try {
+      console.log(`[AI Writer] Yeni makale için otomatik analiz tetikleniyor...`);
+      const analysis = await analyzeArticle(article.id);
+      
+      const PLAGIARISM_THRESHOLD = 30; // %30 intihal eşiği
+      let currentPlagiarismRate = analysis.success ? (analysis.plagiarismRate ?? 0) : 0;
+      
+      if (analysis.success && currentPlagiarismRate > PLAGIARISM_THRESHOLD) {
+        console.log(`[AI Writer] Otomatik analiz sonucu yüksek intihal oranı tespit edildi: %${currentPlagiarismRate}. Yeniden yazım başlatılıyor...`);
+        
+        let rewriteSuccess = false;
+        let rewriteAttempt = 1;
+        const maxRewriteAttempts = 2;
+        
+        while (rewriteAttempt <= maxRewriteAttempts && currentPlagiarismRate > PLAGIARISM_THRESHOLD) {
+          console.log(`[AI Writer] Yeniden yazım denemesi ${rewriteAttempt}/${maxRewriteAttempts}...`);
+          
+          const rewritePrompt = `
+            Daha önce yazdığın haber makalesinde yüksek oranda anlamsal benzerlik/intihal (%${currentPlagiarismRate}) tespit edildi.
+            Lütfen aşağıdaki konuyu tamamen farklı cümle yapılarıyla, son derece özgün, zengin ve tarafsız bir gazetecilik diliyle yeniden yaz.
+            Benzerlik taşıyan klişe kalıplardan ve doğrudan kopya cümlelerden kaçın.
+
+            Konu: ${suggestion.title}
+            Kaynak Özet: ${suggestion.excerpt || ""}
+            Talimat: ${systemPrompt}
+            Format: HTML (h2, p, strong). En az 500 kelime.
+          `;
+          
+          let newContent = "";
+          try {
+            newContent = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: rewritePrompt }], tools);
+          } catch (rewriteErr) {
+            console.error(`[AI Writer] Yeniden yazım API hatası:`, rewriteErr);
+          }
+          
+          if (newContent) {
+            await prisma.article.update({
+              where: { id: article.id },
+              data: { content: newContent }
+            });
+            
+            // Yeniden analiz et
+            const reAnalysis = await analyzeArticle(article.id);
+            if (reAnalysis.success) {
+              currentPlagiarismRate = reAnalysis.plagiarismRate ?? 0;
+              if (currentPlagiarismRate <= PLAGIARISM_THRESHOLD) {
+                rewriteSuccess = true;
+                console.log(`[AI Writer] Yeniden yazım başarılı! Yeni intihal oranı: %${currentPlagiarismRate}`);
+                break;
+              }
+            }
+          }
+          rewriteAttempt++;
+        }
+        
+        if (!rewriteSuccess) {
+          console.warn(`[AI Writer] ${maxRewriteAttempts} yeniden yazma denemesine rağmen intihal oranı %${PLAGIARISM_THRESHOLD} altına düşürülemedi. Son oran: %${currentPlagiarismRate}`);
+        }
+      }
+    } catch (analysisErr) {
+      console.error("[AI Writer] Otomatik analiz veya yeniden yazım hatası:", analysisErr);
+    }
+
     return { success: true, articleId: article.id, title: article.title };
   } catch (error) {
     console.error("AI Writer Hatası:", error);
@@ -284,4 +349,69 @@ export async function writeBatchArticlesWithAI(count: number = 3) {
     if (i < suggestions.length - 1) await sleep(15000);
   }
   return results;
+}
+
+export async function rewriteArticleWithAI(articleId: string) {
+  try {
+    const article = await prisma.article.findUnique({
+      where: { id: articleId },
+      include: { aiPersona: true, category: true }
+    });
+    if (!article) throw new Error("Makale bulunamadı.");
+
+    const settings = await prisma.systemSettings.findFirst();
+    const writerModelName = settings?.aiWriterModel || "google/gemini-2.0-flash-001";
+    
+    // Prompt hazırlığı
+    const systemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün.";
+    let finalPrompt = systemPrompt;
+    if (article.aiPersona) {
+      finalPrompt = `${systemPrompt}\n\nÖzel Yazım Talimatları:\n${article.aiPersona.prompt}`;
+    }
+
+    const useGoogleSearch = settings?.aiWriterSearchEnabled || false;
+    const tools = useGoogleSearch ? [{ type: "openrouter:web_search" }] : undefined;
+
+    const textPrompt = `
+      Konu: ${article.title}
+      Lütfen bu makaleyi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz. 
+      Önceki versiyondaki anlatım bozukluklarını düzelt, intihal riski oluşturabilecek ifadelerden kaçın.
+      Format: HTML (h2, p, strong). En az 500 kelime.
+    `;
+
+    console.log(`[AI Writer] Manuel yeniden yazım başlatılıyor: Makale="${article.title}" (${article.id})`);
+    
+    let content = "";
+    for (let i = 0; i < 3; i++) {
+      try {
+        content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }], tools);
+        break;
+      } catch (err: any) {
+        if (i < 2) {
+          await sleep(5000);
+          continue;
+        }
+        throw err;
+      }
+    }
+
+    if (!content) throw new Error("Yeniden yazım başarısız oldu, içerik üretilemedi.");
+
+    // Makaleyi güncelle
+    await prisma.article.update({
+      where: { id: articleId },
+      data: { content }
+    });
+
+    // Tekrar analiz et
+    const analysis = await analyzeArticle(articleId);
+
+    return {
+      success: true,
+      analysis
+    };
+  } catch (error: any) {
+    console.error("Manuel Yeniden Yazım Hatası:", error);
+    return { success: false, error: error.message || String(error) };
+  }
 }

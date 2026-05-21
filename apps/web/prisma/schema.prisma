@@ -81,6 +81,14 @@ model Article {
   aiPersonaId String?
   publishedAt DateTime?
   lang        String         @default("tr")
+
+  // Analiz Sonuclari
+  plagiarismRate    Int?
+  seoScore          Int?
+  readabilityScore  Int?
+  qualityScore      Int?
+  analysisReport    Json?
+
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
   author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)

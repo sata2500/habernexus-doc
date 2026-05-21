@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { analyzeArticle } from "@/lib/article-analyzer";
+import { rewriteArticleWithAI } from "@/lib/ai-writer";
 
 async function assertAdmin() {
   const reqHeaders = await headers();
@@ -262,4 +264,20 @@ export async function deleteCommentAdmin(id: string) {
     revalidatePath(`/article/${comment.article.slug}`);
   }
   return { success: true };
+}
+
+// Makaleyi analiz et (admin)
+export async function analyzeArticleAction(articleId: string) {
+  await assertAdmin();
+  const res = await analyzeArticle(articleId);
+  revalidatePath("/admin/articles");
+  return res;
+}
+
+// Makaleyi yapay zeka ile yeniden yaz (admin)
+export async function rewriteArticleWithAIAction(articleId: string) {
+  await assertAdmin();
+  const res = await rewriteArticleWithAI(articleId);
+  revalidatePath("/admin/articles");
+  return res;
 }

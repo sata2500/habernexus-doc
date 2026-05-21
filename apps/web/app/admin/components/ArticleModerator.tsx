@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
+import { useState, useTransition, useMemo, useEffect } from "react";
 import { 
   updateArticleStatus, 
   deleteArticle, 
@@ -14,17 +14,19 @@ import {
   Eye, 
   EyeOff, 
   Search, 
-  Filter, 
   CheckSquare, 
   Square, 
   MoreHorizontal,
   ArrowUpDown,
   CheckCircle2,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  Sparkles,
+  AlertTriangle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ArticleWithRelations } from "@/lib/types";
+import { ArticleAnalysisModal } from "@/components/article/ArticleAnalysisModal";
 
 type Article = ArticleWithRelations;
 
@@ -34,7 +36,21 @@ function getStatusInfo(status: string) {
   return { label: status, variant: "default" as const, icon: <XCircle className="h-3 w-3" /> };
 }
 
+const getScoreColor = (score: number, isPlagiarism = false) => {
+  if (isPlagiarism) {
+    if (score <= 30) return "text-green-500 bg-green-500/10 border-green-500/20 animate-none";
+    if (score <= 60) return "text-amber-500 bg-amber-500/10 border-amber-500/20 animate-none";
+    return "text-red-500 bg-red-500/10 border-red-500/20 font-black animate-pulse";
+  } else {
+    if (score >= 70) return "text-green-500 bg-green-500/10 border-green-500/20";
+    if (score >= 40) return "text-amber-500 bg-amber-500/10 border-amber-500/20";
+    return "text-red-500 bg-red-500/10 border-red-500/20";
+  }
+};
+
 export function ArticleModerator({ articles }: { articles: Article[] }) {
+  const [localArticles, setLocalArticles] = useState<Article[]>(articles);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [isPending, startTransition] = useTransition();
   const [actionId, setActionId] = useState<string | null>(null);
   
@@ -46,18 +62,32 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
   // Seçim State'i
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
+  // Sync prop updates to local state
+  useEffect(() => {
+    setLocalArticles(articles);
+  }, [articles]);
+
+  const handleAnalysisComplete = (updatedArticle: any) => {
+    setLocalArticles((prev) =>
+      prev.map((art) => (art.id === updatedArticle.id ? { ...art, ...updatedArticle } : art))
+    );
+    if (selectedArticle && selectedArticle.id === updatedArticle.id) {
+      setSelectedArticle({ ...selectedArticle, ...updatedArticle });
+    }
+  };
+
   // Kategorileri çıkar (filtre için)
   const categories = useMemo(() => {
     const cats = new Map();
-    articles.forEach(a => {
+    localArticles.forEach(a => {
       if (a.category) cats.set(a.category.id, a.category.name);
     });
     return Array.from(cats.entries());
-  }, [articles]);
+  }, [localArticles]);
 
   // Filtrelenmiş liste
   const filteredArticles = useMemo(() => {
-    return articles.filter(article => {
+    return localArticles.filter(article => {
       const authorName = article.author.name || "İsimsiz Yazar";
       const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
                            authorName.toLowerCase().includes(searchQuery.toLowerCase());
@@ -66,7 +96,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
       
       return matchesSearch && matchesStatus && matchesCategory;
     });
-  }, [articles, searchQuery, statusFilter, categoryFilter]);
+  }, [localArticles, searchQuery, statusFilter, categoryFilter]);
 
   // Seçim işlemleri
   const toggleSelectAll = () => {
@@ -216,6 +246,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
           </button>
           <div className="flex-1">Makale Bilgisi</div>
           <div className="hidden md:block w-24">İstatistik</div>
+          <div className="hidden md:block w-40">Analiz & Kalite</div>
           <div className="w-24">Durum</div>
           <div className="w-20 text-right">İşlemler</div>
         </div>
@@ -231,6 +262,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
               const isLoading = actionId?.startsWith(article.id) || isPending;
               const isSelected = selectedIds.has(article.id);
               const authorName = article.author.name || "İsimsiz Yazar";
+              const isAnalyzed = article.qualityScore !== null;
 
               return (
                 <div 
@@ -252,9 +284,21 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                   </button>
 
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate group-hover:text-primary-600 transition-colors">
-                      {article.title}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-semibold truncate group-hover:text-primary-600 transition-colors">
+                        {article.title}
+                      </p>
+                      {article.aiPersonaId && (
+                        <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-primary-500/10 border border-primary-500/20 text-primary-500 flex items-center gap-0.5" title="Yapay Zeka Makalesi">
+                          <Sparkles className="h-2 w-2" /> AI
+                        </span>
+                      )}
+                      {isAnalyzed && (article.plagiarismRate ?? 0) > 30 && (
+                        <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center gap-0.5 animate-pulse" title="Yüksek İntihal Riski">
+                          <AlertTriangle className="h-2.5 w-2.5" /> Risk
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
                       <span className="font-medium">{authorName}</span>
                       <span>•</span>
@@ -272,6 +316,37 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                   <div className="hidden md:flex items-center gap-1.5 w-24 text-xs font-medium text-muted-foreground">
                     <ArrowUpDown className="h-3 w-3" />
                     {article.viewCount.toLocaleString()}
+                  </div>
+
+                  {/* Analiz & Kalite Scores */}
+                  <div className="hidden md:block w-40 shrink-0">
+                    {isAnalyzed ? (
+                      <button
+                        onClick={() => setSelectedArticle(article)}
+                        className="flex items-center gap-1.5 p-1 pr-2 rounded-xl border border-border bg-muted/20 hover:bg-muted transition-all cursor-pointer text-left"
+                        title="Detaylı Analiz Raporunu Gör"
+                      >
+                        <span className={cn(
+                          "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border",
+                          getScoreColor(article.plagiarismRate ?? 0, true)
+                        )}>
+                          İnt: %{article.plagiarismRate}
+                        </span>
+                        <span className={cn(
+                          "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border",
+                          getScoreColor(article.qualityScore ?? 0)
+                        )}>
+                          Kal: {article.qualityScore}
+                        </span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setSelectedArticle(article)}
+                        className="flex items-center gap-1 text-[9px] font-extrabold px-2.5 py-1.5 rounded-xl border border-dashed border-border hover:border-primary-500/40 hover:bg-primary-500/5 hover:text-primary-500 text-muted-foreground transition-all cursor-pointer"
+                      >
+                        <Sparkles className="h-2.5 w-2.5 animate-pulse" /> Analiz Et
+                      </button>
+                    )}
                   </div>
 
                   <div className="w-24">
@@ -309,6 +384,24 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
           )}
         </div>
       </div>
+
+      {/* Article Quality/Plagiarism Report Modal */}
+      {selectedArticle && (
+        <ArticleAnalysisModal
+          articleId={selectedArticle.id}
+          articleTitle={selectedArticle.title}
+          userRole="ADMIN"
+          initialData={{
+            plagiarismRate: selectedArticle.plagiarismRate,
+            seoScore: selectedArticle.seoScore,
+            readabilityScore: selectedArticle.readabilityScore,
+            qualityScore: selectedArticle.qualityScore,
+            analysisReport: selectedArticle.analysisReport
+          }}
+          onClose={() => setSelectedArticle(null)}
+          onAnalysisComplete={handleAnalysisComplete}
+        />
+      )}
     </div>
   );
 }

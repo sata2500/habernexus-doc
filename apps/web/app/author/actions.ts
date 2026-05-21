@@ -6,6 +6,8 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { ActionResponse } from "@/lib/types";
 import { slugify } from "@/lib/utils";
+import { analyzeArticle } from "@/lib/article-analyzer";
+import { rewriteArticleWithAI } from "@/lib/ai-writer";
 
 
 export async function createArticle(data: {
@@ -273,6 +275,50 @@ export async function deleteCommentByAuthor(id: string) {
     return { success: true };
   } catch {
     return { success: false, error: "Yorum silinirken bir hata oluştu." };
+  }
+}
+
+// Yazar veya Admin yetki doğrulama yardımcısı
+async function assertAuthorOrAdmin(articleId: string) {
+  const reqHeaders = await headers();
+  const session = await auth.api.getSession({ headers: reqHeaders });
+  if (!session || (session.user.role !== "AUTHOR" && session.user.role !== "ADMIN")) {
+    throw new Error("Yetkisiz işlem.");
+  }
+  const article = await prisma.article.findUnique({
+    where: { id: articleId },
+    select: { authorId: true }
+  });
+  if (!article) {
+    throw new Error("Makale bulunamadı.");
+  }
+  if (session.user.role !== "ADMIN" && article.authorId !== session.user.id) {
+    throw new Error("Bu makale üzerinde işlem yapma yetkiniz yok.");
+  }
+  return session;
+}
+
+// Makaleyi analiz et (yazar)
+export async function analyzeArticleAction(articleId: string) {
+  try {
+    await assertAuthorOrAdmin(articleId);
+    const res = await analyzeArticle(articleId);
+    revalidatePath("/author/articles");
+    return res;
+  } catch (error: any) {
+    return { success: false, error: error.message || "Bilinmeyen bir hata oluştu." };
+  }
+}
+
+// Makaleyi yapay zeka ile yeniden yaz (yazar)
+export async function rewriteArticleWithAIAction(articleId: string) {
+  try {
+    await assertAuthorOrAdmin(articleId);
+    const res = await rewriteArticleWithAI(articleId);
+    revalidatePath("/author/articles");
+    return res;
+  } catch (error: any) {
+    return { success: false, error: error.message || "Bilinmeyen bir hata oluştu." };
   }
 }
 

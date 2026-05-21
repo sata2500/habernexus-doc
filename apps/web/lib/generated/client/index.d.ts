@@ -7955,10 +7955,18 @@ export namespace Prisma {
 
   export type ArticleAvgAggregateOutputType = {
     viewCount: number | null
+    plagiarismRate: number | null
+    seoScore: number | null
+    readabilityScore: number | null
+    qualityScore: number | null
   }
 
   export type ArticleSumAggregateOutputType = {
     viewCount: number | null
+    plagiarismRate: number | null
+    seoScore: number | null
+    readabilityScore: number | null
+    qualityScore: number | null
   }
 
   export type ArticleMinAggregateOutputType = {
@@ -7975,6 +7983,10 @@ export namespace Prisma {
     aiPersonaId: string | null
     publishedAt: Date | null
     lang: string | null
+    plagiarismRate: number | null
+    seoScore: number | null
+    readabilityScore: number | null
+    qualityScore: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -7993,6 +8005,10 @@ export namespace Prisma {
     aiPersonaId: string | null
     publishedAt: Date | null
     lang: string | null
+    plagiarismRate: number | null
+    seoScore: number | null
+    readabilityScore: number | null
+    qualityScore: number | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -8011,6 +8027,11 @@ export namespace Prisma {
     aiPersonaId: number
     publishedAt: number
     lang: number
+    plagiarismRate: number
+    seoScore: number
+    readabilityScore: number
+    qualityScore: number
+    analysisReport: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -8019,10 +8040,18 @@ export namespace Prisma {
 
   export type ArticleAvgAggregateInputType = {
     viewCount?: true
+    plagiarismRate?: true
+    seoScore?: true
+    readabilityScore?: true
+    qualityScore?: true
   }
 
   export type ArticleSumAggregateInputType = {
     viewCount?: true
+    plagiarismRate?: true
+    seoScore?: true
+    readabilityScore?: true
+    qualityScore?: true
   }
 
   export type ArticleMinAggregateInputType = {
@@ -8039,6 +8068,10 @@ export namespace Prisma {
     aiPersonaId?: true
     publishedAt?: true
     lang?: true
+    plagiarismRate?: true
+    seoScore?: true
+    readabilityScore?: true
+    qualityScore?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8057,6 +8090,10 @@ export namespace Prisma {
     aiPersonaId?: true
     publishedAt?: true
     lang?: true
+    plagiarismRate?: true
+    seoScore?: true
+    readabilityScore?: true
+    qualityScore?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -8075,6 +8112,11 @@ export namespace Prisma {
     aiPersonaId?: true
     publishedAt?: true
     lang?: true
+    plagiarismRate?: true
+    seoScore?: true
+    readabilityScore?: true
+    qualityScore?: true
+    analysisReport?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -8180,6 +8222,11 @@ export namespace Prisma {
     aiPersonaId: string | null
     publishedAt: Date | null
     lang: string
+    plagiarismRate: number | null
+    seoScore: number | null
+    readabilityScore: number | null
+    qualityScore: number | null
+    analysisReport: JsonValue | null
     createdAt: Date
     updatedAt: Date
     _count: ArticleCountAggregateOutputType | null
@@ -8217,6 +8264,11 @@ export namespace Prisma {
     aiPersonaId?: boolean
     publishedAt?: boolean
     lang?: boolean
+    plagiarismRate?: boolean
+    seoScore?: boolean
+    readabilityScore?: boolean
+    qualityScore?: boolean
+    analysisReport?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -8242,6 +8294,11 @@ export namespace Prisma {
     aiPersonaId?: boolean
     publishedAt?: boolean
     lang?: boolean
+    plagiarismRate?: boolean
+    seoScore?: boolean
+    readabilityScore?: boolean
+    qualityScore?: boolean
+    analysisReport?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -8263,6 +8320,11 @@ export namespace Prisma {
     aiPersonaId?: boolean
     publishedAt?: boolean
     lang?: boolean
+    plagiarismRate?: boolean
+    seoScore?: boolean
+    readabilityScore?: boolean
+    qualityScore?: boolean
+    analysisReport?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     author?: boolean | UserDefaultArgs<ExtArgs>
@@ -8284,11 +8346,16 @@ export namespace Prisma {
     aiPersonaId?: boolean
     publishedAt?: boolean
     lang?: boolean
+    plagiarismRate?: boolean
+    seoScore?: boolean
+    readabilityScore?: boolean
+    qualityScore?: boolean
+    analysisReport?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "content" | "excerpt" | "coverImage" | "status" | "viewCount" | "authorId" | "categoryId" | "aiPersonaId" | "publishedAt" | "lang" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
+  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "content" | "excerpt" | "coverImage" | "status" | "viewCount" | "authorId" | "categoryId" | "aiPersonaId" | "publishedAt" | "lang" | "plagiarismRate" | "seoScore" | "readabilityScore" | "qualityScore" | "analysisReport" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
   export type ArticleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
@@ -8333,6 +8400,11 @@ export namespace Prisma {
       aiPersonaId: string | null
       publishedAt: Date | null
       lang: string
+      plagiarismRate: number | null
+      seoScore: number | null
+      readabilityScore: number | null
+      qualityScore: number | null
+      analysisReport: Prisma.JsonValue | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["article"]>
@@ -8777,6 +8849,11 @@ export namespace Prisma {
     readonly aiPersonaId: FieldRef<"Article", 'String'>
     readonly publishedAt: FieldRef<"Article", 'DateTime'>
     readonly lang: FieldRef<"Article", 'String'>
+    readonly plagiarismRate: FieldRef<"Article", 'Int'>
+    readonly seoScore: FieldRef<"Article", 'Int'>
+    readonly readabilityScore: FieldRef<"Article", 'Int'>
+    readonly qualityScore: FieldRef<"Article", 'Int'>
+    readonly analysisReport: FieldRef<"Article", 'Json'>
     readonly createdAt: FieldRef<"Article", 'DateTime'>
     readonly updatedAt: FieldRef<"Article", 'DateTime'>
   }
@@ -30967,6 +31044,11 @@ export namespace Prisma {
     aiPersonaId: 'aiPersonaId',
     publishedAt: 'publishedAt',
     lang: 'lang',
+    plagiarismRate: 'plagiarismRate',
+    seoScore: 'seoScore',
+    readabilityScore: 'readabilityScore',
+    qualityScore: 'qualityScore',
+    analysisReport: 'analysisReport',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -31377,20 +31459,6 @@ export namespace Prisma {
 
 
   /**
-   * Reference to a field of type 'MediaStatus'
-   */
-  export type EnumMediaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaStatus'>
-    
-
-
-  /**
-   * Reference to a field of type 'MediaStatus[]'
-   */
-  export type ListEnumMediaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaStatus[]'>
-    
-
-
-  /**
    * Reference to a field of type 'Json'
    */
   export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -31401,6 +31469,20 @@ export namespace Prisma {
    * Reference to a field of type 'QueryMode'
    */
   export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+  /**
+   * Reference to a field of type 'MediaStatus'
+   */
+  export type EnumMediaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'MediaStatus[]'
+   */
+  export type ListEnumMediaStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MediaStatus[]'>
     
 
 
@@ -31788,6 +31870,11 @@ export namespace Prisma {
     aiPersonaId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     lang?: StringFilter<"Article"> | string
+    plagiarismRate?: IntNullableFilter<"Article"> | number | null
+    seoScore?: IntNullableFilter<"Article"> | number | null
+    readabilityScore?: IntNullableFilter<"Article"> | number | null
+    qualityScore?: IntNullableFilter<"Article"> | number | null
+    analysisReport?: JsonNullableFilter<"Article">
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -31812,6 +31899,11 @@ export namespace Prisma {
     aiPersonaId?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     lang?: SortOrder
+    plagiarismRate?: SortOrderInput | SortOrder
+    seoScore?: SortOrderInput | SortOrder
+    readabilityScore?: SortOrderInput | SortOrder
+    qualityScore?: SortOrderInput | SortOrder
+    analysisReport?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     author?: UserOrderByWithRelationInput
@@ -31839,6 +31931,11 @@ export namespace Prisma {
     aiPersonaId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     lang?: StringFilter<"Article"> | string
+    plagiarismRate?: IntNullableFilter<"Article"> | number | null
+    seoScore?: IntNullableFilter<"Article"> | number | null
+    readabilityScore?: IntNullableFilter<"Article"> | number | null
+    qualityScore?: IntNullableFilter<"Article"> | number | null
+    analysisReport?: JsonNullableFilter<"Article">
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -31863,6 +31960,11 @@ export namespace Prisma {
     aiPersonaId?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     lang?: SortOrder
+    plagiarismRate?: SortOrderInput | SortOrder
+    seoScore?: SortOrderInput | SortOrder
+    readabilityScore?: SortOrderInput | SortOrder
+    qualityScore?: SortOrderInput | SortOrder
+    analysisReport?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: ArticleCountOrderByAggregateInput
@@ -31889,6 +31991,11 @@ export namespace Prisma {
     aiPersonaId?: StringNullableWithAggregatesFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableWithAggregatesFilter<"Article"> | Date | string | null
     lang?: StringWithAggregatesFilter<"Article"> | string
+    plagiarismRate?: IntNullableWithAggregatesFilter<"Article"> | number | null
+    seoScore?: IntNullableWithAggregatesFilter<"Article"> | number | null
+    readabilityScore?: IntNullableWithAggregatesFilter<"Article"> | number | null
+    qualityScore?: IntNullableWithAggregatesFilter<"Article"> | number | null
+    analysisReport?: JsonNullableWithAggregatesFilter<"Article">
     createdAt?: DateTimeWithAggregatesFilter<"Article"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Article"> | Date | string
   }
@@ -33835,6 +33942,11 @@ export namespace Prisma {
     viewCount?: number
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -33859,6 +33971,11 @@ export namespace Prisma {
     aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
@@ -33877,6 +33994,11 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -33901,6 +34023,11 @@ export namespace Prisma {
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
@@ -33922,6 +34049,11 @@ export namespace Prisma {
     aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -33937,6 +34069,11 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -33955,6 +34092,11 @@ export namespace Prisma {
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -36093,6 +36235,40 @@ export namespace Prisma {
     not?: NestedIntFilter<$PrismaModel> | number
   }
 
+  export type IntNullableFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableFilter<$PrismaModel> | number | null
+  }
+  export type JsonNullableFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
   export type CategoryNullableScalarRelationFilter = {
     is?: CategoryWhereInput | null
     isNot?: CategoryWhereInput | null
@@ -36127,12 +36303,21 @@ export namespace Prisma {
     aiPersonaId?: SortOrder
     publishedAt?: SortOrder
     lang?: SortOrder
+    plagiarismRate?: SortOrder
+    seoScore?: SortOrder
+    readabilityScore?: SortOrder
+    qualityScore?: SortOrder
+    analysisReport?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type ArticleAvgOrderByAggregateInput = {
     viewCount?: SortOrder
+    plagiarismRate?: SortOrder
+    seoScore?: SortOrder
+    readabilityScore?: SortOrder
+    qualityScore?: SortOrder
   }
 
   export type ArticleMaxOrderByAggregateInput = {
@@ -36149,6 +36334,10 @@ export namespace Prisma {
     aiPersonaId?: SortOrder
     publishedAt?: SortOrder
     lang?: SortOrder
+    plagiarismRate?: SortOrder
+    seoScore?: SortOrder
+    readabilityScore?: SortOrder
+    qualityScore?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -36167,12 +36356,20 @@ export namespace Prisma {
     aiPersonaId?: SortOrder
     publishedAt?: SortOrder
     lang?: SortOrder
+    plagiarismRate?: SortOrder
+    seoScore?: SortOrder
+    readabilityScore?: SortOrder
+    qualityScore?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type ArticleSumOrderByAggregateInput = {
     viewCount?: SortOrder
+    plagiarismRate?: SortOrder
+    seoScore?: SortOrder
+    readabilityScore?: SortOrder
+    qualityScore?: SortOrder
   }
 
   export type IntWithAggregatesFilter<$PrismaModel = never> = {
@@ -36189,6 +36386,48 @@ export namespace Prisma {
     _sum?: NestedIntFilter<$PrismaModel>
     _min?: NestedIntFilter<$PrismaModel>
     _max?: NestedIntFilter<$PrismaModel>
+  }
+
+  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: number | IntFieldRefInput<$PrismaModel> | null
+    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
+    lt?: number | IntFieldRefInput<$PrismaModel>
+    lte?: number | IntFieldRefInput<$PrismaModel>
+    gt?: number | IntFieldRefInput<$PrismaModel>
+    gte?: number | IntFieldRefInput<$PrismaModel>
+    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _avg?: NestedFloatNullableFilter<$PrismaModel>
+    _sum?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedIntNullableFilter<$PrismaModel>
+    _max?: NestedIntNullableFilter<$PrismaModel>
+  }
+  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntNullableFilter<$PrismaModel>
+    _min?: NestedJsonNullableFilter<$PrismaModel>
+    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type AiPersonaOnCategoryListRelationFilter = {
@@ -36397,17 +36636,6 @@ export namespace Prisma {
     not?: NestedEnumMediaStatusFilter<$PrismaModel> | $Enums.MediaStatus
   }
 
-  export type IntNullableFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableFilter<$PrismaModel> | number | null
-  }
-
   export type MediaCountOrderByAggregateInput = {
     id?: SortOrder
     url?: SortOrder
@@ -36472,45 +36700,6 @@ export namespace Prisma {
     _max?: NestedEnumMediaStatusFilter<$PrismaModel>
   }
 
-  export type IntNullableWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: number | IntFieldRefInput<$PrismaModel> | null
-    in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    notIn?: number[] | ListIntFieldRefInput<$PrismaModel> | null
-    lt?: number | IntFieldRefInput<$PrismaModel>
-    lte?: number | IntFieldRefInput<$PrismaModel>
-    gt?: number | IntFieldRefInput<$PrismaModel>
-    gte?: number | IntFieldRefInput<$PrismaModel>
-    not?: NestedIntNullableWithAggregatesFilter<$PrismaModel> | number | null
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _avg?: NestedFloatNullableFilter<$PrismaModel>
-    _sum?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedIntNullableFilter<$PrismaModel>
-    _max?: NestedIntNullableFilter<$PrismaModel>
-  }
-  export type JsonNullableFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-  }
-
   export type StaticPageCountOrderByAggregateInput = {
     id?: SortOrder
     slug?: SortOrder
@@ -36543,32 +36732,6 @@ export namespace Prisma {
     lang?: SortOrder
     updatedAt?: SortOrder
     createdAt?: SortOrder
-  }
-  export type JsonNullableWithAggregatesFilter<$PrismaModel = never> =
-    | PatchUndefined<
-        Either<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
-        Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>
-      >
-    | OptionalFlat<Omit<Required<JsonNullableWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
-
-  export type JsonNullableWithAggregatesFilterBase<$PrismaModel = never> = {
-    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    path?: string[]
-    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
-    string_contains?: string | StringFieldRefInput<$PrismaModel>
-    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
-    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
-    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
-    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
-    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
-    _count?: NestedIntNullableFilter<$PrismaModel>
-    _min?: NestedJsonNullableFilter<$PrismaModel>
-    _max?: NestedJsonNullableFilter<$PrismaModel>
   }
 
   export type SupportMessageListRelationFilter = {
@@ -37575,6 +37738,14 @@ export namespace Prisma {
     divide?: number
   }
 
+  export type NullableIntFieldUpdateOperationsInput = {
+    set?: number | null
+    increment?: number
+    decrement?: number
+    multiply?: number
+    divide?: number
+  }
+
   export type UserUpdateOneRequiredWithoutArticlesNestedInput = {
     create?: XOR<UserCreateWithoutArticlesInput, UserUncheckedCreateWithoutArticlesInput>
     connectOrCreate?: UserCreateOrConnectWithoutArticlesInput
@@ -37963,14 +38134,6 @@ export namespace Prisma {
 
   export type EnumMediaStatusFieldUpdateOperationsInput = {
     set?: $Enums.MediaStatus
-  }
-
-  export type NullableIntFieldUpdateOperationsInput = {
-    set?: number | null
-    increment?: number
-    decrement?: number
-    multiply?: number
-    divide?: number
   }
 
   export type UserUpdateOneRequiredWithoutMediaNestedInput = {
@@ -38443,23 +38606,6 @@ export namespace Prisma {
     not?: NestedFloatFilter<$PrismaModel> | number
   }
 
-  export type NestedEnumMediaStatusFilter<$PrismaModel = never> = {
-    equals?: $Enums.MediaStatus | EnumMediaStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.MediaStatus[] | ListEnumMediaStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.MediaStatus[] | ListEnumMediaStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumMediaStatusFilter<$PrismaModel> | $Enums.MediaStatus
-  }
-
-  export type NestedEnumMediaStatusWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.MediaStatus | EnumMediaStatusFieldRefInput<$PrismaModel>
-    in?: $Enums.MediaStatus[] | ListEnumMediaStatusFieldRefInput<$PrismaModel>
-    notIn?: $Enums.MediaStatus[] | ListEnumMediaStatusFieldRefInput<$PrismaModel>
-    not?: NestedEnumMediaStatusWithAggregatesFilter<$PrismaModel> | $Enums.MediaStatus
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumMediaStatusFilter<$PrismaModel>
-    _max?: NestedEnumMediaStatusFilter<$PrismaModel>
-  }
-
   export type NestedIntNullableWithAggregatesFilter<$PrismaModel = never> = {
     equals?: number | IntFieldRefInput<$PrismaModel> | null
     in?: number[] | ListIntFieldRefInput<$PrismaModel> | null
@@ -38508,6 +38654,23 @@ export namespace Prisma {
     gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
     not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type NestedEnumMediaStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.MediaStatus | EnumMediaStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MediaStatus[] | ListEnumMediaStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MediaStatus[] | ListEnumMediaStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMediaStatusFilter<$PrismaModel> | $Enums.MediaStatus
+  }
+
+  export type NestedEnumMediaStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.MediaStatus | EnumMediaStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.MediaStatus[] | ListEnumMediaStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.MediaStatus[] | ListEnumMediaStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumMediaStatusWithAggregatesFilter<$PrismaModel> | $Enums.MediaStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumMediaStatusFilter<$PrismaModel>
+    _max?: NestedEnumMediaStatusFilter<$PrismaModel>
   }
 
   export type NestedEnumRssItemStatusFilter<$PrismaModel = never> = {
@@ -38595,6 +38758,11 @@ export namespace Prisma {
     viewCount?: number
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     category?: CategoryCreateNestedOneWithoutArticlesInput
@@ -38617,6 +38785,11 @@ export namespace Prisma {
     aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
@@ -38820,6 +38993,11 @@ export namespace Prisma {
     aiPersonaId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     lang?: StringFilter<"Article"> | string
+    plagiarismRate?: IntNullableFilter<"Article"> | number | null
+    seoScore?: IntNullableFilter<"Article"> | number | null
+    readabilityScore?: IntNullableFilter<"Article"> | number | null
+    qualityScore?: IntNullableFilter<"Article"> | number | null
+    analysisReport?: JsonNullableFilter<"Article">
     createdAt?: DateTimeFilter<"Article"> | Date | string
     updatedAt?: DateTimeFilter<"Article"> | Date | string
   }
@@ -39499,6 +39677,11 @@ export namespace Prisma {
     viewCount?: number
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -39521,6 +39704,11 @@ export namespace Prisma {
     aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
@@ -39644,6 +39832,11 @@ export namespace Prisma {
     viewCount?: number
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -39667,6 +39860,11 @@ export namespace Prisma {
     aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
@@ -39721,6 +39919,11 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -39744,6 +39947,11 @@ export namespace Prisma {
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
@@ -39788,6 +39996,11 @@ export namespace Prisma {
     viewCount?: number
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -39811,6 +40024,11 @@ export namespace Prisma {
     aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
@@ -39942,6 +40160,11 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -39965,6 +40188,11 @@ export namespace Prisma {
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
@@ -40078,6 +40306,11 @@ export namespace Prisma {
     viewCount?: number
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -40101,6 +40334,11 @@ export namespace Prisma {
     aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
@@ -40177,6 +40415,11 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -40200,6 +40443,11 @@ export namespace Prisma {
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
@@ -40644,6 +40892,11 @@ export namespace Prisma {
     viewCount?: number
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
@@ -40666,6 +40919,11 @@ export namespace Prisma {
     categoryId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
@@ -41023,6 +41281,11 @@ export namespace Prisma {
     aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -41121,6 +41384,11 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneWithoutArticlesNestedInput
@@ -41143,6 +41411,11 @@ export namespace Prisma {
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
@@ -41163,6 +41436,11 @@ export namespace Prisma {
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -41374,6 +41652,11 @@ export namespace Prisma {
     aiPersonaId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -41394,6 +41677,11 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -41416,6 +41704,11 @@ export namespace Prisma {
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
@@ -41436,6 +41729,11 @@ export namespace Prisma {
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -41631,6 +41929,11 @@ export namespace Prisma {
     categoryId?: string | null
     publishedAt?: Date | string | null
     lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -41661,6 +41964,11 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
@@ -41683,6 +41991,11 @@ export namespace Prisma {
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
@@ -41703,6 +42016,11 @@ export namespace Prisma {
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
