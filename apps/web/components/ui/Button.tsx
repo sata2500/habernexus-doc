@@ -12,15 +12,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    "bg-gradient-primary text-white hover:opacity-90 shadow-soft hover:shadow-glow active:scale-[0.98]",
+    "bg-gradient-primary text-white hover:opacity-95 shadow-soft hover:shadow-glow hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.97]",
   secondary:
-    "bg-muted text-foreground hover:bg-border active:scale-[0.98]",
+    "bg-muted text-foreground hover:bg-border hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.97]",
   ghost:
-    "bg-transparent text-foreground hover:bg-muted active:scale-[0.98]",
+    "bg-transparent text-foreground hover:bg-muted hover:scale-[1.02] active:scale-[0.97]",
   danger:
-    "bg-error text-white hover:opacity-90 active:scale-[0.98]",
+    "bg-error text-white hover:opacity-95 hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.97]",
   outline:
-    "bg-transparent border border-border text-foreground hover:bg-muted active:scale-[0.98]",
+    "bg-transparent border border-border text-foreground hover:bg-muted hover:scale-[1.02] hover:-translate-y-0.5 active:scale-[0.97]",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -37,7 +37,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-all duration-200",
+          "inline-flex items-center justify-center font-medium transition-all duration-300 ease-spring",
           "focus-ring cursor-pointer select-none",
           "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
           variantStyles[variant],

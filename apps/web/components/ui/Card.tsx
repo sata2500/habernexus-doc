@@ -10,10 +10,10 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = "default", noPadding, children, ...props }, ref) => {
     const variants = {
       default: "bg-card border border-border shadow-card",
-      glass: "glass",
+      glass: "glass-premium",
       elevated: "bg-card border border-border shadow-card-hover",
       interactive:
-        "bg-card border border-border shadow-card hover:shadow-card-hover hover:border-primary-300/50 hover:-translate-y-1 transition-all duration-300",
+        "bg-card border border-border shadow-card hover-lift",
     };
 
     return (

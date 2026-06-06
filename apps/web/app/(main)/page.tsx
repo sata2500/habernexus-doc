@@ -25,6 +25,7 @@ import {
   estimateReadingTime,
 } from "@/lib/data";
 import Image from "next/image";
+import { cn } from "@/lib/utils";
 
 const IconMap: Record<string, LucideIcon> = {
   Newspaper,
@@ -257,73 +258,97 @@ export default async function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {latestArticles.map((article) => (
-            <Link key={article.id} href={`/article/${article.slug}`} className="group">
-              <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
-                <div className="h-48 relative overflow-hidden bg-muted">
-                  {article.coverImage ? (
-                    <Image
-                      src={article.coverImage}
-                      alt={article.title}
-                      fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
-                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    />
-                  ) : (
-                    <div
-                      className="absolute inset-0 flex items-center justify-center"
-                      style={{
-                        background: `linear-gradient(135deg, ${article.category?.color || "#888"}25, ${article.category?.color || "#888"}08)`,
-                      }}
-                    >
-                      <Newspaper className="h-12 w-12 text-muted-foreground/30" />
-                    </div>
+          {latestArticles.map((article, index: number) => {
+            const isFirst = index === 0;
+            return (
+              <Link
+                key={article.id}
+                href={`/article/${article.slug}`}
+                className={cn("group block", isFirst && "md:col-span-2 lg:col-span-2")}
+              >
+                <Card
+                  variant="interactive"
+                  noPadding
+                  className={cn(
+                    "overflow-hidden h-full flex flex-col",
+                    isFirst && "md:flex-row md:h-[320px]"
                   )}
-                  {article.category && (
-                    <div className="absolute top-3 left-3">
-                      <Badge
-                        variant="default"
-                        className="backdrop-blur-md bg-card/80 text-xs"
-                        style={{ color: article.category.color || "inherit" }}
-                      >
-                        {article.category.name}
-                      </Badge>
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-5 flex flex-col flex-1">
-                  <h3 className="text-base font-semibold font-(family-name:--font-outfit) leading-snug mb-2 group-hover:text-primary-600 transition-colors line-clamp-2">
-                    {article.title}
-                  </h3>
-                  <p className="text-sm text-muted-foreground line-clamp-2 mb-4 flex-1">
-                    {article.excerpt || "Devamını okumak için tıklayın..."}
-                  </p>
-
-                  <div className="flex items-center justify-between text-xs text-muted-foreground pt-3 border-t border-border">
-                    <div className="flex items-center gap-2">
-                      <Avatar
-                        src={(article.aiPersona?.image || article.author.image) || undefined}
-                        fallback={article.aiPersona?.name || article.author.name}
-                        size="xs"
+                >
+                  <div
+                    className={cn(
+                      "relative overflow-hidden bg-muted",
+                      isFirst ? "h-48 md:h-full md:w-1/2 shrink-0" : "h-48"
+                    )}
+                  >
+                    {article.coverImage ? (
+                      <Image
+                        src={article.coverImage}
+                        alt={article.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        sizes={isFirst ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 33vw"}
                       />
-                      <span>{article.aiPersona?.name || article.author.name}</span>
+                    ) : (
+                      <div
+                        className="absolute inset-0 flex items-center justify-center"
+                        style={{
+                          background: `linear-gradient(135deg, ${article.category?.color || "#888"}25, ${article.category?.color || "#888"}08)`,
+                        }}
+                      >
+                        <Newspaper className="h-12 w-12 text-muted-foreground/30" />
+                      </div>
+                    )}
+                    {article.category && (
+                      <div className="absolute top-3 left-3">
+                        <Badge
+                          variant="default"
+                          className="backdrop-blur-md bg-card/80 text-xs"
+                          style={{ color: article.category.color || "inherit" }}
+                        >
+                          {article.category.name}
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-5 md:p-6 flex flex-col flex-1 justify-between">
+                    <div className="space-y-2">
+                      <h3 className={cn(
+                        "font-semibold font-(family-name:--font-outfit) leading-snug group-hover:text-primary-600 transition-colors line-clamp-2",
+                        isFirst ? "text-lg md:text-xl lg:text-2xl" : "text-base"
+                      )}>
+                        {article.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground line-clamp-2 md:line-clamp-3">
+                        {article.excerpt || "Devamını okumak için tıklayın..."}
+                      </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1">
-                        <Clock className="h-3 w-3" />
-                        {estimateReadingTime(article.content)} dk
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Eye className="h-3 w-3" />
-                        {formatCount(article.viewCount)}
-                      </span>
+
+                    <div className="flex items-center justify-between text-xs text-muted-foreground pt-4 border-t border-border mt-4">
+                      <div className="flex items-center gap-2">
+                        <Avatar
+                          src={(article.aiPersona?.image || article.author.image) || undefined}
+                          fallback={article.aiPersona?.name || article.author.name}
+                          size="xs"
+                        />
+                        <span>{article.aiPersona?.name || article.author.name}</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" />
+                          {estimateReadingTime(article.content)} dk
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Eye className="h-3 w-3" />
+                          {formatCount(article.viewCount)}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            </Link>
-          ))}
+                </Card>
+              </Link>
+            );
+          })}
         </div>
       </section>
 

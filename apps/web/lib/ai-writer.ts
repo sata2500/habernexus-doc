@@ -255,6 +255,14 @@ export async function writeArticleWithAI(suggestionId: string) {
       },
     });
 
+    // Google Indexing API bildirimi
+    try {
+      const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
+      notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+    } catch (e) {
+      console.error("Failed to load google-indexing helper in writeArticleWithAI:", e);
+    }
+
     await prisma.rssFeedItem.update({
       where: { id: suggestionId },
       data: { usedForArticle: true },
@@ -398,10 +406,19 @@ export async function rewriteArticleWithAI(articleId: string) {
     if (!content) throw new Error("Yeniden yazım başarısız oldu, içerik üretilemedi.");
 
     // Makaleyi güncelle
-    await prisma.article.update({
+    const updatedArticle = await prisma.article.update({
       where: { id: articleId },
       data: { content }
     });
+
+    if (updatedArticle.status === "PUBLISHED") {
+      try {
+        const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
+        notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+      } catch (e) {
+        console.error("Failed to load google-indexing helper in rewriteArticleWithAI:", e);
+      }
+    }
 
     // Tekrar analiz et
     const analysis = await analyzeArticle(articleId);

@@ -16,6 +16,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import type { SiteSettings } from "@/lib/site-settings";
+import { motion, AnimatePresence } from "framer-motion";
 
 
 interface Category {
@@ -73,8 +74,8 @@ export function Navbar({ categories = [], settings }: { categories?: Category[],
           "fixed top-0 left-0 right-0 z-(--z-sticky)",
           "transition-all duration-300",
           isScrolled
-            ? "glass-strong shadow-lg"
-            : "bg-background/80 backdrop-blur-sm"
+            ? "glass-premium shadow-lg border-b border-border/50"
+            : "bg-background/70 backdrop-blur-md border-b border-transparent"
         )}
       >
         {/* Top Bar */}
@@ -197,33 +198,38 @@ export function Navbar({ categories = [], settings }: { categories?: Category[],
         </div>
 
         {/* Search Bar (Expandable) */}
-        <div
-          className={cn(
-            "overflow-hidden transition-all duration-300",
-            isSearchOpen ? "max-h-24 opacity-100" : "max-h-0 opacity-0"
+        <AnimatePresence>
+          {isSearchOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.35, ease: [0.34, 1.56, 0.64, 1] }}
+              className="overflow-hidden"
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={handleSearch}
+                    placeholder="Haberlerde ara... (Enter'a basın)"
+                    className={cn(
+                      "w-full h-12 rounded-xl border border-border bg-card pl-12 pr-4",
+                      "text-sm text-foreground placeholder:text-muted-foreground",
+                      "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent",
+                      "transition-all duration-200"
+                    )}
+                    autoFocus
+                    id="navbar-search-input"
+                  />
+                </div>
+              </div>
+            </motion.div>
           )}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-2 pb-4">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyDown={handleSearch}
-                placeholder="Haberlerde ara... (Enter'a basın)"
-                className={cn(
-                  "w-full h-12 rounded-xl border border-border bg-card pl-12 pr-4",
-                  "text-sm text-foreground placeholder:text-muted-foreground",
-                  "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent",
-                  "transition-all duration-200"
-                )}
-                autoFocus={isSearchOpen}
-                id="navbar-search-input"
-              />
-            </div>
-          </div>
-        </div>
+        </AnimatePresence>
       </header>
 
       {/* Mobile menu overlay */}

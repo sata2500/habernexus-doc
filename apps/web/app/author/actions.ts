@@ -30,7 +30,7 @@ export async function createArticle(data: {
     const uniqueHash = Math.random().toString(36).substring(2, 6);
     const slug = `${baseSlug}-${uniqueHash}`;
 
-    await prisma.article.create({
+    const createdArticle = await prisma.article.create({
       data: {
         title: data.title,
         slug,
@@ -43,6 +43,11 @@ export async function createArticle(data: {
         publishedAt: data.status === "PUBLISHED" ? new Date() : null,
       },
     });
+
+    if (createdArticle.status === "PUBLISHED") {
+      const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+      notifyGoogle(getArticleUrl(createdArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+    }
 
     revalidatePath("/author/articles");
     revalidatePath("/");
@@ -132,7 +137,7 @@ export async function updateArticle(id: string, data: {
       return { success: false, error: "Bu makaleyi düzenleme yetkiniz yok." };
     }
 
-    await prisma.article.update({
+    const updatedArticle = await prisma.article.update({
       where: { id },
       data: {
         title: data.title,
@@ -146,6 +151,14 @@ export async function updateArticle(id: string, data: {
         ...(data.status === "PUBLISHED" && !article.publishedAt ? { publishedAt: new Date() } : {}),
       },
     });
+
+    if (updatedArticle.status === "PUBLISHED") {
+      const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+      notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+    } else if (article.status === "PUBLISHED" && updatedArticle.status !== "PUBLISHED") {
+      const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+      notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err));
+    }
 
     revalidatePath("/author/articles");
     revalidatePath(`/article/${article.slug}`);
@@ -193,6 +206,11 @@ export async function deleteArticle(id: string) {
     await prisma.article.delete({
       where: { id },
     });
+
+    if (article && article.status === "PUBLISHED") {
+      const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+      notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err));
+    }
 
     revalidatePath("/author/articles");
     revalidatePath("/");

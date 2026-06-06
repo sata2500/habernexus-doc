@@ -118,13 +118,24 @@ export async function getAllArticles() {
 // Makale durumunu güncelle
 export async function updateArticleStatus(articleId: string, status: string) {
   await assertAdmin();
-  await prisma.article.update({
+  const articleBefore = await prisma.article.findUnique({ where: { id: articleId } });
+
+  const updatedArticle = await prisma.article.update({
     where: { id: articleId },
     data: {
       status,
       publishedAt: status === "PUBLISHED" ? new Date() : null,
     },
   });
+
+  if (updatedArticle.status === "PUBLISHED") {
+    const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+    notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+  } else if (articleBefore?.status === "PUBLISHED" && updatedArticle.status !== "PUBLISHED") {
+    const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+    notifyGoogle(getArticleUrl(articleBefore.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err));
+  }
+
   revalidatePath("/admin/articles");
   revalidatePath("/");
   return { success: true };
@@ -133,7 +144,15 @@ export async function updateArticleStatus(articleId: string, status: string) {
 // Makaleyi sil
 export async function deleteArticle(articleId: string) {
   await assertAdmin();
+  const article = await prisma.article.findUnique({ where: { id: articleId } });
+
   await prisma.article.delete({ where: { id: articleId } });
+
+  if (article && article.status === "PUBLISHED") {
+    const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+    notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err));
+  }
+
   revalidatePath("/admin/articles");
   revalidatePath("/");
   return { success: true };
@@ -142,6 +161,12 @@ export async function deleteArticle(articleId: string) {
 // Toplu makale durum güncelleme
 export async function bulkUpdateArticleStatus(articleIds: string[], status: string) {
   await assertAdmin();
+  
+  const articlesBefore = await prisma.article.findMany({
+    where: { id: { in: articleIds } },
+    select: { id: true, slug: true, status: true }
+  });
+
   await prisma.article.updateMany({
     where: { id: { in: articleIds } },
     data: {
@@ -149,6 +174,16 @@ export async function bulkUpdateArticleStatus(articleIds: string[], status: stri
       publishedAt: status === "PUBLISHED" ? new Date() : null,
     },
   });
+
+  const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+  for (const article of articlesBefore) {
+    if (status === "PUBLISHED") {
+      notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+    } else if (article.status === "PUBLISHED" && status !== "PUBLISHED") {
+      notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err));
+    }
+  }
+
   revalidatePath("/admin/articles");
   revalidatePath("/");
   return { success: true };
@@ -157,9 +192,23 @@ export async function bulkUpdateArticleStatus(articleIds: string[], status: stri
 // Toplu makale silme
 export async function bulkDeleteArticles(articleIds: string[]) {
   await assertAdmin();
+  
+  const articlesBefore = await prisma.article.findMany({
+    where: { id: { in: articleIds } },
+    select: { slug: true, status: true }
+  });
+
   await prisma.article.deleteMany({
     where: { id: { in: articleIds } },
   });
+
+  const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+  for (const article of articlesBefore) {
+    if (article.status === "PUBLISHED") {
+      notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err));
+    }
+  }
+
   revalidatePath("/admin/articles");
   revalidatePath("/");
   return { success: true };
