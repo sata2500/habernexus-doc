@@ -3,12 +3,13 @@ import Image from "next/image";
 import { getArticleBySlug, estimateReadingTime } from "@/lib/data";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
-import { Clock, Eye, Calendar } from "lucide-react";
+import { Clock, Eye, Calendar, Sparkles } from "lucide-react";
 import { NewsArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { BookmarkButton } from "../components/BookmarkButton";
 import { ViewTracker } from "../components/ViewTracker";
 import { ShareButtons } from "../components/ShareButtons";
 import { CommentSection } from "../components/comments/CommentSection";
+import { AudioPlayer } from "../components/AudioPlayer";
 import { prisma } from "@/lib/prisma";
 
 export const revalidate = 3600; // 1 saatte bir arka planda yenile (ISR)
@@ -188,6 +189,11 @@ export default async function ArticlePage({ params }: { params: Params }) {
         </div>
       </header>
 
+      {/* Metin Seslendirme Oynatıcısı */}
+      <div className="mb-10">
+        <AudioPlayer content={article.content} title={article.title} />
+      </div>
+
       {/* ── Kapak Resmi Görüntüleyicisi ────────────────────────── */}
       {article.coverImage && (
         <div className="w-full aspect-video md:aspect-21/9 bg-neutral-100 dark:bg-neutral-800 rounded-2xl overflow-hidden mb-12 relative shadow-lg">
@@ -250,6 +256,31 @@ export default async function ArticlePage({ params }: { params: Params }) {
           </div>
         </div>
       )}
+
+      {/* ── Yapay Zeka Yorum Özeti ────────────────────────── */}
+      {(() => {
+        const report = article.analysisReport as Record<string, any> | null;
+        const summary = report?.commentsSummary;
+        if (!summary) return null;
+
+        return (
+          <div className="mb-10 p-6 glass-strong rounded-3xl border border-primary-500/10 shadow-soft relative overflow-hidden animate-in fade-in slide-in-from-bottom-2 duration-500">
+            <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-primary-500/5 blur-2xl -z-10" />
+            <div className="flex items-center gap-2 mb-4">
+              <div className="h-8 w-8 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-500">
+                <Sparkles className="h-4 w-4" />
+              </div>
+              <h3 className="text-base font-bold font-(family-name:--font-outfit)">
+                Yapay Zeka Okur Özetleri
+              </h3>
+            </div>
+            <div 
+              className="prose prose-sm dark:prose-invert prose-primary max-w-none text-muted-foreground leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: summary }}
+            />
+          </div>
+        );
+      })()}
 
       {/* ── Yorum Sistemi ────────────────────────── */}
       <CommentSection articleId={article.id} />

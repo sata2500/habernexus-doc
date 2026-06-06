@@ -16,12 +16,14 @@ interface Props {
 export function CommentForm({ articleId, userId, parentId, onSuccess, onCancel, isReply }: Props) {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content.trim() || isSubmitting) return;
 
     setIsSubmitting(true);
+    setError(null);
     const result = await addComment({
       articleId,
       userId,
@@ -33,13 +35,19 @@ export function CommentForm({ articleId, userId, parentId, onSuccess, onCancel, 
       setContent("");
       onSuccess();
     } else {
-      alert(result.error);
+      setError(result.error || "Yorum gönderilemedi.");
     }
     setIsSubmitting(false);
   };
 
   return (
-    <div className={`flex gap-4 ${isReply ? "mt-4 ml-8" : ""}`}>
+    <div className={`flex flex-col gap-3 w-full ${isReply ? "mt-4 ml-8" : ""}`}>
+      {error && (
+        <div className="p-3.5 text-xs rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-semibold animate-in fade-in slide-in-from-top-1 duration-300">
+          {error}
+        </div>
+      )}
+      <div className="flex gap-4">
       {!isReply && (
         <div className="hidden sm:block shrink-0 mt-1">
           <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center text-primary-600 font-bold border border-primary-200/50">
@@ -84,6 +92,7 @@ export function CommentForm({ articleId, userId, parentId, onSuccess, onCancel, 
           </div>
         </div>
       </form>
+      </div>
     </div>
   );
 }

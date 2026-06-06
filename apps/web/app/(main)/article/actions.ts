@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { checkCommentToxicity, generateCommentsSummary } from "@/lib/comment-ai";
 
 export async function getComments(articleId: string) {
   try {
@@ -33,6 +34,16 @@ export async function addComment(data: {
   parentId?: string;
 }) {
   try {
+    // 1. AI Yorum Moderasyonu (Toksisite Kontrolü)
+    const moderation = await checkCommentToxicity(data.content);
+    if (moderation.isToxic) {
+      return { 
+        success: false, 
+        error: `Yorumunuz yapay zeka moderasyonu tarafından elendi: ${moderation.reason}` 
+      };
+    }
+
+    // 2. Yorum Oluşturma
     const comment = await prisma.comment.create({
       data: {
         content: data.content,
@@ -45,11 +56,40 @@ export async function addComment(data: {
       },
     });
 
+    // 3. AI Yorum Özetleyici Tetikleme (Eğer >= 3 yorum varsa)
+    const totalCommentsCount = await prisma.comment.count({
+      where: { articleId: data.articleId }
+    });
+
+    if (totalCommentsCount >= 3) {
+      const summary = await generateCommentsSummary(data.articleId);
+      if (summary) {
+        // Makaleyi çekip mevcut analysisReport'u güncelle
+        const article = await prisma.article.findUnique({
+          where: { id: data.articleId },
+          select: { analysisReport: true }
+        });
+        
+        const oldReport = (article?.analysisReport as Record<string, any>) || {};
+        
+        await prisma.article.update({
+          where: { id: data.articleId },
+          data: {
+            analysisReport: {
+              ...oldReport,
+              commentsSummary: summary,
+              commentsSummaryUpdatedAt: new Date().toISOString()
+            }
+          }
+        });
+      }
+    }
+
     revalidatePath(`/article/[slug]`, "page");
     return { success: true, comment };
   } catch (error) {
     console.error("Add comment error:", error);
-    return { success: false, error: "Yorum gönderilemedi." };
+    return { success: false, error: error instanceof Error ? error.message : "Yorum gönderilemedi." };
   }
 }
 

@@ -145,6 +145,89 @@ export const searchArticles = cache(async (query: string) => {
   }
 });
 
+// Kişiselleştirilmiş Öneri Sistemi
+export const getRecommendedArticles = cache(async (userId?: string, limit: number = 4) => {
+  if (isMissingDb) return [];
+  try {
+    if (!userId) {
+      return await getTrendingArticles(limit);
+    }
+
+    // Kullanıcının bookmark ettiği haberlerin kategorilerini çek
+    const userBookmarks = await prisma.bookmark.findMany({
+      where: { userId },
+      select: {
+        article: {
+          select: {
+            categoryId: true
+          }
+        }
+      }
+    });
+
+    const categoryIds = Array.from(
+      new Set(
+        userBookmarks
+          .map((b) => b.article?.categoryId)
+          .filter((id): id is string => !!id)
+      )
+    );
+
+    if (categoryIds.length === 0) {
+      return await getTrendingArticles(limit);
+    }
+
+    // Zaten bookmark edilmiş haberlerin ID'lerini çek
+    const bookmarkedIds = await prisma.bookmark.findMany({
+      where: { userId },
+      select: { articleId: true }
+    }).then(list => list.map(b => b.articleId));
+
+    // Bu kategorilerdeki makaleleri çek (zaten kaydedilenleri hariç tut)
+    const recommended = await prisma.article.findMany({
+      where: {
+        status: "PUBLISHED",
+        categoryId: { in: categoryIds },
+        id: { notIn: bookmarkedIds }
+      },
+      orderBy: { publishedAt: "desc" },
+      take: limit,
+      include: {
+        category: true,
+        author: true,
+        aiPersona: true
+      }
+    });
+
+    // Eğer yeterli öneri yoksa, trend veya en yeni haberlerle doldur
+    if (recommended.length < limit) {
+      const needed = limit - recommended.length;
+      const excludeIds = [...bookmarkedIds, ...recommended.map(r => r.id)];
+
+      const fallback = await prisma.article.findMany({
+        where: {
+          status: "PUBLISHED",
+          id: { notIn: excludeIds }
+        },
+        orderBy: { viewCount: "desc" },
+        take: needed,
+        include: {
+          category: true,
+          author: true,
+          aiPersona: true
+        }
+      });
+
+      return [...recommended, ...fallback];
+    }
+
+    return recommended;
+  } catch (e) {
+    console.error("getRecommendedArticles error:", e);
+    return [];
+  }
+});
+
 // UI'da "dk okuma" değerlerini göstermek için basit bir yardımcı fonksiyon
 export function estimateReadingTime(text: string): number {
   if (!text) return 1;

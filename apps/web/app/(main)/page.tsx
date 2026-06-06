@@ -12,6 +12,7 @@ import {
   Trophy,
   TrendingDown,
   Heart,
+  Sparkles,
   type LucideIcon
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
@@ -23,9 +24,12 @@ import {
   getLatestArticles,
   getCategoriesWithCount,
   estimateReadingTime,
+  getRecommendedArticles,
 } from "@/lib/data";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 const IconMap: Record<string, LucideIcon> = {
   Newspaper,
@@ -68,6 +72,10 @@ export default async function HomePage() {
   const trendingArticles = await getTrendingArticles(4);
   const latestArticles = await getLatestArticles(6);
   const categories = await getCategoriesWithCount();
+
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
+  const recommendedArticles = await getRecommendedArticles(userId, 4);
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
@@ -351,6 +359,72 @@ export default async function HomePage() {
           })}
         </div>
       </section>
+
+      {/* ── Recommended Articles Section ────────────────────────── */}
+      {recommendedArticles.length > 0 && (
+        <section id="recommended-articles-section" aria-label="Sizin İçin Seçilenler">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-lg bg-accent-500/10 flex items-center justify-center">
+                <Sparkles className="h-4 w-4 text-accent-500" />
+              </div>
+              <h2 className="text-xl font-bold font-(family-name:--font-outfit)">Sizin İçin Seçilenler</h2>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {recommendedArticles.map((article) => (
+              <Link key={article.id} href={`/article/${article.slug}`} className="group block">
+                <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
+                  <div className="relative h-48 bg-muted overflow-hidden">
+                    {article.coverImage ? (
+                      <Image
+                        src={article.coverImage}
+                        alt={article.title}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        sizes="(max-width: 768px) 100vw, 25vw"
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-primary-500/10 to-primary-700/5">
+                        <Newspaper className="h-10 w-10 text-muted-foreground/30" />
+                      </div>
+                    )}
+                    {article.category && (
+                      <div className="absolute top-3 left-3">
+                        <Badge variant="default" className="backdrop-blur-md bg-card/80 text-xs" style={{ color: article.category.color || "inherit" }}>
+                          {article.category.name}
+                        </Badge>
+                      </div>
+                    )}
+                  </div>
+                  <div className="p-4 flex flex-col justify-between flex-grow">
+                    <div className="space-y-1">
+                      <h3 className="font-semibold text-sm font-(family-name:--font-outfit) line-clamp-2 leading-snug group-hover:text-primary-600 transition-colors">
+                        {article.title}
+                      </h3>
+                      {article.excerpt && (
+                        <p className="text-xs text-muted-foreground line-clamp-2">
+                          {article.excerpt}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-4 pt-3 border-t border-border/50">
+                      <span className="font-medium truncate max-w-[100px]">{article.aiPersona?.name || article.author.name}</span>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <span className="flex items-center gap-0.5">
+                          <Clock className="h-3 w-3" />
+                          {estimateReadingTime(article.content)} dk
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* ── CTA Section ────────────────────────── */}
       <section id="cta-section" aria-label="Kayıt Çağrısı">
