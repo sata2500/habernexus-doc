@@ -122,7 +122,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Form Column */}
-        <div className="glass-strong rounded-3xl p-6 border border-border/50 shadow-soft h-fit sticky top-24 transition-all duration-300 hover:border-primary-500/20">
+        <div className="glass-strong rounded-3xl p-6 border border-border/50 shadow-soft h-fit lg:sticky lg:top-24 transition-all duration-300 hover:border-primary-500/20">
           <h3 className="font-bold font-display mb-6 text-lg">
             {isEditing ? "Kategoriyi Düzenle" : "Yeni Kategori Ekle"}
           </h3>

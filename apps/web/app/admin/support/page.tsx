@@ -77,7 +77,7 @@ export default async function AdminSupportPage() {
               href={`/admin/support/${ticket.id}`}
               className="flex items-center justify-between p-5 hover:bg-primary-500/5 transition-all group cursor-pointer"
             >
-              <div className="flex items-center gap-4 min-w-0">
+              <div className="flex items-center gap-4 min-w-0 flex-1">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground shrink-0 group-hover:bg-primary-500/10 group-hover:text-primary-500 transition-colors">
                   <MessageSquare className="h-5 w-5" />
                 </div>

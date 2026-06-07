@@ -54,38 +54,43 @@ export function UserRoleManager({ users }: { users: User[] }) {
         const isChanging = changingId === user.id;
 
         return (
-          <div key={user.id} className="flex items-center gap-4 p-5 bg-background/30 hover:bg-primary-500/5 transition-all duration-300 group">
-            <Avatar src={user.image ?? undefined} fallback={user.name ?? undefined} size="sm" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">{user.name}</p>
-              <p className="text-xs text-muted-foreground truncate mt-0.5">{user.email}</p>
+          <div key={user.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-background/30 hover:bg-primary-500/5 transition-all duration-300 group">
+            <div className="flex items-center gap-4 min-w-0 flex-1 w-full">
+              <Avatar src={user.image ?? undefined} fallback={user.name ?? undefined} size="sm" />
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">{user.name}</p>
+                <p className="text-xs text-muted-foreground truncate mt-0.5">{user.email}</p>
+              </div>
             </div>
-            <div className="hidden sm:block text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2.5 py-1">
-              {user._count.articles} makale
-            </div>
-            <div className="flex items-center gap-2">
-              {isChanging ? (
-                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-              ) : (
-                <>
-                  <select
-                    value={currentRole}
-                    onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                    className="text-xs px-3 py-2 rounded-xl border border-border/85 bg-background/50 text-foreground cursor-pointer focus:ring-2 focus:ring-primary-500 outline-none hover:border-primary-500/30 transition-colors font-bold"
-                  >
-                    {ROLES.map((r) => (
-                      <option key={r.value} value={r.value}>{r.label}</option>
-                    ))}
-                  </select>
-                  <button
-                    onClick={() => handleDeleteUser(user.id, user.name ?? "İsimsiz")}
-                    className="h-9 w-9 flex items-center justify-center rounded-xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer border border-transparent hover:border-red-500/25"
-                    title="Kullanıcıyı Sil"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </>
-              )}
+            
+            <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 w-full sm:w-auto">
+              <div className="hidden sm:block text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2.5 py-1">
+                {user._count.articles} makale
+              </div>
+              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+                {isChanging ? (
+                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                ) : (
+                  <>
+                    <select
+                      value={currentRole}
+                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
+                      className="text-xs px-3 py-2 rounded-xl border border-border/85 bg-background/50 text-foreground cursor-pointer focus:ring-2 focus:ring-primary-500 outline-none hover:border-primary-500/30 transition-colors font-bold"
+                    >
+                      {ROLES.map((r) => (
+                        <option key={r.value} value={r.value}>{r.label}</option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() => handleDeleteUser(user.id, user.name ?? "İsimsiz")}
+                      className="h-9 w-9 flex items-center justify-center rounded-xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer border border-transparent hover:border-red-500/25"
+                      title="Kullanıcıyı Sil"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         );

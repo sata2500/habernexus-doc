@@ -233,7 +233,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
 
       {/* Liste */}
       <div className="glass-strong border border-border/50 rounded-[2.5rem] overflow-hidden shadow-soft">
-        <div className="flex items-center gap-4 p-4 border-b border-border bg-muted/20 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+        <div className="hidden sm:flex items-center gap-4 p-4 border-b border-border bg-muted/20 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
           <button 
             onClick={toggleSelectAll}
             className="p-1 hover:bg-muted rounded transition-colors cursor-pointer"
@@ -268,13 +268,13 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                 <div 
                   key={article.id} 
                   className={cn(
-                    "flex items-center gap-4 p-4 transition-all duration-300 group",
+                    "flex items-start sm:items-center gap-3 sm:gap-4 p-4 transition-all duration-300 group",
                     isSelected ? "bg-[var(--color-primary-500)]/5" : "bg-background/30 hover:bg-primary-500/5"
                   )}
                 >
                   <button 
                     onClick={() => toggleSelect(article.id)}
-                    className="p-1 hover:bg-muted rounded transition-colors cursor-pointer"
+                    className="p-1 hover:bg-muted rounded transition-colors cursor-pointer mt-1 sm:mt-0 shrink-0"
                   >
                     {isSelected ? (
                       <CheckSquare className="h-4 w-4 text-primary-500" />
@@ -283,101 +283,110 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                     )}
                   </button>
 
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">
-                        {article.title}
-                      </p>
-                      {article.aiPersonaId && (
-                        <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-primary-500/10 border border-primary-500/20 text-primary-500 flex items-center gap-0.5" title="Yapay Zeka Makalesi">
-                          <Sparkles className="h-2 w-2" /> AI
-                        </span>
-                      )}
-                      {isAnalyzed && (article.plagiarismRate ?? 0) > 30 && (
-                        <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center gap-0.5 animate-pulse" title="Yüksek İntihal Riski">
-                          <AlertTriangle className="h-2.5 w-2.5" /> Risk
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
-                      <span className="font-semibold">{authorName}</span>
-                      <span>•</span>
-                      {article.category && (
-                        <span 
-                          className="px-1.5 py-0.5 rounded-md bg-muted/30 border border-border/50 font-bold"
-                          style={{ color: article.category.color || undefined }}
-                        >
-                          {article.category.name}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="hidden md:flex items-center gap-1.5 w-24 text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2 py-1 justify-center shrink-0">
-                    <ArrowUpDown className="h-3 w-3 text-primary-500" />
-                    {article.viewCount.toLocaleString()}
-                  </div>
-
-                  <div className="hidden md:flex items-center gap-2 w-40 text-xs shrink-0">
-                    {isAnalyzed ? (
-                      <div className="flex items-center gap-1.5">
-                        <span className={cn(
-                          "px-2 py-1 rounded font-bold border",
-                          (article.qualityScore ?? 0) >= 80 ? "bg-green-500/10 border-green-500/20 text-green-500" :
-                          (article.qualityScore ?? 0) >= 50 ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
-                          "bg-red-500/10 border-red-500/20 text-red-500"
-                        )}>
-                          QS: {article.qualityScore}
-                        </span>
-                        {(article.plagiarismRate ?? 0) > 0 && (
-                          <span className={cn(
-                            "px-2 py-1 rounded font-bold border",
-                            (article.plagiarismRate ?? 0) <= 20 ? "bg-green-500/10 border-green-500/20 text-green-500" :
-                            (article.plagiarismRate ?? 0) <= 40 ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
-                            "bg-red-500/10 border-red-500/20 text-red-500"
-                          )}>
-                            P: %{article.plagiarismRate}
+                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full">
+                    {/* Title & info */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <p className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">
+                          {article.title}
+                        </p>
+                        {article.aiPersonaId && (
+                          <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-primary-500/10 border border-primary-500/20 text-primary-500 flex items-center gap-0.5" title="Yapay Zeka Makalesi">
+                            <Sparkles className="h-2 w-2" /> AI
+                          </span>
+                        )}
+                        {isAnalyzed && (article.plagiarismRate ?? 0) > 30 && (
+                          <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center gap-0.5 animate-pulse" title="Yüksek İntihal Riski">
+                            <AlertTriangle className="h-2.5 w-2.5" /> Risk
                           </span>
                         )}
                       </div>
-                    ) : (
-                      <span className="text-muted-foreground/60 italic">Analiz Yok</span>
-                    )}
-                  </div>
+                      <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground flex-wrap">
+                        <span className="font-semibold">{authorName}</span>
+                        <span>•</span>
+                        {article.category && (
+                          <span 
+                            className="px-1.5 py-0.5 rounded-md bg-muted/30 border border-border/50 font-bold"
+                            style={{ color: article.category.color || undefined }}
+                          >
+                            {article.category.name}
+                          </span>
+                        )}
+                        <span className="sm:hidden font-bold">• {article.viewCount.toLocaleString()} okunma</span>
+                      </div>
+                    </div>
 
-                  <div className="w-24 shrink-0">
-                    <span className={cn(
-                      "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border",
-                      variant === "success" ? "bg-green-500/10 border-green-500/25 text-green-500" :
-                      variant === "warning" ? "bg-amber-500/10 border-amber-500/25 text-amber-500" :
-                      "bg-muted border-border/50 text-muted-foreground"
-                    )}>
-                      {icon}
-                      {label}
-                    </span>
-                  </div>
+                    {/* Stats (Desktop only) */}
+                    <div className="hidden md:flex items-center gap-1.5 w-24 text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2 py-1 justify-center shrink-0">
+                      <ArrowUpDown className="h-3 w-3 text-primary-500" />
+                      {article.viewCount.toLocaleString()}
+                    </div>
 
-                  <div className="w-20 flex items-center justify-end gap-1 shrink-0">
-                    {isLoading ? (
-                      <span className="h-4 w-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        <button
-                          onClick={() => handleStatus(article.id, article.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED")}
-                          className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                          title={article.status === "PUBLISHED" ? "Taslağa al" : "Yayınla"}
-                        >
-                          {article.status === "PUBLISHED" ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                        </button>
-                        <button
-                          onClick={() => handleDelete(article.id)}
-                          className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-transparent hover:border-red-500/25 transition-colors cursor-pointer"
-                          title="Sil"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      </>
-                    )}
+                    {/* Quality scores (Desktop only) */}
+                    <div className="hidden md:flex items-center gap-2 w-40 text-xs shrink-0">
+                      {isAnalyzed ? (
+                        <div className="flex items-center gap-1.5">
+                          <span className={cn(
+                            "px-2 py-1 rounded font-bold border",
+                            (article.qualityScore ?? 0) >= 80 ? "bg-green-500/10 border-green-500/20 text-green-500" :
+                            (article.qualityScore ?? 0) >= 50 ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
+                            "bg-red-500/10 border-red-500/20 text-red-500"
+                          )}>
+                            QS: {article.qualityScore}
+                          </span>
+                          {(article.plagiarismRate ?? 0) > 0 && (
+                            <span className={cn(
+                              "px-2 py-1 rounded font-bold border",
+                              (article.plagiarismRate ?? 0) <= 20 ? "bg-green-500/10 border-green-500/20 text-green-500" :
+                              (article.plagiarismRate ?? 0) <= 40 ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
+                              "bg-red-500/10 border-red-500/20 text-red-500"
+                            )}>
+                              P: %{article.plagiarismRate}
+                            </span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground/60 italic">Analiz Yok</span>
+                      )}
+                    </div>
+
+                    {/* Actions & Status (Responsive wrap on mobile) */}
+                    <div className="flex items-center justify-between sm:justify-end gap-3 mt-2 sm:mt-0 w-full sm:w-auto shrink-0">
+                      <div className="w-24 sm:shrink-0">
+                        <span className={cn(
+                          "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border w-full sm:w-auto justify-center",
+                          variant === "success" ? "bg-green-500/10 border-green-500/25 text-green-500" :
+                          variant === "warning" ? "bg-amber-500/10 border-amber-500/25 text-amber-500" :
+                          "bg-muted border-border/50 text-muted-foreground"
+                        )}>
+                          {icon}
+                          {label}
+                        </span>
+                      </div>
+
+                      <div className="w-20 flex items-center justify-end gap-1 shrink-0">
+                        {isLoading ? (
+                          <span className="h-4 w-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+                        ) : (
+                          <>
+                            <button
+                              onClick={() => handleStatus(article.id, article.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED")}
+                              className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                              title={article.status === "PUBLISHED" ? "Taslağa al" : "Yayınla"}
+                            >
+                              {article.status === "PUBLISHED" ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                            </button>
+                            <button
+                              onClick={() => handleDelete(article.id)}
+                              className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-transparent hover:border-red-500/25 transition-colors cursor-pointer"
+                              title="Sil"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               );

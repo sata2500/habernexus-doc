@@ -319,7 +319,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                 >
                   <Rss className="h-4 w-4" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold text-sm truncate">{source.name}</p>
                     {source.categoryHint && (
@@ -335,7 +335,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                     href={source.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-muted-foreground hover:text-primary-500 transition-colors flex items-center gap-1 mt-0.5"
+                    className="text-xs text-muted-foreground hover:text-primary-500 transition-colors flex items-center gap-1 mt-0.5 break-all truncate max-w-full"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <ExternalLink className="h-2.5 w-2.5" />

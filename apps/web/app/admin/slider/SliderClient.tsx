@@ -190,12 +190,12 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
               value={slide}
               className="relative group"
             >
-              <Card className="p-4 flex items-center gap-4 glass-strong border border-border/50 hover:border-primary-500/30 hover-lift hover:shadow-glow rounded-2xl transition-all cursor-default select-none shadow-soft">
-                <div className="cursor-grab active:cursor-grabbing p-2 text-muted-foreground hover:text-foreground">
-                  <GripVertical className="h-5 w-5" />
+              <Card className="p-3 sm:p-4 flex items-center gap-2 sm:gap-4 glass-strong border border-border/50 hover:border-primary-500/30 hover-lift hover:shadow-glow rounded-2xl transition-all cursor-default select-none shadow-soft">
+                <div className="cursor-grab active:cursor-grabbing p-1.5 sm:p-2 text-muted-foreground hover:text-foreground shrink-0">
+                  <GripVertical className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
                 
-                <div className="relative h-20 w-32 rounded-lg overflow-hidden shrink-0 border border-border">
+                <div className="relative h-12 w-20 sm:h-20 sm:w-32 rounded-lg overflow-hidden shrink-0 border border-border">
                   <img 
                     src={slide.imageUrl} 
                     alt={slide.title || ""} 
@@ -203,27 +203,27 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                   />
                   {!slide.isActive && (
                     <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] flex items-center justify-center">
-                      <EyeOff className="h-5 w-5 text-muted-foreground" />
+                      <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
                     </div>
                   )}
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold truncate text-sm">{slide.title || "Başlıksız Slide"}</h3>
-                  <p className="text-xs text-muted-foreground truncate">{slide.description || "Açıklama yok"}</p>
+                  <h3 className="font-bold truncate text-xs sm:text-sm">{slide.title || "Başlıksız Slide"}</h3>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{slide.description || "Açıklama yok"}</p>
                   {slide.link && (
-                    <div className="flex items-center gap-1 mt-1 text-[10px] text-primary-500 font-bold">
-                      <ExternalLink className="h-3 w-3" /> {slide.link}
+                    <div className="flex items-center gap-1 mt-1 text-[9px] sm:text-[10px] text-primary-500 font-bold truncate">
+                      <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0" /> <span className="truncate">{slide.link}</span>
                     </div>
                   )}
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                   <Button 
                     variant="ghost" 
                     size="icon"
                     onClick={() => setEditingSlide(slide)}
-                    className="rounded-full hover:bg-primary-500/10 hover:text-primary-500 cursor-pointer"
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-primary-500/10 hover:text-primary-500 cursor-pointer"
                   >
                     <Settings className="h-4 w-4" />
                   </Button>
@@ -231,7 +231,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                     variant="ghost" 
                     size="icon"
                     onClick={() => handleDeleteSlide(slide.id)}
-                    className="rounded-full hover:bg-red-500/10 hover:text-red-500 cursor-pointer"
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-red-500/10 hover:text-red-500 cursor-pointer"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

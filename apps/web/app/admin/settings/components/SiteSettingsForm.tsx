@@ -783,7 +783,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
                   }`}
                 >
                   <span className="text-xs font-bold text-foreground leading-none">{preset.name}</span>
-                  <div className="flex gap-1.5 items-center w-full">
+                  <div className="flex flex-col sm:flex-row gap-1.5 items-center w-full">
                     {/* Light Preview */}
                     <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 p-1.5 rounded-xl w-full justify-center border border-border/50">
                       <span className="text-[10px] font-bold text-muted-foreground">L</span>

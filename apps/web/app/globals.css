@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* ============================================
    HABER NEXUS — Design System
@@ -72,9 +73,6 @@
   --z-modal-backdrop: 300;
   --z-modal: 400;
   --z-toast: 500;
-
-  /* Dark Mode Strategy */
-  --dark-mode: selector([data-theme="dark"]);
 }
 
 /* ============================================

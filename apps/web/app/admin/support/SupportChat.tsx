@@ -72,7 +72,7 @@ export function SupportChat({ ticket }: Props) {
   return (
     <div className="flex flex-col h-[calc(100vh-280px)] min-h-[600px] glass-strong rounded-3xl border border-border overflow-hidden shadow-2xl">
       {/* Chat Header */}
-      <div className="p-4 md:p-6 border-b border-border bg-muted/30 flex items-center justify-between shrink-0">
+      <div className="p-4 md:p-6 border-b border-border bg-muted/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-2xl bg-primary-500/10 flex items-center justify-center text-primary-500 border border-primary-500/20">
             <Mail className="h-6 w-6" />
