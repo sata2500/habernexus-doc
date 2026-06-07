@@ -1,24 +1,7 @@
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import Link from "next/link";
-import { ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, Image, Home, PenTool, Mail, LayoutTemplate, Rss, Wand2, Settings2 } from "lucide-react";
-import { SignOutButton } from "../dashboard/components/SignOutButton";
-
-const navItems = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "RSS Önerileri", href: "/admin/rss-feeds", icon: Rss },
-  { name: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
-  { name: "Medya Kütüphanesi", href: "/admin/media", icon: Image },
-  { name: "Kategoriler", href: "/admin/categories", icon: Bookmark },
-  { name: "Kullanıcılar", href: "/admin/users", icon: Users },
-  { name: "Makaleler", href: "/admin/articles", icon: FileText },
-  { name: "Sayfa Yönetimi", href: "/admin/pages", icon: LayoutTemplate },
-  { name: "Slider Yönetimi", href: "/admin/slider", icon: Image },
-  { name: "Yorum Yönetimi", href: "/admin/comments", icon: MessageSquare },
-  { name: "Destek Merkezi", href: "/admin/support", icon: Mail },
-  { name: "Site Ayarları", href: "/admin/settings", icon: Settings2 },
-];
+import { AdminSidebar } from "./components/AdminSidebar";
 
 export const dynamic = "force-dynamic";
 
@@ -30,58 +13,10 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   if (session.user.role !== "ADMIN") redirect("/");
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 flex flex-col md:flex-row gap-8 min-h-screen transition-colors duration-300">
-      <aside className="w-full md:w-64 shrink-0">
-        <div className="rounded-[2rem] p-5 border border-border shadow-lg sticky top-24 transition-all duration-300" style={{ backgroundColor: "var(--sidebar-bg)", color: "var(--sidebar-fg)" }}>
-          <div className="flex items-center gap-3 mb-8 px-2">
-            <div className="h-10 w-10 rounded-xl bg-red-500/20 border border-red-500/30 flex items-center justify-center">
-              <ShieldCheck className="h-5 w-5 text-red-400" />
-            </div>
-            <div>
-              <h2 className="font-bold font-(family-name:--font-outfit) leading-none">Admin Paneli</h2>
-              <span className="text-xs opacity-70">Süper Yönetici</span>
-            </div>
-          </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12 flex flex-col md:flex-row gap-6 md:gap-8 min-h-[calc(100vh-4rem)] relative transition-colors duration-300">
+      <AdminSidebar session={session} />
 
-          <nav className="flex flex-col gap-1.5">
-            {navItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-medium opacity-80 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all"
-                >
-                  <Icon className="h-4 w-4" />
-                  {item.name}
-                </Link>
-              );
-            })}
-          </nav>
-
-          <div className="mt-8 pt-6 border-t border-border/20 px-2 space-y-1">
-            <Link
-              href="/"
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-2xl text-sm font-medium opacity-80 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all group"
-            >
-              <Home className="h-4 w-4 group-hover:scale-110 transition-transform" />
-              Ana Sayfaya Dön
-            </Link>
-            <Link
-              href="/author"
-              className="flex items-center gap-3 w-full px-4 py-3 rounded-2xl text-sm font-medium opacity-80 hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 transition-all group"
-            >
-              <PenTool className="h-4 w-4 group-hover:scale-110 transition-transform" />
-              Yazar Masasına Geç
-            </Link>
-            <div className="opacity-80 hover:opacity-100 transition-opacity">
-              <SignOutButton />
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      <main className="flex-1 w-full min-w-0">
+      <main className="flex-1 w-full min-w-0 pb-16 md:pb-0">
         {children}
       </main>
     </div>
