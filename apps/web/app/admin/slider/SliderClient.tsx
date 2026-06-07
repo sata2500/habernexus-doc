@@ -15,7 +15,7 @@ import {
   ExternalLink,
   EyeOff,
   Clock,
-  Layout
+  Images
 } from "lucide-react";
 import { updateSlider, upsertSlide, deleteSlide, reorderSlides } from "@/app/actions/slider";
 import { SliderWithSlides } from "@/lib/types";
@@ -36,8 +36,6 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
         name: slider.name,
         autoPlay: slider.autoPlay,
         interval: slider.interval,
-        height: slider.height || undefined,
-        mobileHeight: slider.mobileHeight || undefined,
         isActive: slider.isActive,
       });
       if (result.success) {
@@ -113,7 +111,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
           <h2 className="text-xl font-bold font-(family-name:--font-outfit)">Genel Ayarlar</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Slider Durumu</label>
             <div className="flex items-center gap-3 h-11 px-4 rounded-xl border border-border bg-background/50">
@@ -155,73 +153,14 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
             </div>
           </div>
 
-          <div className="space-y-2 md:col-span-2">
-            <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Slider Tasarım Modu</label>
-            <select
-              value={slider.height === "aspect-16-9" ? "aspect-16-9" : "custom"}
-              onChange={(e) => {
-                const val = e.target.value;
-                if (val === "aspect-16-9") {
-                  setSlider({
-                    ...slider,
-                    height: "aspect-16-9",
-                    mobileHeight: "aspect-16-9"
-                  });
-                } else {
-                  setSlider({
-                    ...slider,
-                    height: "500px",
-                    mobileHeight: "300px"
-                  });
-                }
-              }}
-              className="w-full h-11 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm font-semibold cursor-pointer"
-            >
-              <option value="aspect-16-9">Akıllı Aspekt Oranı (16:9) - [Önerilen]</option>
-              <option value="custom">Özel Sabit Yükseklik (Klasik)</option>
-            </select>
-          </div>
-
-          {slider.height !== "aspect-16-9" && (
-            <>
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Masaüstü Yükseklik</label>
-                <div className="relative">
-                  <Layout className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input 
-                    type="text" 
-                    value={slider.height || ""} 
-                    onChange={(e) => setSlider({...slider, height: e.target.value})}
-                    className="w-full h-11 pl-11 pr-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                    placeholder="Örn: 500px veya 60vh"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Mobil Yükseklik</label>
-                <div className="relative">
-                  <Layout className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <input 
-                    type="text" 
-                    value={slider.mobileHeight || ""} 
-                    onChange={(e) => setSlider({...slider, mobileHeight: e.target.value})}
-                    className="w-full h-11 pl-11 pr-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                    placeholder="Örn: 300px veya 40vh"
-                  />
-                </div>
-              </div>
-            </>
-          )}
-
-          <div className="flex items-end">
+          <div className="md:col-span-3 flex items-center justify-end pt-2">
             <Button 
               onClick={handleSliderUpdate} 
               disabled={loading}
-              className="w-full h-11 rounded-xl gap-2 shadow-lg shadow-primary-500/20"
+              className="h-11 rounded-xl gap-2 px-8 shadow-lg shadow-primary-500/20"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-              {success ? "Güncellendi" : "Ayarları Kaydet"}
+              {success ? "Güncellendi ✓" : "Ayarları Kaydet"}
             </Button>
           </div>
         </div>
@@ -304,7 +243,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
 
         {slides.length === 0 && (
           <div className="text-center py-20 bg-muted/20 rounded-3xl border border-dashed">
-            <Layout className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-20" />
+            <Images className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-20" />
             <p className="text-muted-foreground">Henüz bir slayt eklenmemiş.</p>
           </div>
         )}
