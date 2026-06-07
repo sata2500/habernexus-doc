@@ -25,16 +25,16 @@ export default async function AuthorStatsPage() {
     .slice(0, 5);
 
   const stats = [
-    { label: "Toplam Görüntülenme", value: totalViews.toLocaleString(), icon: Eye, bg: "bg-blue-500", trend: "+12%" },
-    { label: "Yayınlanan Haber", value: publishedArticles, icon: CheckCircle2, bg: "bg-green-500", trend: null },
-    { label: "Ortalama Okunma", value: avgViews, icon: TrendingUp, bg: "bg-purple-500", trend: "+5%" },
-    { label: "Taslaklar", value: draftArticles, icon: Clock, bg: "bg-amber-500", trend: null },
+    { label: "Toplam Görüntülenme", value: totalViews.toLocaleString(), icon: Eye, bg: "bg-primary-500", trend: "+12%" },
+    { label: "Yayınlanan Haber", value: publishedArticles, icon: CheckCircle2, bg: "bg-success", trend: null },
+    { label: "Ortalama Okunma", value: avgViews, icon: TrendingUp, bg: "bg-accent-500", trend: "+5%" },
+    { label: "Taslaklar", value: draftArticles, icon: Clock, bg: "bg-warning", trend: null },
   ];
 
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">İstatistikler</h1>
+        <h1 className="text-2xl font-bold font-display">İstatistikler</h1>
         <p className="text-muted-foreground text-sm">Haberlerinizin performansı ve etkileşim oranları.</p>
       </div>
 
@@ -57,7 +57,7 @@ export default async function AuthorStatsPage() {
                    )}
                  </div>
                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{item.label}</p>
-                 <h3 className="text-2xl font-bold mt-1 font-(family-name:--font-outfit)">{item.value}</h3>
+                 <h3 className="text-2xl font-bold mt-1 font-display">{item.value}</h3>
                </div>
             </Card>
           );
@@ -68,7 +68,7 @@ export default async function AuthorStatsPage() {
         {/* ── En Çok Okunanlar ────────────────────────── */}
         <Card className="lg:col-span-2 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold font-(family-name:--font-outfit) flex items-center gap-2">
+            <h3 className="font-bold font-display flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary-500" />
               En Popüler Haberler
             </h3>
@@ -85,7 +85,7 @@ export default async function AuthorStatsPage() {
                   <p className="text-xs text-muted-foreground mt-0.5">{article.category?.name} · {article.status === 'PUBLISHED' ? 'Yayında' : 'Taslak'}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <div className="flex items-center gap-1.5 text-sm font-bold font-(family-name:--font-outfit)">
+                  <div className="flex items-center gap-1.5 text-sm font-bold font-display">
                     <Eye className="h-3.5 w-3.5 text-muted-foreground" />
                     {article.viewCount}
                   </div>
@@ -109,29 +109,29 @@ export default async function AuthorStatsPage() {
 
         {/* ── Durum Dağılımı ────────────────────────── */}
         <Card className="p-6">
-          <h3 className="font-bold font-(family-name:--font-outfit) mb-6">İçerik Dağılımı</h3>
+          <h3 className="font-bold font-display mb-6">İçerik Dağılımı</h3>
           <div className="space-y-6">
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-green-500" /> Yayında
+                  <span className="h-2 w-2 rounded-full bg-success" /> Yayında
                 </span>
                 <span className="font-bold">{publishedArticles}</span>
               </div>
               <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                 <div className="h-full bg-green-500" style={{ width: `${(publishedArticles / (totalArticles || 1)) * 100}%` }} />
+                 <div className="h-full bg-success" style={{ width: `${(publishedArticles / (totalArticles || 1)) * 100}%` }} />
               </div>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-amber-500" /> Taslak
+                  <span className="h-2 w-2 rounded-full bg-warning" /> Taslak
                 </span>
                 <span className="font-bold">{draftArticles}</span>
               </div>
               <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                 <div className="h-full bg-amber-500" style={{ width: `${(draftArticles / (totalArticles || 1)) * 100}%` }} />
+                 <div className="h-full bg-warning" style={{ width: `${(draftArticles / (totalArticles || 1)) * 100}%` }} />
               </div>
             </div>
 

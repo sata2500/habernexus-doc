@@ -48,8 +48,8 @@ export function CommentTable({ comments, onDelete, isAdmin }: Props) {
   return (
     <div className="mt-6 border border-border/50 rounded-[2rem] overflow-hidden shadow-soft glass-strong bg-background/50 animate-in fade-in duration-300">
       <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
-          <thead>
+        <table className="w-full block md:table text-left border-collapse">
+          <thead className="hidden md:table-header-group">
             <tr className="bg-muted/30 border-b border-border/50">
               <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Kullanıcı / Yorum</th>
               <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Makale</th>
@@ -57,10 +57,10 @@ export function CommentTable({ comments, onDelete, isAdmin }: Props) {
               <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Aksiyon</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-border/50">
+          <tbody className="block md:table-row-group divide-y divide-border/50">
             {comments.map((comment) => (
-              <tr key={comment.id} className="hover:bg-primary-500/5 transition-all duration-300 group">
-                <td className="px-6 py-4">
+              <tr key={comment.id} className="flex flex-col md:table-row hover:bg-primary-500/5 transition-all duration-300 group p-4 md:p-0 gap-3 md:gap-0">
+                <td className="block md:table-cell px-0 md:px-6 py-0 md:py-4">
                   <div className="flex gap-4">
                     <Avatar 
                       src={comment.user.image || undefined} 
@@ -78,11 +78,12 @@ export function CommentTable({ comments, onDelete, isAdmin }: Props) {
                     </div>
                   </div>
                 </td>
-                <td className="px-6 py-4">
-                  <div className="max-w-[200px]">
+                <td className="block md:table-cell px-0 md:px-6 py-0 md:py-4">
+                  <div className="max-w-full md:max-w-[200px] flex items-center md:block">
+                    <span className="md:hidden text-xs font-semibold text-muted-foreground mr-2 shrink-0">Makale:</span>
                     <Link 
                       href={`/article/${comment.article.slug}`}
-                      className="text-xs font-bold text-primary-500 hover:text-primary-600 hover:underline flex items-center gap-1.5 transition-colors"
+                      className="text-xs font-bold text-primary-500 hover:text-primary-600 hover:underline flex items-center gap-1.5 transition-colors min-w-0"
                       target="_blank"
                     >
                       <span className="truncate">{comment.article.title}</span>
@@ -90,24 +91,30 @@ export function CommentTable({ comments, onDelete, isAdmin }: Props) {
                     </Link>
                   </div>
                 </td>
-                <td className="px-6 py-4">
-                  <span className="text-xs text-muted-foreground">
-                    {new Date(comment.createdAt).toLocaleDateString("tr-TR")}
-                  </span>
+                <td className="block md:table-cell px-0 md:px-6 py-0 md:py-4">
+                  <div className="flex items-center md:block">
+                    <span className="md:hidden text-xs font-semibold text-muted-foreground mr-2">Tarih:</span>
+                    <span className="text-xs text-muted-foreground">
+                      {new Date(comment.createdAt).toLocaleDateString("tr-TR")}
+                    </span>
+                  </div>
                 </td>
-                <td className="px-6 py-4 text-right">
-                  <button
-                    onClick={() => handleDelete(comment.id)}
-                    disabled={deletingId === comment.id}
-                    className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-transparent hover:border-red-500/25 transition-all disabled:opacity-50 cursor-pointer"
-                    title="Yorumu Kaldır"
-                  >
-                    {deletingId === comment.id ? (
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      <Trash2 className="h-4 w-4" />
-                    )}
-                  </button>
+                <td className="block md:table-cell px-0 md:px-6 py-0 md:py-4 text-left md:text-right border-t border-border/20 md:border-t-0 pt-2 md:pt-0">
+                  <div className="flex items-center justify-between md:justify-end">
+                    <span className="md:hidden text-xs font-semibold text-muted-foreground">İşlemler:</span>
+                    <button
+                      onClick={() => handleDelete(comment.id)}
+                      disabled={deletingId === comment.id}
+                      className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-transparent hover:border-red-500/25 transition-all disabled:opacity-50 cursor-pointer"
+                      title="Yorumu Kaldır"
+                    >
+                      {deletingId === comment.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Trash2 className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
                 </td>
               </tr>
             ))}

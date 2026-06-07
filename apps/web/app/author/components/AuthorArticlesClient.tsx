@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { 
   PlusCircle, 
   Eye, 
@@ -84,14 +85,14 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Makalelerim</h1>
+          <h1 className="text-2xl font-bold font-display">Makalelerim</h1>
           <p className="text-muted-foreground text-sm">Toplam {articles.length} makale bulundu.</p>
         </div>
-        <Link href="/author/articles/new">
-          <button className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-all cursor-pointer">
+        <Link href="/author/articles/new" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto gap-2">
             <PlusCircle className="h-4 w-4" />
             Yeni Haber Yaz
-          </button>
+          </Button>
         </Link>
       </div>
 
@@ -101,9 +102,9 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
           <p className="font-medium">Henüz makale yok</p>
           <p className="text-sm text-muted-foreground mt-1 mb-6">İlk haberinizi eklemeye başlayın.</p>
           <Link href="/author/articles/new">
-            <button className="px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-all cursor-pointer">
+            <Button>
               İlk Haberimi Yaz
-            </button>
+            </Button>
           </Link>
         </div>
       ) : (
@@ -150,58 +151,59 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
                       {article.category?.name || "Kategorisiz"} · {formatDate(article.publishedAt || article.createdAt)}
                     </p>
                   </div>
-                </div>
+                             {/* Scores & Metrics */}
+                <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 md:gap-4 w-full md:w-auto pt-3 md:pt-0 border-t border-border/40 md:border-t-0 shrink-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {isAnalyzed ? (
+                      <button
+                        onClick={() => setSelectedArticle(article)}
+                        className="flex items-center gap-2 p-1.5 pr-2.5 rounded-xl border border-border bg-muted/20 hover:bg-muted transition-all cursor-pointer outline-none focus-ring"
+                        title="Detaylı Analiz Raporunu Gör"
+                      >
+                        <span className={cn(
+                          "text-[10px] font-bold px-2 py-0.5 rounded-md border",
+                          getScoreColor(article.plagiarismRate ?? 0, true)
+                        )}>
+                          İntihal: %{article.plagiarismRate}
+                        </span>
+                        <span className={cn(
+                          "text-[10px] font-bold px-2 py-0.5 rounded-md border",
+                          getScoreColor(article.qualityScore ?? 0)
+                        )}>
+                          Kalite: {article.qualityScore}
+                        </span>
+                        <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1">
+                          <Gauge className="h-3 w-3" /> Rapor
+                        </span>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => setSelectedArticle(article)}
+                        className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1.5 rounded-xl border border-dashed border-border hover:border-primary-500/40 hover:bg-primary-500/5 hover:text-primary-500 text-muted-foreground transition-all cursor-pointer outline-none focus-ring"
+                      >
+                        <Sparkles className="h-3 w-3" /> Analiz Et
+                      </button>
+                    )}
 
-                {/* Scores & Metrics */}
-                <div className="flex flex-wrap items-center gap-2 md:gap-4 shrink-0">
-                  {isAnalyzed ? (
-                    <button
-                      onClick={() => setSelectedArticle(article)}
-                      className="flex items-center gap-2 p-1.5 pr-2.5 rounded-xl border border-border bg-muted/20 hover:bg-muted transition-all cursor-pointer"
-                      title="Detaylı Analiz Raporunu Gör"
-                    >
-                      <span className={cn(
-                        "text-[10px] font-bold px-2 py-0.5 rounded-md border",
-                        getScoreColor(article.plagiarismRate ?? 0, true)
-                      )}>
-                        İntihal: %{article.plagiarismRate}
-                      </span>
-                      <span className={cn(
-                        "text-[10px] font-bold px-2 py-0.5 rounded-md border",
-                        getScoreColor(article.qualityScore ?? 0)
-                      )}>
-                        Kalite: {article.qualityScore}
-                      </span>
-                      <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1">
-                        <Gauge className="h-3 w-3" /> Rapor
-                      </span>
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setSelectedArticle(article)}
-                      className="flex items-center gap-1 text-[10px] font-bold px-2.5 py-1.5 rounded-xl border border-dashed border-border hover:border-primary-500/40 hover:bg-primary-500/5 hover:text-primary-500 text-muted-foreground transition-all cursor-pointer"
-                    >
-                      <Sparkles className="h-3 w-3" /> Analiz Et
-                    </button>
-                  )}
+                    <Badge variant={variant} className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">{label}</Badge>
+                    
+                    <span className="flex items-center gap-1 text-xs text-muted-foreground font-medium">
+                      <Eye className="h-3.5 w-3.5" /> {article.viewCount}
+                    </span>
+                  </div>
 
-                  <Badge variant={variant} className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">{label}</Badge>
-                  
-                  <span className="flex items-center gap-1 text-xs text-muted-foreground font-medium">
-                    <Eye className="h-3.5 w-3.5" /> {article.viewCount}
-                  </span>
-
-                  <div className="flex items-center gap-1 border-l border-border pl-3">
+                  <div className="flex items-center gap-1.5 border-t border-border/30 md:border-t-0 pt-2 md:pt-0 w-full md:w-auto justify-end md:border-l md:border-border md:pl-3">
                     <Link
                       href={`/author/articles/${article.id}/edit`}
-                      className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground"
+                      className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted/50 hover:bg-muted transition-colors text-muted-foreground hover:text-foreground border border-border/30"
                       title="Düzenle"
                     >
-                      <Pencil className="h-4 w-4" />
+                      <Pencil className="h-4.5 w-4.5" />
                     </Link>
                     <DeleteArticleButton articleId={article.id} articleTitle={article.title} />
                   </div>
                 </div>
+        </div>
 
               </div>
             );

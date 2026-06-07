@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 import {
   ExternalLink,
   X,
@@ -36,7 +37,7 @@ interface Props {
 
 function ScoreBar({ score }: { score: number }) {
   const color =
-    score >= 75 ? "bg-green-500" : score >= 55 ? "bg-amber-500" : "bg-muted-foreground/40";
+    score >= 75 ? "bg-success" : score >= 55 ? "bg-warning" : "bg-muted-foreground/40";
   return (
     <div className="flex items-center gap-2">
       <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
@@ -148,27 +149,33 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
           <button
             onClick={() => setShowPreview(true)}
             title="Haberi İncele"
-            className="px-3 py-2.5 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all cursor-pointer border border-border"
+            className="px-3.5 py-2.5 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all cursor-pointer border border-border outline-none focus-ring"
           >
             <Eye className="h-4 w-4" />
           </button>
           <Link
             href="/author/articles/new"
             onClick={handleUse}
-            className="flex-1 text-center px-3 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-primary-500/20 active:scale-95 cursor-pointer"
+            className="flex-1 flex"
+            passHref
           >
-            {loading === "use" ? (
-              <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-            ) : (
-              <CheckCheck className="h-3.5 w-3.5" />
-            )}
-            Haber Yaz
+            <Button
+              className="w-full h-[42px] text-xs font-bold gap-1.5"
+              disabled={!!loading}
+            >
+              {loading === "use" ? (
+                <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : (
+                <CheckCheck className="h-3.5 w-3.5" />
+              )}
+              Haber Yaz
+            </Button>
           </Link>
           <button
             onClick={handleDismiss}
             disabled={!!loading}
             title="İlginç Değil"
-            className="px-3 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-all cursor-pointer disabled:opacity-40 border border-border hover:border-red-200 dark:hover:border-red-800"
+            className="px-3.5 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/20 text-muted-foreground hover:text-red-500 transition-all cursor-pointer disabled:opacity-40 border border-border hover:border-red-200 dark:hover:border-red-800 outline-none focus-ring"
           >
             {loading === "dismiss" ? (
               <span className="h-4 w-4 border-2 border-muted-foreground/30 border-t-muted-foreground rounded-full animate-spin block" />
@@ -228,7 +235,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
               )}
 
               <div>
-                <h2 className="text-xl md:text-2xl font-bold font-(family-name:--font-outfit) leading-snug mb-3">
+                <h2 className="text-xl md:text-2xl font-bold font-display leading-snug mb-3">
                   {item.title}
                 </h2>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4">
@@ -310,10 +317,12 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
                 <Link
                   href="/author/articles/new"
                   onClick={handleUse}
-                  className="px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold transition-all flex items-center gap-1.5"
+                  passHref
                 >
-                  <CheckCheck className="h-4 w-4" />
-                  Haberi Yaz
+                  <Button className="gap-1.5" disabled={!!loading}>
+                    <CheckCheck className="h-4 w-4" />
+                    Haberi Yaz
+                  </Button>
                 </Link>
               </div>
             </div>

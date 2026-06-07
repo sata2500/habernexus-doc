@@ -9,7 +9,7 @@ export default async function AuthorSuggestionsPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* ── Header ── */}
       <div>
-        <h1 className="text-2xl font-bold font-(family-name:--font-outfit) flex items-center gap-2">
+        <h1 className="text-2xl font-bold font-display flex items-center gap-2">
           <Sparkles className="h-6 w-6 text-primary-500" />
           Haber Önerileri
         </h1>

@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { getAuthorArticles } from "./actions";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { PlusCircle, Eye, FileText, Newspaper, Pencil, TrendingUp, Sparkles } from "lucide-react";
 
 function getStatusLabel(status: string) {
@@ -33,32 +34,32 @@ export default async function AuthorDashboardPage() {
       {/* ── Başlık ────────────────────────────── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">
+          <h1 className="text-2xl font-bold font-display">
             Hoş Geldin, {session?.user.name.split(" ")[0]} 👋
           </h1>
           <p className="text-muted-foreground text-sm">Şu anki durum özetin ve hızlı erişim alanın.</p>
         </div>
-        <Link href="/author/articles/new">
-          <button className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-xl transition-all focus:ring-4 focus:ring-primary-500/30 shadow-lg shadow-primary-500/20 cursor-pointer">
+        <Link href="/author/articles/new" className="w-full sm:w-auto">
+          <Button className="w-full sm:w-auto gap-2">
             <PlusCircle className="h-4 w-4" />
             Yeni Haber Yaz
-          </button>
+          </Button>
         </Link>
       </div>
 
       {/* ── İstatistik Kartları ───────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
-          { icon: Newspaper, label: "Toplam Makale", value: articles.length, color: "text-blue-500 bg-blue-500/10" },
-          { icon: TrendingUp, label: "Toplam Görüntülenme", value: totalViews.toLocaleString("tr-TR"), color: "text-green-500 bg-green-500/10" },
-          { icon: FileText, label: "Taslak", value: drafts.length, color: "text-amber-500 bg-amber-500/10" },
+          { icon: Newspaper, label: "Toplam Makale", value: articles.length, color: "text-primary-500 bg-primary-500/10 border border-primary-500/5" },
+          { icon: TrendingUp, label: "Toplam Görüntülenme", value: totalViews.toLocaleString("tr-TR"), color: "text-success bg-success/10 border border-success/5" },
+          { icon: FileText, label: "Taslak", value: drafts.length, color: "text-warning bg-warning/10 border border-warning/5" },
         ].map((stat) => (
-          <div key={stat.label} className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-center gap-4">
+          <div key={stat.label} className="glass-strong rounded-2xl p-4 sm:p-5 border border-border shadow-soft flex items-center gap-4">
             <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
               <stat.icon className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-2xl font-bold font-(family-name:--font-outfit)">{stat.value}</p>
+              <p className="text-2xl font-bold font-display">{stat.value}</p>
               <p className="text-xs text-muted-foreground">{stat.label}</p>
             </div>
           </div>
@@ -68,7 +69,7 @@ export default async function AuthorDashboardPage() {
       {/* ── Makaleler Listesi ─────────────────── */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold font-(family-name:--font-outfit)">Son Makalelerim</h2>
+          <h2 className="text-lg font-semibold font-display">Son Makalelerim</h2>
           <Link href="/author/articles" className="text-sm text-primary-600 hover:underline">Tümünü Gör</Link>
         </div>
 
@@ -83,7 +84,7 @@ export default async function AuthorDashboardPage() {
             {(articles as AuthorArticle[]).slice(0, 5).map((article) => {
               const { label, variant } = getStatusLabel(article.status);
               return (
-                <div key={article.id} className="flex items-center justify-between gap-4 p-4 bg-background hover:bg-muted/40 transition-colors">
+                <div key={article.id} className="flex items-center justify-between gap-4 p-3.5 sm:p-4 bg-background hover:bg-muted/40 transition-colors">
                   <div className="flex items-center gap-3 min-w-0">
                     <div className="h-10 w-10 shrink-0 rounded-xl bg-muted flex items-center justify-center">
                       <FileText className="h-5 w-5 text-muted-foreground" />
@@ -111,7 +112,7 @@ export default async function AuthorDashboardPage() {
       {/* ── Haber Önerileri Widget ──────────────────── */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold font-(family-name:--font-outfit) flex items-center gap-2">
+          <h2 className="text-lg font-semibold font-display flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-primary-500" />
             Güncel Haber Önerileri
           </h2>

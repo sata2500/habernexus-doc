@@ -7,6 +7,8 @@ import { useEffect } from "react";
 import { createArticle, getCategories } from "../../actions";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
+
 import { Image as ImageIcon, Tag, Loader2, Eye, Save } from "lucide-react";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 
@@ -66,7 +68,7 @@ export default function NewArticlePage() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Yeni Haber Yaz</h1>
+        <h1 className="text-2xl font-bold font-display">Yeni Haber Yaz</h1>
         <p className="text-muted-foreground text-sm">Aşağıdaki alanları doldurun ve haberi taslak olarak kaydedin veya yayınlayın.</p>
       </div>
 
@@ -81,9 +83,10 @@ export default function NewArticlePage() {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Etkileyici bir haber başlığı girin..."
-              className="w-full text-2xl font-bold font-(family-name:--font-outfit) bg-transparent border-none outline-none placeholder:text-muted-foreground/40 placeholder:font-medium resize-none"
+              className="w-full text-2xl font-bold font-display bg-transparent border-none outline-none placeholder:text-muted-foreground/40 placeholder:font-medium resize-none"
               maxLength={200}
             />
+
             <p className="text-xs text-muted-foreground text-right">{title.length}/200</p>
           </Card>
 
@@ -123,8 +126,8 @@ export default function NewArticlePage() {
                   className={`flex-1 py-2 rounded-xl text-sm font-medium border transition-all cursor-pointer ${
                     status === s
                       ? s === "PUBLISHED"
-                        ? "bg-green-500 text-white border-green-500"
-                        : "bg-amber-500 text-white border-amber-500"
+                        ? "bg-success text-white border-success"
+                        : "bg-warning text-white border-warning"
                       : "bg-transparent text-muted-foreground border-border hover:border-foreground"
                   }`}
                 >
@@ -132,6 +135,7 @@ export default function NewArticlePage() {
                 </button>
               ))}
             </div>
+
           </Card>
 
           {/* Kategori */}
@@ -179,25 +183,27 @@ export default function NewArticlePage() {
 
           {/* Aksiyon Butonları */}
           <div className="flex flex-col gap-2">
-            <button
+            <Button
               type="button"
               onClick={() => handleSubmit("PUBLISHED")}
-              disabled={saving}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl transition-all shadow-lg shadow-primary-500/20 cursor-pointer disabled:opacity-60"
+              isLoading={saving}
+              className="w-full gap-2 py-3 h-auto text-base font-semibold"
             >
-              {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Eye className="h-4 w-4" />}
+              <Eye className="h-4 w-4" />
               Yayınla
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => handleSubmit("DRAFT")}
+              variant="secondary"
               disabled={saving}
-              className="w-full flex items-center justify-center gap-2 px-5 py-3 bg-muted hover:bg-muted/80 text-foreground font-medium rounded-xl transition-all cursor-pointer disabled:opacity-60 border border-border"
+              className="w-full gap-2 py-3 h-auto text-base font-medium"
             >
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               Taslak Kaydet
-            </button>
+            </Button>
           </div>
+
         </div>
       </div>
     </div>
