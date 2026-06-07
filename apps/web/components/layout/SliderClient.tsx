@@ -63,8 +63,9 @@ export function SliderClient({
       ref={containerRef}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      // Mobil: yaklaşık 16/8 (2:1), Masaüstü: 2 slayt yan yana = 32/9 civarı → daha uzun görünüm için 16/5
-      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-card transition-all duration-500 aspect-[4/3] sm:aspect-[16/9] lg:aspect-[8/3]"
+      // Dış konteyner: slaytlardan ~%10 daha uzun → üst/alt arka plan görünür
+      // Mobil (1 slayt): 16/10  |  Masaüstü (2 slayt): 32/11
+      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-card transition-all duration-500 aspect-[16/10] lg:aspect-[32/11]"
     >
       <motion.div
         animate={{ x: `-${current * (100 / slides.length)}%` }}
@@ -86,11 +87,11 @@ export function SliderClient({
           return (
             <div
               key={`${slide.id}-${index}`}
-              className="relative h-full px-1 py-1 md:px-2 md:py-2 flex-shrink-0"
+              className="relative h-full px-1.5 md:px-2.5 py-0 flex-shrink-0 flex items-center"
               style={{ width: `${100 / slides.length}%` }}
             >
-              {/* Slayt kartı — köşeli, taşmasız */}
-              <div className="relative w-full h-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide">
+              {/* Slayt kartı — tam 16:9, dikey ortala */}
+              <div className="relative w-full aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide">
 
                 {/* Arka plan görseli — alana tam oturan */}
                 <div className="absolute inset-0 z-10">
