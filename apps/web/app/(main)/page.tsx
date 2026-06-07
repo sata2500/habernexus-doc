@@ -54,12 +54,15 @@ function formatCount(n: number): string {
 export default async function HomePage() {
   const heroArticle = await getHeroArticle();
   const trendingArticles = await getTrendingArticles(4);
-  const latestArticles = await getLatestArticles(6);
+  const latestArticles = await getLatestArticles(8);
   const categories = await getCategoriesWithCount();
 
   const session = await auth.api.getSession({ headers: await headers() });
   const userId = session?.user?.id;
-  const recommendedArticles = await getRecommendedArticles(userId, 4);
+  // Sadece giriş yapılmışsa kişiselleştirilmiş öneriler çek
+  const recommendedArticles = userId
+    ? await getRecommendedArticles(userId, 6)
+    : [];
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
@@ -372,24 +375,27 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Recommended Articles Section ────────────────────────── */}
-      {recommendedArticles.length > 0 && (
+      {/* ── Sizin İçin Section (sadece giriş yapılmışsa) ────────────────────────── */}
+      {userId && recommendedArticles.length > 0 && (
         <section id="recommended-articles-section" aria-label="Sizin İçin Seçilenler">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <div className="h-9 w-9 rounded-xl bg-accent-500/10 flex items-center justify-center">
                 <Sparkles className="h-4.5 w-4.5 text-accent-500" />
               </div>
-              <h2 className="text-xl font-bold font-display tracking-tight">Sizin İçin Seçilenler</h2>
+              <div>
+                <h2 className="text-xl font-bold font-display tracking-tight">Sizin İçin</h2>
+                <p className="text-xs text-muted-foreground">İlgi alanlarınıza göre seçilenler</p>
+              </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {recommendedArticles.map((article) => (
               <Link key={article.id} href={`/article/${article.slug}`} className="group block shine rounded-2xl">
-                <Card 
-                  variant="interactive" 
-                  noPadding 
+                <Card
+                  variant="interactive"
+                  noPadding
                   className="overflow-hidden h-full flex flex-col border border-border/40 bg-card/65 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_20px_var(--art-glow)] transition-all duration-300"
                   style={{
                     "--art-color": article.category?.color || "var(--color-accent-500)",
@@ -403,7 +409,7 @@ export default async function HomePage() {
                         alt={article.title}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-700"
-                        sizes="(max-width: 768px) 100vw, 25vw"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center bg-linear-to-br from-primary-500/10 to-primary-700/5">
@@ -417,6 +423,12 @@ export default async function HomePage() {
                         </Badge>
                       </div>
                     )}
+                    {/* Kişiselleştirilmiş rozet */}
+                    <div className="absolute top-3 right-3 z-10">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-accent-500/20 text-accent-500 border border-accent-500/30 backdrop-blur-md">
+                        <Sparkles className="h-2.5 w-2.5" /> Sizin için
+                      </span>
+                    </div>
                   </div>
                   <div className="p-4.5 flex flex-col justify-between flex-grow">
                     <div className="space-y-1.5">
@@ -453,6 +465,9 @@ export default async function HomePage() {
           </div>
         </section>
       )}
+
+
+
 
       {/* ── CTA Section ────────────────────────── */}
       <section id="cta-section" aria-label="Kayıt Çağrısı">
