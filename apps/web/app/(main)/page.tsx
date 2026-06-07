@@ -286,7 +286,7 @@ export default async function HomePage() {
                   noPadding
                   className={cn(
                     "overflow-hidden h-full flex flex-col border border-border/40 bg-card/65 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_20px_var(--art-glow)] transition-all duration-300",
-                    isFirst && "md:flex-row md:h-[320px]"
+                    isFirst && "md:flex-row"
                   )}
                   style={{
                     "--art-color": article.category?.color || "var(--color-primary-500)",
