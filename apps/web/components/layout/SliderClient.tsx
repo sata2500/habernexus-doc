@@ -63,9 +63,9 @@ export function SliderClient({
       ref={containerRef}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      // Dış konteyner: slaytlardan ~%10 daha uzun → üst/alt arka plan görünür
-      // Mobil (1 slayt): 16/10  |  Masaüstü (2 slayt): 32/11
-      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-card transition-all duration-500 aspect-[16/10] lg:aspect-[32/11]"
+      // Dış konteyner: slaytlardan ~%5 daha uzun → üst/alt arka plan görünür
+      // Mobil (1 slayt): 32/19  |  Masaüstü (2 slayt): 32/10
+      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-card transition-all duration-500 aspect-[32/19] lg:aspect-[32/10]"
     >
       <motion.div
         animate={{ x: `-${current * (100 / slides.length)}%` }}
