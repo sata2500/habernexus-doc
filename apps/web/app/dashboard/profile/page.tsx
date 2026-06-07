@@ -8,11 +8,31 @@ import { CheckCircle2, User as UserIcon, PenTool, ShieldCheck, ArrowRight, Loade
 import { Badge } from "@/components/ui/Badge";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 function getRoleBadge(role: string | null | undefined) {
-  if (role === "ADMIN") return { label: "Admin", variant: "error" as const, icon: ShieldCheck };
-  if (role === "AUTHOR") return { label: "Yazar", variant: "primary" as const, icon: PenTool };
-  return { label: "Standart Kullanıcı", variant: "default" as const, icon: null };
+  if (role === "ADMIN") {
+    return { 
+      label: "Admin", 
+      variant: "error" as const, 
+      icon: ShieldCheck,
+      badgeClass: "bg-red-500 text-white dark:bg-red-500/15 dark:text-red-400 border border-red-500/20"
+    };
+  }
+  if (role === "AUTHOR") {
+    return { 
+      label: "Yazar", 
+      variant: "primary" as const, 
+      icon: PenTool,
+      badgeClass: "bg-primary-500 text-white dark:bg-primary-500/15 dark:text-primary-400 border border-primary-500/20"
+    };
+  }
+  return { 
+    label: "Standart Kullanıcı", 
+    variant: "default" as const, 
+    icon: null,
+    badgeClass: "bg-muted text-muted-foreground dark:bg-muted/30 dark:text-muted-foreground border border-border/40"
+  };
 }
 
 export default function ProfilePage() {
@@ -139,7 +159,7 @@ export default function ProfilePage() {
               <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Grup / Rol</label>
               <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-muted/40 border border-border/40 select-none">
                 <span className="text-sm text-muted-foreground font-medium">Mevcut Rolünüz</span>
-                <Badge variant={roleBadge.variant} className="flex items-center gap-1.5 px-3 py-1 font-bold text-xs uppercase tracking-wider">
+                <Badge className={cn("flex items-center gap-1.5 px-3 py-1 font-bold text-xs uppercase tracking-wider", roleBadge.badgeClass)}>
                   {roleBadge.icon && <roleBadge.icon className="h-3.5 w-3.5" />}
                   {roleBadge.label}
                 </Badge>
