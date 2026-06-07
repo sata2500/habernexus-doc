@@ -169,11 +169,11 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
           />
         </div>
         
-        <div className="flex gap-2">
+        <div className="flex gap-2 w-full md:w-auto">
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-background/50 border border-border rounded-xl text-sm focus:border-primary-500 outline-none cursor-pointer font-semibold"
+            className="flex-1 md:flex-initial px-3 py-2 bg-background/50 border border-border rounded-xl text-sm focus:border-primary-500 outline-none cursor-pointer font-semibold min-w-0"
           >
             <option value="all">Tüm Durumlar</option>
             <option value="PUBLISHED">Yayında</option>
@@ -183,7 +183,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-2 bg-background/50 border border-border rounded-xl text-sm focus:border-primary-500 outline-none max-w-[150px] cursor-pointer font-semibold"
+            className="flex-1 md:flex-initial px-3 py-2 bg-background/50 border border-border rounded-xl text-sm focus:border-primary-500 outline-none md:max-w-[150px] cursor-pointer font-semibold min-w-0"
           >
             <option value="all">Tüm Kategoriler</option>
             {categories.map(([id, name]) => (
@@ -268,7 +268,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                 <div 
                   key={article.id} 
                   className={cn(
-                    "flex items-start sm:items-center gap-3 sm:gap-4 p-4 transition-all duration-300 group",
+                    "flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 transition-all duration-300 group",
                     isSelected ? "bg-[var(--color-primary-500)]/5" : "bg-background/30 hover:bg-primary-500/5"
                   )}
                 >
@@ -286,7 +286,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                   <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full">
                     {/* Title & info */}
                     <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap min-w-0">
                         <p className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">
                           {article.title}
                         </p>

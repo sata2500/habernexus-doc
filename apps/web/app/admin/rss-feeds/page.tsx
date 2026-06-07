@@ -59,13 +59,13 @@ export default async function AdminRssFeedsPage({
         {statCards.map((stat) => (
           <div
             key={stat.label}
-            className="glass-strong hover-lift rounded-2xl p-4 border border-border shadow-soft flex flex-col items-center gap-2 text-center hover:shadow-glow hover:border-primary-500/20 transition-all duration-300"
+            className="glass-strong hover-lift rounded-2xl p-4 border border-border shadow-soft flex flex-col items-center gap-2 text-center hover:shadow-glow hover:border-primary-500/20 transition-all duration-300 min-w-0 w-full overflow-hidden"
           >
-            <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${stat.color}`}>
+            <div className={`h-9 w-9 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
               <stat.icon className="h-4 w-4" />
             </div>
             <p className="text-2xl font-black font-display text-foreground tracking-tight leading-none mt-1">{stat.value}</p>
-            <p className="text-[10px] text-muted-foreground font-bold leading-tight uppercase tracking-wider">{stat.label}</p>
+            <p className="text-[10px] text-muted-foreground font-bold leading-tight uppercase tracking-wider break-words line-clamp-2 max-w-full">{stat.label}</p>
           </div>
         ))}
       </div>

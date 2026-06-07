@@ -95,13 +95,11 @@ export default async function HomePage() {
                     />
                   )}
                   <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-transparent" />
-                  <div className="absolute top-4 left-4 z-10">
+                  <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2 items-center">
                     <Badge variant="error" className="animate-pulse-glow">
                       <Zap className="h-3 w-3 mr-1" />
                       Son Dakika
                     </Badge>
-                  </div>
-                  <div className="relative z-10 p-6 md:p-8 text-white space-y-3.5">
                     {heroArticle.category && (
                       <Badge
                         className="text-white border-white/30 backdrop-blur-md bg-white/10"
@@ -111,6 +109,8 @@ export default async function HomePage() {
                         {heroArticle.category.name}
                       </Badge>
                     )}
+                  </div>
+                  <div className="relative z-10 p-6 md:p-8 text-white space-y-3.5">
                     <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-display leading-tight group-hover:text-[var(--art-color)] transition-colors duration-300">
                       {heroArticle.title}
                     </h2>

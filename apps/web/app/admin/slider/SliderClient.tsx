@@ -103,7 +103,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Slider Settings */}
-      <Card className="p-6 glass-strong border border-border/50 rounded-3xl shadow-soft">
+      <Card className="p-4 sm:p-6 glass-strong border border-border/50 rounded-3xl shadow-soft">
         <div className="flex items-center gap-3 mb-6">
           <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center border border-primary-500/20">
             <Settings className="h-5 w-5 text-primary-500" />
@@ -157,7 +157,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
             <Button 
               onClick={handleSliderUpdate} 
               disabled={loading}
-              className="h-11 rounded-xl gap-2 px-8 shadow-lg shadow-primary-500/20 cursor-pointer"
+              className="w-full sm:w-auto h-11 rounded-xl gap-2 px-8 shadow-lg shadow-primary-500/20 cursor-pointer"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               {success ? "Güncellendi ✓" : "Ayarları Kaydet"}
@@ -168,16 +168,16 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
 
       {/* Slides Management */}
       <div className="space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center border border-primary-500/20">
-              <Plus className="h-5 w-5 text-primary-500" />
+              <Images className="h-5 w-5 text-primary-500" />
             </div>
             <h2 className="text-xl font-bold font-display">Slaytlar</h2>
           </div>
           <Button 
             onClick={() => setEditingSlide({ order: slides.length, isActive: true })}
-            className="rounded-xl gap-2 bg-primary-500 hover:bg-primary-600 text-white font-bold shadow-lg shadow-primary-500/20 active:scale-95 transition-all cursor-pointer"
+            className="w-full sm:w-auto rounded-xl gap-2 bg-primary-500 hover:bg-primary-600 text-white font-bold shadow-lg shadow-primary-500/20 active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="h-4 w-4" /> Yeni Slide Ekle
           </Button>
@@ -333,14 +333,14 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                   </div>
                 </div>
 
-                <div className="p-6 border-t border-border/50 flex justify-end gap-3 bg-muted/20">
-                  <Button variant="ghost" onClick={() => setEditingSlide(null)} disabled={loading} className="cursor-pointer font-bold">
+                <div className="p-4 sm:p-6 border-t border-border/50 flex flex-row justify-end gap-3 bg-muted/20">
+                  <Button variant="ghost" onClick={() => setEditingSlide(null)} disabled={loading} className="flex-1 sm:flex-initial cursor-pointer font-bold">
                     İptal
                   </Button>
                   <Button 
                     onClick={handleSlideSave} 
                     disabled={loading || !editingSlide.imageUrl}
-                    className="min-w-[140px] gap-2 rounded-xl cursor-pointer"
+                    className="flex-1 sm:flex-initial sm:min-w-[140px] gap-2 rounded-xl cursor-pointer"
                   >
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                     {editingSlide.id ? "Güncelle" : "Ekle"}
