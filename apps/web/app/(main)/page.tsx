@@ -87,8 +87,16 @@ export default async function HomePage() {
         {/* Main Hero */}
         <div className="lg:col-span-2">
           {heroArticle ? (
-            <Link href={`/article/${heroArticle.slug}`} className="group block h-full">
-              <Card variant="interactive" noPadding className="overflow-hidden h-full">
+            <Link href={`/article/${heroArticle.slug}`} className="group block h-full shine rounded-2xl">
+              <Card 
+                variant="interactive" 
+                noPadding 
+                className="overflow-hidden h-full border border-border/40 hover:border-[var(--art-color)] hover:shadow-[0_0_30px_var(--art-glow)] transition-all duration-500"
+                style={{
+                  "--art-color": heroArticle.category?.color || "var(--color-primary-500)",
+                  "--art-glow": `${heroArticle.category?.color || "var(--color-primary-500)"}18`
+                } as React.CSSProperties}
+              >
                 <div className="relative h-full min-h-[300px] md:min-h-[400px] bg-linear-to-br from-primary-500/20 via-accent-500/10 to-primary-700/20 flex items-end">
                   {heroArticle.coverImage && (
                     <Image
@@ -99,24 +107,24 @@ export default async function HomePage() {
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   )}
-                  <div className="absolute inset-0 bg-linear-to-t from-black/80 via-black/30 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-transparent" />
                   <div className="absolute top-4 left-4 z-10">
                     <Badge variant="error" className="animate-pulse-glow">
                       <Zap className="h-3 w-3 mr-1" />
                       Son Dakika
                     </Badge>
                   </div>
-                  <div className="relative z-10 p-6 md:p-8 text-white space-y-3">
+                  <div className="relative z-10 p-6 md:p-8 text-white space-y-3.5">
                     {heroArticle.category && (
                       <Badge
-                        className="text-white border-white/30"
+                        className="text-white border-white/30 backdrop-blur-md bg-white/10"
                         variant="outline"
-                        style={{ borderColor: heroArticle.category.color || "#fff" }}
+                        style={{ borderColor: heroArticle.category.color || "#fff", color: heroArticle.category.color || "#fff" }}
                       >
                         {heroArticle.category.name}
                       </Badge>
                     )}
-                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-(family-name:--font-outfit) leading-tight group-hover:text-primary-200 transition-colors">
+                    <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-display leading-tight group-hover:text-[var(--art-color)] transition-colors duration-300">
                       {heroArticle.title}
                     </h2>
                     {heroArticle.excerpt && (
@@ -124,14 +132,15 @@ export default async function HomePage() {
                         {heroArticle.excerpt}
                       </p>
                     )}
-                    <div className="flex items-center gap-4 text-sm text-white/60">
+                    <div className="flex flex-wrap items-center gap-4 text-xs md:text-sm text-white/60 pt-2">
                       <div className="flex items-center gap-2">
                         <Avatar
                           src={(heroArticle.aiPersona?.image || heroArticle.author.image) || undefined}
                           fallback={heroArticle.aiPersona?.name || heroArticle.author.name}
                           size="xs"
+                          className="ring-2 ring-[var(--art-color)]"
                         />
-                        <span>{heroArticle.aiPersona?.name || heroArticle.author.name}</span>
+                        <span className="font-medium text-white/80">{heroArticle.aiPersona?.name || heroArticle.author.name}</span>
                       </div>
                       <span className="flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5" />
@@ -139,7 +148,7 @@ export default async function HomePage() {
                       </span>
                       <span className="flex items-center gap-1">
                         <Eye className="h-3.5 w-3.5" />
-                        {formatCount(heroArticle.viewCount)}
+                        {formatCount(heroArticle.viewCount)} okuma
                       </span>
                     </div>
                   </div>
@@ -155,58 +164,68 @@ export default async function HomePage() {
 
         {/* Trending Sidebar */}
         <div className="lg:col-span-1">
-          <Card className="h-full">
-            <div className="flex items-center gap-2 mb-5">
-              <div className="h-8 w-8 rounded-lg bg-accent-500/10 flex items-center justify-center">
-                <Flame className="h-4 w-4 text-accent-500" />
+          <Card className="h-full border border-border/40 bg-card/60 backdrop-blur-xs flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2.5 mb-6">
+                <div className="h-9 w-9 rounded-xl bg-accent-500/10 flex items-center justify-center">
+                  <Flame className="h-4.5 w-4.5 text-accent-500" />
+                </div>
+                <h2 className="text-lg font-bold font-display tracking-tight">
+                  Trend Haberler
+                </h2>
               </div>
-              <h2 className="text-lg font-bold font-(family-name:--font-outfit)">
-                Trend Haberler
-              </h2>
-            </div>
-            {trendingArticles.length > 0 ? (
-              <div className="space-y-4">
-                {trendingArticles.map((article, index: number) => (
-                  <Link
-                    key={article.id}
-                    href={`/article/${article.slug}`}
-                    className="group flex gap-3 items-start"
-                  >
-                    <span className="text-2xl font-bold font-(family-name:--font-outfit) text-muted-foreground/40 group-hover:text-primary-500 transition-colors min-w-8">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-                    <div className="flex-1 min-w-0 space-y-1">
-                      {article.category && (
-                        <Badge
-                          variant="outline"
-                          className="text-[10px] px-1.5 py-0"
-                          style={{
-                            color: article.category.color || "currentColor",
-                            borderColor: `${article.category.color || "#ccc"}40`,
-                          }}
-                        >
-                          {article.category.name}
-                        </Badge>
-                      )}
-                      <h3 className="text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary-600 transition-colors">
-                        {article.title}
-                      </h3>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        {article.publishedAt && (
-                          <span>{formatRelative(article.publishedAt)}</span>
-                        )}
-                        <span className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
-                          {formatCount(article.viewCount)}
+              {trendingArticles.length > 0 ? (
+                <div className="space-y-3.5">
+                  {trendingArticles.map((article, index: number) => (
+                    <Link
+                      key={article.id}
+                      href={`/article/${article.slug}`}
+                      className="group block"
+                    >
+                      <div 
+                        className="p-3.5 rounded-xl border border-border/40 bg-card/30 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_15px_var(--art-glow)] transition-all duration-300 flex gap-3.5 items-center hover:-translate-y-0.5"
+                        style={{
+                          "--art-color": article.category?.color || "var(--color-primary-500)",
+                          "--art-glow": `${article.category?.color || "var(--color-primary-500)"}12`
+                        } as React.CSSProperties}
+                      >
+                        <span className="text-xl font-bold font-display text-muted-foreground/30 group-hover:text-[var(--art-color)] transition-colors duration-300 min-w-6 text-center">
+                          {String(index + 1).padStart(2, "0")}
                         </span>
+                        <div className="flex-1 min-w-0 space-y-1.5">
+                          <div className="flex items-center justify-between gap-2">
+                            {article.category && (
+                              <span 
+                                className="text-[10px] font-bold tracking-wider uppercase"
+                                style={{ color: article.category.color || "var(--color-primary-500)" }}
+                              >
+                                {article.category.name}
+                              </span>
+                            )}
+                            {article.publishedAt && (
+                              <span className="text-[10px] text-muted-foreground/80">
+                                {formatRelative(article.publishedAt)}
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="text-sm font-bold leading-snug line-clamp-2 text-card-foreground group-hover:text-primary-500 transition-colors duration-300">
+                            {article.title}
+                          </h3>
+                          <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                            <span className="flex items-center gap-0.5">
+                              <Eye className="h-3 w-3" />
+                              {formatCount(article.viewCount)} okuma
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <p className="text-sm text-muted-foreground">Trend makale yok.</p>
-            )}
+                    </Link>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">Trend makale yok.</p>
+              )}
+            </div>
           </Card>
         </div>
       </section>
@@ -214,34 +233,39 @@ export default async function HomePage() {
       {/* ── Categories Bar ────────────────────────── */}
       <section id="categories-section" aria-label="Kategoriler">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold font-(family-name:--font-outfit)">Kategoriler</h2>
+          <h2 className="text-xl font-bold font-display tracking-tight">Kategoriler</h2>
           <Link
             href="/categories"
-            className="text-sm text-primary-500 hover:text-primary-600 font-medium flex items-center gap-1 transition-colors"
+            className="text-sm text-primary-500 hover:text-primary-600 font-medium flex items-center gap-1 transition-colors group/all"
           >
-            Tümünü Gör <ArrowRight className="h-4 w-4" />
+            Tümünü Gör <ArrowRight className="h-4 w-4 group-hover/all:translate-x-0.5 transition-transform" />
           </Link>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
           {categories.map((cat) => {
             const IconComponent = cat.icon && IconMap[cat.icon] ? IconMap[cat.icon] : Newspaper;
             return (
-              <Link key={cat.slug} href={`/category/${cat.slug}`}>
-                <Card
-                  variant="interactive"
-                  className="flex flex-col items-center gap-2 text-center py-5 px-3"
+              <Link key={cat.slug} href={`/category/${cat.slug}`} className="group block">
+                <div
+                  className="relative flex flex-col items-center gap-2.5 text-center py-6 px-3 border border-border/40 bg-card/60 backdrop-blur-xs hover:bg-card hover:border-[var(--cat-color)] hover:shadow-[0_0_20px_var(--cat-glow)] hover:-translate-y-1 transition-all duration-300 rounded-2xl cursor-pointer"
+                  style={{
+                    "--cat-color": cat.color || "#888",
+                    "--cat-glow": `${cat.color || "#888"}18`,
+                  } as React.CSSProperties}
                 >
                   <div
-                    className="h-11 w-11 rounded-xl flex items-center justify-center transition-transform group-hover:scale-110"
-                    style={{ backgroundColor: `${cat.color || "#888"}15` }}
+                    className="h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_12px_var(--cat-glow)]"
+                    style={{ backgroundColor: `${cat.color || "#888"}12` }}
                   >
-                    <IconComponent className="h-5 w-5" style={{ color: cat.color || "#888" }} />
+                    <IconComponent className="h-5.5 w-5.5 transition-colors duration-300" style={{ color: cat.color || "#888" }} />
                   </div>
-                  <span className="text-sm font-semibold">{cat.name}</span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-sm font-bold tracking-tight text-card-foreground group-hover:text-[var(--cat-color)] transition-colors duration-300">
+                    {cat.name}
+                  </span>
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground group-hover:bg-[var(--cat-glow)] group-hover:text-[var(--cat-color)] transition-all duration-300">
                     {cat._count.articles} haber
                   </span>
-                </Card>
+                </div>
               </Link>
             );
           })}
@@ -252,16 +276,16 @@ export default async function HomePage() {
       <section id="latest-articles-section" aria-label="Son Haberler">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-primary-500/10 flex items-center justify-center">
-              <TrendingUp className="h-4 w-4 text-primary-500" />
+            <div className="h-9 w-9 rounded-xl bg-primary-500/10 flex items-center justify-center">
+              <TrendingUp className="h-5 w-5 text-primary-500" />
             </div>
-            <h2 className="text-xl font-bold font-(family-name:--font-outfit)">Son Haberler</h2>
+            <h2 className="text-xl font-bold font-display tracking-tight">Son Haberler</h2>
           </div>
           <Link
             href="/latest"
-            className="text-sm text-primary-500 hover:text-primary-600 font-medium flex items-center gap-1 transition-colors"
+            className="text-sm text-primary-500 hover:text-primary-600 font-medium flex items-center gap-1 transition-colors group/all"
           >
-            Tümünü Gör <ArrowRight className="h-4 w-4" />
+            Tümünü Gör <ArrowRight className="h-4 w-4 group-hover/all:translate-x-0.5 transition-transform" />
           </Link>
         </div>
 
@@ -272,15 +296,19 @@ export default async function HomePage() {
               <Link
                 key={article.id}
                 href={`/article/${article.slug}`}
-                className={cn("group block", isFirst && "md:col-span-2 lg:col-span-2")}
+                className={cn("group block shine rounded-2xl", isFirst && "md:col-span-2 lg:col-span-2")}
               >
                 <Card
                   variant="interactive"
                   noPadding
                   className={cn(
-                    "overflow-hidden h-full flex flex-col",
+                    "overflow-hidden h-full flex flex-col border border-border/40 bg-card/65 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_20px_var(--art-glow)] transition-all duration-300",
                     isFirst && "md:flex-row md:h-[320px]"
                   )}
+                  style={{
+                    "--art-color": article.category?.color || "var(--color-primary-500)",
+                    "--art-glow": `${article.category?.color || "var(--color-primary-500)"}12`,
+                  } as React.CSSProperties}
                 >
                   <div
                     className={cn(
@@ -293,7 +321,7 @@ export default async function HomePage() {
                         src={article.coverImage}
                         alt={article.title}
                         fill
-                        className="object-cover group-hover:scale-105 transition-transform duration-700"
+                        className="object-cover group-hover:scale-105 transition-transform duration-750"
                         sizes={isFirst ? "(max-width: 768px) 100vw, 50vw" : "(max-width: 768px) 100vw, 33vw"}
                       />
                     ) : (
@@ -307,10 +335,10 @@ export default async function HomePage() {
                       </div>
                     )}
                     {article.category && (
-                      <div className="absolute top-3 left-3">
+                      <div className="absolute top-3 left-3 z-10">
                         <Badge
                           variant="default"
-                          className="backdrop-blur-md bg-card/80 text-xs"
+                          className="backdrop-blur-md bg-card/85 text-xs font-bold"
                           style={{ color: article.category.color || "inherit" }}
                         >
                           {article.category.name}
@@ -320,14 +348,14 @@ export default async function HomePage() {
                   </div>
 
                   <div className="p-5 md:p-6 flex flex-col flex-1 justify-between">
-                    <div className="space-y-2">
+                    <div className="space-y-2.5">
                       <h3 className={cn(
-                        "font-semibold font-(family-name:--font-outfit) leading-snug group-hover:text-primary-600 transition-colors line-clamp-2",
+                        "font-bold font-display leading-snug group-hover:text-[var(--art-color)] transition-colors duration-300 line-clamp-2",
                         isFirst ? "text-lg md:text-xl lg:text-2xl" : "text-base"
                       )}>
                         {article.title}
                       </h3>
-                      <p className="text-sm text-muted-foreground line-clamp-2 md:line-clamp-3">
+                      <p className="text-sm text-muted-foreground line-clamp-2 md:line-clamp-3 leading-relaxed">
                         {article.excerpt || "Devamını okumak için tıklayın..."}
                       </p>
                     </div>
@@ -338,16 +366,17 @@ export default async function HomePage() {
                           src={(article.aiPersona?.image || article.author.image) || undefined}
                           fallback={article.aiPersona?.name || article.author.name}
                           size="xs"
+                          className="ring-2 ring-[var(--art-color)]/70"
                         />
-                        <span>{article.aiPersona?.name || article.author.name}</span>
+                        <span className="font-medium">{article.aiPersona?.name || article.author.name}</span>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
+                          <Clock className="h-3.5 w-3.5" />
                           {estimateReadingTime(article.content)} dk
                         </span>
                         <span className="flex items-center gap-1">
-                          <Eye className="h-3 w-3" />
+                          <Eye className="h-3.5 w-3.5" />
                           {formatCount(article.viewCount)}
                         </span>
                       </div>
@@ -365,17 +394,25 @@ export default async function HomePage() {
         <section id="recommended-articles-section" aria-label="Sizin İçin Seçilenler">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
-              <div className="h-8 w-8 rounded-lg bg-accent-500/10 flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-accent-500" />
+              <div className="h-9 w-9 rounded-xl bg-accent-500/10 flex items-center justify-center">
+                <Sparkles className="h-4.5 w-4.5 text-accent-500" />
               </div>
-              <h2 className="text-xl font-bold font-(family-name:--font-outfit)">Sizin İçin Seçilenler</h2>
+              <h2 className="text-xl font-bold font-display tracking-tight">Sizin İçin Seçilenler</h2>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {recommendedArticles.map((article) => (
-              <Link key={article.id} href={`/article/${article.slug}`} className="group block">
-                <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
+              <Link key={article.id} href={`/article/${article.slug}`} className="group block shine rounded-2xl">
+                <Card 
+                  variant="interactive" 
+                  noPadding 
+                  className="overflow-hidden h-full flex flex-col border border-border/40 bg-card/65 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_20px_var(--art-glow)] transition-all duration-300"
+                  style={{
+                    "--art-color": article.category?.color || "var(--color-accent-500)",
+                    "--art-glow": `${article.category?.color || "var(--color-accent-500)"}12`,
+                  } as React.CSSProperties}
+                >
                   <div className="relative h-48 bg-muted overflow-hidden">
                     {article.coverImage ? (
                       <Image
@@ -391,26 +428,34 @@ export default async function HomePage() {
                       </div>
                     )}
                     {article.category && (
-                      <div className="absolute top-3 left-3">
-                        <Badge variant="default" className="backdrop-blur-md bg-card/80 text-xs" style={{ color: article.category.color || "inherit" }}>
+                      <div className="absolute top-3 left-3 z-10">
+                        <Badge variant="default" className="backdrop-blur-md bg-card/85 text-xs font-bold" style={{ color: article.category.color || "inherit" }}>
                           {article.category.name}
                         </Badge>
                       </div>
                     )}
                   </div>
-                  <div className="p-4 flex flex-col justify-between flex-grow">
-                    <div className="space-y-1">
-                      <h3 className="font-semibold text-sm font-(family-name:--font-outfit) line-clamp-2 leading-snug group-hover:text-primary-600 transition-colors">
+                  <div className="p-4.5 flex flex-col justify-between flex-grow">
+                    <div className="space-y-1.5">
+                      <h3 className="font-bold text-sm font-display line-clamp-2 leading-snug group-hover:text-[var(--art-color)] transition-colors duration-300">
                         {article.title}
                       </h3>
                       {article.excerpt && (
-                        <p className="text-xs text-muted-foreground line-clamp-2">
+                        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                           {article.excerpt}
                         </p>
                       )}
                     </div>
                     <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-4 pt-3 border-t border-border/50">
-                      <span className="font-medium truncate max-w-[100px]">{article.aiPersona?.name || article.author.name}</span>
+                      <div className="flex items-center gap-1.5 min-w-0">
+                        <Avatar
+                          src={(article.aiPersona?.image || article.author.image) || undefined}
+                          fallback={article.aiPersona?.name || article.author.name}
+                          size="xs"
+                          className="w-4.5 h-4.5 ring-1 ring-[var(--art-color)]/70 shrink-0"
+                        />
+                        <span className="font-medium truncate max-w-[90px]">{article.aiPersona?.name || article.author.name}</span>
+                      </div>
                       <div className="flex items-center gap-2 shrink-0">
                         <span className="flex items-center gap-0.5">
                           <Clock className="h-3 w-3" />
@@ -436,7 +481,7 @@ export default async function HomePage() {
           <div className="absolute bottom-4 left-4 w-32 h-32 rounded-full bg-accent-500/5 blur-2xl" />
 
           <div className="relative z-10">
-            <h2 className="text-2xl md:text-3xl font-bold font-(family-name:--font-outfit) mb-3">
+            <h2 className="text-2xl md:text-3xl font-bold font-display tracking-tight mb-3">
               Haberleri <span className="text-gradient">Kaçırmayın</span>
             </h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
@@ -445,12 +490,12 @@ export default async function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link href="/register">
-                <button className="h-12 px-8 rounded-xl bg-gradient-primary text-white font-semibold hover:opacity-90 transition-opacity shadow-glow cursor-pointer">
+                <button className="h-12 px-8 rounded-xl bg-gradient-primary text-white font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow cursor-pointer">
                   Ücretsiz Kaydol
                 </button>
               </Link>
               <Link href="/about">
-                <button className="h-12 px-8 rounded-xl border border-border text-foreground font-semibold hover:bg-muted transition-colors cursor-pointer">
+                <button className="h-12 px-8 rounded-xl border border-border text-foreground font-semibold hover:bg-muted hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer">
                   Daha Fazla Bilgi
                 </button>
               </Link>

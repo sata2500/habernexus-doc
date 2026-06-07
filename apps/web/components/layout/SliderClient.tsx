@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -81,6 +81,8 @@ export function SliderClient({
   return (
     <div 
       ref={containerRef}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
       className="slider-container relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-black transition-all duration-500"
     >
       <style jsx>{`
@@ -114,73 +116,81 @@ export function SliderClient({
         className="flex h-full cursor-grab active:cursor-grabbing touch-pan-y"
         style={{ width: `${(slides.length / itemsToShow) * 100}%` }}
       >
-        {slides.map((slide, index) => (
-          <div 
-            key={`${slide.id}-${index}`} 
-            className="relative h-full px-1 md:px-2 flex-shrink-0"
-            style={{ width: `${100 / slides.length}%` }}
-          >
-            <div className="relative w-full h-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide bg-zinc-900/40">
-              {/* Background Blur */}
-              <div className="absolute inset-0 z-0">
-                <Image src={slide.imageUrl} alt="" fill className="object-cover blur-2xl opacity-30 scale-110" />
-              </div>
-
-              {/* Main Image */}
-              <div className="relative z-10 w-full h-full flex items-center justify-center p-4 md:p-8">
-                <div className="relative w-full h-full max-w-full max-h-full">
-                  <Image
-                    src={slide.imageUrl}
-                    alt={slide.title || ""}
-                    fill
-                    className="object-contain"
-                    priority={index >= initialSlides.length && index < initialSlides.length + itemsToShow}
-                  />
+        {slides.map((slide, index) => {
+          const isActive = index >= current && index < current + itemsToShow;
+          return (
+            <div 
+              key={`${slide.id}-${index}`} 
+              className="relative h-full px-1 md:px-2 flex-shrink-0"
+              style={{ width: `${100 / slides.length}%` }}
+            >
+              <div className="relative w-full h-full rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide bg-zinc-900/40">
+                {/* Background Blur */}
+                <div className="absolute inset-0 z-0">
+                  <Image src={slide.imageUrl} alt="" fill className="object-cover blur-2xl opacity-30 scale-110" />
                 </div>
-              </div>
 
-              {/* Overlay */}
-              <div className="absolute inset-0 z-20 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+                {/* Main Image */}
+                <div className="relative z-10 w-full h-full flex items-center justify-center p-4 md:p-8">
+                  <div className="relative w-full h-full max-w-full max-h-full">
+                    <Image
+                      src={slide.imageUrl}
+                      alt={slide.title || ""}
+                      fill
+                      className="object-contain"
+                      priority={index >= initialSlides.length && index < initialSlides.length + itemsToShow}
+                    />
+                  </div>
+                </div>
 
-              {/* Content */}
-              <div className="absolute inset-0 z-30 flex items-end justify-center pb-12 md:pb-16 px-6">
-                <div className="w-full max-w-[90%] md:max-w-[80%] space-y-2 md:space-y-4 text-center">
-                  {slide.title && (
-                    <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white font-(family-name:--font-outfit) leading-tight drop-shadow-xl line-clamp-2">
-                      {slide.title}
-                    </h2>
-                  )}
-                  {itemsToShow === 1 && slide.description && (
-                    <p className="text-white/90 text-xs md:text-lg line-clamp-2 font-medium leading-relaxed drop-shadow-md mx-auto max-w-2xl hidden md:block">
-                      {slide.description}
-                    </p>
-                  )}
-                  
-                  {slide.link && (
-                    <div className="pt-3 md:pt-5">
-                      <Link 
-                        href={slide.link!}
-                        className="inline-flex items-center gap-3 px-6 py-2.5 md:px-10 md:py-4 bg-white/10 backdrop-blur-2xl text-white border border-white/20 rounded-2xl font-bold text-xs md:text-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 transition-all shadow-2xl shadow-black/40 group/btn"
-                      >
-                        İncele
-                        <div className="bg-white/20 rounded-full p-1 group-hover/btn:bg-primary-500 transition-colors">
-                          <ArrowRight className="h-3 w-3 md:h-4 md:w-4 group-hover/btn:translate-x-0.5 transition-transform" />
-                        </div>
-                      </Link>
-                    </div>
-                  )}
+                {/* Overlay */}
+                <div className="absolute inset-0 z-20 bg-linear-to-t from-black/80 via-black/20 to-transparent" />
+
+                {/* Content */}
+                <div className="absolute inset-0 z-30 flex items-end justify-center pb-12 md:pb-16 px-6">
+                  <motion.div 
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+                    className="w-full max-w-[90%] md:max-w-[80%] space-y-2 md:space-y-4 text-center"
+                  >
+                    {slide.title && (
+                      <h2 className="text-xl md:text-3xl lg:text-4xl font-bold text-white font-(family-name:--font-outfit) leading-tight drop-shadow-xl line-clamp-2">
+                        {slide.title}
+                      </h2>
+                    )}
+                    {itemsToShow === 1 && slide.description && (
+                      <p className="text-white/90 text-xs md:text-lg line-clamp-2 font-medium leading-relaxed drop-shadow-md mx-auto max-w-2xl hidden md:block">
+                        {slide.description}
+                      </p>
+                    )}
+                    
+                    {slide.link && (
+                      <div className="pt-3 md:pt-5">
+                        <Link 
+                          href={slide.link!}
+                          className="inline-flex items-center gap-3 px-6 py-2.5 md:px-10 md:py-4 bg-white/10 backdrop-blur-2xl text-white border border-white/20 rounded-2xl font-bold text-xs md:text-sm hover:bg-white/20 hover:border-white/40 hover:scale-105 active:scale-95 transition-all duration-300 shadow-2xl shadow-black/40 group/btn"
+                        >
+                          İncele
+                          <div className="bg-white/20 rounded-full p-1 group-hover/btn:bg-primary-500 transition-colors duration-300">
+                            <ArrowRight className="h-3 w-3 md:h-4 md:w-4 group-hover/btn:translate-x-0.5 transition-transform duration-300" />
+                          </div>
+                        </Link>
+                      </div>
+                    )}
+                  </motion.div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </motion.div>
 
       {/* Controls */}
       <div className="absolute inset-y-0 left-2 md:left-6 flex items-center z-40">
         <button 
           onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-          className="h-9 w-9 md:h-12 md:w-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white flex items-center justify-center hover:bg-primary-500 transition-all opacity-0 group-hover:opacity-100"
+          className="h-9 w-9 md:h-12 md:w-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white flex items-center justify-center hover:bg-primary-500 hover:border-primary-400 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-lg"
         >
           <ChevronLeft className="h-5 w-5 md:h-6 md:w-6" />
         </button>
@@ -188,7 +198,7 @@ export function SliderClient({
       <div className="absolute inset-y-0 right-2 md:right-6 flex items-center z-40">
         <button 
           onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-          className="h-9 w-9 md:h-12 md:w-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white flex items-center justify-center hover:bg-primary-500 transition-all opacity-0 group-hover:opacity-100"
+          className="h-9 w-9 md:h-12 md:w-12 rounded-full bg-black/40 backdrop-blur-xl border border-white/10 text-white flex items-center justify-center hover:bg-primary-500 hover:border-primary-400 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-lg"
         >
           <ChevronRight className="h-5 w-5 md:h-6 md:w-6" />
         </button>
@@ -210,7 +220,7 @@ export function SliderClient({
                   key={current}
                   initial={{ width: 0 }}
                   animate={{ width: (isHovering || isDragging) ? "0%" : "100%" }}
-                  transition={{ duration: interval / 1000, ease: "linear" as any }}
+                  transition={{ duration: interval / 1000, ease: "linear" }}
                   className="absolute inset-0 bg-primary-500"
                 />
               )}

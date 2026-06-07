@@ -9,11 +9,11 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = "default", noPadding, children, ...props }, ref) => {
     const variants = {
-      default: "bg-card border border-border shadow-card",
-      glass: "glass-premium",
-      elevated: "bg-card border border-border shadow-card-hover",
+      default: "bg-card border border-border shadow-card transition-all duration-300",
+      glass: "glass-premium transition-all duration-300",
+      elevated: "bg-card border border-border shadow-card-hover transition-all duration-300",
       interactive:
-        "bg-card border border-border shadow-card hover-lift",
+        "bg-card border border-border shadow-card hover-lift transition-all duration-300",
     };
 
     return (
