@@ -265,3 +265,20 @@ export async function testNewsletterEmail() {
     return { success: false, error: "E-posta gönderimi başarısız oldu." };
   }
 }
+
+/**
+ * Kullanıcının veritabanındaki güncel biyografisini getirir.
+ */
+export async function getUserBio() {
+  try {
+    const session = await getVerifiedSession();
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { bio: true }
+    });
+    return user?.bio || "";
+  } catch (err) {
+    console.error("Error fetching user bio:", err);
+    return "";
+  }
+}
