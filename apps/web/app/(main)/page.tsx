@@ -7,11 +7,6 @@ import {
   Flame,
   Zap,
   Newspaper,
-  Globe,
-  Cpu,
-  Trophy,
-  TrendingDown,
-  Heart,
   Sparkles,
   type LucideIcon
 } from "lucide-react";
@@ -30,18 +25,7 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-
-const IconMap: Record<string, LucideIcon> = {
-  Newspaper,
-  Globe,
-  TrendingDown,
-  TrendingUp,
-  Cpu,
-  Trophy,
-  Heart,
-  Flame,
-  Zap,
-};
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
 import { HomepageSlider } from "@/components/layout/HomepageSlider";
 
@@ -243,7 +227,6 @@ export default async function HomePage() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
           {categories.map((cat) => {
-            const IconComponent = cat.icon && IconMap[cat.icon] ? IconMap[cat.icon] : Newspaper;
             return (
               <Link key={cat.slug} href={`/category/${cat.slug}`} className="group block">
                 <div
@@ -257,7 +240,7 @@ export default async function HomePage() {
                     className="h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_12px_var(--cat-glow)]"
                     style={{ backgroundColor: `${cat.color || "#888"}12` }}
                   >
-                    <IconComponent className="h-5.5 w-5.5 transition-colors duration-300" style={{ color: cat.color || "#888" }} />
+                    <DynamicIcon name={cat.icon} fallback={Newspaper} className="h-5.5 w-5.5 transition-colors duration-300" style={{ color: cat.color || "#888" }} />
                   </div>
                   <span className="text-sm font-bold tracking-tight text-card-foreground group-hover:text-[var(--cat-color)] transition-colors duration-300">
                     {cat.name}
