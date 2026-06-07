@@ -11,7 +11,7 @@ export default async function AdminSettingsPage() {
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold font-(family-name:--font-outfit) flex items-center gap-3">
+        <h1 className="text-3xl font-bold font-display flex items-center gap-3">
           <div className="h-12 w-12 rounded-2xl bg-indigo-500/20 flex items-center justify-center">
             <Settings2 className="h-6 w-6 text-indigo-500" />
           </div>

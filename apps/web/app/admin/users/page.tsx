@@ -12,7 +12,7 @@ export default async function AdminUsersPage() {
       <div className="flex items-center gap-3">
         <Users className="h-6 w-6 text-muted-foreground" />
         <div>
-          <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Kullanıcı Yönetimi</h1>
+          <h1 className="text-2xl font-bold font-display">Kullanıcı Yönetimi</h1>
           <p className="text-muted-foreground text-sm">Toplam {users.length} kayıtlı kullanıcı. Dropdown menüden rolü değiştirin.</p>
         </div>
       </div>

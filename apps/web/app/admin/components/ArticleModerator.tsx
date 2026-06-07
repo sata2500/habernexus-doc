@@ -155,9 +155,9 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 animate-in fade-in duration-300">
       {/* Filtre Barı */}
-      <div className="flex flex-col md:flex-row gap-4 bg-card border border-border p-4 rounded-2xl shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 glass-strong border border-border/50 p-4 rounded-3xl shadow-soft">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
@@ -165,7 +165,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
             placeholder="Başlık veya yazar ara..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2 bg-background/50 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
           />
         </div>
         
@@ -173,7 +173,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 bg-background border border-border rounded-xl text-sm focus:border-primary-500 outline-none"
+            className="px-3 py-2 bg-background/50 border border-border rounded-xl text-sm focus:border-primary-500 outline-none cursor-pointer font-semibold"
           >
             <option value="all">Tüm Durumlar</option>
             <option value="PUBLISHED">Yayında</option>
@@ -183,7 +183,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="px-3 py-2 bg-background border border-border rounded-xl text-sm focus:border-primary-500 outline-none max-w-[150px]"
+            className="px-3 py-2 bg-background/50 border border-border rounded-xl text-sm focus:border-primary-500 outline-none max-w-[150px] cursor-pointer font-semibold"
           >
             <option value="all">Tüm Kategoriler</option>
             {categories.map(([id, name]) => (
@@ -195,7 +195,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
 
       {/* Toplu İşlem Barı (Sadece seçim varsa görünür) */}
       {selectedIds.size > 0 && (
-        <div className="flex items-center justify-between bg-primary-600 text-white p-3 rounded-xl shadow-lg animate-in slide-in-from-top-2 duration-300">
+        <div className="flex items-center justify-between glass-strong bg-primary-500/90 border border-primary-400/20 text-white p-3 rounded-2xl shadow-glow backdrop-blur-xl animate-in slide-in-from-top-2 duration-300">
           <div className="flex items-center gap-3 px-2">
             <span className="text-sm font-bold">{selectedIds.size} öğe seçildi</span>
           </div>
@@ -203,27 +203,27 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
             <button
               onClick={() => handleBulkStatus("PUBLISHED")}
               disabled={isPending}
-              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer active:scale-95"
             >
               <Eye className="h-3.5 w-3.5" /> Yayınla
             </button>
             <button
               onClick={() => handleBulkStatus("DRAFT")}
               disabled={isPending}
-              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer active:scale-95"
             >
               <EyeOff className="h-3.5 w-3.5" /> Taslağa Al
             </button>
             <button
               onClick={handleBulkDelete}
               disabled={isPending}
-              className="flex items-center gap-2 px-3 py-1.5 bg-red-500 hover:bg-red-600 rounded-lg text-xs font-bold transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1.5 bg-red-500 hover:bg-red-600 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer active:scale-95"
             >
               <Trash2 className="h-3.5 w-3.5" /> Sil
             </button>
             <button
               onClick={() => setSelectedIds(new Set())}
-              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
             >
               <MoreHorizontal className="h-4 w-4" />
             </button>
@@ -232,11 +232,11 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
       )}
 
       {/* Liste */}
-      <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm">
-        <div className="flex items-center gap-4 p-4 border-b border-border bg-muted/30 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+      <div className="glass-strong border border-border/50 rounded-[2.5rem] overflow-hidden shadow-soft">
+        <div className="flex items-center gap-4 p-4 border-b border-border bg-muted/20 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
           <button 
             onClick={toggleSelectAll}
-            className="p-1 hover:bg-muted rounded transition-colors"
+            className="p-1 hover:bg-muted rounded transition-colors cursor-pointer"
           >
             {selectedIds.size === filteredArticles.length && filteredArticles.length > 0 ? (
               <CheckSquare className="h-4 w-4 text-primary-500" />
@@ -268,13 +268,13 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                 <div 
                   key={article.id} 
                   className={cn(
-                    "flex items-center gap-4 p-4 transition-colors group",
-                    isSelected ? "bg-primary-500/5" : "bg-background hover:bg-muted/30"
+                    "flex items-center gap-4 p-4 transition-all duration-300 group",
+                    isSelected ? "bg-[var(--color-primary-500)]/5" : "bg-background/30 hover:bg-primary-500/5"
                   )}
                 >
                   <button 
                     onClick={() => toggleSelect(article.id)}
-                    className="p-1 hover:bg-muted rounded transition-colors"
+                    className="p-1 hover:bg-muted rounded transition-colors cursor-pointer"
                   >
                     {isSelected ? (
                       <CheckSquare className="h-4 w-4 text-primary-500" />
@@ -285,7 +285,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold truncate group-hover:text-primary-600 transition-colors">
+                      <p className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">
                         {article.title}
                       </p>
                       {article.aiPersonaId && (
@@ -300,11 +300,11 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                       )}
                     </div>
                     <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground">
-                      <span className="font-medium">{authorName}</span>
+                      <span className="font-semibold">{authorName}</span>
                       <span>•</span>
                       {article.category && (
                         <span 
-                          className="px-1.5 py-0.5 rounded-md bg-muted font-bold"
+                          className="px-1.5 py-0.5 rounded-md bg-muted/30 border border-border/50 font-bold"
                           style={{ color: article.category.color || undefined }}
                         >
                           {article.category.name}
@@ -313,52 +313,53 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                     </div>
                   </div>
 
-                  <div className="hidden md:flex items-center gap-1.5 w-24 text-xs font-medium text-muted-foreground">
-                    <ArrowUpDown className="h-3 w-3" />
+                  <div className="hidden md:flex items-center gap-1.5 w-24 text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2 py-1 justify-center shrink-0">
+                    <ArrowUpDown className="h-3 w-3 text-primary-500" />
                     {article.viewCount.toLocaleString()}
                   </div>
 
-                  {/* Analiz & Kalite Scores */}
-                  <div className="hidden md:block w-40 shrink-0">
+                  <div className="hidden md:flex items-center gap-2 w-40 text-xs shrink-0">
                     {isAnalyzed ? (
-                      <button
-                        onClick={() => setSelectedArticle(article)}
-                        className="flex items-center gap-1.5 p-1 pr-2 rounded-xl border border-border bg-muted/20 hover:bg-muted transition-all cursor-pointer text-left"
-                        title="Detaylı Analiz Raporunu Gör"
-                      >
+                      <div className="flex items-center gap-1.5">
                         <span className={cn(
-                          "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border",
-                          getScoreColor(article.plagiarismRate ?? 0, true)
+                          "px-2 py-1 rounded font-bold border",
+                          (article.qualityScore ?? 0) >= 80 ? "bg-green-500/10 border-green-500/20 text-green-500" :
+                          (article.qualityScore ?? 0) >= 50 ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
+                          "bg-red-500/10 border-red-500/20 text-red-500"
                         )}>
-                          İnt: %{article.plagiarismRate}
+                          QS: {article.qualityScore}
                         </span>
-                        <span className={cn(
-                          "text-[9px] font-extrabold px-1.5 py-0.5 rounded-md border",
-                          getScoreColor(article.qualityScore ?? 0)
-                        )}>
-                          Kal: {article.qualityScore}
-                        </span>
-                      </button>
+                        {(article.plagiarismRate ?? 0) > 0 && (
+                          <span className={cn(
+                            "px-2 py-1 rounded font-bold border",
+                            (article.plagiarismRate ?? 0) <= 20 ? "bg-green-500/10 border-green-500/20 text-green-500" :
+                            (article.plagiarismRate ?? 0) <= 40 ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
+                            "bg-red-500/10 border-red-500/20 text-red-500"
+                          )}>
+                            P: %{article.plagiarismRate}
+                          </span>
+                        )}
+                      </div>
                     ) : (
-                      <button
-                        onClick={() => setSelectedArticle(article)}
-                        className="flex items-center gap-1 text-[9px] font-extrabold px-2.5 py-1.5 rounded-xl border border-dashed border-border hover:border-primary-500/40 hover:bg-primary-500/5 hover:text-primary-500 text-muted-foreground transition-all cursor-pointer"
-                      >
-                        <Sparkles className="h-2.5 w-2.5 animate-pulse" /> Analiz Et
-                      </button>
+                      <span className="text-muted-foreground/60 italic">Analiz Yok</span>
                     )}
                   </div>
 
-                  <div className="w-24">
-                    <Badge variant={variant} className="gap-1 px-2 py-0.5 text-[10px]">
+                  <div className="w-24 shrink-0">
+                    <span className={cn(
+                      "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border",
+                      variant === "success" ? "bg-green-500/10 border-green-500/25 text-green-500" :
+                      variant === "warning" ? "bg-amber-500/10 border-amber-500/25 text-amber-500" :
+                      "bg-muted border-border/50 text-muted-foreground"
+                    )}>
                       {icon}
                       {label}
-                    </Badge>
+                    </span>
                   </div>
 
-                  <div className="flex items-center justify-end gap-1 w-20 shrink-0">
-                    {isLoading && actionId?.startsWith(article.id) ? (
-                      <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                  <div className="w-20 flex items-center justify-end gap-1 shrink-0">
+                    {isLoading ? (
+                      <span className="h-4 w-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
                     ) : (
                       <>
                         <button
@@ -370,7 +371,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                         </button>
                         <button
                           onClick={() => handleDelete(article.id)}
-                          className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
+                          className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-transparent hover:border-red-500/25 transition-colors cursor-pointer"
                           title="Sil"
                         >
                           <Trash2 className="h-4 w-4" />

@@ -199,22 +199,22 @@ export function AiWriterSettingsCard({
   };
 
   return (
-    <div className="glass-strong rounded-[2.5rem] border border-neutral-200 dark:border-neutral-800 overflow-hidden shadow-2xl transition-all">
+    <div className="glass-strong rounded-[2.5rem] border border-border overflow-hidden shadow-soft transition-all">
       {/* ── Header ── */}
-      <div className="bg-gradient-to-r from-purple-600/5 to-blue-600/5 dark:from-purple-600/10 dark:to-blue-600/10 px-8 py-6 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+      <div className="px-6 sm:px-8 py-6 border-b border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-2xl bg-primary-500/10 flex items-center justify-center border border-primary-500/20 shadow-inner">
             <Wand2 className="h-6 w-6 text-primary-500" />
           </div>
           <div>
-            <h3 className="font-bold text-lg font-(family-name:--font-outfit) text-neutral-900 dark:text-white">AI Yazar Ayarları</h3>
+            <h3 className="font-bold text-lg font-display text-neutral-900 dark:text-white">AI Yazar Ayarları</h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">Yapay zeka modellerini ve yazım parametrelerini yapılandırın.</p>
           </div>
         </div>
         <button
           onClick={handleSave}
           disabled={loading}
-          className="px-6 py-3 rounded-2xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-primary-500/25 active:scale-95 disabled:opacity-50"
+          className="px-6 py-3 rounded-2xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-primary-500/25 active:scale-95 disabled:opacity-50 cursor-pointer"
         >
           {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           {success ? "Kaydedildi!" : "Ayarları Kaydet"}
@@ -297,7 +297,7 @@ export function AiWriterSettingsCard({
             </div>
             <button
               onClick={() => setUseRssImage(!useRssImage)}
-              className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${useRssImage ? "bg-primary-600" : "bg-neutral-300 dark:bg-neutral-800"}`}
+              className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${useRssImage ? "bg-primary-500" : "bg-neutral-300 dark:bg-neutral-800"}`}
             >
               <div className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-all shadow-md ${useRssImage ? "translate-x-7" : ""}`} />
             </button>
@@ -315,7 +315,7 @@ export function AiWriterSettingsCard({
             </div>
             <button
               onClick={() => setSearchEnabled(!searchEnabled)}
-              className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${searchEnabled ? "bg-primary-600" : "bg-neutral-300 dark:bg-neutral-800"}`}
+              className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${searchEnabled ? "bg-primary-500" : "bg-neutral-300 dark:bg-neutral-800"}`}
             >
               <div className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-all shadow-md ${searchEnabled ? "translate-x-7" : ""}`} />
             </button>

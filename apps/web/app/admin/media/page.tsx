@@ -13,7 +13,7 @@ export default async function AdminMediaPage() {
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Medya Kütüphanesi</h1>
+          <h1 className="text-2xl font-bold font-display">Medya Kütüphanesi</h1>
           <p className="text-muted-foreground text-sm">Yüklenen tüm görselleri yönetin ve optimize edin.</p>
         </div>
         <div className="px-4 py-2 bg-primary-500/10 text-primary-500 rounded-xl border border-primary-500/20 text-sm font-medium flex items-center gap-2">

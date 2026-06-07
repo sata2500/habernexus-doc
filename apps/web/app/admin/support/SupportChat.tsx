@@ -138,7 +138,7 @@ export function SupportChat({ ticket }: Props) {
                 className={cn(
                   "p-4 rounded-2xl text-sm leading-relaxed shadow-sm",
                   isAdmin
-                    ? "bg-primary-600 text-white rounded-tr-none"
+                    ? "bg-primary-500 text-white rounded-tr-none"
                     : "bg-muted text-foreground rounded-tl-none border border-border"
                 )}
               >
@@ -195,12 +195,12 @@ export function SupportChat({ ticket }: Props) {
             placeholder="Yanıtınızı buraya yazın..."
             rows={3}
             disabled={ticket.status === "CLOSED" || isPending}
-            className="w-full p-4 rounded-2xl bg-background border border-border outline-none focus:ring-2 focus:ring-primary-500/50 transition-all resize-none text-sm pr-16 disabled:opacity-50"
+            className="w-full p-4 rounded-2xl bg-background/50 border border-border outline-none focus:ring-2 focus:ring-primary-500/50 transition-all resize-none text-sm pr-16 disabled:opacity-50"
           />
           <button
             onClick={handleSend}
             disabled={!reply.trim() || isPending || ticket.status === "CLOSED"}
-            className="absolute bottom-4 right-4 h-10 w-10 rounded-xl bg-primary-600 text-white flex items-center justify-center hover:bg-primary-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary-500/20"
+            className="absolute bottom-4 right-4 h-10 w-10 rounded-xl bg-primary-500 text-white flex items-center justify-center hover:bg-primary-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary-500/20 cursor-pointer"
           >
             {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
           </button>

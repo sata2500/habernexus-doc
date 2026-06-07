@@ -103,12 +103,12 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* Slider Settings */}
-      <Card className="p-6 border-primary-500/10 shadow-lg">
+      <Card className="p-6 glass-strong border border-border/50 rounded-3xl shadow-soft">
         <div className="flex items-center gap-3 mb-6">
-          <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center">
+          <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center border border-primary-500/20">
             <Settings className="h-5 w-5 text-primary-500" />
           </div>
-          <h2 className="text-xl font-bold font-(family-name:--font-outfit)">Genel Ayarlar</h2>
+          <h2 className="text-xl font-bold font-display">Genel Ayarlar</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -119,7 +119,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 type="checkbox" 
                 checked={slider.isActive} 
                 onChange={(e) => setSlider({...slider, isActive: e.target.checked})}
-                className="h-5 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                className="h-5 w-5 rounded border-border text-primary-500 focus:ring-primary-500 bg-background/50 cursor-pointer"
               />
               <span className="text-sm font-medium">{slider.isActive ? "Aktif" : "Devre Dışı"}</span>
             </div>
@@ -132,7 +132,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 type="checkbox" 
                 checked={slider.autoPlay} 
                 onChange={(e) => setSlider({...slider, autoPlay: e.target.checked})}
-                className="h-5 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                className="h-5 w-5 rounded border-border text-primary-500 focus:ring-primary-500 bg-background/50 cursor-pointer"
               />
               <span className="text-sm font-medium">Aktif</span>
             </div>
@@ -146,7 +146,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 type="number" 
                 value={slider.interval} 
                 onChange={(e) => setSlider({...slider, interval: parseInt(e.target.value)})}
-                className="w-full h-11 pl-11 pr-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                className="w-full h-11 pl-11 pr-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm"
                 step="500"
                 min="1000"
               />
@@ -157,7 +157,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
             <Button 
               onClick={handleSliderUpdate} 
               disabled={loading}
-              className="h-11 rounded-xl gap-2 px-8 shadow-lg shadow-primary-500/20"
+              className="h-11 rounded-xl gap-2 px-8 shadow-lg shadow-primary-500/20 cursor-pointer"
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
               {success ? "Güncellendi ✓" : "Ayarları Kaydet"}
@@ -170,14 +170,14 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center">
-              <Plus className="h-5 w-5 text-blue-500" />
+            <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center border border-primary-500/20">
+              <Plus className="h-5 w-5 text-primary-500" />
             </div>
-            <h2 className="text-xl font-bold font-(family-name:--font-outfit)">Slaytlar</h2>
+            <h2 className="text-xl font-bold font-display">Slaytlar</h2>
           </div>
           <Button 
             onClick={() => setEditingSlide({ order: slides.length, isActive: true })}
-            className="rounded-xl gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+            className="rounded-xl gap-2 bg-primary-500 hover:bg-primary-600 text-white font-bold shadow-lg shadow-primary-500/20 active:scale-95 transition-all cursor-pointer"
           >
             <Plus className="h-4 w-4" /> Yeni Slide Ekle
           </Button>
@@ -190,7 +190,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
               value={slide}
               className="relative group"
             >
-              <Card className="p-4 flex items-center gap-4 hover:border-primary-500/30 transition-all cursor-default select-none shadow-sm hover:shadow-md">
+              <Card className="p-4 flex items-center gap-4 glass-strong border border-border/50 hover:border-primary-500/30 hover-lift hover:shadow-glow rounded-2xl transition-all cursor-default select-none shadow-soft">
                 <div className="cursor-grab active:cursor-grabbing p-2 text-muted-foreground hover:text-foreground">
                   <GripVertical className="h-5 w-5" />
                 </div>
@@ -209,10 +209,10 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 </div>
 
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-bold truncate">{slide.title || "Başlıksız Slide"}</h3>
+                  <h3 className="font-bold truncate text-sm">{slide.title || "Başlıksız Slide"}</h3>
                   <p className="text-xs text-muted-foreground truncate">{slide.description || "Açıklama yok"}</p>
                   {slide.link && (
-                    <div className="flex items-center gap-1 mt-1 text-[10px] text-blue-500 font-medium">
+                    <div className="flex items-center gap-1 mt-1 text-[10px] text-primary-500 font-bold">
                       <ExternalLink className="h-3 w-3" /> {slide.link}
                     </div>
                   )}
@@ -223,7 +223,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                     variant="ghost" 
                     size="icon"
                     onClick={() => setEditingSlide(slide)}
-                    className="rounded-full hover:bg-primary-500/10 hover:text-primary-500"
+                    className="rounded-full hover:bg-primary-500/10 hover:text-primary-500 cursor-pointer"
                   >
                     <Settings className="h-4 w-4" />
                   </Button>
@@ -231,7 +231,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                     variant="ghost" 
                     size="icon"
                     onClick={() => handleDeleteSlide(slide.id)}
-                    className="rounded-full hover:bg-red-500/10 hover:text-red-500"
+                    className="rounded-full hover:bg-red-500/10 hover:text-red-500 cursor-pointer"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
@@ -266,12 +266,12 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="relative w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col"
             >
-              <Card className="shadow-2xl border-primary-500/20 rounded-3xl overflow-hidden flex flex-col">
-                <div className="p-6 border-b border-border flex items-center justify-between bg-muted/30">
-                  <h2 className="text-xl font-bold font-(family-name:--font-outfit)">
+              <Card className="glass-strong border border-border/50 rounded-[2.5rem] overflow-hidden flex flex-col bg-background/90 shadow-glow">
+                <div className="p-6 border-b border-border/50 flex items-center justify-between bg-muted/20">
+                  <h2 className="text-xl font-bold font-display">
                     {editingSlide.id ? "Slide Düzenle" : "Yeni Slide Ekle"}
                   </h2>
-                  <button onClick={() => setEditingSlide(null)} className="p-2 hover:bg-muted rounded-full">
+                  <button onClick={() => setEditingSlide(null)} className="p-2 hover:bg-muted rounded-full cursor-pointer">
                     <X className="h-5 w-5" />
                   </button>
                 </div>
@@ -294,7 +294,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                         type="text" 
                         value={editingSlide.title || ""} 
                         onChange={(e) => setEditingSlide({...editingSlide, title: e.target.value})}
-                        className="w-full h-11 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none"
+                        className="w-full h-11 px-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none text-sm"
                         placeholder="Slide başlığı..."
                       />
                     </div>
@@ -304,7 +304,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                         type="text" 
                         value={editingSlide.link || ""} 
                         onChange={(e) => setEditingSlide({...editingSlide, link: e.target.value})}
-                        className="w-full h-11 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none"
+                        className="w-full h-11 px-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none text-sm"
                         placeholder="https://..."
                       />
                     </div>
@@ -315,7 +315,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                     <textarea 
                       value={editingSlide.description || ""} 
                       onChange={(e) => setEditingSlide({...editingSlide, description: e.target.value})}
-                      className="w-full h-24 p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none resize-none"
+                      className="w-full h-24 p-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none resize-none text-sm"
                       placeholder="Kısa açıklama metni..."
                     />
                   </div>
@@ -326,21 +326,21 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                         type="checkbox" 
                         checked={editingSlide.isActive} 
                         onChange={(e) => setEditingSlide({...editingSlide, isActive: e.target.checked})}
-                        className="h-5 w-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                        className="h-5 w-5 rounded border-border text-primary-500 focus:ring-primary-500 bg-background/50"
                       />
-                      <span className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Aktif</span>
+                      <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Aktif</span>
                     </label>
                   </div>
                 </div>
 
-                <div className="p-6 border-t border-border flex justify-end gap-3 bg-muted/30">
-                  <Button variant="ghost" onClick={() => setEditingSlide(null)} disabled={loading}>
+                <div className="p-6 border-t border-border/50 flex justify-end gap-3 bg-muted/20">
+                  <Button variant="ghost" onClick={() => setEditingSlide(null)} disabled={loading} className="cursor-pointer font-bold">
                     İptal
                   </Button>
                   <Button 
                     onClick={handleSlideSave} 
                     disabled={loading || !editingSlide.imageUrl}
-                    className="min-w-[140px] gap-2 rounded-xl"
+                    className="min-w-[140px] gap-2 rounded-xl cursor-pointer"
                   >
                     {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                     {editingSlide.id ? "Güncelle" : "Ekle"}

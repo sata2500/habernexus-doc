@@ -100,7 +100,7 @@ export function ModelManagerClient({ initialModels }: Props) {
             <Cpu className="h-7 w-7 text-primary-500" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold font-(family-name:--font-outfit)">AI Model Merkezi</h1>
+            <h1 className="text-3xl font-bold font-display">AI Model Merkezi</h1>
             <p className="text-sm text-muted-foreground">OpenRouter ve özel modelleri dinamik olarak yönetin.</p>
           </div>
         </div>
@@ -108,7 +108,7 @@ export function ModelManagerClient({ initialModels }: Props) {
         <button
           onClick={handleSync}
           disabled={syncing}
-          className="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-primary-500/20 disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-primary-500/20 disabled:opacity-50 cursor-pointer"
         >
           <RefreshCw className={`h-5 w-5 ${syncing ? "animate-spin" : ""}`} />
           {syncing ? "Senkronize Ediliyor..." : "OpenRouter'dan Senkronize Et"}
@@ -133,8 +133,8 @@ export function ModelManagerClient({ initialModels }: Props) {
             <button
               key={t}
               onClick={() => setFilter(t)}
-              className={`flex-1 min-w-[60px] py-2 px-3 rounded-xl text-[10px] font-bold transition-all ${
-                filter === t ? "bg-primary-600 text-white shadow-md" : "hover:bg-muted-foreground/10"
+              className={`flex-1 min-w-[60px] py-2 px-3 rounded-xl text-[10px] font-bold transition-all cursor-pointer ${
+                filter === t ? "bg-primary-500 text-white shadow-md" : "hover:bg-muted-foreground/10"
               }`}
             >
               {t === "ALL" ? "Hepsi" : t}
@@ -150,7 +150,7 @@ export function ModelManagerClient({ initialModels }: Props) {
       {/* ── Modeller Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredModels.map((m) => (
-          <div key={m.id} className={`glass-strong rounded-3xl border transition-all group relative overflow-hidden ${m.isActive ? "border-primary-500/30" : "border-border opacity-70"}`}>
+          <div key={m.id} className={`glass-strong rounded-3xl border transition-all duration-300 group relative overflow-hidden hover-lift hover:shadow-glow ${m.isActive ? "border-primary-500/30 hover:border-primary-500/50" : "border-border opacity-70"}`}>
             {/* Status Indicator */}
             <div className={`absolute top-0 right-0 h-1 w-full ${m.isActive ? "bg-primary-500" : "bg-muted"}`} />
 
@@ -174,7 +174,7 @@ export function ModelManagerClient({ initialModels }: Props) {
                 
                 <button
                   onClick={() => handleToggle(m.id, !m.isActive)}
-                  className={`p-2 rounded-xl transition-all ${m.isActive ? "bg-primary-500/10 text-primary-500" : "bg-muted text-muted-foreground hover:bg-muted-foreground/10"}`}
+                  className={`p-2 rounded-xl transition-all cursor-pointer ${m.isActive ? "bg-primary-500/10 text-primary-500" : "bg-muted text-muted-foreground hover:bg-muted-foreground/10"}`}
                 >
                   {m.isActive ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
                 </button>

@@ -29,7 +29,7 @@ export default async function AdminAiWriterPage() {
       {/* ── Header ── */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
-          <h1 className="text-3xl font-bold font-(family-name:--font-outfit) flex items-center gap-3">
+          <h1 className="text-3xl font-bold font-display flex items-center gap-3">
             <div className="h-12 w-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
               < Wand2 className="h-6 w-6 text-purple-500" />
             </div>
@@ -42,14 +42,14 @@ export default async function AdminAiWriterPage() {
         <div className="flex items-center gap-3">
           <Link 
             href="/admin/ai-writer/models"
-            className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-primary-500/20"
+            className="flex items-center gap-2 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-primary-500/20 cursor-pointer"
           >
             <Cpu className="h-4 w-4" />
             Model Merkezi
           </Link>
           <Link 
             href="/admin/ai-writer/personas"
-            className="flex items-center gap-2 px-5 py-2.5 bg-muted hover:bg-muted/80 rounded-2xl font-bold text-sm transition-all active:scale-95 border border-border"
+            className="flex items-center gap-2 px-5 py-2.5 bg-muted hover:bg-muted/80 rounded-2xl font-bold text-sm transition-all active:scale-95 border border-border cursor-pointer"
           >
             <Users className="h-4 w-4 text-primary-500" />
             Personaları Yönet
@@ -59,7 +59,7 @@ export default async function AdminAiWriterPage() {
 
       {/* ── İstatistikler / Bilgi ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4">
+        <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4 hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300">
           <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
             <BrainCircuit className="h-6 w-6" />
           </div>
@@ -68,7 +68,7 @@ export default async function AdminAiWriterPage() {
             <p className="font-bold text-lg">{settings.aiWriterModel}</p>
           </div>
         </div>
-        <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4">
+        <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4 hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300">
           <div className="h-12 w-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500">
             <Sparkles className="h-6 w-6" />
           </div>
@@ -77,7 +77,7 @@ export default async function AdminAiWriterPage() {
             <p className="font-bold text-lg">{settings.aiWriterAutoEnabled ? "Aktif" : "Devre Dışı"}</p>
           </div>
         </div>
-        <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4">
+        <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4 hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300">
           <div className="h-12 w-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
             <Rocket className="h-6 w-6" />
           </div>

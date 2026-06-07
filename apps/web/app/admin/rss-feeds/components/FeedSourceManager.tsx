@@ -167,7 +167,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
       {/* Add Form */}
       {isAdding ? (
         <form onSubmit={handleAdd} className="glass-strong rounded-2xl p-6 border border-border shadow-soft space-y-4">
-          <h3 className="font-bold font-(family-name:--font-outfit)">Yeni RSS Kaynağı Ekle</h3>
+          <h3 className="font-bold font-display">Yeni RSS Kaynağı Ekle</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
               <label className="text-sm font-medium">Kaynak Adı *</label>
@@ -190,13 +190,13 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="px-5 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-medium text-sm transition-all cursor-pointer">Kaydet</button>
-            <button type="button" onClick={() => setIsAdding(false)} className="px-5 py-2 rounded-xl bg-muted hover:bg-muted/80 font-medium text-sm transition-all cursor-pointer">İptal</button>
+            <button type="submit" className="px-5 py-2.5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm shadow-md shadow-primary-500/15 active:scale-95 transition-all cursor-pointer">Kaydet</button>
+            <button type="button" onClick={() => setIsAdding(false)} className="px-5 py-2.5 rounded-xl bg-muted hover:bg-muted/80 font-bold text-sm active:scale-95 transition-all cursor-pointer">İptal</button>
           </div>
         </form>
       ) : (
         <div className="flex flex-col sm:flex-row gap-3">
-          <button onClick={() => setIsAdding(true)} className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-medium text-sm shadow-lg shadow-primary-500/20 transition-all cursor-pointer shrink-0">
+          <button onClick={() => setIsAdding(true)} className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm shadow-lg shadow-primary-500/20 active:scale-95 transition-all cursor-pointer shrink-0">
             <Plus className="h-4 w-4" />
             Kaynak Ekle
           </button>
@@ -264,17 +264,17 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
       )}
 
       {/* Sources List */}
-      <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden bg-background relative">
-        <div className="bg-muted/30 p-3 border-b border-border flex items-center justify-between">
+      <div className="divide-y divide-border/40 rounded-3xl border border-border/50 overflow-hidden glass-strong relative">
+        <div className="bg-muted/30 p-3.5 border-b border-border/40 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <button onClick={selectAll} className="text-muted-foreground hover:text-primary-600 transition-colors">
+            <button onClick={selectAll} className="text-muted-foreground hover:text-primary-500 transition-colors cursor-pointer">
               {selectedIds.size === filteredSources.length && filteredSources.length > 0 ? (
-                <CheckSquare className="h-5 w-5 text-primary-600" />
+                <CheckSquare className="h-5 w-5 text-primary-500" />
               ) : (
                 <Square className="h-5 w-5" />
               )}
             </button>
-            <span className="text-sm font-medium text-muted-foreground">Toplu Seçim</span>
+            <span className="text-sm font-semibold text-muted-foreground">Toplu Seçim</span>
           </div>
           <span className="text-xs text-muted-foreground">{filteredSources.length} sonuç</span>
         </div>
@@ -289,7 +289,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
             <div
               key={source.id}
               className={`flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 hover:bg-muted/30 transition-colors cursor-pointer ${
-                selectedIds.has(source.id) ? "bg-primary-500/5 hover:bg-primary-500/10" : ""
+                selectedIds.has(source.id) ? "bg-primary-500/10 hover:bg-primary-500/15" : ""
               }`}
               onClick={(e) => {
                 // Ignore clicks on buttons/links
@@ -301,11 +301,11 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
             >
               <div className="flex items-center gap-3 min-w-0">
                 <button
-                  className="text-muted-foreground hover:text-primary-600 transition-colors"
+                  className="text-muted-foreground hover:text-primary-500 transition-colors cursor-pointer"
                   onClick={() => toggleSelection(source.id)}
                 >
                   {selectedIds.has(source.id) ? (
-                    <CheckSquare className="h-5 w-5 text-primary-600" />
+                    <CheckSquare className="h-5 w-5 text-primary-500" />
                   ) : (
                     <Square className="h-5 w-5" />
                   )}
@@ -323,7 +323,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="font-semibold text-sm truncate">{source.name}</p>
                     {source.categoryHint && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary-500/10 text-primary-600 font-semibold">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary-500/10 text-primary-500 font-semibold border border-primary-500/10">
                         {source.categoryHint}
                       </span>
                     )}
@@ -335,7 +335,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                     href={source.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-xs text-muted-foreground hover:text-primary-600 transition-colors flex items-center gap-1 mt-0.5"
+                    className="text-xs text-muted-foreground hover:text-primary-500 transition-colors flex items-center gap-1 mt-0.5"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <ExternalLink className="h-2.5 w-2.5" />

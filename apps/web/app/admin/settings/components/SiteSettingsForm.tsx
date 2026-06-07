@@ -580,7 +580,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
 
       {/* Temel Bilgiler */}
       <section className="space-y-5">
-        <h3 className="text-base font-bold font-(family-name:--font-outfit) flex items-center gap-2 border-b border-border pb-3">
+        <h3 className="text-base font-bold font-display flex items-center gap-2 border-b border-border pb-3">
           <Globe className="h-4 w-4 text-primary-500" />
           Temel Platform Bilgileri
         </h3>
@@ -665,7 +665,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
 
       {/* Sosyal Medya */}
       <section className="space-y-5">
-        <h3 className="text-base font-bold font-(family-name:--font-outfit) flex items-center gap-2 border-b border-border pb-3">
+        <h3 className="text-base font-bold font-display flex items-center gap-2 border-b border-border pb-3">
           <Link2 className="h-4 w-4 text-primary-500" />
           Sosyal Medya Linkleri
         </h3>
@@ -703,7 +703,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
 
       {/* Footer */}
       <section className="space-y-5">
-        <h3 className="text-base font-bold font-(family-name:--font-outfit) flex items-center gap-2 border-b border-border pb-3">
+        <h3 className="text-base font-bold font-display flex items-center gap-2 border-b border-border pb-3">
           <CopyCheck className="h-4 w-4 text-primary-500" />
           Footer Ayarları
         </h3>
@@ -722,7 +722,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
 
       {/* Medya ve Marka Görselleri */}
       <section className="space-y-5">
-        <h3 className="text-base font-bold font-(family-name:--font-outfit) flex items-center gap-2 border-b border-border pb-3">
+        <h3 className="text-base font-bold font-display flex items-center gap-2 border-b border-border pb-3">
           <Palette className="h-4 w-4 text-primary-500" />
           Medya ve Tema Renkleri
         </h3>

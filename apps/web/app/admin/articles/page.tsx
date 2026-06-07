@@ -15,7 +15,7 @@ export default async function AdminArticlesPage() {
       <div className="flex items-center gap-3">
         <FileText className="h-6 w-6 text-muted-foreground" />
         <div>
-          <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">İçerik Moderasyonu</h1>
+          <h1 className="text-2xl font-bold font-display">İçerik Moderasyonu</h1>
           <p className="text-muted-foreground text-sm">
             Toplam {articles.length} makale · {published} yayında · {drafts} taslak.
             Yayın durumunu değiştirmek veya silmek için sağdaki ikonları kullanın.

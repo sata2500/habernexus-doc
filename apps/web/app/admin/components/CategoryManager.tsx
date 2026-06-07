@@ -122,46 +122,46 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Form Column */}
-        <div className="glass-strong rounded-2xl p-6 border border-border shadow-soft h-fit sticky top-24">
-          <h3 className="font-bold font-(family-name:--font-outfit) mb-6 text-lg">
+        <div className="glass-strong rounded-3xl p-6 border border-border/50 shadow-soft h-fit sticky top-24 transition-all duration-300 hover:border-primary-500/20">
+          <h3 className="font-bold font-display mb-6 text-lg">
             {isEditing ? "Kategoriyi Düzenle" : "Yeni Kategori Ekle"}
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Kategori Adı</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Kategori Adı</label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
                 placeholder="Örn: Teknoloji"
-                className="w-full px-3 py-2 rounded-xl bg-background border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                className="w-full px-3 py-2 rounded-xl bg-background/50 border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 required
               />
             </div>
             
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">URL (Slug)</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">URL (Slug)</label>
               <input
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
                 placeholder="teknoloji"
-                className="w-full px-3 py-2 rounded-xl bg-background border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                className="w-full px-3 py-2 rounded-xl bg-background/50 border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 required
               />
-              <p className="text-xs text-muted-foreground mt-1">/category/teknoloji adresinde kullanılacak.</p>
+              <p className="text-[10px] text-muted-foreground mt-1">/category/teknoloji adresinde kullanılacak.</p>
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium">Kategori Simgesi</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Kategori Simgesi</label>
               <IconPicker value={icon} onChange={setIcon} />
-              <p className="text-xs text-muted-foreground mt-1">Sitede görünecek modern Lucide simgesini yukarıdan seçebilirsiniz.</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Sitede görünecek modern Lucide simgesini yukarıdan seçebilirsiniz.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">Tema Rengi</label>
-                <div className="flex bg-background border border-border rounded-xl px-1 overflow-hidden h-10 items-center">
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tema Rengi</label>
+                <div className="flex bg-background/50 border border-border rounded-xl px-1 overflow-hidden h-10 items-center">
                     <input
                     type="color"
                     value={color}
@@ -172,12 +172,12 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-sm font-medium">Sıra (Order)</label>
+                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Sıra (Order)</label>
                 <input
                   type="number"
                   value={order}
                   onChange={(e) => setOrder(parseInt(e.target.value) || 0)}
-                  className="w-full px-3 py-2 h-10 rounded-xl bg-background border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+                  className="w-full px-3 py-2 h-10 rounded-xl bg-background/50 border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm"
                 />
               </div>
             </div>
@@ -186,7 +186,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
               <button
                 type="submit"
                 disabled={pending && actionId === "form-submit"}
-                className="flex-1 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-medium focus:ring-4 focus:ring-primary-500/30 transition-all text-sm flex items-center justify-center cursor-pointer disabled:opacity-70"
+                className="flex-1 py-2.5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold transition-all text-sm flex items-center justify-center cursor-pointer disabled:opacity-70 shadow-md shadow-primary-500/20 active:scale-95"
               >
                 {pending && actionId === "form-submit" ? <Loader2 className="h-4 w-4 animate-spin" /> : (isEditing ? "Güncelle" : "Ekle")}
               </button>
@@ -194,7 +194,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                 <button
                   type="button"
                   onClick={resetForm}
-                  className="px-4 py-2.5 rounded-xl bg-muted hover:bg-muted/80 text-foreground text-sm font-medium transition-all"
+                  className="px-4 py-2.5 rounded-xl bg-muted hover:bg-muted/80 text-foreground text-sm font-bold transition-all cursor-pointer"
                 >
                   İptal
                 </button>
@@ -204,7 +204,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
         </div>
 
         {/* List Column */}
-        <div className="lg:col-span-2 divide-y divide-border rounded-2xl border border-border overflow-hidden bg-background">
+        <div className="lg:col-span-2 divide-y divide-border/50 rounded-[2rem] border border-border/50 overflow-hidden glass-strong shadow-soft">
           {categories.length === 0 ? (
              <div className="p-8 text-center text-muted-foreground flex flex-col items-center justify-center">
                  <Bookmark className="h-10 w-10 mb-3 opacity-20" />
@@ -214,19 +214,19 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
             const isDeleting = actionId === cat.id + "-delete";
 
             return (
-              <div key={cat.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 hover:bg-muted/30 transition-colors">
+              <div key={cat.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 hover:bg-primary-500/5 transition-all duration-300 group">
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 shrink-0 rounded-xl border border-border flex items-center justify-center bg-muted/50 transition-transform group-hover:scale-105" style={{ color: cat.color || "#3b82f6" }}>
+                  <div className="w-10 h-10 shrink-0 rounded-xl border border-border/50 flex items-center justify-center bg-muted/30 transition-transform group-hover:scale-105" style={{ color: cat.color || "#3b82f6" }}>
                       <DynamicIcon name={cat.icon} className="h-5 w-5" />
                   </div>
                   <div>
-                    <p className="font-semibold">{cat.name}</p>
-                    <p className="text-xs text-muted-foreground">/{cat.slug} · Sıra: {cat.order}</p>
+                    <p className="font-bold text-sm group-hover:text-[var(--color-primary-500)] transition-colors">{cat.name}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">/{cat.slug} · Sıra: {cat.order}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-center gap-4 shrink-0 sm:self-center self-end">
-                  <div className="text-xs border border-border bg-muted/50 px-2.5 py-1 rounded-md text-muted-foreground">
+                  <div className="text-xs border border-border/50 bg-muted/30 px-2.5 py-1 rounded-md text-muted-foreground font-bold">
                     {cat._count.articles} {cat._count.articles === 1 ? "Haber" : "Haber"}
                   </div>
                   

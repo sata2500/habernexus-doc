@@ -8,7 +8,7 @@ export default async function AdminPagesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Sanal Sayfa Yönetimi</h1>
+          <h1 className="text-2xl font-bold font-display">Sanal Sayfa Yönetimi</h1>
           <p className="text-muted-foreground text-sm">Hakkımızda, Gizlilik Politikası, KVKK gibi sayfaları buradan düzenleyebilirsiniz.</p>
         </div>
       </div>

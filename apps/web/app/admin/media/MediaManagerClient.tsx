@@ -158,7 +158,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
   return (
     <div className="relative pb-32">
       {/* Filtre ve Arama Barı */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8 p-4 bg-card border border-border rounded-2xl shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 mb-8 p-4 glass-strong border border-border/50 rounded-3xl shadow-soft">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <input
@@ -166,12 +166,12 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
             placeholder="Dosya adıyla ara..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
+            className="w-full pl-10 pr-4 py-2 bg-background/50 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
           />
           {searchQuery && (
             <button 
               onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
             >
               <X className="h-4 w-4" />
             </button>
@@ -189,9 +189,9 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
               key={f.value}
               onClick={() => setStatusFilter(f.value)}
               className={cn(
-                "px-4 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap",
+                "px-4 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap cursor-pointer",
                 statusFilter === f.value 
-                  ? "bg-primary-600 border-primary-600 text-white shadow-md shadow-primary-500/20" 
+                  ? "bg-primary-500 border-primary-500 text-white shadow-md shadow-primary-500/20" 
                   : "bg-background border-border text-muted-foreground hover:border-primary-500/30"
               )}
             >
@@ -230,7 +230,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
             <Card 
               key={item.id} 
               className={cn(
-                "group overflow-hidden flex flex-col border-border hover:border-primary-500/30 transition-all duration-300 relative",
+                "group overflow-hidden flex flex-col rounded-3xl border border-border/50 hover:border-primary-500/30 hover-lift hover:shadow-glow transition-all duration-300 relative bg-background/50",
                 isSelected && "border-primary-500 ring-2 ring-primary-500/20 shadow-lg shadow-primary-500/10"
               )}
             >
@@ -346,20 +346,20 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
 
       {/* Floating Bulk Action Bar */}
       {selectedIds.size > 0 && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 duration-300">
-          <div className="bg-neutral-900 border border-neutral-800 text-white px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-8 backdrop-blur-xl">
-            <div className="flex flex-col min-w-[120px]">
-              <span className="text-xs font-bold text-neutral-400 uppercase tracking-widest">Toplu İşlem</span>
-              <span className="text-sm font-semibold text-primary-400">{selectedIds.size} öğe seçildi</span>
+        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 duration-300 w-[95%] max-w-lg sm:max-w-none sm:w-auto">
+          <div className="glass-strong bg-background/80 border border-border/50 text-foreground px-6 py-4 rounded-2xl shadow-glow flex flex-col sm:flex-row items-center gap-4 sm:gap-8 backdrop-blur-xl">
+            <div className="flex flex-col min-w-[120px] text-center sm:text-left">
+              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Toplu İşlem</span>
+              <span className="text-sm font-bold text-primary-500">{selectedIds.size} öğe seçildi</span>
             </div>
             
-            <div className="h-8 w-[1px] bg-neutral-800" />
+            <div className="hidden sm:block h-8 w-[1px] bg-border" />
 
-            <div className="flex gap-3">
+            <div className="flex items-center gap-3 w-full sm:w-auto justify-center">
               <button
                 onClick={handleBulkOptimize}
                 disabled={isBulkProcessing}
-                className="flex items-center gap-2 px-5 py-2.5 bg-primary-600 hover:bg-primary-500 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-primary-600/20 disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-primary-500/25 active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {isBulkProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4 fill-current" />}
                 Optimize Et
@@ -368,7 +368,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
               <button
                 onClick={handleBulkDelete}
                 disabled={isBulkProcessing}
-                className="flex items-center gap-2 px-5 py-2.5 bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white border border-red-500/30 rounded-xl text-sm font-bold transition-all disabled:opacity-50"
+                className="flex items-center gap-2 px-5 py-2.5 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 hover:border-red-500 rounded-xl text-sm font-bold transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {isBulkProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                 Sil
@@ -376,7 +376,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
 
               <button
                 onClick={clearSelection}
-                className="p-2.5 hover:bg-white/10 rounded-xl transition-colors"
+                className="p-2.5 hover:bg-muted rounded-xl transition-colors cursor-pointer"
                 title="Seçimi Temizle"
               >
                 <X className="h-5 w-5" />

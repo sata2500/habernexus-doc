@@ -97,7 +97,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
         const isSpecial = slug === "contact" || slug === "advertise";
 
         return (
-          <Card key={page.id} className="p-5 flex flex-col justify-between hover:border-primary-500/50 transition-all duration-300 group shadow-sm hover:shadow-md">
+          <Card key={page.id} className="p-6 flex flex-col justify-between glass-strong border border-border/50 hover:border-primary-500/30 hover-lift hover:shadow-glow rounded-3xl transition-all duration-300 group shadow-soft">
             <div className="flex items-start gap-4">
               <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center group-hover:bg-primary-500/10 transition-colors shrink-0">
                 <Icon className="h-6 w-6 text-muted-foreground group-hover:text-primary-500 transition-colors" />
@@ -106,13 +106,13 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                 <div className="flex items-center gap-2">
                   <h3 className="font-bold text-foreground text-sm uppercase tracking-wider truncate">{page.title}</h3>
                   {isSpecial && (
-                    <span className="flex items-center gap-1 text-[10px] bg-primary-500/10 text-primary-600 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter shrink-0">
+                    <span className="flex items-center gap-1 text-[10px] bg-primary-500/10 text-primary-500 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter shrink-0 border border-primary-500/10">
                       <Sparkles className="h-3 w-3" /> Akıllı
                     </span>
                   )}
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1">
-                  <ExternalLink className="h-3 w-3" /> /{page.slug === "about" ? "about" : page.slug}
+                  <ExternalLink className="h-3 w-3 text-primary-500/70" /> /{page.slug === "about" ? "about" : page.slug}
                 </p>
               </div>
             </div>
@@ -122,7 +122,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                 variant="ghost" 
                 size="sm" 
                 onClick={() => handleEdit(page)}
-                className="rounded-lg hover:bg-primary-500/10 hover:text-primary-600"
+                className="rounded-lg hover:bg-primary-500/10 hover:text-primary-500 cursor-pointer font-bold text-xs"
               >
                 Düzenle
               </Button>
@@ -135,11 +135,11 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
       {editingPage && (
         <div className="fixed inset-0 z-(--z-modal) flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={() => !loading && setEditingPage(null)} />
-          <Card className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl border-primary-500/20 rounded-3xl">
+          <Card className="relative w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col shadow-glow border border-border/50 rounded-[2.5rem] glass-strong bg-background/90">
             {/* Header */}
-            <div className="p-6 border-b border-border flex items-center justify-between bg-muted/30">
+            <div className="p-6 border-b border-border/50 flex items-center justify-between bg-muted/20">
               <div className="flex items-center gap-3">
-                <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center">
+                <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center border border-primary-500/20">
                   {(() => {
                     const slug = editingPage.slug?.toLowerCase().trim();
                     const Icon = (slug && ICON_MAP[slug]) || FileText;
@@ -147,13 +147,13 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                   })()}
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold font-(family-name:--font-outfit)">{editingPage.title} Düzenle</h2>
+                  <h2 className="text-xl font-bold font-display">{editingPage.title} Düzenle</h2>
                   <p className="text-[10px] text-muted-foreground font-mono">slug: /{editingPage.slug}</p>
                 </div>
               </div>
               <button 
                 onClick={() => setEditingPage(null)}
-                className="p-2 hover:bg-muted rounded-full transition-colors"
+                className="p-2 hover:bg-muted rounded-full transition-colors cursor-pointer"
                 disabled={loading}
               >
                 <X className="h-5 w-5" />
@@ -170,7 +170,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                     type="text"
                     value={editingPage.title}
                     onChange={(e) => setEditingPage({...editingPage, title: e.target.value})}
-                    className="w-full h-11 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                    className="w-full h-11 px-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm"
                   />
                 </div>
                 <div className="space-y-2">
@@ -180,7 +180,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                     value={editingPage.description || ""}
                     onChange={(e) => setEditingPage({...editingPage, description: e.target.value})}
                     placeholder="Arama motorları için kısa özet..."
-                    className="w-full h-11 px-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                    className="w-full h-11 px-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm"
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                 if (slug === "contact" || slug === "advertise") {
                   return (
                     <div className="p-6 rounded-2xl bg-primary-500/5 border border-primary-500/10 space-y-4 animate-in fade-in slide-in-from-top-2">
-                      <h3 className="text-xs font-bold flex items-center gap-2 text-primary-600 uppercase tracking-wider">
+                      <h3 className="text-xs font-bold flex items-center gap-2 text-primary-500 uppercase tracking-wider">
                         <Settings className="h-4 w-4" /> Sayfaya Özel Kart Bilgileri
                       </h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -205,7 +205,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                                 type="text" 
                                 value={editingPage.extraData.phone || ""} 
                                 onChange={(e) => updateExtraData("phone", e.target.value)}
-                                className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background focus:ring-1 focus:ring-primary-500 outline-none"
+                                className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none"
                                 placeholder="+90 (212) 000 00 00"
                               />
                             </div>
@@ -217,7 +217,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                                 type="text" 
                                 value={editingPage.extraData.email || ""} 
                                 onChange={(e) => updateExtraData("email", e.target.value)}
-                                className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background focus:ring-1 focus:ring-primary-500 outline-none"
+                                className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none"
                                 placeholder="info@habernexus.com"
                               />
                             </div>
@@ -229,7 +229,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                                 type="text" 
                                 value={editingPage.extraData.address || ""} 
                                 onChange={(e) => updateExtraData("address", e.target.value)}
-                                className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background focus:ring-1 focus:ring-primary-500 outline-none"
+                                className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none"
                                 placeholder="Levent Mah. Medya Sk. No: 1, Beşiktaş / İstanbul"
                               />
                             </div>
@@ -244,7 +244,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                               type="text" 
                               value={editingPage.extraData.email || ""} 
                               onChange={(e) => updateExtraData("email", e.target.value)}
-                              className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background focus:ring-1 focus:ring-primary-500 outline-none"
+                              className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none"
                               placeholder="ads@habernexus.com"
                             />
                           </div>
@@ -265,14 +265,14 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                 <textarea 
                   value={editingPage.content}
                   onChange={(e) => setEditingPage({...editingPage, content: e.target.value})}
-                  className="w-full h-[350px] p-4 rounded-xl border border-border bg-background focus:ring-2 focus:ring-primary-500 outline-none transition-all font-mono text-sm leading-relaxed custom-scrollbar"
+                  className="w-full h-[350px] p-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none transition-all font-mono text-sm leading-relaxed custom-scrollbar"
                   placeholder="<p>Sayfa içeriğini buraya girin...</p>"
                 />
               </div>
             </div>
 
             {/* Footer */}
-            <div className="p-6 border-t border-border flex items-center justify-between bg-muted/30">
+            <div className="p-6 border-t border-border/50 flex items-center justify-between bg-muted/20">
               <Button 
                 variant="ghost" 
                 size="sm" 

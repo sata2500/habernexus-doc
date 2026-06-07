@@ -43,7 +43,7 @@ export default async function AdminRssFeedsPage({
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold font-(family-name:--font-outfit) flex items-center gap-2">
+          <h1 className="text-2xl font-bold font-display flex items-center gap-2">
             <Rss className="h-6 w-6 text-primary-500" />
             RSS Öneri Sistemi
           </h1>
@@ -55,17 +55,17 @@ export default async function AdminRssFeedsPage({
       </div>
 
       {/* ── Stats ── */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {statCards.map((stat) => (
           <div
             key={stat.label}
-            className="glass-strong rounded-2xl p-4 border border-border shadow-soft flex flex-col items-center gap-2 text-center"
+            className="glass-strong hover-lift rounded-2xl p-4 border border-border shadow-soft flex flex-col items-center gap-2 text-center hover:shadow-glow hover:border-primary-500/20 transition-all duration-300"
           >
             <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${stat.color}`}>
               <stat.icon className="h-4 w-4" />
             </div>
-            <p className="text-2xl font-bold font-(family-name:--font-outfit)">{stat.value}</p>
-            <p className="text-[10px] text-muted-foreground font-medium leading-tight">{stat.label}</p>
+            <p className="text-2xl font-black font-display text-foreground tracking-tight leading-none mt-1">{stat.value}</p>
+            <p className="text-[10px] text-muted-foreground font-bold leading-tight uppercase tracking-wider">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -82,7 +82,7 @@ export default async function AdminRssFeedsPage({
 
       {/* ── RSS Kaynakları ── */}
       <section>
-        <h2 className="text-lg font-bold font-(family-name:--font-outfit) mb-4 flex items-center gap-2">
+        <h2 className="text-lg font-bold font-display mb-4 flex items-center gap-2">
           <Rss className="h-5 w-5 text-muted-foreground" />
           RSS Kaynakları
         </h2>
@@ -95,7 +95,7 @@ export default async function AdminRssFeedsPage({
           <SuggestionsFilter categories={categoryNames} />
           
           <div className="flex items-center gap-3 mb-2">
-            <h2 className="text-lg font-bold font-(family-name:--font-outfit) flex items-center gap-2">
+            <h2 className="text-lg font-bold font-display flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary-500" />
               Haber Önerileri
             </h2>

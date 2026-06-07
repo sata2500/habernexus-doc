@@ -14,7 +14,7 @@ export default async function AdminCategoriesPage() {
             <LayoutList className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Kategori Yönetimi</h1>
+          <h1 className="text-2xl font-bold font-display">Kategori Yönetimi</h1>
           <p className="text-muted-foreground text-sm">Sitedeki okuyucuların içeriklere ulaşmasını sağlayan kategorileri yönetin.</p>
         </div>
       </div>

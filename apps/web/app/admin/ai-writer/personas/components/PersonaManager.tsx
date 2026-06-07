@@ -145,14 +145,14 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
             <Users className="h-6 w-6 text-purple-500" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold font-(family-name:--font-outfit)">AI Personaları</h2>
+            <h2 className="text-2xl font-bold font-display">AI Personaları</h2>
             <p className="text-sm text-muted-foreground">Farklı kategoriler için farklı yazım stilleri ve görsel karakterler tanımlayın.</p>
           </div>
         </div>
         {!isAdding && !editingId && (
           <button
             onClick={() => setIsAdding(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-primary-500/20"
+            className="flex items-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-primary-500/20 cursor-pointer"
           >
             <Plus className="h-5 w-5" />
             Yeni Persona Ekle
@@ -289,7 +289,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
             <button
               onClick={handleSubmit}
               disabled={loading}
-              className="px-8 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-xl font-bold shadow-lg shadow-primary-500/20 active:scale-95 transition-all disabled:opacity-50"
+              className="px-8 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold shadow-lg shadow-primary-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
             >
               {loading ? "Kaydediliyor..." : editingId ? "Değişiklikleri Kaydet" : "Personayı Oluştur"}
             </button>
@@ -300,7 +300,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
       {/* ── Personas Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {initialPersonas.map(persona => (
-          <div key={persona.id} className="glass-strong rounded-3xl border border-border p-6 hover:border-primary-500/30 transition-all group flex flex-col h-full shadow-lg">
+          <div key={persona.id} className="glass-strong rounded-3xl border border-border p-6 hover:border-primary-500/30 hover:shadow-glow hover-lift transition-all duration-300 group flex flex-col h-full shadow-soft">
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-center gap-3">
                 <div className="h-14 w-14 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center overflow-hidden">

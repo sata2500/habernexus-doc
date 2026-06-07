@@ -20,7 +20,7 @@ export default async function AdminSliderPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Slayt Yönetimi</h1>
+          <h1 className="text-2xl font-bold font-display">Slayt Yönetimi</h1>
           <p className="text-muted-foreground text-sm">Ana sayfadaki duyuru ve haber slaytlarını buradan yönetebilirsiniz.</p>
         </div>
       </div>

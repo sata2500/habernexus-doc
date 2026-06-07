@@ -113,7 +113,7 @@ export function CronSettingsCard({
     <div className="glass-strong rounded-2xl border border-border shadow-soft overflow-hidden">
       <div className="p-4 border-b border-border bg-muted/20 flex items-center gap-2">
         <Clock className="h-5 w-5 text-primary-500" />
-        <h3 className="font-bold font-(family-name:--font-outfit)">Otomasyon ve Temizlik (QStash)</h3>
+        <h3 className="font-bold font-display">Otomasyon ve Temizlik (QStash)</h3>
       </div>
       
       <div className="p-5 space-y-5">
@@ -228,7 +228,7 @@ export function CronSettingsCard({
               <button
                 onClick={handleNewsletterSetup}
                 disabled={loadingType === "newsletter"}
-                className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-xl transition-colors disabled:opacity-50"
+                className="flex items-center justify-center gap-2 w-full sm:w-auto px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold rounded-xl transition-all shadow-md shadow-primary-500/20 active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {loadingType === "newsletter" && <Loader2 className="h-4 w-4 animate-spin" />}
                 Otomasyonu Başlat

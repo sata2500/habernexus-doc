@@ -42,14 +42,14 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
   };
 
   return (
-    <div className="glass-strong rounded-[2.5rem] border border-neutral-200 dark:border-neutral-800 overflow-hidden shadow-2xl transition-all">
-      <div className="bg-gradient-to-r from-amber-600/5 to-orange-600/5 dark:from-amber-600/10 dark:to-orange-600/10 px-8 py-6 border-b border-neutral-200 dark:border-neutral-800 flex items-center justify-between">
+    <div className="glass-strong rounded-[2.5rem] border border-border overflow-hidden shadow-soft transition-all">
+      <div className="px-6 sm:px-8 py-6 border-b border-border/50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-2xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 shadow-inner">
             <Zap className="h-6 w-6 text-amber-500" />
           </div>
           <div>
-            <h3 className="font-bold text-lg font-(family-name:--font-outfit) text-neutral-900 dark:text-white">AI Yazar Otomasyonu</h3>
+            <h3 className="font-bold text-lg font-display text-neutral-900 dark:text-white">AI Yazar Otomasyonu</h3>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">Zamanlanmış otomatik haber üretimi</p>
           </div>
         </div>
@@ -57,7 +57,7 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
            <button
             onClick={handleManualRun}
             disabled={running}
-            className="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20 active:scale-95 disabled:opacity-50"
+            className="px-5 py-2.5 rounded-2xl bg-purple-500 hover:bg-purple-600 text-white text-xs font-bold transition-all flex items-center gap-2 shadow-lg shadow-purple-500/20 active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             {running ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <PlayCircle className="h-3.5 w-3.5" />}
             Şimdi Çalıştır
@@ -65,7 +65,7 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
           <button
             onClick={handleSave}
             disabled={loading}
-            className="px-5 py-2.5 rounded-2xl bg-primary-600 hover:bg-primary-700 text-white text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-primary-500/25 active:scale-95 disabled:opacity-50"
+            className="px-5 py-2.5 rounded-2xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-primary-500/25 active:scale-95 disabled:opacity-50 cursor-pointer"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             {success ? "Kaydedildi!" : "Kaydet"}
@@ -81,7 +81,7 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
           </div>
           <button
             onClick={() => setEnabled(!enabled)}
-            className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${enabled ? "bg-primary-600" : "bg-neutral-300 dark:bg-neutral-800"}`}
+            className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${enabled ? "bg-primary-500" : "bg-neutral-300 dark:bg-neutral-800"}`}
           >
             <div className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-all shadow-md ${enabled ? "translate-x-7" : ""}`} />
           </button>

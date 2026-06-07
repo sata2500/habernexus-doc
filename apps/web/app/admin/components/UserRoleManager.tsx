@@ -48,19 +48,19 @@ export function UserRoleManager({ users }: { users: User[] }) {
   };
 
   return (
-    <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
+    <div className="glass-strong rounded-[2rem] border border-border/50 overflow-hidden divide-y divide-border/50 shadow-soft">
       {users.map((user) => {
         const currentRole = (user.role as Role) ?? "USER";
         const isChanging = changingId === user.id;
 
         return (
-          <div key={user.id} className="flex items-center gap-4 p-4 bg-background hover:bg-muted/30 transition-colors">
+          <div key={user.id} className="flex items-center gap-4 p-5 bg-background/30 hover:bg-primary-500/5 transition-all duration-300 group">
             <Avatar src={user.image ?? undefined} fallback={user.name ?? undefined} size="sm" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user.name}</p>
-              <p className="text-xs text-muted-foreground truncate">{user.email}</p>
+              <p className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">{user.name}</p>
+              <p className="text-xs text-muted-foreground truncate mt-0.5">{user.email}</p>
             </div>
-            <div className="hidden sm:block text-xs text-muted-foreground">
+            <div className="hidden sm:block text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2.5 py-1">
               {user._count.articles} makale
             </div>
             <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
                   <select
                     value={currentRole}
                     onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                    className="text-xs px-2.5 py-1.5 rounded-lg border border-border bg-background text-foreground cursor-pointer focus:ring-2 focus:ring-primary-500 outline-none"
+                    className="text-xs px-3 py-2 rounded-xl border border-border/85 bg-background/50 text-foreground cursor-pointer focus:ring-2 focus:ring-primary-500 outline-none hover:border-primary-500/30 transition-colors font-bold"
                   >
                     {ROLES.map((r) => (
                       <option key={r.value} value={r.value}>{r.label}</option>
@@ -79,7 +79,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
                   </select>
                   <button
                     onClick={() => handleDeleteUser(user.id, user.name ?? "İsimsiz")}
-                    className="h-9 w-9 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
+                    className="h-9 w-9 flex items-center justify-center rounded-xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer border border-transparent hover:border-red-500/25"
                     title="Kullanıcıyı Sil"
                   >
                     <Trash2 className="h-4 w-4" />
