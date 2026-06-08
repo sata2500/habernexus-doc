@@ -71,13 +71,13 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
 
   const getScoreColor = (score: number, isPlagiarism = false) => {
     if (isPlagiarism) {
-      if (score <= 30) return "text-green-500 bg-green-500/10 border-green-500/20";
-      if (score <= 60) return "text-amber-500 bg-amber-500/10 border-amber-500/20";
-      return "text-red-500 bg-red-500/10 border-red-500/20";
+      if (score <= 30) return "text-success bg-success/10 border-success/20";
+      if (score <= 60) return "text-warning bg-warning/10 border-warning/20";
+      return "text-error bg-error/10 border-error/20";
     } else {
-      if (score >= 70) return "text-green-500 bg-green-500/10 border-green-500/20";
-      if (score >= 40) return "text-amber-500 bg-amber-500/10 border-amber-500/20";
-      return "text-red-500 bg-red-500/10 border-red-500/20";
+      if (score >= 70) return "text-success bg-success/10 border-success/20";
+      if (score >= 40) return "text-warning bg-warning/10 border-warning/20";
+      return "text-error bg-error/10 border-error/20";
     }
   };
 
@@ -131,14 +131,14 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
                       <FileText className="h-5 w-5 text-muted-foreground" />
                     )}
                     {hasHighPlagiarism && (
-                      <div className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-amber-500 border-2 border-background rounded-full flex items-center justify-center" title="Yüksek İntihal Riski">
+                      <div className="absolute -top-1 -right-1 h-3.5 w-3.5 bg-warning border-2 border-background rounded-full flex items-center justify-center animate-pulse" title="Yüksek İntihal Riski">
                         <AlertTriangle className="h-2 w-2 text-white" />
                       </div>
                     )}
                   </div>
-                  <div className="min-w-0 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold truncate text-foreground hover:text-primary-600 transition-colors">
+                  <div className="min-w-0 space-y-1 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap min-w-0">
+                      <p className="text-sm font-semibold line-clamp-2 text-foreground hover:text-primary-500 transition-colors break-words whitespace-normal flex-1 min-w-0">
                         {article.title}
                       </p>
                       {article.aiPersonaId && (
@@ -151,7 +151,9 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
                       {article.category?.name || "Kategorisiz"} · {formatDate(article.publishedAt || article.createdAt)}
                     </p>
                   </div>
-                             {/* Scores & Metrics */}
+                </div>
+
+                {/* Scores & Metrics */}
                 <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 md:gap-4 w-full md:w-auto pt-3 md:pt-0 border-t border-border/40 md:border-t-0 shrink-0">
                   <div className="flex flex-wrap items-center gap-2">
                     {isAnalyzed ? (
@@ -203,7 +205,6 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
                     <DeleteArticleButton articleId={article.id} articleTitle={article.title} />
                   </div>
                 </div>
-        </div>
 
               </div>
             );

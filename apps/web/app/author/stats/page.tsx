@@ -51,7 +51,7 @@ export default async function AuthorStatsPage() {
                      <Icon className="h-5 w-5" />
                    </div>
                    {item.trend && (
-                     <span className="text-[10px] font-bold bg-green-500/10 text-green-600 px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
+                     <span className="text-[10px] font-bold bg-success/10 text-success px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
                        <ArrowUpRight className="h-2.5 w-2.5" /> {item.trend}
                      </span>
                    )}

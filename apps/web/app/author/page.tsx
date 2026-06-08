@@ -131,7 +131,7 @@ export default async function AuthorDashboardPage() {
             {topSuggestions.map((item) => {
               const analysis = item.aiAnalysis as { suggestedTitles?: string[]; suggestedCategory?: string } | null;
               const score = item.aiScore ?? 50;
-              const scoreColor = score >= 75 ? "text-green-600 bg-green-500/10" : score >= 55 ? "text-amber-600 bg-amber-500/10" : "text-muted-foreground bg-muted";
+              const scoreColor = score >= 75 ? "text-success bg-success/10" : score >= 55 ? "text-warning bg-warning/10" : "text-muted-foreground bg-muted";
               return (
                 <div key={item.id} className="flex items-center gap-4 p-4 hover:bg-muted/40 transition-colors">
                   <div className={`h-9 w-9 shrink-0 rounded-xl flex items-center justify-center text-xs font-bold ${scoreColor}`}>
@@ -147,7 +147,7 @@ export default async function AuthorDashboardPage() {
                   </div>
                   <Link
                     href="/author/suggestions"
-                    className="shrink-0 px-3 py-1.5 rounded-lg bg-primary-500/10 hover:bg-primary-500/20 text-primary-600 text-xs font-semibold transition-colors"
+                    className="shrink-0 px-3 py-1.5 rounded-lg bg-primary-500/10 hover:bg-primary-500/20 text-primary-500 text-xs font-semibold transition-colors"
                   >
                     Gör
                   </Link>

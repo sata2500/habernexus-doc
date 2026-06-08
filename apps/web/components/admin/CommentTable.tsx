@@ -67,14 +67,14 @@ export function CommentTable({ comments, onDelete, isAdmin }: Props) {
                       fallback={comment.user.name} 
                       size="sm" 
                     />
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap min-w-0">
                         <span className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">{comment.user.name}</span>
                         {isAdmin && comment.user.email && (
-                          <span className="text-[10px] text-muted-foreground">({comment.user.email})</span>
+                          <span className="text-[10px] text-muted-foreground truncate max-w-[150px] md:max-w-none">({comment.user.email})</span>
                         )}
                       </div>
-                      <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{comment.content}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-3 mt-1 break-words whitespace-pre-wrap">{comment.content}</p>
                     </div>
                   </div>
                 </td>
@@ -105,7 +105,7 @@ export function CommentTable({ comments, onDelete, isAdmin }: Props) {
                     <button
                       onClick={() => handleDelete(comment.id)}
                       disabled={deletingId === comment.id}
-                      className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-transparent hover:border-red-500/25 transition-all disabled:opacity-50 cursor-pointer"
+                      className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-error/10 text-muted-foreground hover:text-error border border-transparent hover:border-error/25 transition-all disabled:opacity-50 cursor-pointer"
                       title="Yorumu Kaldır"
                     >
                       {deletingId === comment.id ? (

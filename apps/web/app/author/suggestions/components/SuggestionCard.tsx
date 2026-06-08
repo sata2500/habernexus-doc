@@ -78,7 +78,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
             <ScoreBar score={item.aiScore ?? 50} />
           </div>
           {item.status === "APPROVED" && (
-            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500 animate-pulse">
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-error/10 border border-error/20 text-error animate-pulse">
               <ShieldCheck className="h-3 w-3" />
               <span className="text-[10px] font-bold uppercase tracking-tight">Yönetici Önerisi</span>
             </div>
@@ -105,7 +105,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
             {analysis?.suggestedCategory && (
               <>
                 <span className="mx-1">·</span>
-                <span className="text-primary-600">{analysis.suggestedCategory}</span>
+                <span className="text-primary-500">{analysis.suggestedCategory}</span>
               </>
             )}
           </div>
@@ -115,7 +115,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
             <p className="text-[10px] text-muted-foreground mb-1">Kaynak Haber:</p>
             <button
               onClick={() => setShowPreview(true)}
-              className="text-left text-sm font-medium text-foreground hover:text-primary-600 transition-colors line-clamp-2"
+              className="text-left text-sm font-medium text-foreground hover:text-primary-500 transition-colors line-clamp-2"
             >
               {item.title}
             </button>
@@ -124,7 +124,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
           {/* AI Suggested Titles */}
           {analysis?.suggestedTitles && analysis.suggestedTitles.length > 0 && (
             <div className="bg-gradient-to-br from-primary-500/5 to-purple-500/5 border border-primary-500/15 rounded-xl p-3">
-              <p className="text-[10px] text-primary-600 font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
+              <p className="text-[10px] text-primary-500 font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
                 Önerilen Başlıklar
               </p>
@@ -175,7 +175,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
             onClick={handleDismiss}
             disabled={!!loading}
             title="İlginç Değil"
-            className="px-3.5 py-2.5 rounded-xl hover:bg-red-50 dark:hover:bg-red-950/20 text-muted-foreground hover:text-red-500 transition-all cursor-pointer disabled:opacity-40 border border-border hover:border-red-200 dark:hover:border-red-800 outline-none focus-ring"
+            className="px-3.5 py-2.5 rounded-xl hover:bg-error/10 text-muted-foreground hover:text-error transition-all cursor-pointer disabled:opacity-40 border border-border hover:border-error/20 outline-none focus-ring"
           >
             {loading === "dismiss" ? (
               <span className="h-4 w-4 border-2 border-muted-foreground/30 border-t-muted-foreground rounded-full animate-spin block" />
@@ -198,7 +198,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
                   {item.source.name}
                 </div>
                 {item.status === "APPROVED" && (
-                  <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20 text-red-500">
+                  <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-error/10 border border-error/20 text-error">
                     <ShieldCheck className="h-3.5 w-3.5" />
                     <span className="text-[10px] font-bold uppercase">Yönetici Önerisi</span>
                   </div>
@@ -250,7 +250,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
                   {analysis?.suggestedCategory && (
                     <>
                       <span>·</span>
-                      <span className="text-primary-600 font-medium px-2 py-0.5 bg-primary-500/10 rounded-full">
+                      <span className="text-primary-500 font-medium px-2 py-0.5 bg-primary-500/10 rounded-full">
                         {analysis.suggestedCategory}
                       </span>
                     </>
