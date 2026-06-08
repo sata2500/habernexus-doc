@@ -4,6 +4,8 @@ import { useState } from "react";
 import { ExternalLink, X, CheckCheck, Sparkles, TrendingUp, Wand2, RefreshCw, AlertTriangle, Undo2 } from "lucide-react";
 import { dismissSuggestion, approveSuggestion, triggerAiWriter, reAnalyzeSuggestion, revertToAnalyzed } from "../actions";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
+
 
 type SuggestionItem = {
   id: string;
@@ -26,16 +28,17 @@ function ScoreBadge({ score }: { score: number | null }) {
   if (!score) return null;
   const color =
     score >= 75
-      ? "bg-green-500/15 text-green-600"
+      ? "bg-success/10 text-success border border-success/10"
       : score >= 55
-      ? "bg-amber-500/15 text-amber-600"
-      : "bg-muted text-muted-foreground";
+      ? "bg-warning/10 text-warning border border-warning/10"
+      : "bg-muted text-muted-foreground border border-border/40";
   return (
-    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${color}`}>
+    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full ${color}`}>
       {score}/100
     </span>
   );
 }
+
 
 export function SuggestionsList({ suggestions: initialItems }: Props) {
   const [items, setItems] = useState(initialItems);
@@ -94,15 +97,16 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
             {/* Score Badge */}
             <div className="absolute top-3 right-3 flex items-center gap-2 z-10">
               {item.status === "APPROVED" && (
-                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-500 text-white text-[10px] font-bold">
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-primary-500 text-white text-[10px] font-bold shadow-sm">
                    Onaylandı
                 </div>
               )}
               {item.status === "DISMISSED" && (
-                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500 text-white text-[10px] font-bold">
+                <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-error text-white text-[10px] font-bold shadow-sm">
                    Reddedildi
                 </div>
               )}
+
               {analysis?.isFallback && (
                 <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/10 text-red-500 border border-red-500/20" title="AI Analizi başarısız oldu, manuel bilgiler kullanılıyor.">
                   <AlertTriangle className="h-3 w-3" />
@@ -176,22 +180,18 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
             </div>
 
             {/* Actions */}
-            <div className="border-t border-border/40 p-3 flex flex-wrap gap-2">
+            <div className="border-t border-border/40 p-3 flex flex-wrap gap-2 items-center">
               {item.status === "ANALYZED" ? (
                 <>
-                  <button
+                  <Button
                     onClick={() => handleApprove(item.id)}
                     disabled={loadingId !== null}
-                    title="Yazar Masasına Gönder"
-                    className="flex-1 text-center px-3 py-2 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-primary-500/20 active:scale-95 disabled:opacity-50 cursor-pointer"
+                    isLoading={loadingId === item.id}
+                    className="flex-1 py-2 h-9 text-xs font-bold gap-1.5 cursor-pointer"
                   >
-                    {loadingId === item.id ? (
-                      <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    ) : (
-                      <CheckCheck className="h-3.5 w-3.5" />
-                    )}
+                    <CheckCheck className="h-3.5 w-3.5" />
                     Haber Yazılsın
-                  </button>
+                  </Button>
                   
                   <button
                     onClick={async () => {
@@ -206,7 +206,7 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
                     }}
                     disabled={loadingId !== null}
                     title="Yapay Zeka İle Tam Otomatik Yaz"
-                    className="px-3 py-2 rounded-xl bg-purple-500 hover:bg-purple-600 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-purple-500/20 active:scale-95 disabled:opacity-50 cursor-pointer"
+                    className="px-3.5 py-2 h-9 rounded-xl bg-accent-500 hover:opacity-95 text-white text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-md shadow-accent-500/15 active:scale-95 disabled:opacity-50 cursor-pointer outline-none focus-ring"
                   >
                     {loadingId === item.id ? (
                       <span className="h-3.5 w-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -227,7 +227,7 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
                     }}
                     disabled={loadingId !== null}
                     title="Yeniden AI Analizi Yap"
-                    className="px-3 py-2 rounded-xl bg-muted hover:bg-primary-500/10 dark:hover:bg-primary-500/15 text-muted-foreground hover:text-primary-500 dark:hover:text-primary-400 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+                    className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted hover:bg-primary-500/10 dark:hover:bg-primary-500/15 text-muted-foreground hover:text-primary-500 dark:hover:text-primary-400 active:scale-95 transition-all cursor-pointer disabled:opacity-50 outline-none focus-ring"
                   >
                     <RefreshCw className={`h-4 w-4 ${loadingId === item.id ? "animate-spin" : ""}`} />
                   </button>
@@ -236,7 +236,7 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
                     onClick={() => handleDismiss(item.id)}
                     disabled={loadingId !== null}
                     title="İlginç Değil"
-                    className="px-3 py-2 rounded-xl bg-muted hover:bg-red-500/10 dark:hover:bg-red-500/15 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 active:scale-95 transition-all cursor-pointer disabled:opacity-50"
+                    className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted hover:bg-red-500/10 dark:hover:bg-red-500/15 text-muted-foreground hover:text-red-500 dark:hover:text-red-400 active:scale-95 transition-all cursor-pointer disabled:opacity-50 outline-none focus-ring"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -249,13 +249,14 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
                     window.location.reload();
                     setLoadingId(null);
                   }}
-                  className="flex-1 text-center px-3 py-2 rounded-xl bg-muted hover:bg-muted/80 text-foreground text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-border/80 cursor-pointer"
+                  className="flex-1 text-center px-3 py-2 rounded-xl bg-muted hover:bg-muted/80 text-foreground text-xs font-bold active:scale-95 transition-all flex items-center justify-center gap-1.5 border border-border/80 cursor-pointer outline-none focus-ring"
                 >
                   <Undo2 className="h-3.5 w-3.5" />
                   İşlemi Geri Al (Aktif Listeye Taşı)
                 </button>
               )}
             </div>
+
           </div>
         );
       })}

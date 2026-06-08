@@ -72,7 +72,7 @@ export function SuggestionsFilter({ categories }: Props) {
         </div>
 
         {/* Status Filter */}
-        <div className="flex gap-2 overflow-x-auto pb-1 lg:pb-0 no-scrollbar">
+        <div className="flex gap-2 overflow-x-auto pb-1.5 lg:pb-0 no-scrollbar w-full min-w-0">
           {statuses.map((s) => (
             <button
               key={s.value}

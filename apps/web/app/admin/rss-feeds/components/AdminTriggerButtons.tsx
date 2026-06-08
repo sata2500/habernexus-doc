@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { RefreshCw, Sparkles, Loader2 } from "lucide-react";
+import { RefreshCw, Sparkles } from "lucide-react";
 import { triggerRssScan, triggerAiAnalysis } from "../actions";
+import { Button } from "@/components/ui/Button";
 
 export function AdminTriggerButtons() {
   const [scanning, setScanning] = useState(false);
@@ -41,24 +42,27 @@ export function AdminTriggerButtons() {
   };
 
   return (
-    <div className="flex flex-col items-end gap-2">
-      <div className="flex flex-wrap items-center justify-end gap-2">
-        <button
+    <div className="flex flex-col items-end gap-2 w-full sm:w-auto">
+      <div className="flex flex-wrap items-center justify-end gap-2 w-full sm:w-auto">
+        <Button
           onClick={handleScan}
           disabled={scanning || analyzing}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium text-sm transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-blue-500/20"
+          isLoading={scanning}
+          variant="outline"
+          className="flex-1 sm:flex-initial gap-2 text-xs font-semibold px-4 cursor-pointer"
         >
-          {scanning ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
-          {scanning ? "Taranıyor..." : "Tümünü Tara"}
-        </button>
-        <button
+          <RefreshCw className="h-4 w-4" />
+          Tümünü Tara
+        </Button>
+        <Button
           onClick={handleAnalyze}
           disabled={scanning || analyzing}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-medium text-sm transition-all cursor-pointer disabled:opacity-50 shadow-lg shadow-primary-500/20"
+          isLoading={analyzing}
+          className="flex-1 sm:flex-initial gap-2 text-xs font-semibold px-4 cursor-pointer"
         >
-          {analyzing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-          {analyzing ? "Analiz ediliyor..." : "AI Analiz ve Özet"}
-        </button>
+          <Sparkles className="h-4 w-4" />
+          AI Analiz ve Özet
+        </Button>
       </div>
       {message && (
         <p className="text-xs text-muted-foreground text-right max-w-sm">{message}</p>

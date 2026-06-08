@@ -2,6 +2,8 @@
 
 import { useState, useMemo, useTransition } from "react";
 import { Plus, Trash2, RefreshCw, Power, ExternalLink, Loader2, Rss, Search, Filter, CheckSquare, Square, X } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+
 import {
   createRssSource,
   deleteRssSource,
@@ -190,16 +192,18 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
             </div>
           </div>
           <div className="flex gap-3 pt-2">
-            <button type="submit" className="px-5 py-2.5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm shadow-md shadow-primary-500/15 active:scale-95 transition-all cursor-pointer">Kaydet</button>
-            <button type="button" onClick={() => setIsAdding(false)} className="px-5 py-2.5 rounded-xl bg-muted hover:bg-muted/80 font-bold text-sm active:scale-95 transition-all cursor-pointer">İptal</button>
+            <Button type="submit">Kaydet</Button>
+            <Button type="button" variant="secondary" onClick={() => setIsAdding(false)}>İptal</Button>
           </div>
+
         </form>
       ) : (
         <div className="flex flex-col sm:flex-row gap-3">
-          <button onClick={() => setIsAdding(true)} className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white font-bold text-sm shadow-lg shadow-primary-500/20 active:scale-95 transition-all cursor-pointer shrink-0">
+          <Button onClick={() => setIsAdding(true)} className="gap-2 shrink-0">
             <Plus className="h-4 w-4" />
             Kaynak Ekle
-          </button>
+          </Button>
+
 
           {/* Search & Filter Bar */}
           <div className="flex-1 flex flex-col sm:flex-row gap-3">
@@ -356,7 +360,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                   onClick={() => handleScan(source.id)}
                   disabled={scanning === source.id || !source.isActive}
                   title="Şimdi Tara"
-                  className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-muted-foreground hover:text-blue-500 transition-colors cursor-pointer disabled:opacity-40"
+                  className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-primary-500/10 dark:hover:bg-primary-500/15 text-muted-foreground hover:text-primary-500 dark:hover:text-primary-400 transition-colors cursor-pointer disabled:opacity-40 outline-none focus-ring"
                 >
                   {scanning === source.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -367,9 +371,9 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                 <button
                   onClick={() => handleToggle(source.id, source.isActive)}
                   title={source.isActive ? "Devre Dışı Bırak" : "Etkinleştir"}
-                  className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors cursor-pointer ${
+                  className={`h-8 w-8 flex items-center justify-center rounded-lg transition-colors cursor-pointer outline-none focus-ring ${
                     source.isActive
-                      ? "text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20"
+                      ? "text-success hover:bg-success/10 dark:hover:bg-success/15"
                       : "text-muted-foreground hover:bg-muted"
                   }`}
                 >
@@ -378,11 +382,12 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                 <button
                   onClick={() => handleDelete(source.id, source.name)}
                   title="Kaynağı Sil"
-                  className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer"
+                  className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 dark:hover:bg-red-500/15 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer outline-none focus-ring"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
               </div>
+
             </div>
           ))
         )}

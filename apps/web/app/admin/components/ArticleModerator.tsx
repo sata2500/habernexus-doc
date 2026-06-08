@@ -38,15 +38,16 @@ function getStatusInfo(status: string) {
 
 const getScoreColor = (score: number, isPlagiarism = false) => {
   if (isPlagiarism) {
-    if (score <= 30) return "text-green-500 bg-green-500/10 border-green-500/20 animate-none";
-    if (score <= 60) return "text-amber-500 bg-amber-500/10 border-amber-500/20 animate-none";
-    return "text-red-500 bg-red-500/10 border-red-500/20 font-black animate-pulse";
+    if (score <= 30) return "text-success bg-success/10 border-success/20 animate-none";
+    if (score <= 60) return "text-warning bg-warning/10 border-warning/20 animate-none";
+    return "text-error bg-error/10 border-error/20 font-black animate-pulse";
   } else {
-    if (score >= 70) return "text-green-500 bg-green-500/10 border-green-500/20";
-    if (score >= 40) return "text-amber-500 bg-amber-500/10 border-amber-500/20";
-    return "text-red-500 bg-red-500/10 border-red-500/20";
+    if (score >= 70) return "text-success bg-success/10 border-success/20";
+    if (score >= 40) return "text-warning bg-warning/10 border-warning/20";
+    return "text-error bg-error/10 border-error/20";
   }
 };
+
 
 export function ArticleModerator({ articles }: { articles: Article[] }) {
   const [localArticles, setLocalArticles] = useState<Article[]>(articles);
@@ -217,10 +218,11 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
             <button
               onClick={handleBulkDelete}
               disabled={isPending}
-              className="flex items-center gap-2 px-3 py-1.5 bg-red-500 hover:bg-red-600 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer active:scale-95"
+              className="flex items-center gap-2 px-3 py-1.5 bg-error hover:opacity-90 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer active:scale-95"
             >
               <Trash2 className="h-3.5 w-3.5" /> Sil
             </button>
+
             <button
               onClick={() => setSelectedIds(new Set())}
               className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
@@ -287,16 +289,17 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                     {/* Title & info */}
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 flex-wrap min-w-0">
-                        <p className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">
+                        <p className="text-sm font-bold line-clamp-2 group-hover:text-[var(--color-primary-500)] transition-colors flex-1 min-w-0 break-words whitespace-normal">
                           {article.title}
                         </p>
+
                         {article.aiPersonaId && (
                           <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-primary-500/10 border border-primary-500/20 text-primary-500 flex items-center gap-0.5" title="Yapay Zeka Makalesi">
                             <Sparkles className="h-2 w-2" /> AI
                           </span>
                         )}
                         {isAnalyzed && (article.plagiarismRate ?? 0) > 30 && (
-                          <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-amber-500/10 border border-amber-500/20 text-amber-500 flex items-center gap-0.5 animate-pulse" title="Yüksek İntihal Riski">
+                          <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-warning/10 border border-warning/20 text-warning flex items-center gap-0.5 animate-pulse" title="Yüksek İntihal Riski">
                             <AlertTriangle className="h-2.5 w-2.5" /> Risk
                           </span>
                         )}
@@ -325,21 +328,21 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                     {/* Quality scores (Desktop only) */}
                     <div className="hidden md:flex items-center gap-2 w-40 text-xs shrink-0">
                       {isAnalyzed ? (
-                        <div className="flex items-center gap-1.5">
+                        <div className="flex gap-1.5 flex-wrap">
                           <span className={cn(
                             "px-2 py-1 rounded font-bold border",
-                            (article.qualityScore ?? 0) >= 80 ? "bg-green-500/10 border-green-500/20 text-green-500" :
-                            (article.qualityScore ?? 0) >= 50 ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
-                            "bg-red-500/10 border-red-500/20 text-red-500"
+                            (article.qualityScore ?? 0) >= 80 ? "bg-success/10 border-success/20 text-success" :
+                            (article.qualityScore ?? 0) >= 50 ? "bg-warning/10 border-warning/20 text-warning" :
+                            "bg-error/10 border-error/20 text-error"
                           )}>
                             QS: {article.qualityScore}
                           </span>
                           {(article.plagiarismRate ?? 0) > 0 && (
                             <span className={cn(
                               "px-2 py-1 rounded font-bold border",
-                              (article.plagiarismRate ?? 0) <= 20 ? "bg-green-500/10 border-green-500/20 text-green-500" :
-                              (article.plagiarismRate ?? 0) <= 40 ? "bg-amber-500/10 border-amber-500/20 text-amber-500" :
-                              "bg-red-500/10 border-red-500/20 text-red-500"
+                              (article.plagiarismRate ?? 0) <= 20 ? "bg-success/10 border-success/20 text-success" :
+                              (article.plagiarismRate ?? 0) <= 40 ? "bg-warning/10 border-warning/20 text-warning" :
+                              "bg-error/10 border-error/20 text-error"
                             )}>
                               P: %{article.plagiarismRate}
                             </span>
@@ -355,13 +358,14 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                       <div className="w-24 sm:shrink-0">
                         <span className={cn(
                           "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border w-full sm:w-auto justify-center",
-                          variant === "success" ? "bg-green-500/10 border-green-500/25 text-green-500" :
-                          variant === "warning" ? "bg-amber-500/10 border-amber-500/25 text-amber-500" :
+                          variant === "success" ? "bg-success/10 border-success/25 text-success" :
+                          variant === "warning" ? "bg-warning/10 border-warning/25 text-warning" :
                           "bg-muted border-border/50 text-muted-foreground"
                         )}>
                           {icon}
                           {label}
                         </span>
+
                       </div>
 
                       <div className="w-20 flex items-center justify-end gap-1 shrink-0">
@@ -378,11 +382,12 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                             </button>
                             <button
                               onClick={() => handleDelete(article.id)}
-                              className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-500 border border-transparent hover:border-red-500/25 transition-colors cursor-pointer"
+                              className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-error/10 text-muted-foreground hover:text-error border border-transparent hover:border-error/25 transition-colors cursor-pointer"
                               title="Sil"
                             >
                               <Trash2 className="h-4 w-4" />
                             </button>
+
                           </>
                         )}
                       </div>

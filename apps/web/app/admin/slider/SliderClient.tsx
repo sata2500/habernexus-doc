@@ -177,20 +177,20 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
           </div>
           <Button 
             onClick={() => setEditingSlide({ order: slides.length, isActive: true })}
-            className="w-full sm:w-auto rounded-xl gap-2 bg-primary-500 hover:bg-primary-600 text-white font-bold shadow-lg shadow-primary-500/20 active:scale-95 transition-all cursor-pointer"
+            className="w-full sm:w-auto cursor-pointer"
           >
             <Plus className="h-4 w-4" /> Yeni Slide Ekle
           </Button>
         </div>
-
+ 
         <Reorder.Group axis="y" values={slides} onReorder={handleReorder} className="space-y-3">
           {slides.map((slide) => (
             <Reorder.Item 
               key={slide.id} 
               value={slide}
-              className="relative group"
+              className="relative group w-full"
             >
-              <Card className="p-3 sm:p-4 flex items-center gap-2 sm:gap-4 glass-strong border border-border/50 hover:border-primary-500/30 hover-lift hover:shadow-glow rounded-2xl transition-all cursor-default select-none shadow-soft">
+              <Card className="w-full min-w-0 p-3 sm:p-4 flex items-center gap-2 sm:gap-4 glass-strong border border-border/50 hover:border-primary-500/30 hover-lift hover:shadow-glow rounded-2xl transition-all cursor-default select-none shadow-soft">
                 <div className="cursor-grab active:cursor-grabbing p-1.5 sm:p-2 text-muted-foreground hover:text-foreground shrink-0">
                   <GripVertical className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
@@ -207,13 +207,14 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                     </div>
                   )}
                 </div>
-
+ 
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold truncate text-xs sm:text-sm">{slide.title || "Başlıksız Slide"}</h3>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{slide.description || "Açıklama yok"}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-2 break-words whitespace-normal">{slide.description || "Açıklama yok"}</p>
                   {slide.link && (
-                    <div className="flex items-center gap-1 mt-1 text-[9px] sm:text-[10px] text-primary-500 font-bold truncate">
-                      <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0" /> <span className="truncate">{slide.link}</span>
+                    <div className="flex items-center gap-1 mt-1 text-[9px] sm:text-[10px] text-primary-500 font-bold min-w-0 w-full">
+                      <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0" />
+                      <span className="truncate flex-1">{slide.link}</span>
                     </div>
                   )}
                 </div>

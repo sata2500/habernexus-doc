@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 interface Message {
   id: string;
@@ -73,22 +74,22 @@ export function SupportChat({ ticket }: Props) {
     <div className="flex flex-col h-[calc(100vh-280px)] min-h-[600px] glass-strong rounded-3xl border border-border overflow-hidden shadow-2xl">
       {/* Chat Header */}
       <div className="p-4 md:p-6 border-b border-border bg-muted/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shrink-0">
-        <div className="flex items-center gap-4">
-          <div className="h-12 w-12 rounded-2xl bg-primary-500/10 flex items-center justify-center text-primary-500 border border-primary-500/20">
+        <div className="flex items-center gap-4 min-w-0 w-full sm:w-auto">
+          <div className="h-12 w-12 rounded-2xl bg-primary-500/10 flex items-center justify-center text-primary-500 border border-primary-500/20 shrink-0">
             <Mail className="h-6 w-6" />
           </div>
-          <div>
-            <h2 className="font-bold text-lg leading-tight">{ticket.subject}</h2>
-            <p className="text-sm text-muted-foreground">{ticket.userEmail}</p>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-bold text-base md:text-lg leading-tight break-words whitespace-normal">{ticket.subject}</h2>
+            <p className="text-xs md:text-sm text-muted-foreground break-all">{ticket.userEmail}</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           {ticket.status !== "CLOSED" ? (
             <button
               onClick={() => handleStatusUpdate("CLOSED")}
               disabled={statusPending}
-              className="px-4 py-2 rounded-xl bg-green-500/10 text-green-600 text-sm font-bold border border-green-500/20 hover:bg-green-500/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 rounded-xl bg-success/10 text-success text-sm font-bold border border-success/20 hover:bg-success/20 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
             >
               {statusPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
               Çözüldü
@@ -97,7 +98,7 @@ export function SupportChat({ ticket }: Props) {
             <button
               onClick={() => handleStatusUpdate("OPEN")}
               disabled={statusPending}
-              className="px-4 py-2 rounded-xl bg-orange-500/10 text-orange-600 text-sm font-bold border border-orange-500/20 hover:bg-orange-500/20 transition-all cursor-pointer disabled:opacity-50"
+              className="px-4 py-2 rounded-xl bg-warning/10 text-warning text-sm font-bold border border-warning/20 hover:bg-warning/20 transition-all cursor-pointer disabled:opacity-50"
             >
               Tekrar Aç
             </button>
@@ -106,7 +107,7 @@ export function SupportChat({ ticket }: Props) {
           <button
             onClick={handleDelete}
             disabled={deletePending}
-            className="p-2 rounded-xl bg-red-500/10 text-red-600 hover:bg-red-500/20 transition-all border border-red-500/20 disabled:opacity-50 cursor-pointer"
+            className="p-2 rounded-xl bg-error/10 text-error hover:bg-error/20 transition-all border border-error/20 disabled:opacity-50 cursor-pointer"
             title="Bileti Sil"
           >
             {deletePending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
@@ -136,7 +137,7 @@ export function SupportChat({ ticket }: Props) {
               
               <div
                 className={cn(
-                  "p-4 rounded-2xl text-sm leading-relaxed shadow-sm",
+                  "p-4 rounded-2xl text-sm leading-relaxed shadow-sm break-words whitespace-pre-wrap",
                   isAdmin
                     ? "bg-primary-500 text-white rounded-tr-none"
                     : "bg-muted text-foreground rounded-tl-none border border-border"
@@ -162,7 +163,7 @@ export function SupportChat({ ticket }: Props) {
                               href={att.url} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[11px] font-medium"
+                              className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[11px] font-medium min-w-0 w-full"
                             >
                               <div className="h-6 w-6 rounded bg-white/10 flex items-center justify-center">
                                 <Mail className="h-3 w-3" />
@@ -197,13 +198,15 @@ export function SupportChat({ ticket }: Props) {
             disabled={ticket.status === "CLOSED" || isPending}
             className="w-full p-4 rounded-2xl bg-background/50 border border-border outline-none focus:ring-2 focus:ring-primary-500/50 transition-all resize-none text-sm pr-16 disabled:opacity-50"
           />
-          <button
+          <Button
             onClick={handleSend}
             disabled={!reply.trim() || isPending || ticket.status === "CLOSED"}
-            className="absolute bottom-4 right-4 h-10 w-10 rounded-xl bg-primary-500 text-white flex items-center justify-center hover:bg-primary-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-primary-500/20 cursor-pointer"
+            size="icon"
+            isLoading={isPending}
+            className="absolute bottom-4 right-4 shadow-lg shadow-primary-500/20"
           >
-            {isPending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
-          </button>
+            <Send className="h-5 w-5" />
+          </Button>
         </div>
         {ticket.status === "CLOSED" && (
           <p className="text-center text-xs text-muted-foreground mt-3">

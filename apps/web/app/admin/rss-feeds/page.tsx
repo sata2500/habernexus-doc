@@ -30,12 +30,12 @@ export default async function AdminRssFeedsPage({
   const categoryNames = categories.map((c) => c.name);
 
   const statCards = [
-    { label: "Toplam Öğe", value: stats.total, icon: Database, color: "text-blue-500 bg-blue-500/10" },
-    { label: "Bekleyen Analiz", value: stats.pending, icon: Rss, color: "text-amber-500 bg-amber-500/10" },
-    { label: "Yeni Öneriler", value: stats.analyzed, icon: Sparkles, color: "text-blue-500 bg-blue-500/10" },
-    { label: "Onaylananlar", value: stats.approved, icon: CheckCircle2, color: "text-primary-500 bg-primary-500/10" },
-    { label: "Haberleştirildi", value: stats.used, icon: BarChart3, color: "text-purple-500 bg-purple-500/10" },
-    { label: "Reddedildi", value: stats.dismissed, icon: X, color: "text-red-500 bg-red-500/10" },
+    { label: "Toplam Öğe", value: stats.total, icon: Database, color: "text-primary-500 bg-primary-500/10 border border-primary-500/5" },
+    { label: "Bekleyen Analiz", value: stats.pending, icon: Rss, color: "text-warning bg-warning/10 border border-warning/5" },
+    { label: "Yeni Öneriler", value: stats.analyzed, icon: Sparkles, color: "text-accent-500 bg-accent-500/10 border border-accent-500/5" },
+    { label: "Onaylananlar", value: stats.approved, icon: CheckCircle2, color: "text-success bg-success/10 border border-success/5" },
+    { label: "Haberleştirildi", value: stats.used, icon: BarChart3, color: "text-primary-600 bg-primary-600/10 border border-primary-600/5" },
+    { label: "Reddedildi", value: stats.dismissed, icon: X, color: "text-error bg-error/10 border border-error/5" },
   ];
 
   return (

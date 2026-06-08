@@ -11,9 +11,9 @@ export default async function AdminSupportPage() {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case "OPEN": return <AlertCircle className="h-4 w-4 text-orange-500" />;
-      case "PENDING": return <Clock className="h-4 w-4 text-blue-500" />;
-      case "CLOSED": return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case "OPEN": return <AlertCircle className="h-4 w-4 text-warning" />;
+      case "PENDING": return <Clock className="h-4 w-4 text-primary-500" />;
+      case "CLOSED": return <CheckCircle2 className="h-4 w-4 text-success" />;
       default: return null;
     }
   };
@@ -75,29 +75,29 @@ export default async function AdminSupportPage() {
             <Link 
               key={ticket.id} 
               href={`/admin/support/${ticket.id}`}
-              className="flex items-center justify-between p-5 hover:bg-primary-500/5 transition-all group cursor-pointer"
+              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-3 hover:bg-primary-500/5 transition-all group cursor-pointer"
             >
-              <div className="flex items-center gap-4 min-w-0 flex-1">
+              <div className="flex items-center gap-3 sm:gap-4 min-w-0 w-full sm:flex-1">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground shrink-0 group-hover:bg-primary-500/10 group-hover:text-primary-500 transition-colors">
                   <MessageSquare className="h-5 w-5" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <h3 className="font-bold text-sm truncate group-hover:text-[var(--color-primary-500)] transition-colors">{ticket.subject}</h3>
                   <p className="text-xs text-muted-foreground truncate mt-0.5">{ticket.userEmail}</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-6 shrink-0">
-                <div className="hidden sm:flex flex-col items-end">
-                    <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Son Etkinlik</span>
+              <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto shrink-0 border-t border-border/30 pt-2 sm:border-t-0 sm:pt-0">
+                <div className="flex flex-col items-start sm:items-end">
+                    <span className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">Son Etkinlik</span>
                     <span className="text-xs font-semibold mt-0.5">
                         {formatDistanceToNow(new Date(ticket.updatedAt), { addSuffix: true, locale: tr })}
                     </span>
                 </div>
-                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
-                    ticket.status === "OPEN" ? "bg-orange-500/10 text-orange-600 border-orange-500/20" :
-                    ticket.status === "PENDING" ? "bg-blue-500/10 text-blue-600 border-blue-500/20" :
-                    "bg-green-500/10 text-green-600 border-green-500/20"
+                <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider border shrink-0 ${
+                    ticket.status === "OPEN" ? "bg-warning/10 text-warning border-warning/20" :
+                    ticket.status === "PENDING" ? "bg-primary-500/10 text-primary-500 border-primary-500/20" :
+                    "bg-success/10 text-success border-success/20"
                 }`}>
                     {getStatusIcon(ticket.status)}
                     {getStatusText(ticket.status)}
