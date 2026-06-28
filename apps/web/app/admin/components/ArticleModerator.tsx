@@ -247,8 +247,8 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
             )}
           </button>
           <div className="flex-1">Makale Bilgisi</div>
-          <div className="hidden md:block w-24">İstatistik</div>
-          <div className="hidden md:block w-40">Analiz & Kalite</div>
+          <div className="hidden lg:block w-24">İstatistik</div>
+          <div className="hidden lg:block w-40">Analiz & Kalite</div>
           <div className="w-24">Durum</div>
           <div className="w-20 text-right">İşlemler</div>
         </div>
@@ -315,18 +315,23 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                             {article.category.name}
                           </span>
                         )}
-                        <span className="sm:hidden font-bold">• {article.viewCount.toLocaleString()} okunma</span>
+                        <span className="lg:hidden font-bold">• {article.viewCount.toLocaleString()} okunma</span>
+                        {isAnalyzed && (
+                          <span className="lg:hidden px-1.5 py-0.5 rounded-md bg-muted/30 border border-border/50 font-bold">
+                            QS: {article.qualityScore} • P: %{article.plagiarismRate}
+                          </span>
+                        )}
                       </div>
                     </div>
 
                     {/* Stats (Desktop only) */}
-                    <div className="hidden md:flex items-center gap-1.5 w-24 text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2 py-1 justify-center shrink-0">
+                    <div className="hidden lg:flex items-center gap-1.5 w-24 text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2 py-1 justify-center shrink-0">
                       <ArrowUpDown className="h-3 w-3 text-primary-500" />
                       {article.viewCount.toLocaleString()}
                     </div>
 
                     {/* Quality scores (Desktop only) */}
-                    <div className="hidden md:flex items-center gap-2 w-40 text-xs shrink-0">
+                    <div className="hidden lg:flex items-center gap-2 w-40 text-xs shrink-0">
                       {isAnalyzed ? (
                         <div className="flex gap-1.5 flex-wrap">
                           <span className={cn(

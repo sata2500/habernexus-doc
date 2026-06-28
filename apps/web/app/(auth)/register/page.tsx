@@ -102,7 +102,7 @@ export default function RegisterPage() {
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all dark:text-white"
+              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white"
               placeholder="Adınız Soyadınız"
               required
             />
@@ -115,7 +115,7 @@ export default function RegisterPage() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all dark:text-white"
+              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white"
               placeholder="ornek@habernexus.com"
               required
             />
@@ -128,7 +128,7 @@ export default function RegisterPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all dark:text-white"
+              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white"
               placeholder="••••••••"
               minLength={6}
               required
@@ -137,7 +137,7 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-4 flex justify-center items-center rounded-xl text-white font-medium bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/50 disabled:opacity-70 disabled:cursor-not-allowed transition-all transform active:scale-[0.98]"
+            className="w-full py-3 px-4 flex justify-center items-center rounded-xl text-white font-medium bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:ring-primary-500/50 disabled:opacity-70 disabled:cursor-not-allowed transition-all transform active:scale-[0.98]"
           >
             {loading ? (
               <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -151,7 +151,7 @@ export default function RegisterPage() {
         <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-800 text-center">
           <p className="text-neutral-500 dark:text-neutral-400">
             Zaten hesabınız var mı?{" "}
-            <Link href="/login" className="font-semibold text-neutral-900 dark:text-white hover:underline decoration-blue-500 decoration-2 underline-offset-2 transition-all">
+            <Link href="/login" className="font-semibold text-neutral-900 dark:text-white hover:underline decoration-primary-500 decoration-2 underline-offset-2 transition-all">
               Giriş yapın
             </Link>
           </p>

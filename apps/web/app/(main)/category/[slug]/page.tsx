@@ -32,6 +32,17 @@ function formatCount(n: number): string {
   return n.toString();
 }
 
+function formatRelative(date: Date): string {
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+  if (diffMinutes < 60) return `${Math.max(1, diffMinutes)} dk önce`;
+  if (diffHours < 24) return `${diffHours} saat önce`;
+  return `${diffDays} gün önce`;
+}
+
 export default async function CategoryPage({ params }: { params: Params }) {
   const { slug } = await params;
   const category = await getCategoryWithArticles(slug);
@@ -133,15 +144,20 @@ export default async function CategoryPage({ params }: { params: Params }) {
                       />
                       <span className="font-semibold text-foreground">{article.aiPersona?.name || article.author.name}</span>
                     </div>
-                    <div className="flex items-center gap-3">
-                      <span className="flex items-center gap-1 font-medium">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="flex items-center gap-1 font-medium shrink-0">
                         <Clock className="h-3.5 w-3.5" />
                         {estimateReadingTime(article.content)} dk
                       </span>
-                      <span className="flex items-center gap-1 font-medium">
+                      <span className="flex items-center gap-1 font-medium shrink-0">
                         <Eye className="h-3.5 w-3.5" />
                         {formatCount(article.viewCount)}
                       </span>
+                      {article.publishedAt && (
+                        <span className="flex items-center gap-1 font-medium shrink-0 text-muted-foreground/80">
+                          • {formatRelative(article.publishedAt)}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>

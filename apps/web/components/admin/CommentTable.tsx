@@ -48,13 +48,13 @@ export function CommentTable({ comments, onDelete, isAdmin }: Props) {
   return (
     <div className="mt-6 border border-border/50 rounded-[2rem] overflow-hidden shadow-soft glass-strong bg-background/50 animate-in fade-in duration-300">
       <div className="overflow-x-auto">
-        <table className="w-full block md:table text-left border-collapse">
+        <table className="w-full block md:table md:table-layout-fixed text-left border-collapse">
           <thead className="hidden md:table-header-group">
             <tr className="bg-muted/30 border-b border-border/50">
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Kullanıcı / Yorum</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Makale</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Tarih</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right">Aksiyon</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground w-[50%]">Kullanıcı / Yorum</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground w-[25%]">Makale</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground w-[13%]">Tarih</th>
+              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right w-[12%]">Aksiyon</th>
             </tr>
           </thead>
           <tbody className="block md:table-row-group divide-y divide-border/50">

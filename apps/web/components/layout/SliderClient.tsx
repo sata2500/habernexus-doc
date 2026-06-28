@@ -63,9 +63,8 @@ export function SliderClient({
       ref={containerRef}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
-      // Dış konteyner: slaytlardan ~%5 daha uzun → üst/alt arka plan görünür
-      // Mobil (1 slayt): 32/19  |  Masaüstü (2 slayt): 32/10
-      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-card transition-all duration-500 aspect-[32/19] lg:aspect-[32/10]"
+      // Dış konteyner: slaytlar ile tam uyumlu aspect-ratio (16:9 ve 32:9)
+      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-card transition-all duration-500 aspect-[16/9] lg:aspect-[32/9]"
     >
       <motion.div
         animate={{ x: `-${current * (100 / slides.length)}%` }}
@@ -104,8 +103,8 @@ export function SliderClient({
                   />
                 </div>
 
-                {/* Gradient örtüsü — tema ile uyumlu */}
-                <div className="absolute inset-0 z-20 bg-gradient-to-t from-card/90 via-card/40 dark:from-black/80 dark:via-black/30 to-transparent transition-colors duration-300" />
+                {/* Gradient örtüsü — Metin okunabilirliği için her zaman koyu gradyan */}
+                <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/85 via-black/40 to-transparent transition-colors duration-300" />
 
                 {/* İçerik */}
                 <div className="absolute inset-0 z-30 flex items-end justify-center pb-7 md:pb-10 px-4 md:px-5">
@@ -116,12 +115,12 @@ export function SliderClient({
                     className="w-full max-w-[95%] space-y-1.5 md:space-y-2.5 text-center"
                   >
                     {slide.title && (
-                      <h2 className="text-base md:text-xl lg:text-2xl font-bold font-display leading-tight line-clamp-2 text-foreground dark:text-white drop-shadow transition-colors duration-300">
+                      <h2 className="text-base md:text-xl lg:text-2xl font-bold font-display leading-tight line-clamp-2 text-white drop-shadow transition-colors duration-300">
                         {slide.title}
                       </h2>
                     )}
                     {itemsToShow === 1 && slide.description && (
-                      <p className="text-muted-foreground dark:text-white/80 text-xs md:text-sm line-clamp-2 font-medium leading-relaxed max-w-xl mx-auto hidden md:block transition-colors duration-300">
+                      <p className="text-white/85 text-xs md:text-sm line-clamp-2 font-medium leading-relaxed max-w-xl mx-auto hidden md:block transition-colors duration-300">
                         {slide.description}
                       </p>
                     )}

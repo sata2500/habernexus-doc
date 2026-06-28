@@ -179,7 +179,7 @@ export function Navbar({ categories = [], settings }: { categories?: Category[],
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
                 className={cn(
-                  "lg:hidden h-10 w-10 rounded-xl flex items-center justify-center",
+                  "lg:hidden h-11 w-11 rounded-xl flex items-center justify-center",
                   "text-muted-foreground hover:text-foreground",
                   "hover:bg-muted transition-all duration-200",
                   "focus-ring cursor-pointer"

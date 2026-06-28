@@ -20,7 +20,7 @@ export default async function AuthorLayout({ children }: { children: React.React
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12 flex flex-col md:flex-row gap-6 md:gap-8 min-h-[calc(100vh-4rem)] relative transition-colors duration-300">
+    <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12 flex flex-col md:flex-row gap-6 md:gap-8 min-h-[calc(100vh-4rem)] relative transition-colors duration-300">
       <AuthorSidebar session={session} />
 
       {/* ── İçerik Alanı ────────────────────────── */}

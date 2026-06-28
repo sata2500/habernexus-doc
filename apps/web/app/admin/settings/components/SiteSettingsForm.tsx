@@ -738,6 +738,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
               onChange={set("logoUrl")}
               type="article"
               aspectRatio="video"
+              objectFit="contain"
               className="mt-2"
             />
           </FieldGroup>
@@ -750,7 +751,8 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
               value={form.faviconUrl}
               onChange={set("faviconUrl")}
               type="profile"
-              aspectRatio="square"
+              aspectRatio="video"
+              objectFit="contain"
               className="mt-2"
             />
           </FieldGroup>

@@ -155,6 +155,7 @@
 }
 
 html {
+  font-size: clamp(12px, 0.4vw + 12.8px, 18px);
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

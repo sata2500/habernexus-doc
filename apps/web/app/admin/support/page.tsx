@@ -75,7 +75,7 @@ export default async function AdminSupportPage() {
             <Link 
               key={ticket.id} 
               href={`/admin/support/${ticket.id}`}
-              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-3 hover:bg-primary-500/5 transition-all group cursor-pointer"
+              className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-3 hover:bg-primary-500/5 transition-all group cursor-pointer w-full min-w-0"
             >
               <div className="flex items-center gap-3 sm:gap-4 min-w-0 w-full sm:flex-1">
                 <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground shrink-0 group-hover:bg-primary-500/10 group-hover:text-primary-500 transition-colors">

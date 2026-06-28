@@ -117,7 +117,7 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
             return (
               <div
                 key={article.id}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-5 bg-background hover:bg-muted/30 transition-colors"
+                className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 p-5 bg-background hover:bg-muted/30 transition-colors"
               >
                 {/* Article Info */}
                 <div className="flex items-start gap-3 min-w-0 flex-1">
@@ -154,7 +154,7 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
                 </div>
 
                 {/* Scores & Metrics */}
-                <div className="flex flex-wrap items-center justify-between md:justify-end gap-3 md:gap-4 w-full md:w-auto pt-3 md:pt-0 border-t border-border/40 md:border-t-0 shrink-0">
+                <div className="flex flex-wrap items-center justify-between lg:justify-end gap-3 lg:gap-4 w-full lg:w-auto pt-3 lg:pt-0 border-t border-border/40 lg:border-t-0 shrink-0">
                   <div className="flex flex-wrap items-center gap-2">
                     {isAnalyzed ? (
                       <button
@@ -194,7 +194,7 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
                     </span>
                   </div>
 
-                  <div className="flex items-center gap-1.5 border-t border-border/30 md:border-t-0 pt-2 md:pt-0 w-full md:w-auto justify-end md:border-l md:border-border md:pl-3">
+                  <div className="flex items-center gap-1.5 border-t border-border/30 lg:border-t-0 pt-2 lg:pt-0 w-full lg:w-auto justify-end lg:border-l lg:border-border lg:pl-3">
                     <Link
                       href={`/author/articles/${article.id}/edit`}
                       className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted/50 hover:bg-muted transition-colors text-muted-foreground hover:text-foreground border border-border/30"

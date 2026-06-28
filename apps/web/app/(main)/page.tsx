@@ -356,15 +356,20 @@ export default async function HomePage() {
                         />
                         <span className="font-medium">{article.aiPersona?.name || article.author.name}</span>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <span className="flex items-center gap-1">
+                      <div className="flex flex-wrap items-center gap-3">
+                        <span className="flex items-center gap-1 shrink-0">
                           <Clock className="h-3.5 w-3.5" />
                           {estimateReadingTime(article.content)} dk
                         </span>
-                        <span className="flex items-center gap-1">
+                        <span className="flex items-center gap-1 shrink-0">
                           <Eye className="h-3.5 w-3.5" />
                           {formatCount(article.viewCount)}
                         </span>
+                        {article.publishedAt && (
+                          <span className="flex items-center gap-1 shrink-0 text-muted-foreground/80">
+                            • {formatRelative(article.publishedAt)}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>

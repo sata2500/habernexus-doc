@@ -13,6 +13,7 @@ interface ImageUploaderProps {
   className?: string;
   aspectRatio?: "square" | "video";
   autoOptimize?: boolean;
+  objectFit?: "cover" | "contain";
 }
 
 export function ImageUploader({
@@ -22,6 +23,7 @@ export function ImageUploader({
   className,
   aspectRatio = "video",
   autoOptimize = false,
+  objectFit = "cover",
 }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,7 +96,10 @@ export function ImageUploader({
               src={value} 
               alt="Yüklenen görsel" 
               fill
-              className="object-cover transition-transform duration-500 group-hover:scale-105" 
+              className={cn(
+                objectFit === "contain" ? "object-contain p-4 bg-muted/10" : "object-cover",
+                "transition-transform duration-500 group-hover:scale-105"
+              )} 
             />
             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <button

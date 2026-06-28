@@ -74,7 +74,7 @@ export function BookmarkButton({ articleId }: Props) {
         "p-2 rounded-full transition-all duration-200 cursor-pointer shadow-none flex items-center justify-center",
         isBookmarked
           ? "bg-primary-500 text-white hover:bg-primary-600 scale-110 shadow-lg shadow-primary-500/30"
-          : "bg-muted text-muted-foreground hover:text-primary-50"
+          : "bg-muted text-muted-foreground hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20"
       )}
       aria-label="Kaydet"
       title="Daha sonra okumak için kaydet"

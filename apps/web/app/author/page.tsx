@@ -32,15 +32,15 @@ export default async function AuthorDashboardPage() {
   return (
     <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* ── Başlık ────────────────────────────── */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold font-display">
             Hoş Geldin, {session?.user.name.split(" ")[0]} 👋
           </h1>
           <p className="text-muted-foreground text-sm">Şu anki durum özetin ve hızlı erişim alanın.</p>
         </div>
-        <Link href="/author/articles/new" className="w-full sm:w-auto">
-          <Button className="w-full sm:w-auto gap-2">
+        <Link href="/author/articles/new" className="w-full lg:w-auto">
+          <Button className="w-full lg:w-auto gap-2">
             <PlusCircle className="h-4 w-4" />
             Yeni Haber Yaz
           </Button>
@@ -48,13 +48,13 @@ export default async function AuthorDashboardPage() {
       </div>
 
       {/* ── İstatistik Kartları ───────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="flex flex-wrap gap-4">
         {[
           { icon: Newspaper, label: "Toplam Makale", value: articles.length, color: "text-primary-500 bg-primary-500/10 border border-primary-500/5" },
           { icon: TrendingUp, label: "Toplam Görüntülenme", value: totalViews.toLocaleString("tr-TR"), color: "text-success bg-success/10 border border-success/5" },
           { icon: FileText, label: "Taslak", value: drafts.length, color: "text-warning bg-warning/10 border border-warning/5" },
         ].map((stat) => (
-          <div key={stat.label} className="glass-strong rounded-2xl p-4 sm:p-5 border border-border shadow-soft flex items-center gap-4">
+          <div key={stat.label} className="flex-1 min-w-[200px] glass-strong rounded-2xl p-4 sm:p-5 border border-border shadow-soft flex items-center gap-4">
             <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
               <stat.icon className="h-6 w-6" />
             </div>
@@ -84,8 +84,8 @@ export default async function AuthorDashboardPage() {
             {(articles as AuthorArticle[]).slice(0, 5).map((article) => {
               const { label, variant } = getStatusLabel(article.status);
               return (
-                <div key={article.id} className="flex items-center justify-between gap-4 p-3.5 sm:p-4 bg-background hover:bg-muted/40 transition-colors">
-                  <div className="flex items-center gap-3 min-w-0">
+                <div key={article.id} className="flex items-center justify-between gap-4 p-3.5 sm:p-4 bg-background hover:bg-muted/40 transition-colors w-full min-w-0">
+                  <div className="flex items-center gap-3 min-w-0 flex-1">
                     <div className="h-10 w-10 shrink-0 rounded-xl bg-muted flex items-center justify-center">
                       <FileText className="h-5 w-5 text-muted-foreground" />
                     </div>
@@ -133,7 +133,7 @@ export default async function AuthorDashboardPage() {
               const score = item.aiScore ?? 50;
               const scoreColor = score >= 75 ? "text-success bg-success/10" : score >= 55 ? "text-warning bg-warning/10" : "text-muted-foreground bg-muted";
               return (
-                <div key={item.id} className="flex items-center gap-4 p-4 hover:bg-muted/40 transition-colors">
+                <div key={item.id} className="flex items-center gap-4 p-4 hover:bg-muted/40 transition-colors w-full min-w-0">
                   <div className={`h-9 w-9 shrink-0 rounded-xl flex items-center justify-center text-xs font-bold ${scoreColor}`}>
                     {score}
                   </div>
