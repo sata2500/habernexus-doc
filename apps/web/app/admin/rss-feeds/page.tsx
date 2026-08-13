@@ -1,4 +1,4 @@
-import { getRssSources, getRssSuggestions, getRssStats } from "./actions";
+import { getRssSources, getRssSuggestions, getRssStats, getGoogleTrendOpportunities } from "./actions";
 import { getSystemSettings } from "./cron-actions";
 import { prisma } from "@/lib/prisma";
 import { FeedSourceManager } from "./components/FeedSourceManager";
@@ -6,6 +6,7 @@ import { SuggestionsList } from "./components/SuggestionsList";
 import { SuggestionsFilter } from "./components/SuggestionsFilter";
 import { AdminTriggerButtons } from "./components/AdminTriggerButtons";
 import { CronSettingsCard } from "./components/CronSettingsCard";
+import { GoogleTrendsBar } from "./components/GoogleTrendsBar";
 import { Rss, Sparkles, Database, CheckCircle2, X, BarChart3 } from "lucide-react";
 
 export default async function AdminRssFeedsPage({
@@ -15,7 +16,7 @@ export default async function AdminRssFeedsPage({
 }) {
   const params = await searchParams;
   
-  const [sources, suggestions, stats, systemSettings, categories] = await Promise.all([
+  const [sources, suggestions, stats, systemSettings, categories, trends] = await Promise.all([
     getRssSources(),
     getRssSuggestions({
       status: params.status,
@@ -25,6 +26,7 @@ export default async function AdminRssFeedsPage({
     getRssStats(),
     getSystemSettings(),
     prisma.category.findMany({ select: { name: true }, orderBy: { name: "asc" } }),
+    getGoogleTrendOpportunities(),
   ]);
 
   const categoryNames = categories.map((c) => c.name);
@@ -78,6 +80,11 @@ export default async function AdminRssFeedsPage({
           hasNewsletter={!!systemSettings.qStashNewsletterId}
           retentionDays={systemSettings.rssRetentionDays}
         />
+      </section>
+
+      {/* ── Google Trends Fırsatları ── */}
+      <section>
+        <GoogleTrendsBar trends={trends} />
       </section>
 
       {/* ── RSS Kaynakları ── */}

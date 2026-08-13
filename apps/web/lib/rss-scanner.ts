@@ -109,6 +109,19 @@ export async function scanRssSource(
         imageUrl = item.enclosure.url;
       }
 
+      // Maksimum Haber Yaşı Kontrolü (Admin Panelinden Yönetilebilir)
+      const settings = await prisma.systemSettings.findFirst();
+      const maxAgeHours = settings?.maxNewsAgeHours ?? 24;
+      const pubDate = item.pubDate ? new Date(item.pubDate) : null;
+      let initialStatus: "PENDING" | "EXPIRED_STALE" = "PENDING";
+
+      if (maxAgeHours > 0 && pubDate) {
+        const ageInHours = (Date.now() - pubDate.getTime()) / (1000 * 60 * 60);
+        if (ageInHours > maxAgeHours) {
+          initialStatus = "EXPIRED_STALE";
+        }
+      }
+
       await prisma.rssFeedItem.create({
         data: {
           sourceId,
@@ -117,8 +130,8 @@ export async function scanRssSource(
           urlHash,
           excerpt: cleanText(item.contentSnippet || item.content || item.summary || ""),
           imageUrl,
-          publishedAt: item.pubDate ? new Date(item.pubDate) : null,
-          status: "PENDING",
+          publishedAt: pubDate,
+          status: initialStatus,
         },
       });
       added++;

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import {
   ExternalLink,
@@ -123,7 +124,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
 
           {/* AI Suggested Titles */}
           {analysis?.suggestedTitles && analysis.suggestedTitles.length > 0 && (
-            <div className="bg-gradient-to-br from-primary-500/5 to-purple-500/5 border border-primary-500/15 rounded-xl p-3">
+            <div className="bg-gradient-to-br from-primary-500/5 to-primary-500/10 border border-primary-500/15 rounded-xl p-3">
               <p className="text-[10px] text-primary-500 font-bold uppercase tracking-wider mb-2 flex items-center gap-1">
                 <Sparkles className="h-3 w-3" />
                 Önerilen Başlıklar
@@ -216,13 +217,12 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
             <div className="overflow-y-auto p-5 space-y-6">
               {item.imageUrl ? (
                 <div className="w-full aspect-[16/9] rounded-xl overflow-hidden bg-muted relative border border-border">
-                  <img
+                  <Image
                     src={item.imageUrl}
                     alt={item.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = "none";
-                    }}
+                    fill
+                    className="object-cover"
+                    unoptimized
                   />
                 </div>
               ) : (

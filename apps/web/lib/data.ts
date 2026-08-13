@@ -150,7 +150,7 @@ export const getRecommendedArticles = cache(async (userId?: string, limit: numbe
   if (isMissingDb) return [];
   try {
     if (!userId) {
-      return await getTrendingArticles(limit);
+      return []; // Oturum açmamış ziyaretçilere "Sizin İçin" özel haberler bölümü gösterilmez
     }
 
     // Kullanıcının bookmark ettiği haberlerin kategorilerini çek

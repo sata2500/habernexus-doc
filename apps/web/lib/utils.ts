@@ -114,3 +114,17 @@ export function getAppUrl() {
   // Fallback: Yerel geliştirme
   return process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
 }
+
+/**
+ * Generates bulletproof CSS variables for 360-degree card hover borders and glows.
+ * Handles missing/null categories and invalid color variables safely.
+ */
+export function getCardGlowStyles(color?: string | null) {
+  const hexColor = color && color.startsWith("#") ? color : "#6366f1";
+  return {
+    "--art-color": hexColor,
+    "--art-glow": `${hexColor}40`,
+    "--cat-color": hexColor,
+    "--cat-glow": `${hexColor}40`,
+  } as React.CSSProperties;
+}

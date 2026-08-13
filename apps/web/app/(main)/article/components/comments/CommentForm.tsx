@@ -43,7 +43,7 @@ export function CommentForm({ articleId, userId, parentId, onSuccess, onCancel, 
   return (
     <div className={`flex flex-col gap-3 w-full ${isReply ? "mt-4 ml-8" : ""}`}>
       {error && (
-        <div className="p-3.5 text-xs rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-semibold animate-in fade-in slide-in-from-top-1 duration-300">
+        <div className="p-3.5 text-xs rounded-xl bg-primary-500/10 border border-primary-500/20 text-primary-500 font-semibold animate-in fade-in slide-in-from-top-1 duration-300">
           {error}
         </div>
       )}

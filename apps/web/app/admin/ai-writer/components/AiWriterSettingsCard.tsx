@@ -91,13 +91,13 @@ function StylishSelect({
           </span>
           <div className="flex items-center gap-1 shrink-0">
             {selectedOption?.isFree && (
-              <span className="px-1.5 py-0.5 bg-green-500/10 text-green-600 text-[9px] rounded-md font-bold border border-green-500/10">FREE</span>
+              <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-600 text-[9px] rounded-md font-bold border border-primary-500/10">FREE</span>
             )}
             {selectedOption?.supportsSearch && (
-              <span className="px-1.5 py-0.5 bg-blue-500/10 text-blue-600 text-[9px] rounded-md font-bold border border-blue-500/10">SEARCH</span>
+              <span className="px-1.5 py-0.5 bg-primary-/10 text-primary- text-[9px] rounded-md font-bold border border-primary-/10">SEARCH</span>
             )}
             {selectedOption?.supportsVision && (
-              <span className="px-1.5 py-0.5 bg-purple-500/10 text-purple-600 text-[9px] rounded-md font-bold border border-purple-500/10">VISION</span>
+              <span className="px-1.5 py-0.5 bg-primary-/10 text-primary- text-[9px] rounded-md font-bold border border-primary-/10">VISION</span>
             )}
           </div>
         </div>
@@ -133,11 +133,11 @@ function StylishSelect({
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
                       <span className="text-[9px] text-neutral-400 font-mono truncate max-w-[150px]">{opt.id}</span>
-                      {opt.isFree && <span className="px-1 py-0 bg-green-500/10 text-green-600 text-[8px] rounded font-bold border border-green-500/10">FREE</span>}
-                      {opt.supportsSearch && <span className="px-1 py-0 bg-blue-500/10 text-blue-600 text-[8px] rounded font-bold border border-blue-500/10">SEARCH</span>}
-                      {opt.supportsVision && <span className="px-1 py-0 bg-purple-500/10 text-purple-600 text-[8px] rounded font-bold border border-purple-500/10">VISION</span>}
-                      {opt.supportsT2I && <span className="px-1 py-0 bg-orange-500/10 text-orange-600 text-[8px] rounded font-bold border border-orange-500/10">T2I</span>}
-                      {opt.supportsI2I && <span className="px-1 py-0 bg-pink-500/10 text-pink-600 text-[8px] rounded font-bold border border-pink-500/10">I2I</span>}
+                      {opt.isFree && <span className="px-1 py-0 bg-primary-500/10 text-primary-600 text-[8px] rounded font-bold border border-primary-500/10">FREE</span>}
+                      {opt.supportsSearch && <span className="px-1 py-0 bg-primary-/10 text-primary- text-[8px] rounded font-bold border border-primary-/10">SEARCH</span>}
+                      {opt.supportsVision && <span className="px-1 py-0 bg-primary-/10 text-primary- text-[8px] rounded font-bold border border-primary-/10">VISION</span>}
+                      {opt.supportsT2I && <span className="px-1 py-0 bg-primary-/10 text-primary- text-[8px] rounded font-bold border border-primary-/10">T2I</span>}
+                      {opt.supportsI2I && <span className="px-1 py-0 bg-primary-/10 text-primary- text-[8px] rounded font-bold border border-primary-/10">I2I</span>}
                     </div>
                   </button>
                 ))
@@ -168,15 +168,16 @@ export function AiWriterSettingsCard({
   const [prompt, setPrompt] = useState(initialPrompt);
   const [imagePrompt, setImagePrompt] = useState(initialImagePrompt);
   const [model, setModel] = useState(initialModel);
-  const [imageModel, setImageModel] = useState(initialImageModel);
   const [useRssImage, setUseRssImage] = useState(initialUseRssImage);
   const [searchEnabled, setSearchEnabled] = useState(initialSearchEnabled);
   const [analyzerModel, setAnalyzerModel] = useState(initialAnalyzerModel);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const textModels = availableModels.filter(m => m.type === "TEXT" || m.type === "MULTIMODAL");
-  const imageModels = availableModels.filter(m => m.type === "IMAGE");
+  const textModels = availableModels.filter(m => m.type === "TEXT" || m.type === "MULTIMODAL" || (Array.isArray((m as unknown as Record<string, unknown>).outputModalities) && ((m as unknown as Record<string, unknown>).outputModalities as string[]).includes("text")));
+  const imageModels = availableModels.filter(m => m.type === "IMAGE" || m.supportsT2I || (Array.isArray((m as unknown as Record<string, unknown>).outputModalities) && ((m as unknown as Record<string, unknown>).outputModalities as string[]).includes("image")));
+
+  const [imageModel, setImageModel] = useState(() => initialImageModel || (imageModels[0]?.id ?? ""));
 
   const handleSave = async () => {
     setLoading(true);
@@ -287,7 +288,7 @@ export function AiWriterSettingsCard({
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="flex-1 w-full flex items-center justify-between p-5 bg-[var(--card)] text-[var(--card-fg)] rounded-[1.5rem] border border-border transition-all hover:bg-black/5 dark:hover:bg-white/5">
             <div className="flex items-center gap-4">
-              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${useRssImage ? "bg-green-500/10 text-green-500" : "bg-red-500/10 text-red-500"}`}>
+              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${useRssImage ? "bg-primary-500/10 text-primary-500" : "bg-primary-500/10 text-primary-500"}`}>
                 <ImageIcon className="h-6 w-6" />
               </div>
               <div>
@@ -305,7 +306,7 @@ export function AiWriterSettingsCard({
           
           <div className="flex-1 w-full flex items-center justify-between p-5 bg-[var(--card)] text-[var(--card-fg)] rounded-[1.5rem] border border-border transition-all hover:bg-black/5 dark:hover:bg-white/5">
              <div className="flex items-center gap-4">
-              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${searchEnabled ? "bg-amber-500/10 text-amber-500" : "bg-neutral-500/10 text-neutral-500"}`}>
+              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${searchEnabled ? "bg-primary-/10 text-primary-" : "bg-neutral-500/10 text-neutral-500"}`}>
                 <Sparkles className="h-6 w-6" />
               </div>
               <div>

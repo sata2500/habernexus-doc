@@ -111,7 +111,7 @@ export function SuggestionsFilter({ categories }: Props) {
         {(search || status !== "ANALYZED" || category !== "all") && (
           <button
             onClick={clearFilters}
-            className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider ml-auto"
+            className="text-[10px] font-bold text-primary-500 hover:text-primary-600 uppercase tracking-wider ml-auto"
           >
             Filtreleri Temizle
           </button>

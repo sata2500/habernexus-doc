@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
 import {
@@ -89,7 +90,7 @@ export function Navbar({ categories = [], settings }: { categories?: Category[],
             >
               {settings?.logoUrl ? (
                 <div className="h-9 w-9 relative rounded-xl overflow-hidden group-hover:scale-105 transition-transform shrink-0 border border-border/50">
-                  <img src={settings.logoUrl} alt={siteName} className="object-cover w-full h-full" />
+                  <Image src={settings.logoUrl} alt={siteName} fill className="object-cover" sizes="36px" unoptimized />
                 </div>
               ) : (
                 <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform shrink-0">

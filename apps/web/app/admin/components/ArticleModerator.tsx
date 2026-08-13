@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useTransition, useMemo, useEffect } from "react";
+import { useState, useTransition, useMemo } from "react";
 import { 
   updateArticleStatus, 
   deleteArticle, 
   bulkUpdateArticleStatus, 
   bulkDeleteArticles 
 } from "../actions";
-import { Badge } from "@/components/ui/Badge";
 import { 
-  Loader2, 
   Trash2, 
   Eye, 
   EyeOff, 
@@ -36,18 +34,6 @@ function getStatusInfo(status: string) {
   return { label: status, variant: "default" as const, icon: <XCircle className="h-3 w-3" /> };
 }
 
-const getScoreColor = (score: number, isPlagiarism = false) => {
-  if (isPlagiarism) {
-    if (score <= 30) return "text-success bg-success/10 border-success/20 animate-none";
-    if (score <= 60) return "text-warning bg-warning/10 border-warning/20 animate-none";
-    return "text-error bg-error/10 border-error/20 font-black animate-pulse";
-  } else {
-    if (score >= 70) return "text-success bg-success/10 border-success/20";
-    if (score >= 40) return "text-warning bg-warning/10 border-warning/20";
-    return "text-error bg-error/10 border-error/20";
-  }
-};
-
 
 export function ArticleModerator({ articles }: { articles: Article[] }) {
   const [localArticles, setLocalArticles] = useState<Article[]>(articles);
@@ -63,12 +49,13 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
   // Seçim State'i
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
-  // Sync prop updates to local state
-  useEffect(() => {
+  const [prevArticles, setPrevArticles] = useState(articles);
+  if (articles !== prevArticles) {
+    setPrevArticles(articles);
     setLocalArticles(articles);
-  }, [articles]);
+  }
 
-  const handleAnalysisComplete = (updatedArticle: any) => {
+  const handleAnalysisComplete = (updatedArticle: Partial<Article> & { id: string }) => {
     setLocalArticles((prev) =>
       prev.map((art) => (art.id === updatedArticle.id ? { ...art, ...updatedArticle } : art))
     );

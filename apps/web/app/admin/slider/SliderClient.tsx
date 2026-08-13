@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ImageUploader } from "@/components/ui/ImageUploader";
@@ -196,10 +197,13 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 </div>
                 
                 <div className="relative h-12 w-20 sm:h-20 sm:w-32 rounded-lg overflow-hidden shrink-0 border border-border">
-                  <img 
+                  <Image 
                     src={slide.imageUrl} 
                     alt={slide.title || ""} 
-                    className="h-full w-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 80px, 128px"
+                    unoptimized
                   />
                   {!slide.isActive && (
                     <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] flex items-center justify-center">
@@ -232,7 +236,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                     variant="ghost" 
                     size="icon"
                     onClick={() => handleDeleteSlide(slide.id)}
-                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-red-500/10 hover:text-red-500 cursor-pointer"
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-primary-500/10 hover:text-primary-500 cursor-pointer"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

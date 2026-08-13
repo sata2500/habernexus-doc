@@ -18,13 +18,17 @@ export async function syncModelsFromOpenRouter() {
     const models = json.data;
     if (!Array.isArray(models)) throw new Error("Geçersiz API yanıtı");
 
+    const fetchedIds = new Set<string>();
     let updatedCount = 0;
+
     for (const m of models) {
+      fetchedIds.add(m.id);
+
       // Ücret kontrolü
       const isFree = parseFloat(m.pricing?.prompt || "0") === 0 && 
                      parseFloat(m.pricing?.completion || "0") === 0;
 
-      // Yetenek ve Modalite Analizi
+      // Yetenek ve Modalite Analizi (OpenRouter mimarisinden)
       const inputModalities = m.architecture?.input_modalities || ["text"];
       const outputModalities = m.architecture?.output_modalities || ["text"];
       const supportedParameters = m.supported_parameters || [];
@@ -35,9 +39,11 @@ export async function syncModelsFromOpenRouter() {
       const supportsT2I = outputModalities.includes("image");
       const supportsI2I = inputModalities.includes("image") && outputModalities.includes("image");
 
-      // Model Tipi Belirleme
+      // Model Tipi Belirleme (Text, Image veya Multimodal)
       let type: "TEXT" | "IMAGE" | "MULTIMODAL" = "TEXT";
-      if (supportsT2I || supportsI2I) {
+      if ((supportsVision && supportsT2I) || (inputModalities.includes("image") && outputModalities.includes("image"))) {
+        type = "MULTIMODAL";
+      } else if (supportsT2I) {
         type = "IMAGE";
       } else if (supportsVision) {
         type = "MULTIMODAL";
@@ -74,9 +80,23 @@ export async function syncModelsFromOpenRouter() {
       });
       updatedCount++;
     }
-    
+
+    // OpenRouter'da artık var olmayan / kaldırılan eski modelleri pasife al
+    const allDbModels = await prisma.aiModel.findMany({ select: { id: true } });
+    const removedModelIds = allDbModels
+      .map((m) => m.id)
+      .filter((id) => !fetchedIds.has(id));
+
+    if (removedModelIds.length > 0) {
+      await prisma.aiModel.updateMany({
+        where: { id: { in: removedModelIds } },
+        data: { isActive: false },
+      });
+      console.log(`[Model Sync] OpenRouter'da bulunmayan ${removedModelIds.length} eski model pasife alındı.`);
+    }
+
     revalidatePath("/admin/ai-writer/models");
-    return { success: true, count: updatedCount };
+    return { success: true, count: updatedCount, deactivated: removedModelIds.length };
   } catch (err) {
     console.error("Sync Error:", err);
     return { success: false, error: err instanceof Error ? err.message : String(err) };

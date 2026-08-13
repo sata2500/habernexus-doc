@@ -108,13 +108,13 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
     <div className="space-y-8">
       {/* Messages */}
       {errorMsg && (
-        <div className="p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-xl flex items-center gap-2">
+        <div className="p-4 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-xl flex items-center gap-2">
           <AlertCircle className="h-5 w-5" />
           <span className="text-sm font-medium">{errorMsg}</span>
         </div>
       )}
       {successMsg && (
-        <div className="p-4 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800 rounded-xl flex items-center gap-2">
+        <div className="p-4 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-xl flex items-center gap-2">
           <CheckCircle2 className="h-5 w-5" />
           <span className="text-sm font-medium">{successMsg}</span>
         </div>
@@ -242,7 +242,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                     <button
                         onClick={() => handleDelete(cat.id, cat._count.articles)}
                         disabled={pending || cat._count.articles > 0}
-                        className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 text-muted-foreground hover:text-primary-500 transition-colors cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         title={cat._count.articles > 0 ? "İçinde makale varken silinemez" : "Sil"}
                     >
                         {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}

@@ -41,7 +41,7 @@ export function RSSFeedList({ feeds }: { feeds: Feed[] }) {
                 <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${
                   feed.type === 'global' ? 'bg-primary-500/10 text-primary-600' : 
                   feed.type === 'language' ? 'bg-accent-500/10 text-accent-600' : 
-                  'bg-orange-500/10 text-orange-600'
+                  'bg-primary-500/10 text-primary-600'
                 }`}>
                   <Rss className="h-5 w-5" />
                 </div>
@@ -66,7 +66,7 @@ export function RSSFeedList({ feeds }: { feeds: Feed[] }) {
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.5, opacity: 0 }}
-                      className="flex items-center gap-2 text-green-600"
+                      className="flex items-center gap-2 text-primary-600"
                     >
                       <Check className="h-4 w-4" /> Kopyalandı
                     </motion.span>

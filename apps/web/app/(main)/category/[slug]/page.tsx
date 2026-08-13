@@ -8,6 +8,7 @@ import { Clock, Eye, Newspaper } from "lucide-react";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import Image from "next/image";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
+import { getCardGlowStyles } from "@/lib/utils";
 
 // Async Params Arayüzü
 type Params = Promise<{ slug: string }>;
@@ -81,15 +82,12 @@ export default async function CategoryPage({ params }: { params: Params }) {
       {category.articles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {category.articles.map((article) => (
-            <Link key={article.id} href={`/article/${article.slug}`} className="group block shine rounded-2xl">
+            <Link key={article.id} href={`/article/${article.slug}`} className="group block">
               <Card 
                 variant="interactive" 
                 noPadding 
-                className="overflow-hidden h-full flex flex-col border border-border/40 bg-card/65 hover:bg-card hover:border-[var(--cat-color)] hover:shadow-[0_0_25px_var(--cat-glow)] transition-all duration-300"
-                style={{
-                  "--cat-color": category.color || "var(--color-primary-500)",
-                  "--cat-glow": `${category.color || "var(--color-primary-500)"}12`
-                } as React.CSSProperties}
+                className="overflow-hidden h-full flex flex-col shine rounded-2xl card-360-border bg-card/65 hover:bg-card transition-all duration-300 ease-out"
+                style={getCardGlowStyles(category.color)}
               >
                 <div className="h-48 relative overflow-hidden bg-neutral-100 dark:bg-neutral-800">
                   {article.coverImage ? (

@@ -34,7 +34,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <span className="text-[10px] text-muted-foreground">{session.user.name}</span>
           </div>
         </div>
-        <SignOutButton className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-500 hover:text-red-600 hover:bg-red-500/5 transition-colors cursor-pointer" />
+        <SignOutButton className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-primary-500 hover:text-primary-600 hover:bg-primary-500/5 transition-colors cursor-pointer" />
       </div>
 
       {/* ── Sidebar Navigasyon (Masaüstü) ────────────────────────── */}

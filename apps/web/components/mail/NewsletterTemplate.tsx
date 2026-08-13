@@ -76,7 +76,7 @@ export const NewsletterTemplate = ({
                   className="mx-auto"
                 />
               </Link>
-              <Text className="text-blue-100 text-[12px] font-bold uppercase tracking-[2px] mt-2 m-0">
+              <Text className="text-primary-100 text-[12px] font-bold uppercase tracking-[2px] mt-2 m-0">
                 GÜNLÜK HABER ÖZETİ
               </Text>
             </Section>
@@ -108,7 +108,7 @@ export const NewsletterTemplate = ({
                 <Section className="mt-6">
                   <Link
                     href={`${BASE_URL}/article/${mainArticle.slug}`}
-                    className="bg-brand text-white px-8 py-4 rounded-xl font-bold text-sm inline-block shadow-lg shadow-blue-500/20"
+                    className="bg-brand text-white px-8 py-4 rounded-xl font-bold text-sm inline-block shadow-lg shadow-primary-500/20"
                   >
                     Haberi Oku →
                   </Link>
@@ -185,7 +185,7 @@ export const NewsletterTemplate = ({
               
               <Link
                 href={unsubscribeUrl}
-                className="text-red-500 text-[12px] font-bold underline"
+                className="text-primary-500 text-[12px] font-bold underline"
               >
                 Abonelikten Ayrıl
               </Link>

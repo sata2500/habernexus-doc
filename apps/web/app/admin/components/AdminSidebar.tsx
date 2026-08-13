@@ -5,13 +5,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
   ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare, 
-  Image, Home, PenTool, Mail, LayoutTemplate, Rss, Wand2, Settings2, Menu, X 
+  Image, Home, PenTool, Mail, LayoutTemplate, Rss, Wand2, Settings2, Menu, X, TrendingUp 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "../../dashboard/components/SignOutButton";
 
 const navItems = [
   { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { name: "Google Trends", href: "/admin/google-trends", icon: TrendingUp },
   { name: "RSS Önerileri", href: "/admin/rss-feeds", icon: Rss },
   { name: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
   { name: "Medya Kütüphanesi", href: "/admin/media", icon: Image },
@@ -39,11 +40,13 @@ interface SessionProps {
 export function AdminSidebar({ session }: SessionProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
   // Sayfa değiştikçe çekmeceyi otomatik kapat
-  useEffect(() => {
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setIsOpen(false);
-  }, [pathname]);
+  }
 
   // Çekmece açıkken arka plan kaydırmasını engelle
   useEffect(() => {
@@ -106,7 +109,7 @@ export function AdminSidebar({ session }: SessionProps) {
           Yazar Masasına Geç
         </Link>
         <div className="pt-2 border-t border-border/40">
-          <SignOutButton className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:text-red-600 hover:bg-red-500/5 transition-all cursor-pointer" />
+          <SignOutButton className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-primary-500 hover:text-primary-600 hover:bg-primary-500/5 transition-all cursor-pointer" />
         </div>
       </div>
     );
@@ -125,8 +128,8 @@ export function AdminSidebar({ session }: SessionProps) {
             <Menu className="h-5 w-5 text-foreground" />
           </button>
           <div className="flex items-center gap-2 ml-1">
-            <div className="h-8 w-8 rounded-lg bg-red-500/10 flex items-center justify-center border border-red-500/20 shrink-0">
-              <ShieldCheck className="h-4 w-4 text-red-500" />
+            <div className="h-8 w-8 rounded-lg bg-primary-500/10 flex items-center justify-center border border-primary-500/20 shrink-0">
+              <ShieldCheck className="h-4 w-4 text-primary-500" />
             </div>
             <div>
               <h2 className="font-bold font-display text-sm leading-none text-foreground">Admin Paneli</h2>
@@ -136,7 +139,7 @@ export function AdminSidebar({ session }: SessionProps) {
         </div>
         
         {/* Hızlı Çıkış */}
-        <SignOutButton className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-500 hover:text-red-600 hover:bg-red-500/5 transition-colors cursor-pointer" />
+        <SignOutButton className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-primary-500 hover:text-primary-600 hover:bg-primary-500/5 transition-colors cursor-pointer" />
       </div>
 
       {/* ── Mobil Çekmece Menüsü (Mobile Drawer Menu) ────────────────────────── */}
@@ -157,8 +160,8 @@ export function AdminSidebar({ session }: SessionProps) {
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-border/40">
             <div className="flex items-center gap-2">
-              <div className="h-9 w-9 rounded-lg bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                <ShieldCheck className="h-4.5 w-4.5 text-red-500" />
+              <div className="h-9 w-9 rounded-lg bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
+                <ShieldCheck className="h-4.5 w-4.5 text-primary-500" />
               </div>
               <div>
                 <h3 className="font-bold font-display text-sm leading-none text-foreground">Admin Paneli</h3>
@@ -186,12 +189,12 @@ export function AdminSidebar({ session }: SessionProps) {
 
       {/* ── Masaüstü Sidebar (Desktop Sidebar) ────────────────────────── */}
       <aside className="hidden md:block w-64 shrink-0">
-        <div className="glass-strong rounded-3xl p-5 border border-border/50 shadow-soft sticky top-24 flex flex-col justify-between min-h-[750px]">
-          <div className="space-y-6">
+        <div className="glass-strong rounded-3xl p-5 border border-border/50 shadow-soft sticky top-24 flex flex-col justify-between max-h-[calc(100vh-7rem)] overflow-hidden">
+          <div className="space-y-4 overflow-hidden flex flex-col min-h-0">
             {/* Header */}
-            <div className="flex items-center gap-3 px-2">
-              <div className="h-10 w-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center">
-                <ShieldCheck className="h-5 w-5 text-red-500" />
+            <div className="flex items-center gap-3 px-2 shrink-0">
+              <div className="h-10 w-10 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center shrink-0">
+                <ShieldCheck className="h-5 w-5 text-primary-500" />
               </div>
               <div>
                 <h2 className="font-bold font-display leading-none text-foreground text-sm">Admin Paneli</h2>
@@ -200,13 +203,13 @@ export function AdminSidebar({ session }: SessionProps) {
             </div>
 
             {/* Links */}
-            <div className="max-h-[500px] overflow-y-auto pr-1 scrollbar-none">
+            <div className="overflow-y-auto pr-1 flex-1 min-h-0 space-y-1 scrollbar-none">
               {renderNavLinks(false)}
             </div>
           </div>
 
           {/* Footer */}
-          <div className="pt-4 border-t border-border/40 mt-auto">
+          <div className="pt-3 border-t border-border/40 shrink-0 mt-2">
             {renderFooterLinks(false)}
           </div>
         </div>

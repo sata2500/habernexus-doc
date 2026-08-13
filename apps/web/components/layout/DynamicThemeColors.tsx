@@ -172,5 +172,5 @@ export function DynamicThemeColors({ settings }: { settings: Partial<SiteSetting
     }
   `;
 
-  return <style dangerouslySetInnerHTML={{ __html: cssString }} suppressHydrationWarning />;
+  return <style id="dynamic-theme-colors" dangerouslySetInnerHTML={{ __html: cssString }} suppressHydrationWarning />;
 }

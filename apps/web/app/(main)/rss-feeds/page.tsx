@@ -58,11 +58,11 @@ export default async function RSSFeedsPage() {
 
         {/* Hero Section */}
         <section className="text-center space-y-4">
-          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-orange-500/10 text-orange-600 mb-4">
+          <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-500/10 text-primary-600 mb-4">
             <Rss className="h-8 w-8" />
           </div>
           <h1 className="text-4xl md:text-5xl font-black font-(family-name:--font-outfit) tracking-tight text-foreground">
-            RSS <span className="text-orange-500">Kaynakları</span>
+            RSS <span className="text-primary-500">Kaynakları</span>
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Haberleri kendi şartlarınızla takip edin. Algoritmalara veya bildirimlere gerek duymadan,
@@ -99,7 +99,7 @@ export default async function RSSFeedsPage() {
           {/* Category Feeds */}
           <div className="space-y-6">
             <h2 className="text-2xl font-bold font-(family-name:--font-outfit) flex items-center gap-2">
-              <span className="h-1.5 w-6 bg-orange-500 rounded-full" />
+              <span className="h-1.5 w-6 bg-primary-500 rounded-full" />
               Kategori Akışları
             </h2>
             <RSSFeedList feeds={categoryFeeds} />

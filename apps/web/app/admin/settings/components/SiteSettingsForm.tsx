@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { updateSiteSettings, type SiteSettingsInput } from "../actions";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import {
@@ -190,7 +191,8 @@ function hexToHsl(hex: string): { h: number; s: number; l: number } {
 
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
-  let h = 0, s = 0, l = (max + min) / 2;
+  const l = (max + min) / 2;
+  let h = 0, s = 0;
 
   if (max !== min) {
     const d = max - min;
@@ -557,7 +559,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
         <div className="flex items-center gap-3">
           {form.logoUrl ? (
             <div className="h-10 w-10 relative rounded-xl overflow-hidden shadow-lg border border-border flex shrink-0">
-               <img src={form.logoUrl} alt="Logo" className="object-cover w-full h-full" />
+               <Image src={form.logoUrl} alt="Logo" fill className="object-cover" sizes="40px" unoptimized />
             </div>
           ) : (
             <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center shadow-lg shrink-0" style={{ backgroundColor: form.primaryColorLight }}>
@@ -762,7 +764,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
         <div className="glass-strong rounded-3xl border border-border p-6 space-y-6 bg-slate-50/50 dark:bg-neutral-900/50 backdrop-blur-sm">
           <div>
             <h4 className="font-bold text-sm flex items-center gap-2 text-foreground mb-1">
-              <Sparkles className="h-4 w-4 text-amber-500 animate-pulse" />
+              <Sparkles className="h-4 w-4 text-primary- animate-pulse" />
               Hızlı Tema Şablonları (Presets)
             </h4>
             <p className="text-xs text-muted-foreground">
@@ -855,8 +857,8 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
         <div
           className={`flex items-center gap-3 p-4 rounded-2xl text-sm font-medium ${
             result.success
-              ? "bg-green-500/10 border border-green-500/20 text-green-600 dark:text-green-400"
-              : "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400"
+              ? "bg-primary-500/10 border border-primary-500/20 text-primary-600 dark:text-primary-400"
+              : "bg-primary-500/10 border border-primary-500/20 text-primary-600 dark:text-primary-400"
           }`}
         >
           {result.success ? (

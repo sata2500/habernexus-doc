@@ -105,3 +105,27 @@ export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
 
   return { success: true };
 }
+
+export async function updateSystemSettings(data: {
+  maxNewsAgeHours?: number;
+  googleTrendsEnabled?: boolean;
+  googleTrendsGeo?: string;
+  trendAutoPublishThreshold?: number;
+  trendSearchGenerateEnabled?: boolean;
+}) {
+  await assertAdmin();
+
+  await prisma.systemSettings.upsert({
+    where: { id: "global" },
+    create: {
+      id: "global",
+      ...data,
+    },
+    update: data,
+  });
+
+  revalidatePath("/admin/settings");
+  revalidatePath("/admin/google-trends");
+
+  return { success: true };
+}

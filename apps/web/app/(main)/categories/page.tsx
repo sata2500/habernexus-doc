@@ -3,6 +3,7 @@ import { getCategoriesWithCount } from "@/lib/data";
 import { Card } from "@/components/ui/Card";
 import { FolderOpen, ArrowRight, Newspaper } from "lucide-react";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
+import { getCardGlowStyles } from "@/lib/utils";
 
 export const metadata = {
   title: "Tüm Kategoriler",
@@ -29,15 +30,12 @@ export default async function CategoriesPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {categories.map((cat) => {
           return (
-            <Link key={cat.slug} href={`/category/${cat.slug}`} className="group block shine rounded-2xl">
+            <Link key={cat.slug} href={`/category/${cat.slug}`} className="group block">
               <Card
                 variant="interactive"
                 noPadding
-                className="h-full flex flex-col p-6 border border-border/40 bg-card/65 hover:bg-card hover:border-[var(--cat-color)] hover:shadow-[0_0_30px_var(--cat-glow)] hover:-translate-y-1.5 transition-all duration-300"
-                style={{
-                  "--cat-color": cat.color || "#888",
-                  "--cat-glow": `${cat.color || "#888"}18`,
-                } as React.CSSProperties}
+                className="h-full flex flex-col p-6 shine rounded-2xl card-360-border bg-card/65 hover:bg-card transition-all duration-300 ease-out"
+                style={getCardGlowStyles(cat.color)}
               >
                 <div className="flex items-center justify-between mb-5">
                   <div

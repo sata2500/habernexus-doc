@@ -202,6 +202,15 @@ export async function updateNewsletterSubscription(subscribed: boolean) {
       where: { id: session.user.id },
       data: { newsletterSubscribed: subscribed },
     });
+
+    // Çifte e-posta gitmesini engelle (Deduplication)
+    if (subscribed && session.user.email) {
+      await prisma.subscriber.updateMany({
+        where: { email: session.user.email.toLowerCase() },
+        data: { isActive: false },
+      });
+    }
+
     revalidatePath("/dashboard/settings");
     return { success: true };
   } catch (err) {

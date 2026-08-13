@@ -96,7 +96,7 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
         )}
         
         {testStatus !== "idle" && (
-          <div className={`text-xs font-medium flex items-center gap-1.5 ${testStatus === "success" ? "text-green-600" : "text-red-500"}`}>
+          <div className={`text-xs font-medium flex items-center gap-1.5 ${testStatus === "success" ? "text-primary-600" : "text-primary-500"}`}>
             {testStatus === "success" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
             {testMessage}
           </div>

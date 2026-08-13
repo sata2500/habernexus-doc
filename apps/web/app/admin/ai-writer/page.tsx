@@ -30,8 +30,8 @@ export default async function AdminAiWriterPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold font-display flex items-center gap-3">
-            <div className="h-12 w-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
-              < Wand2 className="h-6 w-6 text-purple-500" />
+            <div className="h-12 w-12 rounded-2xl bg-primary-/20 flex items-center justify-center">
+              < Wand2 className="h-6 w-6 text-primary-" />
             </div>
             AI Yazar Merkezi
           </h1>
@@ -60,7 +60,7 @@ export default async function AdminAiWriterPage() {
       {/* ── İstatistikler / Bilgi ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4 hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300">
-          <div className="h-12 w-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500">
+          <div className="h-12 w-12 rounded-2xl bg-primary-/10 flex items-center justify-center text-primary-">
             <BrainCircuit className="h-6 w-6" />
           </div>
           <div>
@@ -69,7 +69,7 @@ export default async function AdminAiWriterPage() {
           </div>
         </div>
         <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4 hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300">
-          <div className="h-12 w-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500">
+          <div className="h-12 w-12 rounded-2xl bg-primary-/10 flex items-center justify-center text-primary-">
             <Sparkles className="h-6 w-6" />
           </div>
           <div>
@@ -78,7 +78,7 @@ export default async function AdminAiWriterPage() {
           </div>
         </div>
         <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4 hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300">
-          <div className="h-12 w-12 rounded-2xl bg-orange-500/10 flex items-center justify-center text-orange-500">
+          <div className="h-12 w-12 rounded-2xl bg-primary-/10 flex items-center justify-center text-primary-">
             <Rocket className="h-6 w-6" />
           </div>
           <div>

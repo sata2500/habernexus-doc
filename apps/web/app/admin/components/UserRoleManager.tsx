@@ -83,7 +83,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
                     </select>
                     <button
                       onClick={() => handleDeleteUser(user.id, user.name ?? "İsimsiz")}
-                      className="h-9 w-9 flex items-center justify-center rounded-xl hover:bg-red-500/10 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer border border-transparent hover:border-red-500/25"
+                      className="h-9 w-9 flex items-center justify-center rounded-xl hover:bg-primary-500/10 text-muted-foreground hover:text-primary-500 transition-colors cursor-pointer border border-transparent hover:border-primary-500/25"
                       title="Kullanıcıyı Sil"
                     >
                       <Trash2 className="h-4 w-4" />

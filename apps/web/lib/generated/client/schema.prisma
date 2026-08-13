@@ -268,22 +268,23 @@ model RssFeedSource {
 
 /// RSS'ten çekilen ham haberler
 model RssFeedItem {
-  id             String        @id @default(cuid())
-  sourceId       String
-  title          String
-  url            String        @unique
-  urlHash        String        @unique // SHA-256 hash, hızlı dedup
-  excerpt        String?
-  imageUrl       String?
-  publishedAt    DateTime?
-  status         RssItemStatus @default(PENDING)
-  aiScore        Int? // 0-100 Gemini öneri puanı
-  aiAnalysis     Json? // Gemini'nin tam JSON çıktısı
-  dismissed      Boolean       @default(false) // "İlginç değil" işareti
-  usedForArticle Boolean       @default(false) // Bu öneriden haber yazıldıysa
-  source         RssFeedSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  id               String            @id @default(cuid())
+  sourceId         String
+  title            String
+  url              String            @unique
+  urlHash          String            @unique // SHA-256 hash, hızlı dedup
+  excerpt          String?
+  imageUrl         String?
+  publishedAt      DateTime?
+  status           RssItemStatus     @default(PENDING)
+  aiScore          Int? // 0-100 Gemini öneri puanı
+  aiAnalysis       Json? // Gemini'nin tam JSON çıktısı
+  dismissed        Boolean           @default(false) // "İlginç değil" işareti
+  usedForArticle   Boolean           @default(false) // Bu öneriden haber yazıldıysa
+  source           RssFeedSource     @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  googleTrendItems GoogleTrendItem[]
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
   @@index([sourceId])
   @@index([status])
@@ -299,6 +300,7 @@ enum RssItemStatus {
   APPROVED // Admin onayladı, yazar masasına düştü
   LOW_SCORE // Puan düşük (< 40), gösterilmeyecek
   COVERED // Zaten haberleştirilmiş konuyla örtüşüyor
+  EXPIRED_STALE // Tarihi geçmiş / güncelliğini yitirmiş haber
   DISMISSED // Yazar/admin "gerek yok" dedi
 }
 
@@ -329,7 +331,56 @@ model SystemSettings {
   qStashAiWriterId      String? // QStash üzerindeki görev ID'si
   aiWriterSearchEnabled Boolean @default(false)
 
+  // Maksimum Haber Yaşı ve Google Trends Ayarları
+  maxNewsAgeHours            Int     @default(24) // Kaç saatten eski haberler elensin (0 = kapalı)
+  googleTrendsEnabled        Boolean @default(true) // Google Trends entegrasyonu aktif mi
+  googleTrendsGeo            String  @default("TR") // Bölge kodu ("TR", "US" vb.)
+  trendAutoPublishThreshold  Int     @default(70) // Trend eşleşme skoru kaç üzerindeyse öncelikli otomatik yayın
+  trendSearchGenerateEnabled Boolean @default(true) // Trends'te olup RSS'te olmayan konu için aramayla haber üret
+
   updatedAt DateTime @updatedAt
+}
+
+enum TrendAction {
+  PENDING
+  AUTO_PUBLISHED
+  SEARCH_GENERATED
+  SCHEDULED_DRAFT
+  DISMISSED
+}
+
+/// Google Trends Verileri
+model GoogleTrend {
+  id           String            @id @default(cuid())
+  keyword      String            @unique
+  searchVolume String?
+  exploreUrl   String?
+  category     String?
+  country      String            @default("TR")
+  trafficScore Int               @default(50)
+  items        GoogleTrendItem[]
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  @@index([keyword])
+  @@index([trafficScore])
+  @@index([country])
+}
+
+/// Trends ile RSS Karşılaştırma Eşleşmesi
+model GoogleTrendItem {
+  id          String       @id @default(cuid())
+  trendId     String
+  rssItemId   String?
+  matchScore  Int
+  actionTaken TrendAction  @default(PENDING)
+  trend       GoogleTrend  @relation(fields: [trendId], references: [id], onDelete: Cascade)
+  rssItem     RssFeedItem? @relation(fields: [rssItemId], references: [id], onDelete: SetNull)
+  createdAt   DateTime     @default(now())
+
+  @@index([trendId])
+  @@index([rssItemId])
+  @@index([matchScore])
 }
 
 /// AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)

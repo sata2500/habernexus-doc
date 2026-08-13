@@ -112,7 +112,7 @@ export function ImageUploader({
               <button
                 type="button"
                 onClick={removeImage}
-                className="p-2 bg-red-500/80 backdrop-blur-md rounded-xl text-white hover:bg-red-500 transition-colors"
+                className="p-2 bg-primary-500/80 backdrop-blur-md rounded-xl text-white hover:bg-primary-500 transition-colors"
                 title="Sil"
               >
                 <X className="h-5 w-5" />
@@ -147,7 +147,7 @@ export function ImageUploader({
       </div>
 
       {error && (
-        <p className="text-xs font-medium text-red-500 px-1">{error}</p>
+        <p className="text-xs font-medium text-primary-500 px-1">{error}</p>
       )}
     </div>
   );

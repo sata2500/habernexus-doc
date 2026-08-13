@@ -41,16 +41,17 @@ export async function sendEmail({ to, subject, react, from, replyTo }: SendMailO
     }
 
     return { success: true, data };
-  } catch (err: any) {
+  } catch (err: unknown) {
+    const errorObj = err instanceof Error ? err : new Error(String(err));
     // Beklenmedik hataları (ağ hatası, geçersiz parametre vb.) detaylıca logla
     console.error("[Mail] Kritik mail gönderim hatası:", {
-      message: err?.message,
-      stack: err?.stack,
+      message: errorObj.message,
+      stack: errorObj.stack,
       error: err
     });
     return { 
       success: false, 
-      error: err?.message || "E-posta gönderilirken beklenmedik bir sistem hatası oluştu." 
+      error: errorObj.message || "E-posta gönderilirken beklenmedik bir sistem hatası oluştu." 
     };
   }
 }

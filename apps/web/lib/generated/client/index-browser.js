@@ -342,7 +342,33 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   aiWriterAutoCron: 'aiWriterAutoCron',
   qStashAiWriterId: 'qStashAiWriterId',
   aiWriterSearchEnabled: 'aiWriterSearchEnabled',
+  maxNewsAgeHours: 'maxNewsAgeHours',
+  googleTrendsEnabled: 'googleTrendsEnabled',
+  googleTrendsGeo: 'googleTrendsGeo',
+  trendAutoPublishThreshold: 'trendAutoPublishThreshold',
+  trendSearchGenerateEnabled: 'trendSearchGenerateEnabled',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.GoogleTrendScalarFieldEnum = {
+  id: 'id',
+  keyword: 'keyword',
+  searchVolume: 'searchVolume',
+  exploreUrl: 'exploreUrl',
+  category: 'category',
+  country: 'country',
+  trafficScore: 'trafficScore',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.GoogleTrendItemScalarFieldEnum = {
+  id: 'id',
+  trendId: 'trendId',
+  rssItemId: 'rssItemId',
+  matchScore: 'matchScore',
+  actionTaken: 'actionTaken',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.AiPersonaScalarFieldEnum = {
@@ -481,6 +507,15 @@ exports.RssItemStatus = exports.$Enums.RssItemStatus = {
   APPROVED: 'APPROVED',
   LOW_SCORE: 'LOW_SCORE',
   COVERED: 'COVERED',
+  EXPIRED_STALE: 'EXPIRED_STALE',
+  DISMISSED: 'DISMISSED'
+};
+
+exports.TrendAction = exports.$Enums.TrendAction = {
+  PENDING: 'PENDING',
+  AUTO_PUBLISHED: 'AUTO_PUBLISHED',
+  SEARCH_GENERATED: 'SEARCH_GENERATED',
+  SCHEDULED_DRAFT: 'SCHEDULED_DRAFT',
   DISMISSED: 'DISMISSED'
 };
 
@@ -509,6 +544,8 @@ exports.Prisma.ModelName = {
   RssFeedSource: 'RssFeedSource',
   RssFeedItem: 'RssFeedItem',
   SystemSettings: 'SystemSettings',
+  GoogleTrend: 'GoogleTrend',
+  GoogleTrendItem: 'GoogleTrendItem',
   AiPersona: 'AiPersona',
   AiPersonaOnCategory: 'AiPersonaOnCategory',
   SiteSettings: 'SiteSettings',

@@ -56,7 +56,7 @@ export function ShareButtons({ title, url }: Props) {
       
       <button
         onClick={shareOnTwitter}
-        className="p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-900/20 text-muted-foreground hover:text-blue-400 transition-all cursor-pointer"
+        className="p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 text-muted-foreground hover:text-primary-400 transition-all cursor-pointer"
         title="X'te Paylaş"
       >
         <X className="h-5 w-5" />
@@ -64,7 +64,7 @@ export function ShareButtons({ title, url }: Props) {
 
       <button
         onClick={shareOnWhatsApp}
-        className="p-2 rounded-full hover:bg-green-50 dark:hover:bg-green-900/20 text-muted-foreground hover:text-green-500 transition-all cursor-pointer"
+        className="p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 text-muted-foreground hover:text-primary-500 transition-all cursor-pointer"
         title="WhatsApp'ta Paylaş"
       >
         <MessageSquareIcon className="h-5 w-5" />
@@ -75,7 +75,7 @@ export function ShareButtons({ title, url }: Props) {
         className="p-2 rounded-full hover:bg-muted transition-all text-muted-foreground hover:text-foreground cursor-pointer"
         title="Bağlantıyı Kopyala"
       >
-        {copied ? <Check className="h-5 w-5 text-green-500" /> : <Copy className="h-5 w-5" />}
+        {copied ? <Check className="h-5 w-5 text-primary-500" /> : <Copy className="h-5 w-5" />}
       </button>
     </div>
   );

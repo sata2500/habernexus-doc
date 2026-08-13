@@ -14,7 +14,6 @@ import {
   Search,
   BookOpen,
   ExternalLink,
-  ShieldCheck,
   AlertCircle
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -56,10 +55,96 @@ interface ArticleAnalysisModalProps {
     seoScore: number | null;
     readabilityScore: number | null;
     qualityScore: number | null;
-    analysisReport: any;
+    analysisReport: unknown;
   };
   onClose: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onAnalysisComplete?: (updatedArticle: any) => void;
+}
+
+function CircularProgress({
+  value,
+  label,
+  size = 100,
+  strokeWidth = 8,
+  isPlagiarism = false
+}: {
+  value: number | null;
+  label: string;
+  size?: number;
+  strokeWidth?: number;
+  isPlagiarism?: boolean;
+}) {
+  const val = value ?? 0;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = radius * 2 * Math.PI;
+  const strokeDashoffset = circumference - (val / 100) * circumference;
+
+  let colorClass = "stroke-primary-500 text-primary-500";
+  let bgClass = "stroke-primary-500/10";
+  
+  if (value === null) {
+    colorClass = "stroke-muted text-muted-foreground";
+    bgClass = "stroke-muted/10";
+  } else if (isPlagiarism) {
+    if (val <= 30) {
+      colorClass = "stroke-primary-500 text-primary-500";
+      bgClass = "stroke-primary-500/10";
+    } else if (val <= 60) {
+      colorClass = "stroke-primary-500 text-primary-500";
+      bgClass = "stroke-primary-500/10";
+    } else {
+      colorClass = "stroke-primary-500 text-primary-500";
+      bgClass = "stroke-primary-500/10";
+    }
+  } else {
+    if (val >= 70) {
+      colorClass = "stroke-primary-500 text-primary-500";
+      bgClass = "stroke-primary-500/10";
+    } else if (val >= 40) {
+      colorClass = "stroke-primary-500 text-primary-500";
+      bgClass = "stroke-primary-500/10";
+    } else {
+      colorClass = "stroke-primary-500 text-primary-500";
+      bgClass = "stroke-primary-500/10";
+    }
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center p-4 bg-muted/20 border border-border/40 rounded-2xl">
+      <div className="relative" style={{ width: size, height: size }}>
+        <svg className="w-full h-full transform -rotate-90">
+          <circle
+            className={cn("transition-all duration-300", bgClass)}
+            strokeWidth={strokeWidth}
+            fill="transparent"
+            r={radius}
+            cx={size / 2}
+            cy={size / 2}
+          />
+          {value !== null && (
+            <circle
+              className={cn("transition-all duration-500 ease-out", colorClass)}
+              strokeWidth={strokeWidth}
+              strokeDasharray={circumference}
+              strokeDashoffset={strokeDashoffset}
+              strokeLinecap="round"
+              fill="transparent"
+              r={radius}
+              cx={size / 2}
+              cy={size / 2}
+            />
+          )}
+        </svg>
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <span className="text-xl font-extrabold tracking-tight">
+            {value !== null ? `${val}%` : "—"}
+          </span>
+        </div>
+      </div>
+      <span className="mt-3 text-xs font-bold text-muted-foreground uppercase tracking-wider text-center">{label}</span>
+    </div>
+  );
 }
 
 export function ArticleAnalysisModal({
@@ -75,7 +160,6 @@ export function ArticleAnalysisModal({
   const [actionType, setActionType] = useState<"analyze" | "rewrite" | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Local state for article details to show updates immediately
   const [articleData, setArticleData] = useState({
     plagiarismRate: initialData?.plagiarismRate ?? null,
     seoScore: initialData?.seoScore ?? null,
@@ -85,93 +169,6 @@ export function ArticleAnalysisModal({
   });
 
   const hasAnalysis = articleData.qualityScore !== null;
-
-  // Circular gauge drawing helper
-  const CircularProgress = ({
-    value,
-    label,
-    size = 100,
-    strokeWidth = 8,
-    isPlagiarism = false
-  }: {
-    value: number | null;
-    label: string;
-    size?: number;
-    strokeWidth?: number;
-    isPlagiarism?: boolean;
-  }) => {
-    const val = value ?? 0;
-    const radius = (size - strokeWidth) / 2;
-    const circumference = radius * 2 * Math.PI;
-    const strokeDashoffset = circumference - (val / 100) * circumference;
-
-    // Get color based on threshold
-    let colorClass = "stroke-primary-500 text-primary-500";
-    let bgClass = "stroke-primary-500/10";
-    
-    if (value === null) {
-      colorClass = "stroke-muted text-muted-foreground";
-      bgClass = "stroke-muted/10";
-    } else if (isPlagiarism) {
-      if (val <= 30) {
-        colorClass = "stroke-green-500 text-green-500";
-        bgClass = "stroke-green-500/10";
-      } else if (val <= 60) {
-        colorClass = "stroke-amber-500 text-amber-500";
-        bgClass = "stroke-amber-500/10";
-      } else {
-        colorClass = "stroke-red-500 text-red-500";
-        bgClass = "stroke-red-500/10";
-      }
-    } else {
-      if (val >= 70) {
-        colorClass = "stroke-green-500 text-green-500";
-        bgClass = "stroke-green-500/10";
-      } else if (val >= 40) {
-        colorClass = "stroke-amber-500 text-amber-500";
-        bgClass = "stroke-amber-500/10";
-      } else {
-        colorClass = "stroke-red-500 text-red-500";
-        bgClass = "stroke-red-500/10";
-      }
-    }
-
-    return (
-      <div className="flex flex-col items-center justify-center p-4 bg-muted/20 border border-border/40 rounded-2xl">
-        <div className="relative" style={{ width: size, height: size }}>
-          <svg className="w-full h-full transform -rotate-90">
-            <circle
-              className={cn("transition-all duration-300", bgClass)}
-              strokeWidth={strokeWidth}
-              fill="transparent"
-              r={radius}
-              cx={size / 2}
-              cy={size / 2}
-            />
-            {value !== null && (
-              <circle
-                className={cn("transition-all duration-500 ease-out", colorClass)}
-                strokeWidth={strokeWidth}
-                strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
-                strokeLinecap="round"
-                fill="transparent"
-                r={radius}
-                cx={size / 2}
-                cy={size / 2}
-              />
-            )}
-          </svg>
-          <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-xl font-extrabold tracking-tight">
-              {value !== null ? `${val}%` : "—"}
-            </span>
-          </div>
-        </div>
-        <span className="mt-3 text-xs font-bold text-muted-foreground uppercase tracking-wider text-center">{label}</span>
-      </div>
-    );
-  };
 
   const handleAnalyze = () => {
     setError(null);
@@ -191,8 +188,9 @@ export function ArticleAnalysisModal({
         } else {
           setError(res.error || "Analiz sırasında bir hata meydana geldi.");
         }
-      } catch (err: any) {
-        setError(err.message || "Sunucuyla bağlantı kurulurken hata oluştu.");
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : "Sunucuyla bağlantı kurulurken hata oluştu.";
+        setError(errMsg);
       } finally {
         setActionType(null);
       }
@@ -220,8 +218,9 @@ export function ArticleAnalysisModal({
         } else {
           setError(res.error || "Makale yeniden yazılırken bir hata oluştu.");
         }
-      } catch (err: any) {
-        setError(err.message || "Sunucuyla bağlantı kurulurken hata oluştu.");
+      } catch (err: unknown) {
+        const errMsg = err instanceof Error ? err.message : "Sunucuyla bağlantı kurulurken hata oluştu.";
+        setError(errMsg);
       } finally {
         setActionType(null);
       }
@@ -255,7 +254,7 @@ export function ArticleAnalysisModal({
 
         {/* Error Banner */}
         {error && (
-          <div className="px-6 py-3 bg-red-500/10 border-b border-red-500/20 text-red-500 text-xs font-semibold flex items-center gap-2">
+          <div className="px-6 py-3 bg-primary-500/10 border-b border-primary-500/20 text-primary-500 text-xs font-semibold flex items-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -366,7 +365,7 @@ export function ArticleAnalysisModal({
 
                       {/* Warnings / High Plagiarism Banner */}
                       {(articleData.plagiarismRate ?? 0) > 30 && (
-                        <div className="p-4 bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl flex gap-3 text-xs">
+                        <div className="p-4 bg-primary-500/10 border border-primary-500/20 text-primary-600 dark:text-primary-400 rounded-xl flex gap-3 text-xs">
                           <AlertTriangle className="h-5 w-5 shrink-0" />
                           <div className="space-y-1">
                             <p className="font-bold">Yüksek Benzerlik / İntihal Uyarısı (%{articleData.plagiarismRate})</p>
@@ -420,7 +419,7 @@ export function ArticleAnalysisModal({
                                     </a>
                                   )}
                                 </div>
-                                <div className="shrink-0 px-2 py-1 bg-red-500/10 text-red-500 font-extrabold rounded-md text-[10px]">
+                                <div className="shrink-0 px-2 py-1 bg-primary-500/10 text-primary-500 font-extrabold rounded-md text-[10px]">
                                   %{source.matchPercent || 0} Benzerlik
                                 </div>
                               </div>
@@ -453,12 +452,12 @@ export function ArticleAnalysisModal({
                           <p className="text-[10px] font-bold text-muted-foreground uppercase">Hiyerarşik Yapı</p>
                           <div className="flex items-center gap-2">
                             {report?.seo?.hasHeadingStructure ? (
-                              <div className="flex items-center gap-1.5 text-green-500 text-xs font-bold">
+                              <div className="flex items-center gap-1.5 text-primary-500 text-xs font-bold">
                                 <CheckCircle2 className="h-4.5 w-4.5" />
                                 <span>Doğru Alt Başlık Yapısı (H2, H3)</span>
                               </div>
                             ) : (
-                              <div className="flex items-center gap-1.5 text-amber-500 text-xs font-bold">
+                              <div className="flex items-center gap-1.5 text-primary-500 text-xs font-bold">
                                 <AlertTriangle className="h-4.5 w-4.5" />
                                 <span>Başlık Hiyerarşisi Eksik</span>
                               </div>

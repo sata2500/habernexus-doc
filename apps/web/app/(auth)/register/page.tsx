@@ -52,7 +52,7 @@ export default function RegisterPage() {
         </p>
 
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-sm border border-red-200 dark:border-red-800">
+          <div className="mb-6 p-4 rounded-xl bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-sm border border-primary-200 dark:border-primary-800">
             {error}
           </div>
         )}

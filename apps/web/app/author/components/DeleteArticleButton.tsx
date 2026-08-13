@@ -31,7 +31,7 @@ export function DeleteArticleButton({ articleId, articleTitle }: Props) {
     <button
       onClick={handleDelete}
       disabled={isDeleting}
-      className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-muted-foreground hover:text-red-500 cursor-pointer disabled:opacity-50"
+      className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors text-muted-foreground hover:text-primary-500 cursor-pointer disabled:opacity-50"
       title="Haberi Sil"
     >
       {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}

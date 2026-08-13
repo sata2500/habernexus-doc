@@ -323,8 +323,9 @@ export async function analyzeArticleAction(articleId: string) {
     const res = await analyzeArticle(articleId);
     revalidatePath("/author/articles");
     return res;
-  } catch (error: any) {
-    return { success: false, error: error.message || "Bilinmeyen bir hata oluştu." };
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : "Bilinmeyen bir hata oluştu.";
+    return { success: false, error: errMsg };
   }
 }
 
@@ -335,8 +336,9 @@ export async function rewriteArticleWithAIAction(articleId: string) {
     const res = await rewriteArticleWithAI(articleId);
     revalidatePath("/author/articles");
     return res;
-  } catch (error: any) {
-    return { success: false, error: error.message || "Bilinmeyen bir hata oluştu." };
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : "Bilinmeyen bir hata oluştu.";
+    return { success: false, error: errMsg };
   }
 }
 

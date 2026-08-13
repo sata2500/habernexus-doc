@@ -8,10 +8,10 @@ export default async function AdminDashboardPage() {
   if (!stats) redirect("/");
 
   const statCards = [
-    { icon: Users, label: "Toplam Kullanıcı", value: stats.totalUsers, sub: `+${stats.newUsers} bu hafta`, color: "text-blue-600 dark:text-blue-400 bg-blue-500/10 dark:bg-blue-500/15" },
-    { icon: FileText, label: "Toplam Makale", value: stats.totalArticles, sub: `${stats.publishedArticles} yayında · ${stats.draftArticles} taslak`, color: "text-green-600 dark:text-green-400 bg-green-500/10 dark:bg-green-500/15" },
-    { icon: Eye, label: "Toplam Görüntülenme", value: stats.totalViews.toLocaleString("tr-TR"), sub: "Tüm zamanlar", color: "text-purple-600 dark:text-purple-400 bg-purple-500/10 dark:bg-purple-500/15" },
-    { icon: Newspaper, label: "Aktif Kategori", value: stats.categories.length, sub: "Tüm kategoriler", color: "text-amber-600 dark:text-amber-400 bg-amber-500/10 dark:bg-amber-500/15" },
+    { icon: Users, label: "Toplam Kullanıcı", value: stats.totalUsers, sub: `+${stats.newUsers} bu hafta`, color: "text-primary- dark:text-primary- bg-primary-/10 dark:bg-primary-/15" },
+    { icon: FileText, label: "Toplam Makale", value: stats.totalArticles, sub: `${stats.publishedArticles} yayında · ${stats.draftArticles} taslak`, color: "text-primary-600 dark:text-primary-400 bg-primary-500/10 dark:bg-primary-500/15" },
+    { icon: Eye, label: "Toplam Görüntülenme", value: stats.totalViews.toLocaleString("tr-TR"), sub: "Tüm zamanlar", color: "text-primary- dark:text-primary- bg-primary-/10 dark:bg-primary-/15" },
+    { icon: Newspaper, label: "Aktif Kategori", value: stats.categories.length, sub: "Tüm kategoriler", color: "text-primary- dark:text-primary- bg-primary-/10 dark:bg-primary-/15" },
   ];
 
   return (
@@ -21,9 +21,9 @@ export default async function AdminDashboardPage() {
           <h1 className="text-2xl md:text-3xl font-bold font-display text-foreground tracking-tight">Platform Özeti</h1>
           <p className="text-muted-foreground text-sm">Haber Nexus yönetim merkezi.</p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-red-500/10 dark:bg-red-500/15 border border-red-500/20 rounded-xl">
-          <ShieldCheck className="h-4.5 w-4.5 text-red-500 animate-pulse" />
-          <span className="text-xs font-semibold text-red-600 dark:text-red-400">Admin Modu</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-primary-500/10 dark:bg-primary-500/15 border border-primary-500/20 rounded-xl">
+          <ShieldCheck className="h-4.5 w-4.5 text-primary-500 animate-pulse" />
+          <span className="text-xs font-semibold text-primary-600 dark:text-primary-400">Admin Modu</span>
         </div>
       </div>
 
@@ -98,8 +98,8 @@ export default async function AdminDashboardPage() {
           href="/admin/users" 
           className="flex items-center gap-4 p-5 glass-strong hover-lift rounded-3xl border border-border/50 hover:border-primary-500/40 hover:shadow-glow transition-all duration-300 group"
         >
-          <div className="h-12 w-12 rounded-2xl bg-blue-500/10 dark:bg-blue-500/15 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
-            <Users className="h-6 w-6 text-blue-500 dark:text-blue-400" />
+          <div className="h-12 w-12 rounded-2xl bg-primary-/10 dark:bg-primary-/15 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
+            <Users className="h-6 w-6 text-primary- dark:text-primary-" />
           </div>
           <div>
             <p className="font-bold font-display text-foreground group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors duration-200">Kullanıcı Yönetimi</p>
@@ -111,8 +111,8 @@ export default async function AdminDashboardPage() {
           href="/admin/articles" 
           className="flex items-center gap-4 p-5 glass-strong hover-lift rounded-3xl border border-border/50 hover:border-primary-500/40 hover:shadow-glow transition-all duration-300 group"
         >
-          <div className="h-12 w-12 rounded-2xl bg-green-500/10 dark:bg-green-500/15 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
-            <FileText className="h-6 w-6 text-green-500 dark:text-green-400" />
+          <div className="h-12 w-12 rounded-2xl bg-primary-500/10 dark:bg-primary-500/15 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
+            <FileText className="h-6 w-6 text-primary-500 dark:text-primary-400" />
           </div>
           <div>
             <p className="font-bold font-display text-foreground group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors duration-200">İçerik Moderasyonu</p>

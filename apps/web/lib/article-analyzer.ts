@@ -6,7 +6,7 @@ const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 /**
  * OpenRouter API kullanarak analiz verisini JSON formatinda uretir.
  */
-async function generateAnalysisWithOpenRouter(model: string, articleTitle: string, articleContent: string): Promise<any> {
+async function generateAnalysisWithOpenRouter(model: string, articleTitle: string, articleContent: string): Promise<Record<string, unknown>> {
   const apiKey = process.env.OPENROUTER_API_KEY || "";
   if (!apiKey) throw new Error("OPENROUTER_API_KEY eksik.");
 
@@ -84,7 +84,7 @@ ${articleContent}
   const rawContent = data.choices?.[0]?.message?.content || "";
   try {
     return JSON.parse(rawContent.trim());
-  } catch (parseError) {
+  } catch (_parseError) {
     console.error("JSON parse hatasi. Gelen ham veri:", rawContent);
     // Regex ile JSON bloklarini ayiklamaya calis
     const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
@@ -114,17 +114,18 @@ export async function analyzeArticle(articleId: string) {
 
     console.log(`[Article Analyzer] Analiz baslatiliyor. Makale: "${article.title}" (${article.id}), Model: ${analyzerModel}`);
 
-    let analysisResult: any = null;
-    let error: any = null;
+    let analysisResult: Record<string, unknown> | null = null;
+    let error: unknown = null;
 
     // Retry mantigi
     for (let attempt = 1; attempt <= 3; attempt++) {
       try {
         analysisResult = await generateAnalysisWithOpenRouter(analyzerModel, article.title, article.content);
         break;
-      } catch (err: any) {
+      } catch (err: unknown) {
         error = err;
-        console.warn(`[Article Analyzer] Deneme ${attempt} basarisiz. Hata:`, err.message || err);
+        const msg = err instanceof Error ? err.message : String(err);
+        console.warn(`[Article Analyzer] Deneme ${attempt} basarisiz. Hata:`, msg);
         if (attempt < 3) {
           await sleep(2000 * attempt);
         }
@@ -132,15 +133,16 @@ export async function analyzeArticle(articleId: string) {
     }
 
     if (!analysisResult) {
-      throw new Error(`Makale analiz edilemedi. Son hata: ${error?.message || error}`);
+      const errMsg = error instanceof Error ? error.message : String(error);
+      throw new Error(`Makale analiz edilemedi. Son hata: ${errMsg}`);
     }
 
     // Degerlerin dogrulanmasi ve veritabanina kaydedilmesi
-    const plagiarismRate = Math.min(100, Math.max(0, analysisResult.plagiarismRate ?? 0));
-    const seoScore = Math.min(100, Math.max(0, analysisResult.seoScore ?? 0));
-    const readabilityScore = Math.min(100, Math.max(0, analysisResult.readabilityScore ?? 0));
-    const qualityScore = Math.min(100, Math.max(0, analysisResult.qualityScore ?? 0));
-    const reportJson = analysisResult.analysisReport || {};
+    const plagiarismRate = Math.min(100, Math.max(0, typeof analysisResult.plagiarismRate === "number" ? analysisResult.plagiarismRate : 0));
+    const seoScore = Math.min(100, Math.max(0, typeof analysisResult.seoScore === "number" ? analysisResult.seoScore : 0));
+    const readabilityScore = Math.min(100, Math.max(0, typeof analysisResult.readabilityScore === "number" ? analysisResult.readabilityScore : 0));
+    const qualityScore = Math.min(100, Math.max(0, typeof analysisResult.qualityScore === "number" ? analysisResult.qualityScore : 0));
+    const reportJson = (analysisResult.analysisReport as Record<string, unknown>) || {};
 
     const updatedArticle = await prisma.article.update({
       where: { id: article.id },
@@ -149,7 +151,7 @@ export async function analyzeArticle(articleId: string) {
         seoScore,
         readabilityScore,
         qualityScore,
-        analysisReport: reportJson
+        analysisReport: JSON.parse(JSON.stringify(reportJson))
       }
     });
 
@@ -165,11 +167,12 @@ export async function analyzeArticle(articleId: string) {
       article: updatedArticle
     };
 
-  } catch (err: any) {
-    console.error(`[Article Analyzer] HATA:`, err.message || err);
+  } catch (err: unknown) {
+    const errMsg = err instanceof Error ? err.message : "Bilinmeyen bir analiz hatasi olustu.";
+    console.error(`[Article Analyzer] HATA:`, errMsg);
     return {
       success: false,
-      error: err.message || "Bilinmeyen bir analiz hatasi olustu."
+      error: errMsg
     };
   }
 }

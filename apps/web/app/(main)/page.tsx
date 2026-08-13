@@ -22,7 +22,7 @@ import {
   getRecommendedArticles,
 } from "@/lib/data";
 import Image from "next/image";
-import { cn } from "@/lib/utils";
+import { cn, getCardGlowStyles } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
@@ -74,15 +74,12 @@ export default async function HomePage() {
         {/* Main Hero */}
         <div className="lg:col-span-2">
           {heroArticle ? (
-            <Link href={`/article/${heroArticle.slug}`} className="group block h-full shine rounded-2xl">
+            <Link href={`/article/${heroArticle.slug}`} className="group block h-full">
               <Card 
                 variant="interactive" 
                 noPadding 
-                className="overflow-hidden h-full border border-border/40 hover:border-[var(--art-color)] hover:shadow-[0_0_30px_var(--art-glow)] transition-all duration-500"
-                style={{
-                  "--art-color": heroArticle.category?.color || "var(--color-primary-500)",
-                  "--art-glow": `${heroArticle.category?.color || "var(--color-primary-500)"}18`
-                } as React.CSSProperties}
+                className="overflow-hidden h-full shine rounded-2xl card-360-border transition-all duration-300 ease-out"
+                style={getCardGlowStyles(heroArticle.category?.color)}
               >
                 <div className="relative h-full min-h-[300px] md:min-h-[400px] bg-linear-to-br from-primary-500/20 via-accent-500/10 to-primary-700/20 flex items-end">
                   {heroArticle.coverImage && (
@@ -110,7 +107,9 @@ export default async function HomePage() {
                       </Badge>
                     )}
                   </div>
+
                   <div className="relative z-10 p-6 md:p-8 text-white space-y-3.5">
+                    <h1 className="sr-only">Haber Nexus — Türkiye ve Dünya Gündeminden Son Dakika Haberler</h1>
                     <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-display leading-tight group-hover:text-[var(--art-color)] transition-colors duration-300">
                       {heroArticle.title}
                     </h2>
@@ -170,11 +169,8 @@ export default async function HomePage() {
                       className="group block"
                     >
                       <div 
-                        className="p-3.5 rounded-xl border border-border/40 bg-card/30 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_15px_var(--art-glow)] transition-all duration-300 flex gap-3.5 items-center hover:-translate-y-0.5"
-                        style={{
-                          "--art-color": article.category?.color || "var(--color-primary-500)",
-                          "--art-glow": `${article.category?.color || "var(--color-primary-500)"}12`
-                        } as React.CSSProperties}
+                        className="p-3.5 rounded-xl border border-border/40 bg-card/30 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_20px_var(--art-glow)] transition-all duration-300 ease-out flex gap-3.5 items-center hover:-translate-y-0.5"
+                        style={getCardGlowStyles(article.category?.color)}
                       >
                         <span className="text-xl font-bold font-display text-muted-foreground/30 group-hover:text-[var(--art-color)] transition-colors duration-300 min-w-6 text-center">
                           {String(index + 1).padStart(2, "0")}
@@ -229,15 +225,12 @@ export default async function HomePage() {
           </Link>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
-          {categories.map((cat) => {
+          {categories.slice(0, 12).map((cat) => {
             return (
               <Link key={cat.slug} href={`/category/${cat.slug}`} className="group block">
                 <div
-                  className="relative flex flex-col items-center gap-2.5 text-center py-6 px-3 border border-border/40 bg-card/60 backdrop-blur-xs hover:bg-card hover:border-[var(--cat-color)] hover:shadow-[0_0_20px_var(--cat-glow)] hover:-translate-y-1 transition-all duration-300 rounded-2xl cursor-pointer"
-                  style={{
-                    "--cat-color": cat.color || "#888",
-                    "--cat-glow": `${cat.color || "#888"}18`,
-                  } as React.CSSProperties}
+                  className="relative flex flex-col items-center gap-2.5 text-center py-6 px-3 card-360-border bg-card/60 backdrop-blur-xs hover:bg-card hover:-translate-y-1 transition-all duration-300 ease-out rounded-2xl cursor-pointer"
+                  style={getCardGlowStyles(cat.color)}
                 >
                   <div
                     className="h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_12px_var(--cat-glow)]"
@@ -282,19 +275,16 @@ export default async function HomePage() {
               <Link
                 key={article.id}
                 href={`/article/${article.slug}`}
-                className={cn("group block shine rounded-2xl", isFirst && "md:col-span-2 lg:col-span-2")}
+                className={cn("group block", isFirst && "md:col-span-2 lg:col-span-2")}
               >
                 <Card
                   variant="interactive"
                   noPadding
                   className={cn(
-                    "overflow-hidden h-full flex flex-col border border-border/40 bg-card/65 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_20px_var(--art-glow)] transition-all duration-300",
+                    "overflow-hidden h-full flex flex-col shine rounded-2xl card-360-border bg-card/65 hover:bg-card transition-all duration-300 ease-out",
                     isFirst && "md:flex-row"
                   )}
-                  style={{
-                    "--art-color": article.category?.color || "var(--color-primary-500)",
-                    "--art-glow": `${article.category?.color || "var(--color-primary-500)"}12`,
-                  } as React.CSSProperties}
+                  style={getCardGlowStyles(article.category?.color)}
                 >
                   <div
                     className={cn(
@@ -397,15 +387,12 @@ export default async function HomePage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {recommendedArticles.map((article) => (
-              <Link key={article.id} href={`/article/${article.slug}`} className="group block shine rounded-2xl">
+              <Link key={article.id} href={`/article/${article.slug}`} className="group block">
                 <Card
                   variant="interactive"
                   noPadding
-                  className="overflow-hidden h-full flex flex-col border border-border/40 bg-card/65 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_20px_var(--art-glow)] transition-all duration-300"
-                  style={{
-                    "--art-color": article.category?.color || "var(--color-accent-500)",
-                    "--art-glow": `${article.category?.color || "var(--color-accent-500)"}12`,
-                  } as React.CSSProperties}
+                  className="overflow-hidden h-full flex flex-col shine rounded-2xl card-360-border bg-card/65 hover:bg-card transition-all duration-300 ease-out"
+                  style={getCardGlowStyles(article.category?.color)}
                 >
                   <div className="relative h-48 bg-muted overflow-hidden">
                     {article.coverImage ? (
@@ -488,15 +475,24 @@ export default async function HomePage() {
               Haberleri <span className="text-gradient">Kaçırmayın</span>
             </h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Gündemdeki en önemli gelişmeleri kişiselleştirilmiş haber akışınızla
-              takip edin. Ücretsiz üye olun.
+              {userId
+                ? "Bülten aboneliğinizi, bildirimlerinizi ve haber tercihlerinizi profil sayfanızdan dilediğiniz zaman yönetebilirsiniz."
+                : "Gündemdeki en önemli gelişmeleri kişiselleştirilmiş haber akışınızla takip edin. Ücretsiz üye olun."}
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link href="/register">
-                <button className="h-12 px-8 rounded-xl bg-gradient-primary text-white font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow cursor-pointer">
-                  Ücretsiz Kaydol
-                </button>
-              </Link>
+              {userId ? (
+                <Link href="/dashboard/settings">
+                  <button className="h-12 px-8 rounded-xl bg-gradient-primary text-white font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow cursor-pointer">
+                    Bülten & Tercihlerimi Yönet
+                  </button>
+                </Link>
+              ) : (
+                <Link href="/register">
+                  <button className="h-12 px-8 rounded-xl bg-gradient-primary text-white font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow cursor-pointer">
+                    Ücretsiz Kaydol
+                  </button>
+                </Link>
+              )}
               <Link href="/about">
                 <button className="h-12 px-8 rounded-xl border border-border text-foreground font-semibold hover:bg-muted hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer">
                   Daha Fazla Bilgi

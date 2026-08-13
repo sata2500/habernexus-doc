@@ -16,7 +16,7 @@ function getRoleBadge(role: string | null | undefined) {
       label: "Admin", 
       variant: "error" as const, 
       icon: ShieldCheck,
-      badgeClass: "bg-red-500 text-white dark:bg-red-500/15 dark:text-red-400 border border-red-500/20"
+      badgeClass: "bg-primary-500 text-white dark:bg-primary-500/15 dark:text-primary-400 border border-primary-500/20"
     };
   }
   if (role === "AUTHOR") {
@@ -37,22 +37,27 @@ function getRoleBadge(role: string | null | undefined) {
 
 export default function ProfilePage() {
   const { data: session } = useSession();
-  const [name, setName] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [name, setName] = useState(session?.user?.name || "");
+  const [avatarUrl, setAvatarUrl] = useState(session?.user?.image || "");
   const [bio, setBio] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [syncedUserId, setSyncedUserId] = useState<string | null>(null);
+
+  if (session?.user?.id && syncedUserId !== session.user.id) {
+    setSyncedUserId(session.user.id);
+    setName(session.user.name || "");
+    setAvatarUrl(session.user.image || "");
+  }
 
   useEffect(() => {
     if (session?.user) {
-      setName(session.user.name);
-      setAvatarUrl(session.user.image || "");
       // Veritabanındaki güncel biyografiyi çek
       getUserBio().then((dbBio) => {
         setBio(dbBio);
       });
     }
-  }, [session]);
+  }, [session?.user]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -194,7 +199,7 @@ export default function ProfilePage() {
           {/* Aksiyon Butonu */}
           <div className="flex items-center justify-end gap-4 pt-4">
             {successMsg && (
-              <span className="text-sm text-green-500 font-medium flex items-center gap-1.5 animate-in fade-in zoom-in duration-200">
+              <span className="text-sm text-primary-500 font-medium flex items-center gap-1.5 animate-in fade-in zoom-in duration-200">
                 <CheckCircle2 className="h-4 w-4" /> {successMsg}
               </span>
             )}

@@ -7,13 +7,14 @@ import { analyzeArticle } from "./article-analyzer";
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Yardımcı: URL'den görseli indirip base64'e çevirir (Vision analizi için)
-async function fetchImageAsBase64(url: string): Promise<string | null> {
+// Yardımcı: URL'den görseli indirip base64'e çevirir (Vision analizi için)
+export async function fetchImageAsBase64(url: string): Promise<string | null> {
   try {
     const res = await fetch(url);
     if (!res.ok) return null;
     const arrayBuffer = await res.arrayBuffer();
     return Buffer.from(arrayBuffer).toString("base64");
-  } catch (e) {
+  } catch (_e) {
     return null;
   }
 }
@@ -21,11 +22,11 @@ async function fetchImageAsBase64(url: string): Promise<string | null> {
 /**
  * OpenRouter API kullanarak içerik üretir.
  */
-async function generateContentWithOpenRouter(model: string, messages: any[], tools?: any[]): Promise<string> {
+async function generateContentWithOpenRouter(model: string, messages: Array<{ role: string; content: string | unknown[] }>, tools?: unknown[]): Promise<string> {
   const apiKey = process.env.OPENROUTER_API_KEY || "";
   if (!apiKey) throw new Error("OPENROUTER_API_KEY eksik.");
 
-  const body: any = {
+  const body: Record<string, unknown> = {
     model: model,
     messages: messages,
     response_format: { type: "text" }
@@ -61,7 +62,7 @@ async function generateImageWithOpenRouter(model: string, prompt: string, refere
     console.log(`[AI Writer] OpenRouter görsel üretimi: model=${model}, referans=${!!referenceImageUrl}`);
     const apiKey = process.env.OPENROUTER_API_KEY || "";
     
-    const content: any[] = [{ type: "text", text: prompt }];
+    const content: Array<{ type: string; text?: string; image_url?: { url: string } }> = [{ type: "text", text: prompt }];
     if (referenceImageUrl) {
       content.push({ type: "image_url", image_url: { url: referenceImageUrl } });
     }
@@ -125,8 +126,9 @@ export async function writeArticleWithAI(suggestionId: string) {
     const useGoogleSearch = settings?.aiWriterSearchEnabled || false;
     const useRssImage = settings?.aiWriterUseRssImage !== false;
 
-    if (suggestion.aiAnalysis && (suggestion.aiAnalysis as any).suggestedCategory) {
-      const suggestedCatName = (suggestion.aiAnalysis as any).suggestedCategory;
+    const aiAnalysisObj = suggestion.aiAnalysis as Record<string, unknown> | null;
+    if (aiAnalysisObj && typeof aiAnalysisObj.suggestedCategory === "string") {
+      const suggestedCatName = aiAnalysisObj.suggestedCategory;
       
       // Önce tam eşleşme dene
       let category = await prisma.category.findUnique({
@@ -179,7 +181,7 @@ export async function writeArticleWithAI(suggestionId: string) {
         console.log(`[AI Writer] Metin üretiliyor: Model=${writerModelName}, Deneme=${i + 1}, Arama=${useGoogleSearch}`);
         content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }], tools);
         break;
-      } catch (err: any) {
+      } catch (err: unknown) {
         const errorMsg = String(err);
         const isRetryable = errorMsg.includes("429") || errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE") || errorMsg.includes("high demand") || errorMsg.includes("timeout");
         if (isRetryable && i < 2) {
@@ -196,7 +198,7 @@ export async function writeArticleWithAI(suggestionId: string) {
     const finalImagePrompt = `${imagePromptBase}\nNews headline: "${suggestion.title}"\nStyle: Photorealistic, 16:9, no text.`;
     const referenceUrl = useRssImage && suggestion.imageUrl ? suggestion.imageUrl : undefined;
 
-    let generatedImageUrl = await generateImageWithOpenRouter(imageModelName, finalImagePrompt, referenceUrl);
+    const generatedImageUrl = await generateImageWithOpenRouter(imageModelName, finalImagePrompt, referenceUrl);
     let imageUrl = generatedImageUrl;
 
     // Eğer AI görsel üretmediyse veya hata oluştuysa RSS görselini kullan ve sisteme kaydet
@@ -255,12 +257,15 @@ export async function writeArticleWithAI(suggestionId: string) {
       },
     });
 
-    // Google Indexing API bildirimi
+    // Google Indexing API bildirimi ve Sosyal Medya Paylaşımı
     try {
       const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
       notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+      
+      const { publishToTelegram } = await import("./social-publisher");
+      publishToTelegram({ title: article.title, excerpt: article.excerpt, slug: article.slug, coverImage: article.coverImage }).catch(err => console.error("Telegram publish error:", err));
     } catch (e) {
-      console.error("Failed to load google-indexing helper in writeArticleWithAI:", e);
+      console.error("Failed to load google-indexing or social-publisher helper in writeArticleWithAI:", e);
     }
 
     await prisma.rssFeedItem.update({
@@ -382,6 +387,7 @@ export async function rewriteArticleWithAI(articleId: string) {
 
     const textPrompt = `
       Konu: ${article.title}
+      Talimat: ${finalPrompt}
       Lütfen bu makaleyi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz. 
       Önceki versiyondaki anlatım bozukluklarını düzelt, intihal riski oluşturabilecek ifadelerden kaçın.
       Format: HTML (h2, p, strong). En az 500 kelime.
@@ -394,12 +400,12 @@ export async function rewriteArticleWithAI(articleId: string) {
       try {
         content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }], tools);
         break;
-      } catch (err: any) {
+      } catch (_err: unknown) {
         if (i < 2) {
           await sleep(5000);
           continue;
         }
-        throw err;
+        throw _err;
       }
     }
 
@@ -427,8 +433,9 @@ export async function rewriteArticleWithAI(articleId: string) {
       success: true,
       analysis
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : String(error);
     console.error("Manuel Yeniden Yazım Hatası:", error);
-    return { success: false, error: error.message || String(error) };
+    return { success: false, error: errMsg };
   }
 }

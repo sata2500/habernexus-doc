@@ -104,6 +104,16 @@ export type RssFeedItem = $Result.DefaultSelection<Prisma.$RssFeedItemPayload>
  */
 export type SystemSettings = $Result.DefaultSelection<Prisma.$SystemSettingsPayload>
 /**
+ * Model GoogleTrend
+ * Google Trends Verileri
+ */
+export type GoogleTrend = $Result.DefaultSelection<Prisma.$GoogleTrendPayload>
+/**
+ * Model GoogleTrendItem
+ * Trends ile RSS Karşılaştırma Eşleşmesi
+ */
+export type GoogleTrendItem = $Result.DefaultSelection<Prisma.$GoogleTrendItemPayload>
+/**
  * Model AiPersona
  * AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)
  */
@@ -154,10 +164,22 @@ export const RssItemStatus: {
   APPROVED: 'APPROVED',
   LOW_SCORE: 'LOW_SCORE',
   COVERED: 'COVERED',
+  EXPIRED_STALE: 'EXPIRED_STALE',
   DISMISSED: 'DISMISSED'
 };
 
 export type RssItemStatus = (typeof RssItemStatus)[keyof typeof RssItemStatus]
+
+
+export const TrendAction: {
+  PENDING: 'PENDING',
+  AUTO_PUBLISHED: 'AUTO_PUBLISHED',
+  SEARCH_GENERATED: 'SEARCH_GENERATED',
+  SCHEDULED_DRAFT: 'SCHEDULED_DRAFT',
+  DISMISSED: 'DISMISSED'
+};
+
+export type TrendAction = (typeof TrendAction)[keyof typeof TrendAction]
 
 
 export const AiModelType: {
@@ -177,6 +199,10 @@ export const MediaStatus: typeof $Enums.MediaStatus
 export type RssItemStatus = $Enums.RssItemStatus
 
 export const RssItemStatus: typeof $Enums.RssItemStatus
+
+export type TrendAction = $Enums.TrendAction
+
+export const TrendAction: typeof $Enums.TrendAction
 
 export type AiModelType = $Enums.AiModelType
 
@@ -482,6 +508,26 @@ export class PrismaClient<
     * ```
     */
   get systemSettings(): Prisma.SystemSettingsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.googleTrend`: Exposes CRUD operations for the **GoogleTrend** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GoogleTrends
+    * const googleTrends = await prisma.googleTrend.findMany()
+    * ```
+    */
+  get googleTrend(): Prisma.GoogleTrendDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.googleTrendItem`: Exposes CRUD operations for the **GoogleTrendItem** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more GoogleTrendItems
+    * const googleTrendItems = await prisma.googleTrendItem.findMany()
+    * ```
+    */
+  get googleTrendItem(): Prisma.GoogleTrendItemDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.aiPersona`: Exposes CRUD operations for the **AiPersona** model.
@@ -994,6 +1040,8 @@ export namespace Prisma {
     RssFeedSource: 'RssFeedSource',
     RssFeedItem: 'RssFeedItem',
     SystemSettings: 'SystemSettings',
+    GoogleTrend: 'GoogleTrend',
+    GoogleTrendItem: 'GoogleTrendItem',
     AiPersona: 'AiPersona',
     AiPersonaOnCategory: 'AiPersonaOnCategory',
     SiteSettings: 'SiteSettings',
@@ -1015,7 +1063,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "systemSettings" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2351,6 +2399,154 @@ export namespace Prisma {
           }
         }
       }
+      GoogleTrend: {
+        payload: Prisma.$GoogleTrendPayload<ExtArgs>
+        fields: Prisma.GoogleTrendFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GoogleTrendFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GoogleTrendFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload>
+          }
+          findFirst: {
+            args: Prisma.GoogleTrendFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GoogleTrendFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload>
+          }
+          findMany: {
+            args: Prisma.GoogleTrendFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload>[]
+          }
+          create: {
+            args: Prisma.GoogleTrendCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload>
+          }
+          createMany: {
+            args: Prisma.GoogleTrendCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.GoogleTrendCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload>[]
+          }
+          delete: {
+            args: Prisma.GoogleTrendDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload>
+          }
+          update: {
+            args: Prisma.GoogleTrendUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload>
+          }
+          deleteMany: {
+            args: Prisma.GoogleTrendDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GoogleTrendUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.GoogleTrendUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload>[]
+          }
+          upsert: {
+            args: Prisma.GoogleTrendUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendPayload>
+          }
+          aggregate: {
+            args: Prisma.GoogleTrendAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGoogleTrend>
+          }
+          groupBy: {
+            args: Prisma.GoogleTrendGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GoogleTrendGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.GoogleTrendCountArgs<ExtArgs>
+            result: $Utils.Optional<GoogleTrendCountAggregateOutputType> | number
+          }
+        }
+      }
+      GoogleTrendItem: {
+        payload: Prisma.$GoogleTrendItemPayload<ExtArgs>
+        fields: Prisma.GoogleTrendItemFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.GoogleTrendItemFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.GoogleTrendItemFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
+          }
+          findFirst: {
+            args: Prisma.GoogleTrendItemFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.GoogleTrendItemFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
+          }
+          findMany: {
+            args: Prisma.GoogleTrendItemFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>[]
+          }
+          create: {
+            args: Prisma.GoogleTrendItemCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
+          }
+          createMany: {
+            args: Prisma.GoogleTrendItemCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.GoogleTrendItemCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>[]
+          }
+          delete: {
+            args: Prisma.GoogleTrendItemDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
+          }
+          update: {
+            args: Prisma.GoogleTrendItemUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
+          }
+          deleteMany: {
+            args: Prisma.GoogleTrendItemDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.GoogleTrendItemUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.GoogleTrendItemUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>[]
+          }
+          upsert: {
+            args: Prisma.GoogleTrendItemUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
+          }
+          aggregate: {
+            args: Prisma.GoogleTrendItemAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateGoogleTrendItem>
+          }
+          groupBy: {
+            args: Prisma.GoogleTrendItemGroupByArgs<ExtArgs>
+            result: $Utils.Optional<GoogleTrendItemGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.GoogleTrendItemCountArgs<ExtArgs>
+            result: $Utils.Optional<GoogleTrendItemCountAggregateOutputType> | number
+          }
+        }
+      }
       AiPersona: {
         payload: Prisma.$AiPersonaPayload<ExtArgs>
         fields: Prisma.AiPersonaFieldRefs
@@ -2921,6 +3117,8 @@ export namespace Prisma {
     rssFeedSource?: RssFeedSourceOmit
     rssFeedItem?: RssFeedItemOmit
     systemSettings?: SystemSettingsOmit
+    googleTrend?: GoogleTrendOmit
+    googleTrendItem?: GoogleTrendItemOmit
     aiPersona?: AiPersonaOmit
     aiPersonaOnCategory?: AiPersonaOnCategoryOmit
     siteSettings?: SiteSettingsOmit
@@ -3288,6 +3486,68 @@ export namespace Prisma {
    */
   export type RssFeedSourceCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RssFeedItemWhereInput
+  }
+
+
+  /**
+   * Count Type RssFeedItemCountOutputType
+   */
+
+  export type RssFeedItemCountOutputType = {
+    googleTrendItems: number
+  }
+
+  export type RssFeedItemCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    googleTrendItems?: boolean | RssFeedItemCountOutputTypeCountGoogleTrendItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * RssFeedItemCountOutputType without action
+   */
+  export type RssFeedItemCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItemCountOutputType
+     */
+    select?: RssFeedItemCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * RssFeedItemCountOutputType without action
+   */
+  export type RssFeedItemCountOutputTypeCountGoogleTrendItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GoogleTrendItemWhereInput
+  }
+
+
+  /**
+   * Count Type GoogleTrendCountOutputType
+   */
+
+  export type GoogleTrendCountOutputType = {
+    items: number
+  }
+
+  export type GoogleTrendCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    items?: boolean | GoogleTrendCountOutputTypeCountItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * GoogleTrendCountOutputType without action
+   */
+  export type GoogleTrendCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendCountOutputType
+     */
+    select?: GoogleTrendCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * GoogleTrendCountOutputType without action
+   */
+  export type GoogleTrendCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GoogleTrendItemWhereInput
   }
 
 
@@ -21764,6 +22024,8 @@ export namespace Prisma {
     createdAt?: boolean
     updatedAt?: boolean
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
+    googleTrendItems?: boolean | RssFeedItem$googleTrendItemsArgs<ExtArgs>
+    _count?: boolean | RssFeedItemCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["rssFeedItem"]>
 
   export type RssFeedItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -21825,6 +22087,8 @@ export namespace Prisma {
   export type RssFeedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceId" | "title" | "url" | "urlHash" | "excerpt" | "imageUrl" | "publishedAt" | "status" | "aiScore" | "aiAnalysis" | "dismissed" | "usedForArticle" | "createdAt" | "updatedAt", ExtArgs["result"]["rssFeedItem"]>
   export type RssFeedItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
+    googleTrendItems?: boolean | RssFeedItem$googleTrendItemsArgs<ExtArgs>
+    _count?: boolean | RssFeedItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RssFeedItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
@@ -21837,6 +22101,7 @@ export namespace Prisma {
     name: "RssFeedItem"
     objects: {
       source: Prisma.$RssFeedSourcePayload<ExtArgs>
+      googleTrendItems: Prisma.$GoogleTrendItemPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -22249,6 +22514,7 @@ export namespace Prisma {
   export interface Prisma__RssFeedItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     source<T extends RssFeedSourceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedSourceDefaultArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    googleTrendItems<T extends RssFeedItem$googleTrendItemsArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedItem$googleTrendItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -22694,6 +22960,30 @@ export namespace Prisma {
   }
 
   /**
+   * RssFeedItem.googleTrendItems
+   */
+  export type RssFeedItem$googleTrendItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    where?: GoogleTrendItemWhereInput
+    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
+    cursor?: GoogleTrendItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
+  }
+
+  /**
    * RssFeedItem without action
    */
   export type RssFeedItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -22727,11 +23017,15 @@ export namespace Prisma {
   export type SystemSettingsAvgAggregateOutputType = {
     rssRetentionDays: number | null
     aiWriterAutoCount: number | null
+    maxNewsAgeHours: number | null
+    trendAutoPublishThreshold: number | null
   }
 
   export type SystemSettingsSumAggregateOutputType = {
     rssRetentionDays: number | null
     aiWriterAutoCount: number | null
+    maxNewsAgeHours: number | null
+    trendAutoPublishThreshold: number | null
   }
 
   export type SystemSettingsMinAggregateOutputType = {
@@ -22753,6 +23047,11 @@ export namespace Prisma {
     aiWriterAutoCron: string | null
     qStashAiWriterId: string | null
     aiWriterSearchEnabled: boolean | null
+    maxNewsAgeHours: number | null
+    googleTrendsEnabled: boolean | null
+    googleTrendsGeo: string | null
+    trendAutoPublishThreshold: number | null
+    trendSearchGenerateEnabled: boolean | null
     updatedAt: Date | null
   }
 
@@ -22775,6 +23074,11 @@ export namespace Prisma {
     aiWriterAutoCron: string | null
     qStashAiWriterId: string | null
     aiWriterSearchEnabled: boolean | null
+    maxNewsAgeHours: number | null
+    googleTrendsEnabled: boolean | null
+    googleTrendsGeo: string | null
+    trendAutoPublishThreshold: number | null
+    trendSearchGenerateEnabled: boolean | null
     updatedAt: Date | null
   }
 
@@ -22797,6 +23101,11 @@ export namespace Prisma {
     aiWriterAutoCron: number
     qStashAiWriterId: number
     aiWriterSearchEnabled: number
+    maxNewsAgeHours: number
+    googleTrendsEnabled: number
+    googleTrendsGeo: number
+    trendAutoPublishThreshold: number
+    trendSearchGenerateEnabled: number
     updatedAt: number
     _all: number
   }
@@ -22805,11 +23114,15 @@ export namespace Prisma {
   export type SystemSettingsAvgAggregateInputType = {
     rssRetentionDays?: true
     aiWriterAutoCount?: true
+    maxNewsAgeHours?: true
+    trendAutoPublishThreshold?: true
   }
 
   export type SystemSettingsSumAggregateInputType = {
     rssRetentionDays?: true
     aiWriterAutoCount?: true
+    maxNewsAgeHours?: true
+    trendAutoPublishThreshold?: true
   }
 
   export type SystemSettingsMinAggregateInputType = {
@@ -22831,6 +23144,11 @@ export namespace Prisma {
     aiWriterAutoCron?: true
     qStashAiWriterId?: true
     aiWriterSearchEnabled?: true
+    maxNewsAgeHours?: true
+    googleTrendsEnabled?: true
+    googleTrendsGeo?: true
+    trendAutoPublishThreshold?: true
+    trendSearchGenerateEnabled?: true
     updatedAt?: true
   }
 
@@ -22853,6 +23171,11 @@ export namespace Prisma {
     aiWriterAutoCron?: true
     qStashAiWriterId?: true
     aiWriterSearchEnabled?: true
+    maxNewsAgeHours?: true
+    googleTrendsEnabled?: true
+    googleTrendsGeo?: true
+    trendAutoPublishThreshold?: true
+    trendSearchGenerateEnabled?: true
     updatedAt?: true
   }
 
@@ -22875,6 +23198,11 @@ export namespace Prisma {
     aiWriterAutoCron?: true
     qStashAiWriterId?: true
     aiWriterSearchEnabled?: true
+    maxNewsAgeHours?: true
+    googleTrendsEnabled?: true
+    googleTrendsGeo?: true
+    trendAutoPublishThreshold?: true
+    trendSearchGenerateEnabled?: true
     updatedAt?: true
     _all?: true
   }
@@ -22984,6 +23312,11 @@ export namespace Prisma {
     aiWriterAutoCron: string
     qStashAiWriterId: string | null
     aiWriterSearchEnabled: boolean
+    maxNewsAgeHours: number
+    googleTrendsEnabled: boolean
+    googleTrendsGeo: string
+    trendAutoPublishThreshold: number
+    trendSearchGenerateEnabled: boolean
     updatedAt: Date
     _count: SystemSettingsCountAggregateOutputType | null
     _avg: SystemSettingsAvgAggregateOutputType | null
@@ -23025,6 +23358,11 @@ export namespace Prisma {
     aiWriterAutoCron?: boolean
     qStashAiWriterId?: boolean
     aiWriterSearchEnabled?: boolean
+    maxNewsAgeHours?: boolean
+    googleTrendsEnabled?: boolean
+    googleTrendsGeo?: boolean
+    trendAutoPublishThreshold?: boolean
+    trendSearchGenerateEnabled?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -23047,6 +23385,11 @@ export namespace Prisma {
     aiWriterAutoCron?: boolean
     qStashAiWriterId?: boolean
     aiWriterSearchEnabled?: boolean
+    maxNewsAgeHours?: boolean
+    googleTrendsEnabled?: boolean
+    googleTrendsGeo?: boolean
+    trendAutoPublishThreshold?: boolean
+    trendSearchGenerateEnabled?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -23069,6 +23412,11 @@ export namespace Prisma {
     aiWriterAutoCron?: boolean
     qStashAiWriterId?: boolean
     aiWriterSearchEnabled?: boolean
+    maxNewsAgeHours?: boolean
+    googleTrendsEnabled?: boolean
+    googleTrendsGeo?: boolean
+    trendAutoPublishThreshold?: boolean
+    trendSearchGenerateEnabled?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -23091,10 +23439,15 @@ export namespace Prisma {
     aiWriterAutoCron?: boolean
     qStashAiWriterId?: boolean
     aiWriterSearchEnabled?: boolean
+    maxNewsAgeHours?: boolean
+    googleTrendsEnabled?: boolean
+    googleTrendsGeo?: boolean
+    trendAutoPublishThreshold?: boolean
+    trendSearchGenerateEnabled?: boolean
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiAnalyzerModel" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "aiWriterSearchEnabled" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiAnalyzerModel" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "aiWriterSearchEnabled" | "maxNewsAgeHours" | "googleTrendsEnabled" | "googleTrendsGeo" | "trendAutoPublishThreshold" | "trendSearchGenerateEnabled" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -23118,6 +23471,11 @@ export namespace Prisma {
       aiWriterAutoCron: string
       qStashAiWriterId: string | null
       aiWriterSearchEnabled: boolean
+      maxNewsAgeHours: number
+      googleTrendsEnabled: boolean
+      googleTrendsGeo: string
+      trendAutoPublishThreshold: number
+      trendSearchGenerateEnabled: boolean
       updatedAt: Date
     }, ExtArgs["result"]["systemSettings"]>
     composites: {}
@@ -23560,6 +23918,11 @@ export namespace Prisma {
     readonly aiWriterAutoCron: FieldRef<"SystemSettings", 'String'>
     readonly qStashAiWriterId: FieldRef<"SystemSettings", 'String'>
     readonly aiWriterSearchEnabled: FieldRef<"SystemSettings", 'Boolean'>
+    readonly maxNewsAgeHours: FieldRef<"SystemSettings", 'Int'>
+    readonly googleTrendsEnabled: FieldRef<"SystemSettings", 'Boolean'>
+    readonly googleTrendsGeo: FieldRef<"SystemSettings", 'String'>
+    readonly trendAutoPublishThreshold: FieldRef<"SystemSettings", 'Int'>
+    readonly trendSearchGenerateEnabled: FieldRef<"SystemSettings", 'Boolean'>
     readonly updatedAt: FieldRef<"SystemSettings", 'DateTime'>
   }
     
@@ -23929,6 +24292,2304 @@ export namespace Prisma {
      * Omit specific fields from the SystemSettings
      */
     omit?: SystemSettingsOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GoogleTrend
+   */
+
+  export type AggregateGoogleTrend = {
+    _count: GoogleTrendCountAggregateOutputType | null
+    _avg: GoogleTrendAvgAggregateOutputType | null
+    _sum: GoogleTrendSumAggregateOutputType | null
+    _min: GoogleTrendMinAggregateOutputType | null
+    _max: GoogleTrendMaxAggregateOutputType | null
+  }
+
+  export type GoogleTrendAvgAggregateOutputType = {
+    trafficScore: number | null
+  }
+
+  export type GoogleTrendSumAggregateOutputType = {
+    trafficScore: number | null
+  }
+
+  export type GoogleTrendMinAggregateOutputType = {
+    id: string | null
+    keyword: string | null
+    searchVolume: string | null
+    exploreUrl: string | null
+    category: string | null
+    country: string | null
+    trafficScore: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GoogleTrendMaxAggregateOutputType = {
+    id: string | null
+    keyword: string | null
+    searchVolume: string | null
+    exploreUrl: string | null
+    category: string | null
+    country: string | null
+    trafficScore: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type GoogleTrendCountAggregateOutputType = {
+    id: number
+    keyword: number
+    searchVolume: number
+    exploreUrl: number
+    category: number
+    country: number
+    trafficScore: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type GoogleTrendAvgAggregateInputType = {
+    trafficScore?: true
+  }
+
+  export type GoogleTrendSumAggregateInputType = {
+    trafficScore?: true
+  }
+
+  export type GoogleTrendMinAggregateInputType = {
+    id?: true
+    keyword?: true
+    searchVolume?: true
+    exploreUrl?: true
+    category?: true
+    country?: true
+    trafficScore?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GoogleTrendMaxAggregateInputType = {
+    id?: true
+    keyword?: true
+    searchVolume?: true
+    exploreUrl?: true
+    category?: true
+    country?: true
+    trafficScore?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type GoogleTrendCountAggregateInputType = {
+    id?: true
+    keyword?: true
+    searchVolume?: true
+    exploreUrl?: true
+    category?: true
+    country?: true
+    trafficScore?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type GoogleTrendAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GoogleTrend to aggregate.
+     */
+    where?: GoogleTrendWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GoogleTrends to fetch.
+     */
+    orderBy?: GoogleTrendOrderByWithRelationInput | GoogleTrendOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GoogleTrendWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GoogleTrends from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GoogleTrends.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GoogleTrends
+    **/
+    _count?: true | GoogleTrendCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GoogleTrendAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GoogleTrendSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GoogleTrendMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GoogleTrendMaxAggregateInputType
+  }
+
+  export type GetGoogleTrendAggregateType<T extends GoogleTrendAggregateArgs> = {
+        [P in keyof T & keyof AggregateGoogleTrend]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGoogleTrend[P]>
+      : GetScalarType<T[P], AggregateGoogleTrend[P]>
+  }
+
+
+
+
+  export type GoogleTrendGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GoogleTrendWhereInput
+    orderBy?: GoogleTrendOrderByWithAggregationInput | GoogleTrendOrderByWithAggregationInput[]
+    by: GoogleTrendScalarFieldEnum[] | GoogleTrendScalarFieldEnum
+    having?: GoogleTrendScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GoogleTrendCountAggregateInputType | true
+    _avg?: GoogleTrendAvgAggregateInputType
+    _sum?: GoogleTrendSumAggregateInputType
+    _min?: GoogleTrendMinAggregateInputType
+    _max?: GoogleTrendMaxAggregateInputType
+  }
+
+  export type GoogleTrendGroupByOutputType = {
+    id: string
+    keyword: string
+    searchVolume: string | null
+    exploreUrl: string | null
+    category: string | null
+    country: string
+    trafficScore: number
+    createdAt: Date
+    updatedAt: Date
+    _count: GoogleTrendCountAggregateOutputType | null
+    _avg: GoogleTrendAvgAggregateOutputType | null
+    _sum: GoogleTrendSumAggregateOutputType | null
+    _min: GoogleTrendMinAggregateOutputType | null
+    _max: GoogleTrendMaxAggregateOutputType | null
+  }
+
+  type GetGoogleTrendGroupByPayload<T extends GoogleTrendGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GoogleTrendGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GoogleTrendGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GoogleTrendGroupByOutputType[P]>
+            : GetScalarType<T[P], GoogleTrendGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GoogleTrendSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    keyword?: boolean
+    searchVolume?: boolean
+    exploreUrl?: boolean
+    category?: boolean
+    country?: boolean
+    trafficScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    items?: boolean | GoogleTrend$itemsArgs<ExtArgs>
+    _count?: boolean | GoogleTrendCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["googleTrend"]>
+
+  export type GoogleTrendSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    keyword?: boolean
+    searchVolume?: boolean
+    exploreUrl?: boolean
+    category?: boolean
+    country?: boolean
+    trafficScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["googleTrend"]>
+
+  export type GoogleTrendSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    keyword?: boolean
+    searchVolume?: boolean
+    exploreUrl?: boolean
+    category?: boolean
+    country?: boolean
+    trafficScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["googleTrend"]>
+
+  export type GoogleTrendSelectScalar = {
+    id?: boolean
+    keyword?: boolean
+    searchVolume?: boolean
+    exploreUrl?: boolean
+    category?: boolean
+    country?: boolean
+    trafficScore?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type GoogleTrendOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "keyword" | "searchVolume" | "exploreUrl" | "category" | "country" | "trafficScore" | "createdAt" | "updatedAt", ExtArgs["result"]["googleTrend"]>
+  export type GoogleTrendInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    items?: boolean | GoogleTrend$itemsArgs<ExtArgs>
+    _count?: boolean | GoogleTrendCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type GoogleTrendIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+  export type GoogleTrendIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
+
+  export type $GoogleTrendPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GoogleTrend"
+    objects: {
+      items: Prisma.$GoogleTrendItemPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      keyword: string
+      searchVolume: string | null
+      exploreUrl: string | null
+      category: string | null
+      country: string
+      trafficScore: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["googleTrend"]>
+    composites: {}
+  }
+
+  type GoogleTrendGetPayload<S extends boolean | null | undefined | GoogleTrendDefaultArgs> = $Result.GetResult<Prisma.$GoogleTrendPayload, S>
+
+  type GoogleTrendCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GoogleTrendFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GoogleTrendCountAggregateInputType | true
+    }
+
+  export interface GoogleTrendDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GoogleTrend'], meta: { name: 'GoogleTrend' } }
+    /**
+     * Find zero or one GoogleTrend that matches the filter.
+     * @param {GoogleTrendFindUniqueArgs} args - Arguments to find a GoogleTrend
+     * @example
+     * // Get one GoogleTrend
+     * const googleTrend = await prisma.googleTrend.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GoogleTrendFindUniqueArgs>(args: SelectSubset<T, GoogleTrendFindUniqueArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GoogleTrend that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GoogleTrendFindUniqueOrThrowArgs} args - Arguments to find a GoogleTrend
+     * @example
+     * // Get one GoogleTrend
+     * const googleTrend = await prisma.googleTrend.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GoogleTrendFindUniqueOrThrowArgs>(args: SelectSubset<T, GoogleTrendFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GoogleTrend that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendFindFirstArgs} args - Arguments to find a GoogleTrend
+     * @example
+     * // Get one GoogleTrend
+     * const googleTrend = await prisma.googleTrend.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GoogleTrendFindFirstArgs>(args?: SelectSubset<T, GoogleTrendFindFirstArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GoogleTrend that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendFindFirstOrThrowArgs} args - Arguments to find a GoogleTrend
+     * @example
+     * // Get one GoogleTrend
+     * const googleTrend = await prisma.googleTrend.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GoogleTrendFindFirstOrThrowArgs>(args?: SelectSubset<T, GoogleTrendFindFirstOrThrowArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GoogleTrends that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GoogleTrends
+     * const googleTrends = await prisma.googleTrend.findMany()
+     * 
+     * // Get first 10 GoogleTrends
+     * const googleTrends = await prisma.googleTrend.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const googleTrendWithIdOnly = await prisma.googleTrend.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GoogleTrendFindManyArgs>(args?: SelectSubset<T, GoogleTrendFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GoogleTrend.
+     * @param {GoogleTrendCreateArgs} args - Arguments to create a GoogleTrend.
+     * @example
+     * // Create one GoogleTrend
+     * const GoogleTrend = await prisma.googleTrend.create({
+     *   data: {
+     *     // ... data to create a GoogleTrend
+     *   }
+     * })
+     * 
+     */
+    create<T extends GoogleTrendCreateArgs>(args: SelectSubset<T, GoogleTrendCreateArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GoogleTrends.
+     * @param {GoogleTrendCreateManyArgs} args - Arguments to create many GoogleTrends.
+     * @example
+     * // Create many GoogleTrends
+     * const googleTrend = await prisma.googleTrend.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GoogleTrendCreateManyArgs>(args?: SelectSubset<T, GoogleTrendCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many GoogleTrends and returns the data saved in the database.
+     * @param {GoogleTrendCreateManyAndReturnArgs} args - Arguments to create many GoogleTrends.
+     * @example
+     * // Create many GoogleTrends
+     * const googleTrend = await prisma.googleTrend.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many GoogleTrends and only return the `id`
+     * const googleTrendWithIdOnly = await prisma.googleTrend.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GoogleTrendCreateManyAndReturnArgs>(args?: SelectSubset<T, GoogleTrendCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a GoogleTrend.
+     * @param {GoogleTrendDeleteArgs} args - Arguments to delete one GoogleTrend.
+     * @example
+     * // Delete one GoogleTrend
+     * const GoogleTrend = await prisma.googleTrend.delete({
+     *   where: {
+     *     // ... filter to delete one GoogleTrend
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GoogleTrendDeleteArgs>(args: SelectSubset<T, GoogleTrendDeleteArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GoogleTrend.
+     * @param {GoogleTrendUpdateArgs} args - Arguments to update one GoogleTrend.
+     * @example
+     * // Update one GoogleTrend
+     * const googleTrend = await prisma.googleTrend.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GoogleTrendUpdateArgs>(args: SelectSubset<T, GoogleTrendUpdateArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GoogleTrends.
+     * @param {GoogleTrendDeleteManyArgs} args - Arguments to filter GoogleTrends to delete.
+     * @example
+     * // Delete a few GoogleTrends
+     * const { count } = await prisma.googleTrend.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GoogleTrendDeleteManyArgs>(args?: SelectSubset<T, GoogleTrendDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GoogleTrends.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GoogleTrends
+     * const googleTrend = await prisma.googleTrend.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GoogleTrendUpdateManyArgs>(args: SelectSubset<T, GoogleTrendUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GoogleTrends and returns the data updated in the database.
+     * @param {GoogleTrendUpdateManyAndReturnArgs} args - Arguments to update many GoogleTrends.
+     * @example
+     * // Update many GoogleTrends
+     * const googleTrend = await prisma.googleTrend.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more GoogleTrends and only return the `id`
+     * const googleTrendWithIdOnly = await prisma.googleTrend.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GoogleTrendUpdateManyAndReturnArgs>(args: SelectSubset<T, GoogleTrendUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one GoogleTrend.
+     * @param {GoogleTrendUpsertArgs} args - Arguments to update or create a GoogleTrend.
+     * @example
+     * // Update or create a GoogleTrend
+     * const googleTrend = await prisma.googleTrend.upsert({
+     *   create: {
+     *     // ... data to create a GoogleTrend
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GoogleTrend we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GoogleTrendUpsertArgs>(args: SelectSubset<T, GoogleTrendUpsertArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of GoogleTrends.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendCountArgs} args - Arguments to filter GoogleTrends to count.
+     * @example
+     * // Count the number of GoogleTrends
+     * const count = await prisma.googleTrend.count({
+     *   where: {
+     *     // ... the filter for the GoogleTrends we want to count
+     *   }
+     * })
+    **/
+    count<T extends GoogleTrendCountArgs>(
+      args?: Subset<T, GoogleTrendCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GoogleTrendCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GoogleTrend.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GoogleTrendAggregateArgs>(args: Subset<T, GoogleTrendAggregateArgs>): Prisma.PrismaPromise<GetGoogleTrendAggregateType<T>>
+
+    /**
+     * Group by GoogleTrend.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GoogleTrendGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GoogleTrendGroupByArgs['orderBy'] }
+        : { orderBy?: GoogleTrendGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GoogleTrendGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGoogleTrendGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GoogleTrend model
+   */
+  readonly fields: GoogleTrendFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GoogleTrend.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GoogleTrendClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    items<T extends GoogleTrend$itemsArgs<ExtArgs> = {}>(args?: Subset<T, GoogleTrend$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GoogleTrend model
+   */
+  interface GoogleTrendFieldRefs {
+    readonly id: FieldRef<"GoogleTrend", 'String'>
+    readonly keyword: FieldRef<"GoogleTrend", 'String'>
+    readonly searchVolume: FieldRef<"GoogleTrend", 'String'>
+    readonly exploreUrl: FieldRef<"GoogleTrend", 'String'>
+    readonly category: FieldRef<"GoogleTrend", 'String'>
+    readonly country: FieldRef<"GoogleTrend", 'String'>
+    readonly trafficScore: FieldRef<"GoogleTrend", 'Int'>
+    readonly createdAt: FieldRef<"GoogleTrend", 'DateTime'>
+    readonly updatedAt: FieldRef<"GoogleTrend", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GoogleTrend findUnique
+   */
+  export type GoogleTrendFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrend to fetch.
+     */
+    where: GoogleTrendWhereUniqueInput
+  }
+
+  /**
+   * GoogleTrend findUniqueOrThrow
+   */
+  export type GoogleTrendFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrend to fetch.
+     */
+    where: GoogleTrendWhereUniqueInput
+  }
+
+  /**
+   * GoogleTrend findFirst
+   */
+  export type GoogleTrendFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrend to fetch.
+     */
+    where?: GoogleTrendWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GoogleTrends to fetch.
+     */
+    orderBy?: GoogleTrendOrderByWithRelationInput | GoogleTrendOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GoogleTrends.
+     */
+    cursor?: GoogleTrendWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GoogleTrends from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GoogleTrends.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GoogleTrends.
+     */
+    distinct?: GoogleTrendScalarFieldEnum | GoogleTrendScalarFieldEnum[]
+  }
+
+  /**
+   * GoogleTrend findFirstOrThrow
+   */
+  export type GoogleTrendFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrend to fetch.
+     */
+    where?: GoogleTrendWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GoogleTrends to fetch.
+     */
+    orderBy?: GoogleTrendOrderByWithRelationInput | GoogleTrendOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GoogleTrends.
+     */
+    cursor?: GoogleTrendWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GoogleTrends from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GoogleTrends.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GoogleTrends.
+     */
+    distinct?: GoogleTrendScalarFieldEnum | GoogleTrendScalarFieldEnum[]
+  }
+
+  /**
+   * GoogleTrend findMany
+   */
+  export type GoogleTrendFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrends to fetch.
+     */
+    where?: GoogleTrendWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GoogleTrends to fetch.
+     */
+    orderBy?: GoogleTrendOrderByWithRelationInput | GoogleTrendOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GoogleTrends.
+     */
+    cursor?: GoogleTrendWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GoogleTrends from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GoogleTrends.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GoogleTrends.
+     */
+    distinct?: GoogleTrendScalarFieldEnum | GoogleTrendScalarFieldEnum[]
+  }
+
+  /**
+   * GoogleTrend create
+   */
+  export type GoogleTrendCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+    /**
+     * The data needed to create a GoogleTrend.
+     */
+    data: XOR<GoogleTrendCreateInput, GoogleTrendUncheckedCreateInput>
+  }
+
+  /**
+   * GoogleTrend createMany
+   */
+  export type GoogleTrendCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GoogleTrends.
+     */
+    data: GoogleTrendCreateManyInput | GoogleTrendCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GoogleTrend createManyAndReturn
+   */
+  export type GoogleTrendCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * The data used to create many GoogleTrends.
+     */
+    data: GoogleTrendCreateManyInput | GoogleTrendCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GoogleTrend update
+   */
+  export type GoogleTrendUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+    /**
+     * The data needed to update a GoogleTrend.
+     */
+    data: XOR<GoogleTrendUpdateInput, GoogleTrendUncheckedUpdateInput>
+    /**
+     * Choose, which GoogleTrend to update.
+     */
+    where: GoogleTrendWhereUniqueInput
+  }
+
+  /**
+   * GoogleTrend updateMany
+   */
+  export type GoogleTrendUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GoogleTrends.
+     */
+    data: XOR<GoogleTrendUpdateManyMutationInput, GoogleTrendUncheckedUpdateManyInput>
+    /**
+     * Filter which GoogleTrends to update
+     */
+    where?: GoogleTrendWhereInput
+    /**
+     * Limit how many GoogleTrends to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GoogleTrend updateManyAndReturn
+   */
+  export type GoogleTrendUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * The data used to update GoogleTrends.
+     */
+    data: XOR<GoogleTrendUpdateManyMutationInput, GoogleTrendUncheckedUpdateManyInput>
+    /**
+     * Filter which GoogleTrends to update
+     */
+    where?: GoogleTrendWhereInput
+    /**
+     * Limit how many GoogleTrends to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GoogleTrend upsert
+   */
+  export type GoogleTrendUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+    /**
+     * The filter to search for the GoogleTrend to update in case it exists.
+     */
+    where: GoogleTrendWhereUniqueInput
+    /**
+     * In case the GoogleTrend found by the `where` argument doesn't exist, create a new GoogleTrend with this data.
+     */
+    create: XOR<GoogleTrendCreateInput, GoogleTrendUncheckedCreateInput>
+    /**
+     * In case the GoogleTrend was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GoogleTrendUpdateInput, GoogleTrendUncheckedUpdateInput>
+  }
+
+  /**
+   * GoogleTrend delete
+   */
+  export type GoogleTrendDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+    /**
+     * Filter which GoogleTrend to delete.
+     */
+    where: GoogleTrendWhereUniqueInput
+  }
+
+  /**
+   * GoogleTrend deleteMany
+   */
+  export type GoogleTrendDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GoogleTrends to delete
+     */
+    where?: GoogleTrendWhereInput
+    /**
+     * Limit how many GoogleTrends to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GoogleTrend.items
+   */
+  export type GoogleTrend$itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    where?: GoogleTrendItemWhereInput
+    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
+    cursor?: GoogleTrendItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
+  }
+
+  /**
+   * GoogleTrend without action
+   */
+  export type GoogleTrendDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrend
+     */
+    select?: GoogleTrendSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrend
+     */
+    omit?: GoogleTrendOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model GoogleTrendItem
+   */
+
+  export type AggregateGoogleTrendItem = {
+    _count: GoogleTrendItemCountAggregateOutputType | null
+    _avg: GoogleTrendItemAvgAggregateOutputType | null
+    _sum: GoogleTrendItemSumAggregateOutputType | null
+    _min: GoogleTrendItemMinAggregateOutputType | null
+    _max: GoogleTrendItemMaxAggregateOutputType | null
+  }
+
+  export type GoogleTrendItemAvgAggregateOutputType = {
+    matchScore: number | null
+  }
+
+  export type GoogleTrendItemSumAggregateOutputType = {
+    matchScore: number | null
+  }
+
+  export type GoogleTrendItemMinAggregateOutputType = {
+    id: string | null
+    trendId: string | null
+    rssItemId: string | null
+    matchScore: number | null
+    actionTaken: $Enums.TrendAction | null
+    createdAt: Date | null
+  }
+
+  export type GoogleTrendItemMaxAggregateOutputType = {
+    id: string | null
+    trendId: string | null
+    rssItemId: string | null
+    matchScore: number | null
+    actionTaken: $Enums.TrendAction | null
+    createdAt: Date | null
+  }
+
+  export type GoogleTrendItemCountAggregateOutputType = {
+    id: number
+    trendId: number
+    rssItemId: number
+    matchScore: number
+    actionTaken: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type GoogleTrendItemAvgAggregateInputType = {
+    matchScore?: true
+  }
+
+  export type GoogleTrendItemSumAggregateInputType = {
+    matchScore?: true
+  }
+
+  export type GoogleTrendItemMinAggregateInputType = {
+    id?: true
+    trendId?: true
+    rssItemId?: true
+    matchScore?: true
+    actionTaken?: true
+    createdAt?: true
+  }
+
+  export type GoogleTrendItemMaxAggregateInputType = {
+    id?: true
+    trendId?: true
+    rssItemId?: true
+    matchScore?: true
+    actionTaken?: true
+    createdAt?: true
+  }
+
+  export type GoogleTrendItemCountAggregateInputType = {
+    id?: true
+    trendId?: true
+    rssItemId?: true
+    matchScore?: true
+    actionTaken?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type GoogleTrendItemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GoogleTrendItem to aggregate.
+     */
+    where?: GoogleTrendItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GoogleTrendItems to fetch.
+     */
+    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: GoogleTrendItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GoogleTrendItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GoogleTrendItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned GoogleTrendItems
+    **/
+    _count?: true | GoogleTrendItemCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: GoogleTrendItemAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: GoogleTrendItemSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: GoogleTrendItemMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: GoogleTrendItemMaxAggregateInputType
+  }
+
+  export type GetGoogleTrendItemAggregateType<T extends GoogleTrendItemAggregateArgs> = {
+        [P in keyof T & keyof AggregateGoogleTrendItem]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateGoogleTrendItem[P]>
+      : GetScalarType<T[P], AggregateGoogleTrendItem[P]>
+  }
+
+
+
+
+  export type GoogleTrendItemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: GoogleTrendItemWhereInput
+    orderBy?: GoogleTrendItemOrderByWithAggregationInput | GoogleTrendItemOrderByWithAggregationInput[]
+    by: GoogleTrendItemScalarFieldEnum[] | GoogleTrendItemScalarFieldEnum
+    having?: GoogleTrendItemScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: GoogleTrendItemCountAggregateInputType | true
+    _avg?: GoogleTrendItemAvgAggregateInputType
+    _sum?: GoogleTrendItemSumAggregateInputType
+    _min?: GoogleTrendItemMinAggregateInputType
+    _max?: GoogleTrendItemMaxAggregateInputType
+  }
+
+  export type GoogleTrendItemGroupByOutputType = {
+    id: string
+    trendId: string
+    rssItemId: string | null
+    matchScore: number
+    actionTaken: $Enums.TrendAction
+    createdAt: Date
+    _count: GoogleTrendItemCountAggregateOutputType | null
+    _avg: GoogleTrendItemAvgAggregateOutputType | null
+    _sum: GoogleTrendItemSumAggregateOutputType | null
+    _min: GoogleTrendItemMinAggregateOutputType | null
+    _max: GoogleTrendItemMaxAggregateOutputType | null
+  }
+
+  type GetGoogleTrendItemGroupByPayload<T extends GoogleTrendItemGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<GoogleTrendItemGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof GoogleTrendItemGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], GoogleTrendItemGroupByOutputType[P]>
+            : GetScalarType<T[P], GoogleTrendItemGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type GoogleTrendItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    trendId?: boolean
+    rssItemId?: boolean
+    matchScore?: boolean
+    actionTaken?: boolean
+    createdAt?: boolean
+    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
+    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
+  }, ExtArgs["result"]["googleTrendItem"]>
+
+  export type GoogleTrendItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    trendId?: boolean
+    rssItemId?: boolean
+    matchScore?: boolean
+    actionTaken?: boolean
+    createdAt?: boolean
+    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
+    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
+  }, ExtArgs["result"]["googleTrendItem"]>
+
+  export type GoogleTrendItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    trendId?: boolean
+    rssItemId?: boolean
+    matchScore?: boolean
+    actionTaken?: boolean
+    createdAt?: boolean
+    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
+    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
+  }, ExtArgs["result"]["googleTrendItem"]>
+
+  export type GoogleTrendItemSelectScalar = {
+    id?: boolean
+    trendId?: boolean
+    rssItemId?: boolean
+    matchScore?: boolean
+    actionTaken?: boolean
+    createdAt?: boolean
+  }
+
+  export type GoogleTrendItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trendId" | "rssItemId" | "matchScore" | "actionTaken" | "createdAt", ExtArgs["result"]["googleTrendItem"]>
+  export type GoogleTrendItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
+    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
+  }
+  export type GoogleTrendItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
+    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
+  }
+  export type GoogleTrendItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
+    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
+  }
+
+  export type $GoogleTrendItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "GoogleTrendItem"
+    objects: {
+      trend: Prisma.$GoogleTrendPayload<ExtArgs>
+      rssItem: Prisma.$RssFeedItemPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      trendId: string
+      rssItemId: string | null
+      matchScore: number
+      actionTaken: $Enums.TrendAction
+      createdAt: Date
+    }, ExtArgs["result"]["googleTrendItem"]>
+    composites: {}
+  }
+
+  type GoogleTrendItemGetPayload<S extends boolean | null | undefined | GoogleTrendItemDefaultArgs> = $Result.GetResult<Prisma.$GoogleTrendItemPayload, S>
+
+  type GoogleTrendItemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<GoogleTrendItemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: GoogleTrendItemCountAggregateInputType | true
+    }
+
+  export interface GoogleTrendItemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GoogleTrendItem'], meta: { name: 'GoogleTrendItem' } }
+    /**
+     * Find zero or one GoogleTrendItem that matches the filter.
+     * @param {GoogleTrendItemFindUniqueArgs} args - Arguments to find a GoogleTrendItem
+     * @example
+     * // Get one GoogleTrendItem
+     * const googleTrendItem = await prisma.googleTrendItem.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends GoogleTrendItemFindUniqueArgs>(args: SelectSubset<T, GoogleTrendItemFindUniqueArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one GoogleTrendItem that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {GoogleTrendItemFindUniqueOrThrowArgs} args - Arguments to find a GoogleTrendItem
+     * @example
+     * // Get one GoogleTrendItem
+     * const googleTrendItem = await prisma.googleTrendItem.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends GoogleTrendItemFindUniqueOrThrowArgs>(args: SelectSubset<T, GoogleTrendItemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GoogleTrendItem that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendItemFindFirstArgs} args - Arguments to find a GoogleTrendItem
+     * @example
+     * // Get one GoogleTrendItem
+     * const googleTrendItem = await prisma.googleTrendItem.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends GoogleTrendItemFindFirstArgs>(args?: SelectSubset<T, GoogleTrendItemFindFirstArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first GoogleTrendItem that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendItemFindFirstOrThrowArgs} args - Arguments to find a GoogleTrendItem
+     * @example
+     * // Get one GoogleTrendItem
+     * const googleTrendItem = await prisma.googleTrendItem.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends GoogleTrendItemFindFirstOrThrowArgs>(args?: SelectSubset<T, GoogleTrendItemFindFirstOrThrowArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more GoogleTrendItems that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendItemFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all GoogleTrendItems
+     * const googleTrendItems = await prisma.googleTrendItem.findMany()
+     * 
+     * // Get first 10 GoogleTrendItems
+     * const googleTrendItems = await prisma.googleTrendItem.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const googleTrendItemWithIdOnly = await prisma.googleTrendItem.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends GoogleTrendItemFindManyArgs>(args?: SelectSubset<T, GoogleTrendItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a GoogleTrendItem.
+     * @param {GoogleTrendItemCreateArgs} args - Arguments to create a GoogleTrendItem.
+     * @example
+     * // Create one GoogleTrendItem
+     * const GoogleTrendItem = await prisma.googleTrendItem.create({
+     *   data: {
+     *     // ... data to create a GoogleTrendItem
+     *   }
+     * })
+     * 
+     */
+    create<T extends GoogleTrendItemCreateArgs>(args: SelectSubset<T, GoogleTrendItemCreateArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many GoogleTrendItems.
+     * @param {GoogleTrendItemCreateManyArgs} args - Arguments to create many GoogleTrendItems.
+     * @example
+     * // Create many GoogleTrendItems
+     * const googleTrendItem = await prisma.googleTrendItem.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends GoogleTrendItemCreateManyArgs>(args?: SelectSubset<T, GoogleTrendItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many GoogleTrendItems and returns the data saved in the database.
+     * @param {GoogleTrendItemCreateManyAndReturnArgs} args - Arguments to create many GoogleTrendItems.
+     * @example
+     * // Create many GoogleTrendItems
+     * const googleTrendItem = await prisma.googleTrendItem.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many GoogleTrendItems and only return the `id`
+     * const googleTrendItemWithIdOnly = await prisma.googleTrendItem.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends GoogleTrendItemCreateManyAndReturnArgs>(args?: SelectSubset<T, GoogleTrendItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a GoogleTrendItem.
+     * @param {GoogleTrendItemDeleteArgs} args - Arguments to delete one GoogleTrendItem.
+     * @example
+     * // Delete one GoogleTrendItem
+     * const GoogleTrendItem = await prisma.googleTrendItem.delete({
+     *   where: {
+     *     // ... filter to delete one GoogleTrendItem
+     *   }
+     * })
+     * 
+     */
+    delete<T extends GoogleTrendItemDeleteArgs>(args: SelectSubset<T, GoogleTrendItemDeleteArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one GoogleTrendItem.
+     * @param {GoogleTrendItemUpdateArgs} args - Arguments to update one GoogleTrendItem.
+     * @example
+     * // Update one GoogleTrendItem
+     * const googleTrendItem = await prisma.googleTrendItem.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends GoogleTrendItemUpdateArgs>(args: SelectSubset<T, GoogleTrendItemUpdateArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more GoogleTrendItems.
+     * @param {GoogleTrendItemDeleteManyArgs} args - Arguments to filter GoogleTrendItems to delete.
+     * @example
+     * // Delete a few GoogleTrendItems
+     * const { count } = await prisma.googleTrendItem.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends GoogleTrendItemDeleteManyArgs>(args?: SelectSubset<T, GoogleTrendItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GoogleTrendItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendItemUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many GoogleTrendItems
+     * const googleTrendItem = await prisma.googleTrendItem.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends GoogleTrendItemUpdateManyArgs>(args: SelectSubset<T, GoogleTrendItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more GoogleTrendItems and returns the data updated in the database.
+     * @param {GoogleTrendItemUpdateManyAndReturnArgs} args - Arguments to update many GoogleTrendItems.
+     * @example
+     * // Update many GoogleTrendItems
+     * const googleTrendItem = await prisma.googleTrendItem.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more GoogleTrendItems and only return the `id`
+     * const googleTrendItemWithIdOnly = await prisma.googleTrendItem.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends GoogleTrendItemUpdateManyAndReturnArgs>(args: SelectSubset<T, GoogleTrendItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one GoogleTrendItem.
+     * @param {GoogleTrendItemUpsertArgs} args - Arguments to update or create a GoogleTrendItem.
+     * @example
+     * // Update or create a GoogleTrendItem
+     * const googleTrendItem = await prisma.googleTrendItem.upsert({
+     *   create: {
+     *     // ... data to create a GoogleTrendItem
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the GoogleTrendItem we want to update
+     *   }
+     * })
+     */
+    upsert<T extends GoogleTrendItemUpsertArgs>(args: SelectSubset<T, GoogleTrendItemUpsertArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of GoogleTrendItems.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendItemCountArgs} args - Arguments to filter GoogleTrendItems to count.
+     * @example
+     * // Count the number of GoogleTrendItems
+     * const count = await prisma.googleTrendItem.count({
+     *   where: {
+     *     // ... the filter for the GoogleTrendItems we want to count
+     *   }
+     * })
+    **/
+    count<T extends GoogleTrendItemCountArgs>(
+      args?: Subset<T, GoogleTrendItemCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], GoogleTrendItemCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a GoogleTrendItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendItemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends GoogleTrendItemAggregateArgs>(args: Subset<T, GoogleTrendItemAggregateArgs>): Prisma.PrismaPromise<GetGoogleTrendItemAggregateType<T>>
+
+    /**
+     * Group by GoogleTrendItem.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {GoogleTrendItemGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends GoogleTrendItemGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: GoogleTrendItemGroupByArgs['orderBy'] }
+        : { orderBy?: GoogleTrendItemGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, GoogleTrendItemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGoogleTrendItemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the GoogleTrendItem model
+   */
+  readonly fields: GoogleTrendItemFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for GoogleTrendItem.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__GoogleTrendItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    trend<T extends GoogleTrendDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GoogleTrendDefaultArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    rssItem<T extends GoogleTrendItem$rssItemArgs<ExtArgs> = {}>(args?: Subset<T, GoogleTrendItem$rssItemArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the GoogleTrendItem model
+   */
+  interface GoogleTrendItemFieldRefs {
+    readonly id: FieldRef<"GoogleTrendItem", 'String'>
+    readonly trendId: FieldRef<"GoogleTrendItem", 'String'>
+    readonly rssItemId: FieldRef<"GoogleTrendItem", 'String'>
+    readonly matchScore: FieldRef<"GoogleTrendItem", 'Int'>
+    readonly actionTaken: FieldRef<"GoogleTrendItem", 'TrendAction'>
+    readonly createdAt: FieldRef<"GoogleTrendItem", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * GoogleTrendItem findUnique
+   */
+  export type GoogleTrendItemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrendItem to fetch.
+     */
+    where: GoogleTrendItemWhereUniqueInput
+  }
+
+  /**
+   * GoogleTrendItem findUniqueOrThrow
+   */
+  export type GoogleTrendItemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrendItem to fetch.
+     */
+    where: GoogleTrendItemWhereUniqueInput
+  }
+
+  /**
+   * GoogleTrendItem findFirst
+   */
+  export type GoogleTrendItemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrendItem to fetch.
+     */
+    where?: GoogleTrendItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GoogleTrendItems to fetch.
+     */
+    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GoogleTrendItems.
+     */
+    cursor?: GoogleTrendItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GoogleTrendItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GoogleTrendItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GoogleTrendItems.
+     */
+    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
+  }
+
+  /**
+   * GoogleTrendItem findFirstOrThrow
+   */
+  export type GoogleTrendItemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrendItem to fetch.
+     */
+    where?: GoogleTrendItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GoogleTrendItems to fetch.
+     */
+    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for GoogleTrendItems.
+     */
+    cursor?: GoogleTrendItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GoogleTrendItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GoogleTrendItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GoogleTrendItems.
+     */
+    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
+  }
+
+  /**
+   * GoogleTrendItem findMany
+   */
+  export type GoogleTrendItemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    /**
+     * Filter, which GoogleTrendItems to fetch.
+     */
+    where?: GoogleTrendItemWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of GoogleTrendItems to fetch.
+     */
+    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing GoogleTrendItems.
+     */
+    cursor?: GoogleTrendItemWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` GoogleTrendItems from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` GoogleTrendItems.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of GoogleTrendItems.
+     */
+    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
+  }
+
+  /**
+   * GoogleTrendItem create
+   */
+  export type GoogleTrendItemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    /**
+     * The data needed to create a GoogleTrendItem.
+     */
+    data: XOR<GoogleTrendItemCreateInput, GoogleTrendItemUncheckedCreateInput>
+  }
+
+  /**
+   * GoogleTrendItem createMany
+   */
+  export type GoogleTrendItemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many GoogleTrendItems.
+     */
+    data: GoogleTrendItemCreateManyInput | GoogleTrendItemCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * GoogleTrendItem createManyAndReturn
+   */
+  export type GoogleTrendItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * The data used to create many GoogleTrendItems.
+     */
+    data: GoogleTrendItemCreateManyInput | GoogleTrendItemCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * GoogleTrendItem update
+   */
+  export type GoogleTrendItemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    /**
+     * The data needed to update a GoogleTrendItem.
+     */
+    data: XOR<GoogleTrendItemUpdateInput, GoogleTrendItemUncheckedUpdateInput>
+    /**
+     * Choose, which GoogleTrendItem to update.
+     */
+    where: GoogleTrendItemWhereUniqueInput
+  }
+
+  /**
+   * GoogleTrendItem updateMany
+   */
+  export type GoogleTrendItemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update GoogleTrendItems.
+     */
+    data: XOR<GoogleTrendItemUpdateManyMutationInput, GoogleTrendItemUncheckedUpdateManyInput>
+    /**
+     * Filter which GoogleTrendItems to update
+     */
+    where?: GoogleTrendItemWhereInput
+    /**
+     * Limit how many GoogleTrendItems to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * GoogleTrendItem updateManyAndReturn
+   */
+  export type GoogleTrendItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * The data used to update GoogleTrendItems.
+     */
+    data: XOR<GoogleTrendItemUpdateManyMutationInput, GoogleTrendItemUncheckedUpdateManyInput>
+    /**
+     * Filter which GoogleTrendItems to update
+     */
+    where?: GoogleTrendItemWhereInput
+    /**
+     * Limit how many GoogleTrendItems to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * GoogleTrendItem upsert
+   */
+  export type GoogleTrendItemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    /**
+     * The filter to search for the GoogleTrendItem to update in case it exists.
+     */
+    where: GoogleTrendItemWhereUniqueInput
+    /**
+     * In case the GoogleTrendItem found by the `where` argument doesn't exist, create a new GoogleTrendItem with this data.
+     */
+    create: XOR<GoogleTrendItemCreateInput, GoogleTrendItemUncheckedCreateInput>
+    /**
+     * In case the GoogleTrendItem was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<GoogleTrendItemUpdateInput, GoogleTrendItemUncheckedUpdateInput>
+  }
+
+  /**
+   * GoogleTrendItem delete
+   */
+  export type GoogleTrendItemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
+    /**
+     * Filter which GoogleTrendItem to delete.
+     */
+    where: GoogleTrendItemWhereUniqueInput
+  }
+
+  /**
+   * GoogleTrendItem deleteMany
+   */
+  export type GoogleTrendItemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which GoogleTrendItems to delete
+     */
+    where?: GoogleTrendItemWhereInput
+    /**
+     * Limit how many GoogleTrendItems to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * GoogleTrendItem.rssItem
+   */
+  export type GoogleTrendItem$rssItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    where?: RssFeedItemWhereInput
+  }
+
+  /**
+   * GoogleTrendItem without action
+   */
+  export type GoogleTrendItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the GoogleTrendItem
+     */
+    select?: GoogleTrendItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the GoogleTrendItem
+     */
+    omit?: GoogleTrendItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: GoogleTrendItemInclude<ExtArgs> | null
   }
 
 
@@ -31241,10 +33902,42 @@ export namespace Prisma {
     aiWriterAutoCron: 'aiWriterAutoCron',
     qStashAiWriterId: 'qStashAiWriterId',
     aiWriterSearchEnabled: 'aiWriterSearchEnabled',
+    maxNewsAgeHours: 'maxNewsAgeHours',
+    googleTrendsEnabled: 'googleTrendsEnabled',
+    googleTrendsGeo: 'googleTrendsGeo',
+    trendAutoPublishThreshold: 'trendAutoPublishThreshold',
+    trendSearchGenerateEnabled: 'trendSearchGenerateEnabled',
     updatedAt: 'updatedAt'
   };
 
   export type SystemSettingsScalarFieldEnum = (typeof SystemSettingsScalarFieldEnum)[keyof typeof SystemSettingsScalarFieldEnum]
+
+
+  export const GoogleTrendScalarFieldEnum: {
+    id: 'id',
+    keyword: 'keyword',
+    searchVolume: 'searchVolume',
+    exploreUrl: 'exploreUrl',
+    category: 'category',
+    country: 'country',
+    trafficScore: 'trafficScore',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type GoogleTrendScalarFieldEnum = (typeof GoogleTrendScalarFieldEnum)[keyof typeof GoogleTrendScalarFieldEnum]
+
+
+  export const GoogleTrendItemScalarFieldEnum: {
+    id: 'id',
+    trendId: 'trendId',
+    rssItemId: 'rssItemId',
+    matchScore: 'matchScore',
+    actionTaken: 'actionTaken',
+    createdAt: 'createdAt'
+  };
+
+  export type GoogleTrendItemScalarFieldEnum = (typeof GoogleTrendItemScalarFieldEnum)[keyof typeof GoogleTrendItemScalarFieldEnum]
 
 
   export const AiPersonaScalarFieldEnum: {
@@ -31497,6 +34190,20 @@ export namespace Prisma {
    * Reference to a field of type 'RssItemStatus[]'
    */
   export type ListEnumRssItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RssItemStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'TrendAction'
+   */
+  export type EnumTrendActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrendAction'>
+    
+
+
+  /**
+   * Reference to a field of type 'TrendAction[]'
+   */
+  export type ListEnumTrendActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrendAction[]'>
     
 
 
@@ -32763,6 +35470,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
+    googleTrendItems?: GoogleTrendItemListRelationFilter
   }
 
   export type RssFeedItemOrderByWithRelationInput = {
@@ -32782,6 +35490,7 @@ export namespace Prisma {
     createdAt?: SortOrder
     updatedAt?: SortOrder
     source?: RssFeedSourceOrderByWithRelationInput
+    googleTrendItems?: GoogleTrendItemOrderByRelationAggregateInput
   }
 
   export type RssFeedItemWhereUniqueInput = Prisma.AtLeast<{
@@ -32804,6 +35513,7 @@ export namespace Prisma {
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
+    googleTrendItems?: GoogleTrendItemListRelationFilter
   }, "id" | "url" | "urlHash">
 
   export type RssFeedItemOrderByWithAggregationInput = {
@@ -32872,6 +35582,11 @@ export namespace Prisma {
     aiWriterAutoCron?: StringFilter<"SystemSettings"> | string
     qStashAiWriterId?: StringNullableFilter<"SystemSettings"> | string | null
     aiWriterSearchEnabled?: BoolFilter<"SystemSettings"> | boolean
+    maxNewsAgeHours?: IntFilter<"SystemSettings"> | number
+    googleTrendsEnabled?: BoolFilter<"SystemSettings"> | boolean
+    googleTrendsGeo?: StringFilter<"SystemSettings"> | string
+    trendAutoPublishThreshold?: IntFilter<"SystemSettings"> | number
+    trendSearchGenerateEnabled?: BoolFilter<"SystemSettings"> | boolean
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }
 
@@ -32894,6 +35609,11 @@ export namespace Prisma {
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrderInput | SortOrder
     aiWriterSearchEnabled?: SortOrder
+    maxNewsAgeHours?: SortOrder
+    googleTrendsEnabled?: SortOrder
+    googleTrendsGeo?: SortOrder
+    trendAutoPublishThreshold?: SortOrder
+    trendSearchGenerateEnabled?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -32919,6 +35639,11 @@ export namespace Prisma {
     aiWriterAutoCron?: StringFilter<"SystemSettings"> | string
     qStashAiWriterId?: StringNullableFilter<"SystemSettings"> | string | null
     aiWriterSearchEnabled?: BoolFilter<"SystemSettings"> | boolean
+    maxNewsAgeHours?: IntFilter<"SystemSettings"> | number
+    googleTrendsEnabled?: BoolFilter<"SystemSettings"> | boolean
+    googleTrendsGeo?: StringFilter<"SystemSettings"> | string
+    trendAutoPublishThreshold?: IntFilter<"SystemSettings"> | number
+    trendSearchGenerateEnabled?: BoolFilter<"SystemSettings"> | boolean
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }, "id">
 
@@ -32941,6 +35666,11 @@ export namespace Prisma {
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrderInput | SortOrder
     aiWriterSearchEnabled?: SortOrder
+    maxNewsAgeHours?: SortOrder
+    googleTrendsEnabled?: SortOrder
+    googleTrendsGeo?: SortOrder
+    trendAutoPublishThreshold?: SortOrder
+    trendSearchGenerateEnabled?: SortOrder
     updatedAt?: SortOrder
     _count?: SystemSettingsCountOrderByAggregateInput
     _avg?: SystemSettingsAvgOrderByAggregateInput
@@ -32971,7 +35701,154 @@ export namespace Prisma {
     aiWriterAutoCron?: StringWithAggregatesFilter<"SystemSettings"> | string
     qStashAiWriterId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     aiWriterSearchEnabled?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
+    maxNewsAgeHours?: IntWithAggregatesFilter<"SystemSettings"> | number
+    googleTrendsEnabled?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
+    googleTrendsGeo?: StringWithAggregatesFilter<"SystemSettings"> | string
+    trendAutoPublishThreshold?: IntWithAggregatesFilter<"SystemSettings"> | number
+    trendSearchGenerateEnabled?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
     updatedAt?: DateTimeWithAggregatesFilter<"SystemSettings"> | Date | string
+  }
+
+  export type GoogleTrendWhereInput = {
+    AND?: GoogleTrendWhereInput | GoogleTrendWhereInput[]
+    OR?: GoogleTrendWhereInput[]
+    NOT?: GoogleTrendWhereInput | GoogleTrendWhereInput[]
+    id?: StringFilter<"GoogleTrend"> | string
+    keyword?: StringFilter<"GoogleTrend"> | string
+    searchVolume?: StringNullableFilter<"GoogleTrend"> | string | null
+    exploreUrl?: StringNullableFilter<"GoogleTrend"> | string | null
+    category?: StringNullableFilter<"GoogleTrend"> | string | null
+    country?: StringFilter<"GoogleTrend"> | string
+    trafficScore?: IntFilter<"GoogleTrend"> | number
+    createdAt?: DateTimeFilter<"GoogleTrend"> | Date | string
+    updatedAt?: DateTimeFilter<"GoogleTrend"> | Date | string
+    items?: GoogleTrendItemListRelationFilter
+  }
+
+  export type GoogleTrendOrderByWithRelationInput = {
+    id?: SortOrder
+    keyword?: SortOrder
+    searchVolume?: SortOrderInput | SortOrder
+    exploreUrl?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    country?: SortOrder
+    trafficScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    items?: GoogleTrendItemOrderByRelationAggregateInput
+  }
+
+  export type GoogleTrendWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    keyword?: string
+    AND?: GoogleTrendWhereInput | GoogleTrendWhereInput[]
+    OR?: GoogleTrendWhereInput[]
+    NOT?: GoogleTrendWhereInput | GoogleTrendWhereInput[]
+    searchVolume?: StringNullableFilter<"GoogleTrend"> | string | null
+    exploreUrl?: StringNullableFilter<"GoogleTrend"> | string | null
+    category?: StringNullableFilter<"GoogleTrend"> | string | null
+    country?: StringFilter<"GoogleTrend"> | string
+    trafficScore?: IntFilter<"GoogleTrend"> | number
+    createdAt?: DateTimeFilter<"GoogleTrend"> | Date | string
+    updatedAt?: DateTimeFilter<"GoogleTrend"> | Date | string
+    items?: GoogleTrendItemListRelationFilter
+  }, "id" | "keyword">
+
+  export type GoogleTrendOrderByWithAggregationInput = {
+    id?: SortOrder
+    keyword?: SortOrder
+    searchVolume?: SortOrderInput | SortOrder
+    exploreUrl?: SortOrderInput | SortOrder
+    category?: SortOrderInput | SortOrder
+    country?: SortOrder
+    trafficScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: GoogleTrendCountOrderByAggregateInput
+    _avg?: GoogleTrendAvgOrderByAggregateInput
+    _max?: GoogleTrendMaxOrderByAggregateInput
+    _min?: GoogleTrendMinOrderByAggregateInput
+    _sum?: GoogleTrendSumOrderByAggregateInput
+  }
+
+  export type GoogleTrendScalarWhereWithAggregatesInput = {
+    AND?: GoogleTrendScalarWhereWithAggregatesInput | GoogleTrendScalarWhereWithAggregatesInput[]
+    OR?: GoogleTrendScalarWhereWithAggregatesInput[]
+    NOT?: GoogleTrendScalarWhereWithAggregatesInput | GoogleTrendScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GoogleTrend"> | string
+    keyword?: StringWithAggregatesFilter<"GoogleTrend"> | string
+    searchVolume?: StringNullableWithAggregatesFilter<"GoogleTrend"> | string | null
+    exploreUrl?: StringNullableWithAggregatesFilter<"GoogleTrend"> | string | null
+    category?: StringNullableWithAggregatesFilter<"GoogleTrend"> | string | null
+    country?: StringWithAggregatesFilter<"GoogleTrend"> | string
+    trafficScore?: IntWithAggregatesFilter<"GoogleTrend"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"GoogleTrend"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"GoogleTrend"> | Date | string
+  }
+
+  export type GoogleTrendItemWhereInput = {
+    AND?: GoogleTrendItemWhereInput | GoogleTrendItemWhereInput[]
+    OR?: GoogleTrendItemWhereInput[]
+    NOT?: GoogleTrendItemWhereInput | GoogleTrendItemWhereInput[]
+    id?: StringFilter<"GoogleTrendItem"> | string
+    trendId?: StringFilter<"GoogleTrendItem"> | string
+    rssItemId?: StringNullableFilter<"GoogleTrendItem"> | string | null
+    matchScore?: IntFilter<"GoogleTrendItem"> | number
+    actionTaken?: EnumTrendActionFilter<"GoogleTrendItem"> | $Enums.TrendAction
+    createdAt?: DateTimeFilter<"GoogleTrendItem"> | Date | string
+    trend?: XOR<GoogleTrendScalarRelationFilter, GoogleTrendWhereInput>
+    rssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
+  }
+
+  export type GoogleTrendItemOrderByWithRelationInput = {
+    id?: SortOrder
+    trendId?: SortOrder
+    rssItemId?: SortOrderInput | SortOrder
+    matchScore?: SortOrder
+    actionTaken?: SortOrder
+    createdAt?: SortOrder
+    trend?: GoogleTrendOrderByWithRelationInput
+    rssItem?: RssFeedItemOrderByWithRelationInput
+  }
+
+  export type GoogleTrendItemWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: GoogleTrendItemWhereInput | GoogleTrendItemWhereInput[]
+    OR?: GoogleTrendItemWhereInput[]
+    NOT?: GoogleTrendItemWhereInput | GoogleTrendItemWhereInput[]
+    trendId?: StringFilter<"GoogleTrendItem"> | string
+    rssItemId?: StringNullableFilter<"GoogleTrendItem"> | string | null
+    matchScore?: IntFilter<"GoogleTrendItem"> | number
+    actionTaken?: EnumTrendActionFilter<"GoogleTrendItem"> | $Enums.TrendAction
+    createdAt?: DateTimeFilter<"GoogleTrendItem"> | Date | string
+    trend?: XOR<GoogleTrendScalarRelationFilter, GoogleTrendWhereInput>
+    rssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
+  }, "id">
+
+  export type GoogleTrendItemOrderByWithAggregationInput = {
+    id?: SortOrder
+    trendId?: SortOrder
+    rssItemId?: SortOrderInput | SortOrder
+    matchScore?: SortOrder
+    actionTaken?: SortOrder
+    createdAt?: SortOrder
+    _count?: GoogleTrendItemCountOrderByAggregateInput
+    _avg?: GoogleTrendItemAvgOrderByAggregateInput
+    _max?: GoogleTrendItemMaxOrderByAggregateInput
+    _min?: GoogleTrendItemMinOrderByAggregateInput
+    _sum?: GoogleTrendItemSumOrderByAggregateInput
+  }
+
+  export type GoogleTrendItemScalarWhereWithAggregatesInput = {
+    AND?: GoogleTrendItemScalarWhereWithAggregatesInput | GoogleTrendItemScalarWhereWithAggregatesInput[]
+    OR?: GoogleTrendItemScalarWhereWithAggregatesInput[]
+    NOT?: GoogleTrendItemScalarWhereWithAggregatesInput | GoogleTrendItemScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"GoogleTrendItem"> | string
+    trendId?: StringWithAggregatesFilter<"GoogleTrendItem"> | string
+    rssItemId?: StringNullableWithAggregatesFilter<"GoogleTrendItem"> | string | null
+    matchScore?: IntWithAggregatesFilter<"GoogleTrendItem"> | number
+    actionTaken?: EnumTrendActionWithAggregatesFilter<"GoogleTrendItem"> | $Enums.TrendAction
+    createdAt?: DateTimeWithAggregatesFilter<"GoogleTrendItem"> | Date | string
   }
 
   export type AiPersonaWhereInput = {
@@ -34917,6 +37794,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     source: RssFeedSourceCreateNestedOneWithoutItemsInput
+    googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
   }
 
   export type RssFeedItemUncheckedCreateInput = {
@@ -34935,6 +37813,7 @@ export namespace Prisma {
     usedForArticle?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
   }
 
   export type RssFeedItemUpdateInput = {
@@ -34953,6 +37832,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
+    googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
   }
 
   export type RssFeedItemUncheckedUpdateInput = {
@@ -34971,6 +37851,7 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
   }
 
   export type RssFeedItemCreateManyInput = {
@@ -35045,6 +37926,11 @@ export namespace Prisma {
     aiWriterAutoCron?: string
     qStashAiWriterId?: string | null
     aiWriterSearchEnabled?: boolean
+    maxNewsAgeHours?: number
+    googleTrendsEnabled?: boolean
+    googleTrendsGeo?: string
+    trendAutoPublishThreshold?: number
+    trendSearchGenerateEnabled?: boolean
     updatedAt?: Date | string
   }
 
@@ -35067,6 +37953,11 @@ export namespace Prisma {
     aiWriterAutoCron?: string
     qStashAiWriterId?: string | null
     aiWriterSearchEnabled?: boolean
+    maxNewsAgeHours?: number
+    googleTrendsEnabled?: boolean
+    googleTrendsGeo?: string
+    trendAutoPublishThreshold?: number
+    trendSearchGenerateEnabled?: boolean
     updatedAt?: Date | string
   }
 
@@ -35089,6 +37980,11 @@ export namespace Prisma {
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
     qStashAiWriterId?: NullableStringFieldUpdateOperationsInput | string | null
     aiWriterSearchEnabled?: BoolFieldUpdateOperationsInput | boolean
+    maxNewsAgeHours?: IntFieldUpdateOperationsInput | number
+    googleTrendsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    googleTrendsGeo?: StringFieldUpdateOperationsInput | string
+    trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
+    trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -35111,6 +38007,11 @@ export namespace Prisma {
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
     qStashAiWriterId?: NullableStringFieldUpdateOperationsInput | string | null
     aiWriterSearchEnabled?: BoolFieldUpdateOperationsInput | boolean
+    maxNewsAgeHours?: IntFieldUpdateOperationsInput | number
+    googleTrendsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    googleTrendsGeo?: StringFieldUpdateOperationsInput | string
+    trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
+    trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -35133,6 +38034,11 @@ export namespace Prisma {
     aiWriterAutoCron?: string
     qStashAiWriterId?: string | null
     aiWriterSearchEnabled?: boolean
+    maxNewsAgeHours?: number
+    googleTrendsEnabled?: boolean
+    googleTrendsGeo?: string
+    trendAutoPublishThreshold?: number
+    trendSearchGenerateEnabled?: boolean
     updatedAt?: Date | string
   }
 
@@ -35155,6 +38061,11 @@ export namespace Prisma {
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
     qStashAiWriterId?: NullableStringFieldUpdateOperationsInput | string | null
     aiWriterSearchEnabled?: BoolFieldUpdateOperationsInput | boolean
+    maxNewsAgeHours?: IntFieldUpdateOperationsInput | number
+    googleTrendsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    googleTrendsGeo?: StringFieldUpdateOperationsInput | string
+    trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
+    trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -35177,7 +38088,161 @@ export namespace Prisma {
     aiWriterAutoCron?: StringFieldUpdateOperationsInput | string
     qStashAiWriterId?: NullableStringFieldUpdateOperationsInput | string | null
     aiWriterSearchEnabled?: BoolFieldUpdateOperationsInput | boolean
+    maxNewsAgeHours?: IntFieldUpdateOperationsInput | number
+    googleTrendsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    googleTrendsGeo?: StringFieldUpdateOperationsInput | string
+    trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
+    trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendCreateInput = {
+    id?: string
+    keyword: string
+    searchVolume?: string | null
+    exploreUrl?: string | null
+    category?: string | null
+    country?: string
+    trafficScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: GoogleTrendItemCreateNestedManyWithoutTrendInput
+  }
+
+  export type GoogleTrendUncheckedCreateInput = {
+    id?: string
+    keyword: string
+    searchVolume?: string | null
+    exploreUrl?: string | null
+    category?: string | null
+    country?: string
+    trafficScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: GoogleTrendItemUncheckedCreateNestedManyWithoutTrendInput
+  }
+
+  export type GoogleTrendUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    keyword?: StringFieldUpdateOperationsInput | string
+    searchVolume?: NullableStringFieldUpdateOperationsInput | string | null
+    exploreUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: StringFieldUpdateOperationsInput | string
+    trafficScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: GoogleTrendItemUpdateManyWithoutTrendNestedInput
+  }
+
+  export type GoogleTrendUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    keyword?: StringFieldUpdateOperationsInput | string
+    searchVolume?: NullableStringFieldUpdateOperationsInput | string | null
+    exploreUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: StringFieldUpdateOperationsInput | string
+    trafficScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: GoogleTrendItemUncheckedUpdateManyWithoutTrendNestedInput
+  }
+
+  export type GoogleTrendCreateManyInput = {
+    id?: string
+    keyword: string
+    searchVolume?: string | null
+    exploreUrl?: string | null
+    category?: string | null
+    country?: string
+    trafficScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GoogleTrendUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    keyword?: StringFieldUpdateOperationsInput | string
+    searchVolume?: NullableStringFieldUpdateOperationsInput | string | null
+    exploreUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: StringFieldUpdateOperationsInput | string
+    trafficScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    keyword?: StringFieldUpdateOperationsInput | string
+    searchVolume?: NullableStringFieldUpdateOperationsInput | string | null
+    exploreUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: StringFieldUpdateOperationsInput | string
+    trafficScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendItemCreateInput = {
+    id?: string
+    matchScore: number
+    actionTaken?: $Enums.TrendAction
+    createdAt?: Date | string
+    trend: GoogleTrendCreateNestedOneWithoutItemsInput
+    rssItem?: RssFeedItemCreateNestedOneWithoutGoogleTrendItemsInput
+  }
+
+  export type GoogleTrendItemUncheckedCreateInput = {
+    id?: string
+    trendId: string
+    rssItemId?: string | null
+    matchScore: number
+    actionTaken?: $Enums.TrendAction
+    createdAt?: Date | string
+  }
+
+  export type GoogleTrendItemUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    trend?: GoogleTrendUpdateOneRequiredWithoutItemsNestedInput
+    rssItem?: RssFeedItemUpdateOneWithoutGoogleTrendItemsNestedInput
+  }
+
+  export type GoogleTrendItemUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trendId?: StringFieldUpdateOperationsInput | string
+    rssItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendItemCreateManyInput = {
+    id?: string
+    trendId: string
+    rssItemId?: string | null
+    matchScore: number
+    actionTaken?: $Enums.TrendAction
+    createdAt?: Date | string
+  }
+
+  export type GoogleTrendItemUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendItemUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trendId?: StringFieldUpdateOperationsInput | string
+    rssItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AiPersonaCreateInput = {
@@ -36871,6 +39936,16 @@ export namespace Prisma {
     isNot?: RssFeedSourceWhereInput
   }
 
+  export type GoogleTrendItemListRelationFilter = {
+    every?: GoogleTrendItemWhereInput
+    some?: GoogleTrendItemWhereInput
+    none?: GoogleTrendItemWhereInput
+  }
+
+  export type GoogleTrendItemOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
   export type RssFeedItemCountOrderByAggregateInput = {
     id?: SortOrder
     sourceId?: SortOrder
@@ -36960,12 +40035,19 @@ export namespace Prisma {
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrder
     aiWriterSearchEnabled?: SortOrder
+    maxNewsAgeHours?: SortOrder
+    googleTrendsEnabled?: SortOrder
+    googleTrendsGeo?: SortOrder
+    trendAutoPublishThreshold?: SortOrder
+    trendSearchGenerateEnabled?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type SystemSettingsAvgOrderByAggregateInput = {
     rssRetentionDays?: SortOrder
     aiWriterAutoCount?: SortOrder
+    maxNewsAgeHours?: SortOrder
+    trendAutoPublishThreshold?: SortOrder
   }
 
   export type SystemSettingsMaxOrderByAggregateInput = {
@@ -36987,6 +40069,11 @@ export namespace Prisma {
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrder
     aiWriterSearchEnabled?: SortOrder
+    maxNewsAgeHours?: SortOrder
+    googleTrendsEnabled?: SortOrder
+    googleTrendsGeo?: SortOrder
+    trendAutoPublishThreshold?: SortOrder
+    trendSearchGenerateEnabled?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -37009,12 +40096,125 @@ export namespace Prisma {
     aiWriterAutoCron?: SortOrder
     qStashAiWriterId?: SortOrder
     aiWriterSearchEnabled?: SortOrder
+    maxNewsAgeHours?: SortOrder
+    googleTrendsEnabled?: SortOrder
+    googleTrendsGeo?: SortOrder
+    trendAutoPublishThreshold?: SortOrder
+    trendSearchGenerateEnabled?: SortOrder
     updatedAt?: SortOrder
   }
 
   export type SystemSettingsSumOrderByAggregateInput = {
     rssRetentionDays?: SortOrder
     aiWriterAutoCount?: SortOrder
+    maxNewsAgeHours?: SortOrder
+    trendAutoPublishThreshold?: SortOrder
+  }
+
+  export type GoogleTrendCountOrderByAggregateInput = {
+    id?: SortOrder
+    keyword?: SortOrder
+    searchVolume?: SortOrder
+    exploreUrl?: SortOrder
+    category?: SortOrder
+    country?: SortOrder
+    trafficScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GoogleTrendAvgOrderByAggregateInput = {
+    trafficScore?: SortOrder
+  }
+
+  export type GoogleTrendMaxOrderByAggregateInput = {
+    id?: SortOrder
+    keyword?: SortOrder
+    searchVolume?: SortOrder
+    exploreUrl?: SortOrder
+    category?: SortOrder
+    country?: SortOrder
+    trafficScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GoogleTrendMinOrderByAggregateInput = {
+    id?: SortOrder
+    keyword?: SortOrder
+    searchVolume?: SortOrder
+    exploreUrl?: SortOrder
+    category?: SortOrder
+    country?: SortOrder
+    trafficScore?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type GoogleTrendSumOrderByAggregateInput = {
+    trafficScore?: SortOrder
+  }
+
+  export type EnumTrendActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.TrendAction | EnumTrendActionFieldRefInput<$PrismaModel>
+    in?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumTrendActionFilter<$PrismaModel> | $Enums.TrendAction
+  }
+
+  export type GoogleTrendScalarRelationFilter = {
+    is?: GoogleTrendWhereInput
+    isNot?: GoogleTrendWhereInput
+  }
+
+  export type RssFeedItemNullableScalarRelationFilter = {
+    is?: RssFeedItemWhereInput | null
+    isNot?: RssFeedItemWhereInput | null
+  }
+
+  export type GoogleTrendItemCountOrderByAggregateInput = {
+    id?: SortOrder
+    trendId?: SortOrder
+    rssItemId?: SortOrder
+    matchScore?: SortOrder
+    actionTaken?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type GoogleTrendItemAvgOrderByAggregateInput = {
+    matchScore?: SortOrder
+  }
+
+  export type GoogleTrendItemMaxOrderByAggregateInput = {
+    id?: SortOrder
+    trendId?: SortOrder
+    rssItemId?: SortOrder
+    matchScore?: SortOrder
+    actionTaken?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type GoogleTrendItemMinOrderByAggregateInput = {
+    id?: SortOrder
+    trendId?: SortOrder
+    rssItemId?: SortOrder
+    matchScore?: SortOrder
+    actionTaken?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type GoogleTrendItemSumOrderByAggregateInput = {
+    matchScore?: SortOrder
+  }
+
+  export type EnumTrendActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TrendAction | EnumTrendActionFieldRefInput<$PrismaModel>
+    in?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumTrendActionWithAggregatesFilter<$PrismaModel> | $Enums.TrendAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTrendActionFilter<$PrismaModel>
+    _max?: NestedEnumTrendActionFilter<$PrismaModel>
   }
 
   export type AiPersonaCountOrderByAggregateInput = {
@@ -38248,6 +41448,20 @@ export namespace Prisma {
     connect?: RssFeedSourceWhereUniqueInput
   }
 
+  export type GoogleTrendItemCreateNestedManyWithoutRssItemInput = {
+    create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
+    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
+    createMany?: GoogleTrendItemCreateManyRssItemInputEnvelope
+    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+  }
+
+  export type GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput = {
+    create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
+    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
+    createMany?: GoogleTrendItemCreateManyRssItemInputEnvelope
+    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+  }
+
   export type EnumRssItemStatusFieldUpdateOperationsInput = {
     set?: $Enums.RssItemStatus
   }
@@ -38258,6 +41472,110 @@ export namespace Prisma {
     upsert?: RssFeedSourceUpsertWithoutItemsInput
     connect?: RssFeedSourceWhereUniqueInput
     update?: XOR<XOR<RssFeedSourceUpdateToOneWithWhereWithoutItemsInput, RssFeedSourceUpdateWithoutItemsInput>, RssFeedSourceUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type GoogleTrendItemUpdateManyWithoutRssItemNestedInput = {
+    create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
+    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
+    upsert?: GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput | GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput[]
+    createMany?: GoogleTrendItemCreateManyRssItemInputEnvelope
+    set?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    disconnect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    delete?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    update?: GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput | GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput[]
+    updateMany?: GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput | GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput[]
+    deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
+  }
+
+  export type GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput = {
+    create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
+    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
+    upsert?: GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput | GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput[]
+    createMany?: GoogleTrendItemCreateManyRssItemInputEnvelope
+    set?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    disconnect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    delete?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    update?: GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput | GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput[]
+    updateMany?: GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput | GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput[]
+    deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
+  }
+
+  export type GoogleTrendItemCreateNestedManyWithoutTrendInput = {
+    create?: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput> | GoogleTrendItemCreateWithoutTrendInput[] | GoogleTrendItemUncheckedCreateWithoutTrendInput[]
+    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutTrendInput | GoogleTrendItemCreateOrConnectWithoutTrendInput[]
+    createMany?: GoogleTrendItemCreateManyTrendInputEnvelope
+    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+  }
+
+  export type GoogleTrendItemUncheckedCreateNestedManyWithoutTrendInput = {
+    create?: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput> | GoogleTrendItemCreateWithoutTrendInput[] | GoogleTrendItemUncheckedCreateWithoutTrendInput[]
+    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutTrendInput | GoogleTrendItemCreateOrConnectWithoutTrendInput[]
+    createMany?: GoogleTrendItemCreateManyTrendInputEnvelope
+    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+  }
+
+  export type GoogleTrendItemUpdateManyWithoutTrendNestedInput = {
+    create?: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput> | GoogleTrendItemCreateWithoutTrendInput[] | GoogleTrendItemUncheckedCreateWithoutTrendInput[]
+    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutTrendInput | GoogleTrendItemCreateOrConnectWithoutTrendInput[]
+    upsert?: GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput | GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput[]
+    createMany?: GoogleTrendItemCreateManyTrendInputEnvelope
+    set?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    disconnect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    delete?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    update?: GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput | GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput[]
+    updateMany?: GoogleTrendItemUpdateManyWithWhereWithoutTrendInput | GoogleTrendItemUpdateManyWithWhereWithoutTrendInput[]
+    deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
+  }
+
+  export type GoogleTrendItemUncheckedUpdateManyWithoutTrendNestedInput = {
+    create?: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput> | GoogleTrendItemCreateWithoutTrendInput[] | GoogleTrendItemUncheckedCreateWithoutTrendInput[]
+    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutTrendInput | GoogleTrendItemCreateOrConnectWithoutTrendInput[]
+    upsert?: GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput | GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput[]
+    createMany?: GoogleTrendItemCreateManyTrendInputEnvelope
+    set?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    disconnect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    delete?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+    update?: GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput | GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput[]
+    updateMany?: GoogleTrendItemUpdateManyWithWhereWithoutTrendInput | GoogleTrendItemUpdateManyWithWhereWithoutTrendInput[]
+    deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
+  }
+
+  export type GoogleTrendCreateNestedOneWithoutItemsInput = {
+    create?: XOR<GoogleTrendCreateWithoutItemsInput, GoogleTrendUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: GoogleTrendCreateOrConnectWithoutItemsInput
+    connect?: GoogleTrendWhereUniqueInput
+  }
+
+  export type RssFeedItemCreateNestedOneWithoutGoogleTrendItemsInput = {
+    create?: XOR<RssFeedItemCreateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput>
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutGoogleTrendItemsInput
+    connect?: RssFeedItemWhereUniqueInput
+  }
+
+  export type EnumTrendActionFieldUpdateOperationsInput = {
+    set?: $Enums.TrendAction
+  }
+
+  export type GoogleTrendUpdateOneRequiredWithoutItemsNestedInput = {
+    create?: XOR<GoogleTrendCreateWithoutItemsInput, GoogleTrendUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: GoogleTrendCreateOrConnectWithoutItemsInput
+    upsert?: GoogleTrendUpsertWithoutItemsInput
+    connect?: GoogleTrendWhereUniqueInput
+    update?: XOR<XOR<GoogleTrendUpdateToOneWithWhereWithoutItemsInput, GoogleTrendUpdateWithoutItemsInput>, GoogleTrendUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type RssFeedItemUpdateOneWithoutGoogleTrendItemsNestedInput = {
+    create?: XOR<RssFeedItemCreateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput>
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutGoogleTrendItemsInput
+    upsert?: RssFeedItemUpsertWithoutGoogleTrendItemsInput
+    disconnect?: RssFeedItemWhereInput | boolean
+    delete?: RssFeedItemWhereInput | boolean
+    connect?: RssFeedItemWhereUniqueInput
+    update?: XOR<XOR<RssFeedItemUpdateToOneWithWhereWithoutGoogleTrendItemsInput, RssFeedItemUpdateWithoutGoogleTrendItemsInput>, RssFeedItemUncheckedUpdateWithoutGoogleTrendItemsInput>
   }
 
   export type AiPersonaOnCategoryCreateNestedManyWithoutPersonaInput = {
@@ -38688,6 +42006,23 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRssItemStatusFilter<$PrismaModel>
     _max?: NestedEnumRssItemStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumTrendActionFilter<$PrismaModel = never> = {
+    equals?: $Enums.TrendAction | EnumTrendActionFieldRefInput<$PrismaModel>
+    in?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumTrendActionFilter<$PrismaModel> | $Enums.TrendAction
+  }
+
+  export type NestedEnumTrendActionWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.TrendAction | EnumTrendActionFieldRefInput<$PrismaModel>
+    in?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
+    notIn?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
+    not?: NestedEnumTrendActionWithAggregatesFilter<$PrismaModel> | $Enums.TrendAction
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumTrendActionFilter<$PrismaModel>
+    _max?: NestedEnumTrendActionFilter<$PrismaModel>
   }
 
   export type NestedEnumAiModelTypeFilter<$PrismaModel = never> = {
@@ -40727,6 +44062,7 @@ export namespace Prisma {
     usedForArticle?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
   }
 
   export type RssFeedItemUncheckedCreateWithoutSourceInput = {
@@ -40744,6 +44080,7 @@ export namespace Prisma {
     usedForArticle?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
   }
 
   export type RssFeedItemCreateOrConnectWithoutSourceInput = {
@@ -40824,6 +44161,32 @@ export namespace Prisma {
     create: XOR<RssFeedSourceCreateWithoutItemsInput, RssFeedSourceUncheckedCreateWithoutItemsInput>
   }
 
+  export type GoogleTrendItemCreateWithoutRssItemInput = {
+    id?: string
+    matchScore: number
+    actionTaken?: $Enums.TrendAction
+    createdAt?: Date | string
+    trend: GoogleTrendCreateNestedOneWithoutItemsInput
+  }
+
+  export type GoogleTrendItemUncheckedCreateWithoutRssItemInput = {
+    id?: string
+    trendId: string
+    matchScore: number
+    actionTaken?: $Enums.TrendAction
+    createdAt?: Date | string
+  }
+
+  export type GoogleTrendItemCreateOrConnectWithoutRssItemInput = {
+    where: GoogleTrendItemWhereUniqueInput
+    create: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput>
+  }
+
+  export type GoogleTrendItemCreateManyRssItemInputEnvelope = {
+    data: GoogleTrendItemCreateManyRssItemInput | GoogleTrendItemCreateManyRssItemInput[]
+    skipDuplicates?: boolean
+  }
+
   export type RssFeedSourceUpsertWithoutItemsInput = {
     update: XOR<RssFeedSourceUpdateWithoutItemsInput, RssFeedSourceUncheckedUpdateWithoutItemsInput>
     create: XOR<RssFeedSourceCreateWithoutItemsInput, RssFeedSourceUncheckedCreateWithoutItemsInput>
@@ -40857,6 +44220,228 @@ export namespace Prisma {
     isActive?: BoolFieldUpdateOperationsInput | boolean
     lastFetchedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     fetchError?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput = {
+    where: GoogleTrendItemWhereUniqueInput
+    update: XOR<GoogleTrendItemUpdateWithoutRssItemInput, GoogleTrendItemUncheckedUpdateWithoutRssItemInput>
+    create: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput>
+  }
+
+  export type GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput = {
+    where: GoogleTrendItemWhereUniqueInput
+    data: XOR<GoogleTrendItemUpdateWithoutRssItemInput, GoogleTrendItemUncheckedUpdateWithoutRssItemInput>
+  }
+
+  export type GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput = {
+    where: GoogleTrendItemScalarWhereInput
+    data: XOR<GoogleTrendItemUpdateManyMutationInput, GoogleTrendItemUncheckedUpdateManyWithoutRssItemInput>
+  }
+
+  export type GoogleTrendItemScalarWhereInput = {
+    AND?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
+    OR?: GoogleTrendItemScalarWhereInput[]
+    NOT?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
+    id?: StringFilter<"GoogleTrendItem"> | string
+    trendId?: StringFilter<"GoogleTrendItem"> | string
+    rssItemId?: StringNullableFilter<"GoogleTrendItem"> | string | null
+    matchScore?: IntFilter<"GoogleTrendItem"> | number
+    actionTaken?: EnumTrendActionFilter<"GoogleTrendItem"> | $Enums.TrendAction
+    createdAt?: DateTimeFilter<"GoogleTrendItem"> | Date | string
+  }
+
+  export type GoogleTrendItemCreateWithoutTrendInput = {
+    id?: string
+    matchScore: number
+    actionTaken?: $Enums.TrendAction
+    createdAt?: Date | string
+    rssItem?: RssFeedItemCreateNestedOneWithoutGoogleTrendItemsInput
+  }
+
+  export type GoogleTrendItemUncheckedCreateWithoutTrendInput = {
+    id?: string
+    rssItemId?: string | null
+    matchScore: number
+    actionTaken?: $Enums.TrendAction
+    createdAt?: Date | string
+  }
+
+  export type GoogleTrendItemCreateOrConnectWithoutTrendInput = {
+    where: GoogleTrendItemWhereUniqueInput
+    create: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput>
+  }
+
+  export type GoogleTrendItemCreateManyTrendInputEnvelope = {
+    data: GoogleTrendItemCreateManyTrendInput | GoogleTrendItemCreateManyTrendInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput = {
+    where: GoogleTrendItemWhereUniqueInput
+    update: XOR<GoogleTrendItemUpdateWithoutTrendInput, GoogleTrendItemUncheckedUpdateWithoutTrendInput>
+    create: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput>
+  }
+
+  export type GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput = {
+    where: GoogleTrendItemWhereUniqueInput
+    data: XOR<GoogleTrendItemUpdateWithoutTrendInput, GoogleTrendItemUncheckedUpdateWithoutTrendInput>
+  }
+
+  export type GoogleTrendItemUpdateManyWithWhereWithoutTrendInput = {
+    where: GoogleTrendItemScalarWhereInput
+    data: XOR<GoogleTrendItemUpdateManyMutationInput, GoogleTrendItemUncheckedUpdateManyWithoutTrendInput>
+  }
+
+  export type GoogleTrendCreateWithoutItemsInput = {
+    id?: string
+    keyword: string
+    searchVolume?: string | null
+    exploreUrl?: string | null
+    category?: string | null
+    country?: string
+    trafficScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GoogleTrendUncheckedCreateWithoutItemsInput = {
+    id?: string
+    keyword: string
+    searchVolume?: string | null
+    exploreUrl?: string | null
+    category?: string | null
+    country?: string
+    trafficScore?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type GoogleTrendCreateOrConnectWithoutItemsInput = {
+    where: GoogleTrendWhereUniqueInput
+    create: XOR<GoogleTrendCreateWithoutItemsInput, GoogleTrendUncheckedCreateWithoutItemsInput>
+  }
+
+  export type RssFeedItemCreateWithoutGoogleTrendItemsInput = {
+    id?: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    source: RssFeedSourceCreateNestedOneWithoutItemsInput
+  }
+
+  export type RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput = {
+    id?: string
+    sourceId: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedItemCreateOrConnectWithoutGoogleTrendItemsInput = {
+    where: RssFeedItemWhereUniqueInput
+    create: XOR<RssFeedItemCreateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput>
+  }
+
+  export type GoogleTrendUpsertWithoutItemsInput = {
+    update: XOR<GoogleTrendUpdateWithoutItemsInput, GoogleTrendUncheckedUpdateWithoutItemsInput>
+    create: XOR<GoogleTrendCreateWithoutItemsInput, GoogleTrendUncheckedCreateWithoutItemsInput>
+    where?: GoogleTrendWhereInput
+  }
+
+  export type GoogleTrendUpdateToOneWithWhereWithoutItemsInput = {
+    where?: GoogleTrendWhereInput
+    data: XOR<GoogleTrendUpdateWithoutItemsInput, GoogleTrendUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type GoogleTrendUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    keyword?: StringFieldUpdateOperationsInput | string
+    searchVolume?: NullableStringFieldUpdateOperationsInput | string | null
+    exploreUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: StringFieldUpdateOperationsInput | string
+    trafficScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendUncheckedUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    keyword?: StringFieldUpdateOperationsInput | string
+    searchVolume?: NullableStringFieldUpdateOperationsInput | string | null
+    exploreUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    category?: NullableStringFieldUpdateOperationsInput | string | null
+    country?: StringFieldUpdateOperationsInput | string
+    trafficScore?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedItemUpsertWithoutGoogleTrendItemsInput = {
+    update: XOR<RssFeedItemUpdateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedUpdateWithoutGoogleTrendItemsInput>
+    create: XOR<RssFeedItemCreateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput>
+    where?: RssFeedItemWhereInput
+  }
+
+  export type RssFeedItemUpdateToOneWithWhereWithoutGoogleTrendItemsInput = {
+    where?: RssFeedItemWhereInput
+    data: XOR<RssFeedItemUpdateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedUpdateWithoutGoogleTrendItemsInput>
+  }
+
+  export type RssFeedItemUpdateWithoutGoogleTrendItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
+  }
+
+  export type RssFeedItemUncheckedUpdateWithoutGoogleTrendItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -41875,6 +45460,7 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
   }
 
   export type RssFeedItemUncheckedUpdateWithoutSourceInput = {
@@ -41892,6 +45478,7 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
   }
 
   export type RssFeedItemUncheckedUpdateManyWithoutSourceInput = {
@@ -41909,6 +45496,70 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendItemCreateManyRssItemInput = {
+    id?: string
+    trendId: string
+    matchScore: number
+    actionTaken?: $Enums.TrendAction
+    createdAt?: Date | string
+  }
+
+  export type GoogleTrendItemUpdateWithoutRssItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    trend?: GoogleTrendUpdateOneRequiredWithoutItemsNestedInput
+  }
+
+  export type GoogleTrendItemUncheckedUpdateWithoutRssItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trendId?: StringFieldUpdateOperationsInput | string
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendItemUncheckedUpdateManyWithoutRssItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    trendId?: StringFieldUpdateOperationsInput | string
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendItemCreateManyTrendInput = {
+    id?: string
+    rssItemId?: string | null
+    matchScore: number
+    actionTaken?: $Enums.TrendAction
+    createdAt?: Date | string
+  }
+
+  export type GoogleTrendItemUpdateWithoutTrendInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    rssItem?: RssFeedItemUpdateOneWithoutGoogleTrendItemsNestedInput
+  }
+
+  export type GoogleTrendItemUncheckedUpdateWithoutTrendInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rssItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type GoogleTrendItemUncheckedUpdateManyWithoutTrendInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    rssItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    matchScore?: IntFieldUpdateOperationsInput | number
+    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AiPersonaOnCategoryCreateManyPersonaInput = {

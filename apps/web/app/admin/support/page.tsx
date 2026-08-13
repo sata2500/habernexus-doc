@@ -30,7 +30,7 @@ export default async function AdminSupportPage() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center gap-3">
-        <div className="bg-blue-500/10 text-blue-500 p-2.5 rounded-xl border border-blue-500/20">
+        <div className="bg-primary-/10 text-primary- p-2.5 rounded-xl border border-primary-/20">
             <Mail className="h-6 w-6" />
         </div>
         <div>
@@ -50,16 +50,16 @@ export default async function AdminSupportPage() {
           <div className="glass-strong p-6 rounded-3xl border border-border/50 flex items-center justify-between hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300 shadow-soft">
               <div>
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Bekleyen Yanıt</p>
-                  <p className="text-2xl font-bold text-orange-500 mt-1">{tickets.filter(t => t.status === "OPEN").length}</p>
+                  <p className="text-2xl font-bold text-primary- mt-1">{tickets.filter(t => t.status === "OPEN").length}</p>
               </div>
-              <AlertCircle className="h-8 w-8 text-orange-500/20" />
+              <AlertCircle className="h-8 w-8 text-primary-/20" />
           </div>
           <div className="glass-strong p-6 rounded-3xl border border-border/50 flex items-center justify-between hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300 shadow-soft">
               <div>
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Çözülenler</p>
-                  <p className="text-2xl font-bold text-green-500 mt-1">{tickets.filter(t => t.status === "CLOSED").length}</p>
+                  <p className="text-2xl font-bold text-primary-500 mt-1">{tickets.filter(t => t.status === "CLOSED").length}</p>
               </div>
-              <CheckCircle2 className="h-8 w-8 text-green-500/20" />
+              <CheckCircle2 className="h-8 w-8 text-primary-500/20" />
           </div>
       </div>
 

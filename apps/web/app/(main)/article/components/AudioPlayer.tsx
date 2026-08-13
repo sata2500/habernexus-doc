@@ -19,6 +19,9 @@ export function AudioPlayer({ content, title }: Props) {
 
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
+  const currentSentenceIndex = useRef(0);
+  const sentencesRef = useRef<string[]>([]);
+
   // HTML etiketlerini temizle ve başlıkla birleştir
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -28,12 +31,23 @@ export function AudioPlayer({ content, title }: Props) {
       const tempDiv = document.createElement("div");
       tempDiv.innerHTML = content;
       const textContent = tempDiv.textContent || tempDiv.innerText || "";
-      // Başlığı da ekleyerek seslendirme metnini hazırla
-      setCleanText(`${title}. ${textContent}`);
+      const fullText = `${title}. ${textContent}`;
+      setCleanText(fullText);
+
+      // Sesleri yükle ve voiceschanged dinleyicisi ekle
+      const updateVoices = () => {
+        if (window.speechSynthesis) {
+          window.speechSynthesis.getVoices();
+        }
+      };
+      updateVoices();
+      if (window.speechSynthesis) {
+        window.speechSynthesis.onvoiceschanged = updateVoices;
+      }
     }
   }, [content, title]);
 
-  // Sayfadan çıkıldığında veya makale değiştiğinde seslendirmeyi durdur
+  // Sayfadan çıkıldığında seslendirmeyi durdur
   useEffect(() => {
     return () => {
       if (typeof window !== "undefined" && window.speechSynthesis) {
@@ -41,6 +55,45 @@ export function AudioPlayer({ content, title }: Props) {
       }
     };
   }, []);
+
+  const speakSentence = (index: number) => {
+    if (!window.speechSynthesis || index >= sentencesRef.current.length) {
+      setIsPlaying(false);
+      setIsPaused(false);
+      setProgress(100);
+      return;
+    }
+
+    currentSentenceIndex.current = index;
+    const textToSpeak = sentencesRef.current[index];
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+
+    const voices = window.speechSynthesis.getVoices();
+    const trVoice =
+      voices.find((v) => v.lang.startsWith("tr-") || v.lang === "tr") ||
+      voices.find((v) => v.lang.startsWith("en"));
+    if (trVoice) {
+      utterance.voice = trVoice;
+    }
+    utterance.lang = "tr-TR";
+    utterance.rate = rate;
+
+    utterance.onend = () => {
+      const nextIndex = index + 1;
+      const totalSentences = sentencesRef.current.length;
+      setProgress(Math.round((nextIndex / totalSentences) * 100));
+      speakSentence(nextIndex);
+    };
+
+    utterance.onerror = (e) => {
+      console.error("Speech synthesis sentence error:", e);
+      setIsPlaying(false);
+      setIsPaused(false);
+    };
+
+    utteranceRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  };
 
   const handlePlay = () => {
     if (!isSupported || !cleanText) return;
@@ -52,48 +105,19 @@ export function AudioPlayer({ content, title }: Props) {
       return;
     }
 
-    // Sıfırdan başlat
+    // Mobil uyumluluk için cümle bazlı böl ve başlat
     window.speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    
-    // Türkçe sesi bulmaya çalış
-    const voices = window.speechSynthesis.getVoices();
-    const trVoice = voices.find((v) => v.lang.startsWith("tr-") || v.lang === "tr") || voices.find((v) => v.lang.startsWith("en"));
-    if (trVoice) {
-      utterance.voice = trVoice;
-    }
-    utterance.lang = "tr-TR";
-    utterance.rate = rate;
+    const sentences = cleanText
+      .split(/(?<=[.?!])\s+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
 
-    // Kelime sınırlarında ilerlemeyi güncelle
-    utterance.onboundary = (event) => {
-      if (event.name === "word") {
-        const textLength = cleanText.length;
-        if (textLength > 0) {
-          const percent = (event.charIndex / textLength) * 100;
-          setProgress(Math.min(100, Math.round(percent)));
-        }
-      }
-    };
-
-    utterance.onend = () => {
-      setIsPlaying(false);
-      setIsPaused(false);
-      setProgress(100);
-    };
-
-    utterance.onerror = (e) => {
-      console.error("Speech synthesis error:", e);
-      setIsPlaying(false);
-      setIsPaused(false);
-    };
-
-    utteranceRef.current = utterance;
-    window.speechSynthesis.speak(utterance);
+    sentencesRef.current = sentences;
     setIsPlaying(true);
     setIsPaused(false);
     setProgress(0);
+    speakSentence(0);
   };
 
   const handlePause = () => {
@@ -109,6 +133,7 @@ export function AudioPlayer({ content, title }: Props) {
     setIsPlaying(false);
     setIsPaused(false);
     setProgress(0);
+    currentSentenceIndex.current = 0;
   };
 
   const handleRateChange = (newRate: number) => {

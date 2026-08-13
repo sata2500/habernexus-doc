@@ -16,6 +16,12 @@ export async function subscribeToNewsletter(email: string) {
     });
 
     if (existingUser) {
+      // Çifte e-posta gitmesini engelle (Deduplication): Misafir aboneyi pasife al
+      await prisma.subscriber.updateMany({
+        where: { email: emailLower },
+        data: { isActive: false },
+      });
+
       if (existingUser.newsletterSubscribed) {
         return { success: false, error: "Zaten bültene kayıtlısınız. Ayarlarınızı profilinizden yönetebilirsiniz." };
       }

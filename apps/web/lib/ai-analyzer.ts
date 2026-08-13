@@ -7,6 +7,7 @@ interface GeminiItemResult {
   id: string;
   score: number;
   isCovered: boolean;
+  isStale?: boolean;
   suggestedTitles: string[];
   suggestedCategory: string;
   reasoning: string;
@@ -147,13 +148,14 @@ Yeni haberler:
 ${newItems}
 
 Görev:
-1. Her haber için bir puan (0-100), mükerrerlik durumu ve kategori önerisi belirle.
+1. Her haber için bir puan (0-100), mükerrerlik durumu, tazelik durumu ve kategori önerisi belirle.
 2. "isCovered" alanı: Eğer haber yukarıdaki "Mevcut Konular" listesinden biriyle aynı konuyu işliyorsa veya BU LİSTE İÇİNDEKİ başka bir haberle aynıysa true yap.
-3. Eğer aynı haber batch içinde birden fazla gelmişse (farklı kaynaklardan), en iyisini (en detaylısını) ANALYZED yap, diğerlerini isCovered: true olarak işaretle.
-4. "suggestedCategory" alanı SADECE aşağıdaki listede bulunan kategori isimlerinden birini içermelidir.
+3. "isStale" alanı: Eğer haber tarihi geçmiş bir olayı (örneğin geçmiş günlerin spor skorları, süresi dolmuş duyurular) işliyorsa true yap.
+4. Eğer aynı haber batch içinde birden fazla gelmişse (farklı kaynaklardan), en detaylısını ANALYZED yap, diğerlerini isCovered: true olarak işaretle.
+5. "suggestedCategory" alanı SADECE aşağıdaki listede bulunan kategori isimlerinden birini içermelidir.
 MEVCUT KATEGORİLER: ${categoryNames}
 
-Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "suggestedTitles": ["..."], "suggestedCategory": "...", "reasoning": "..." } ] }`;
+Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "isStale": true/false, "suggestedTitles": ["..."], "suggestedCategory": "...", "reasoning": "..." } ] }`;
 
     const aiResponse = await callOpenRouter(prompt);
     const cleanedJson = cleanJson(aiResponse);
@@ -161,7 +163,7 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "su
     
     try {
       result = JSON.parse(cleanedJson);
-    } catch (parseErr) {
+    } catch (_parseErr) {
       console.error("[AI Analysis] JSON Ayrıştırma Hatası. Ham Yanıt:", aiResponse);
       throw new Error("Yapay zeka geçersiz bir yanıt döndürdü.");
     }
@@ -171,7 +173,14 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "su
     }
 
     for (const item of result.items) {
-      const status = item.isCovered ? "COVERED" : item.score < SCORE_THRESHOLD ? "LOW_SCORE" : "ANALYZED";
+      const status = item.isStale
+        ? "EXPIRED_STALE"
+        : item.isCovered
+        ? "COVERED"
+        : item.score < SCORE_THRESHOLD
+        ? "LOW_SCORE"
+        : "ANALYZED";
+
       if (status === "COVERED") covered++;
       if (status === "LOW_SCORE") lowScore++;
       
@@ -179,15 +188,16 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "su
         where: { id: item.id },
         data: {
           aiScore: item.score,
-          aiAnalysis: item as any,
+          aiAnalysis: JSON.parse(JSON.stringify(item)),
           status,
         },
       });
       analyzed++;
     }
     return { analyzed, covered, lowScore, aiUsed: true };
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("[AI Analysis] Kritik Hata:", err);
+    const errorMessage = err instanceof Error ? err.message : "AI Analysis Failed";
     
     // Hata durumunda fallback'e devam et
     console.log("[AI Analysis] Fallback (kural tabanlı) puanlama yapılıyor...");
@@ -195,8 +205,8 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "su
       const score = fallbackScore(item.title, item.excerpt || "", item.publishedAt);
       
       // Eski retry count'u al
-      const prevAnalysis = item.aiAnalysis as any;
-      const retryCount = (prevAnalysis?.retryCount || 0) + 1;
+      const prevAnalysis = item.aiAnalysis as Record<string, unknown> | null;
+      const retryCount = (typeof prevAnalysis?.retryCount === "number" ? prevAnalysis.retryCount : 0) + 1;
 
       await prisma.rssFeedItem.update({
         where: { id: item.id },
@@ -206,7 +216,7 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "su
           aiAnalysis: {
             isFallback: true,
             retryCount,
-            error: err.message || "AI Analysis Failed",
+            error: errorMessage,
             suggestedCategory: item.source.categoryHint || "Genel",
             suggestedTitles: [item.title]
           }
@@ -220,7 +230,7 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "su
       covered, 
       lowScore, 
       aiUsed: false, 
-      error: err.message || String(err) 
+      error: errorMessage 
     };
   }
 }

@@ -120,8 +120,8 @@ export function CronSettingsCard({
         {message && (
           <div className={`p-3 rounded-xl text-sm font-medium flex items-start gap-2 ${
             message.type === "success" 
-              ? "bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800"
-              : "bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800"
+              ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800"
+              : "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800"
           }`}>
             {message.type === "success" ? <CheckCircle2 className="h-4 w-4 mt-0.5 shrink-0" /> : <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />}
             {message.text}
@@ -203,7 +203,7 @@ export function CronSettingsCard({
               <button
                 onClick={handleManualCleanup}
                 disabled={loadingType !== null}
-                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-red-600/10 hover:bg-red-600 text-red-600 hover:text-white text-sm font-medium rounded-xl transition-all disabled:opacity-50"
+                className="flex items-center justify-center gap-2 px-4 py-2.5 bg-primary-600/10 hover:bg-primary-600 text-primary-600 hover:text-white text-sm font-medium rounded-xl transition-all disabled:opacity-50"
               >
                 {loadingType === "cleanup" ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                 {loadingType === "cleanup" ? "Temizleniyor..." : "Şimdi Temizle"}
@@ -220,7 +220,7 @@ export function CronSettingsCard({
               Kullanıcıların seçtiği saatlerde e-posta alabilmesi için bu otomasyonun başlatılması gerekir (her saat başı tetiklenir).
             </p>
             {hasNewsletter ? (
-              <div className="flex items-center gap-2 text-sm font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 px-3 py-2.5 rounded-xl">
+              <div className="flex items-center gap-2 text-sm font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 px-3 py-2.5 rounded-xl">
                 <CheckCircle2 className="h-4 w-4" />
                 Sistem Aktif ve Ayarlandı
               </div>

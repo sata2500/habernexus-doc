@@ -149,8 +149,29 @@ export async function getRssSuggestions(filters?: {
     take: 100,
     include: {
       source: { select: { name: true, url: true } },
+      googleTrendItems: {
+        include: {
+          trend: { select: { id: true, keyword: true, searchVolume: true, trafficScore: true } },
+        },
+      },
     },
   });
+}
+
+export async function getGoogleTrendOpportunities() {
+  const activeTrends = await prisma.googleTrend.findMany({
+    orderBy: { trafficScore: "desc" },
+    take: 10,
+    include: {
+      items: {
+        include: {
+          rssItem: { select: { id: true, title: true } },
+        },
+      },
+    },
+  });
+
+  return activeTrends;
 }
 
 export async function revertToAnalyzed(id: string) {

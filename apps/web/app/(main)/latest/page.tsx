@@ -6,6 +6,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Clock, Newspaper, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
+import { getCardGlowStyles } from "@/lib/utils";
 
 export const metadata = {
   title: "Son Haberler",
@@ -42,15 +43,12 @@ export default async function LatestArticlesPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {latestArticles.map((article) => (
-          <Link key={article.id} href={`/article/${article.slug}`} className="group block shine rounded-2xl">
+          <Link key={article.id} href={`/article/${article.slug}`} className="group block">
             <Card 
               variant="interactive" 
               noPadding 
-              className="overflow-hidden h-full flex flex-col border border-border/40 bg-card/65 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_25px_var(--art-glow)] transition-all duration-300"
-              style={{
-                "--art-color": article.category?.color || "var(--color-primary-500)",
-                "--art-glow": `${article.category?.color || "var(--color-primary-500)"}12`
-              } as React.CSSProperties}
+              className="overflow-hidden h-full flex flex-col shine rounded-2xl card-360-border bg-card/65 hover:bg-card transition-all duration-300 ease-out"
+              style={getCardGlowStyles(article.category?.color)}
             >
               <div className="h-56 relative overflow-hidden bg-muted flex items-center justify-center">
                 {article.coverImage ? (

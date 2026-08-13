@@ -42,6 +42,8 @@ export function ModelManagerClient({ initialModels }: Props) {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState<"ALL" | "TEXT" | "T2I" | "I2I" | "VISION">("ALL");
   const [syncing, setSyncing] = useState(false);
+  const [page, setPage] = useState(1);
+  const pageSize = 20;
 
   const filteredModels = models.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(search.toLowerCase()) || m.id.toLowerCase().includes(search.toLowerCase());
@@ -54,6 +56,9 @@ export function ModelManagerClient({ initialModels }: Props) {
 
     return matchesSearch && matchesFilter;
   });
+
+  const totalPages = Math.ceil(filteredModels.length / pageSize) || 1;
+  const paginatedModels = filteredModels.slice((page - 1) * pageSize, page * pageSize);
 
   const handleSync = async () => {
     setSyncing(true);
@@ -123,7 +128,10 @@ export function ModelManagerClient({ initialModels }: Props) {
             type="text"
             placeholder="Model adı veya ID ara..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             className="w-full pl-11 pr-4 py-3 bg-muted/30 border border-border rounded-2xl outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-medium"
           />
         </div>
@@ -132,7 +140,10 @@ export function ModelManagerClient({ initialModels }: Props) {
           {(["ALL", "TEXT", "T2I", "I2I", "VISION"] as const).map((t) => (
             <button
               key={t}
-              onClick={() => setFilter(t)}
+              onClick={() => {
+                setFilter(t);
+                setPage(1);
+              }}
               className={`flex-1 min-w-[60px] py-2 px-3 rounded-xl text-[10px] font-bold transition-all cursor-pointer ${
                 filter === t ? "bg-primary-500 text-white shadow-md" : "hover:bg-muted-foreground/10"
               }`}
@@ -143,13 +154,13 @@ export function ModelManagerClient({ initialModels }: Props) {
         </div>
 
         <div className="flex items-center justify-end px-4 py-2 bg-muted/10 rounded-2xl border border-border italic text-xs text-muted-foreground">
-          Toplam {filteredModels.length} model listeleniyor.
+          {filteredModels.length} modelden {Math.min(filteredModels.length, (page - 1) * pageSize + 1)}-{Math.min(filteredModels.length, page * pageSize)} arası gösteriliyor.
         </div>
       </div>
 
       {/* ── Modeller Grid ── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredModels.map((m) => (
+        {paginatedModels.map((m) => (
           <div key={m.id} className={`glass-strong rounded-3xl border transition-all duration-300 group relative overflow-hidden hover-lift hover:shadow-glow ${m.isActive ? "border-primary-500/30 hover:border-primary-500/50" : "border-border opacity-70"}`}>
             {/* Status Indicator */}
             <div className={`absolute top-0 right-0 h-1 w-full ${m.isActive ? "bg-primary-500" : "bg-muted"}`} />
@@ -158,9 +169,9 @@ export function ModelManagerClient({ initialModels }: Props) {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${
-                    m.type === "IMAGE" ? "bg-blue-500/10 text-blue-500" : 
-                    m.type === "MULTIMODAL" ? "bg-purple-500/10 text-purple-500" : 
-                    "bg-orange-500/10 text-orange-500"
+                    m.type === "IMAGE" ? "bg-primary-/10 text-primary-" : 
+                    m.type === "MULTIMODAL" ? "bg-primary-/10 text-primary-" : 
+                    "bg-primary-/10 text-primary-"
                   }`}>
                     {m.type === "IMAGE" ? <ImageIcon className="h-5 w-5" /> : 
                      m.type === "MULTIMODAL" ? <Sparkles className="h-5 w-5" /> : 
@@ -186,19 +197,19 @@ export function ModelManagerClient({ initialModels }: Props) {
 
               <div className="flex flex-wrap items-center gap-2">
                 {m.isFree && (
-                  <span className="px-2 py-0.5 bg-green-500/10 text-green-600 rounded-md text-[9px] font-bold border border-green-500/20">Ücretsiz</span>
+                  <span className="px-2 py-0.5 bg-primary-500/10 text-primary-600 rounded-md text-[9px] font-bold border border-primary-500/20">Ücretsiz</span>
                 )}
                 {m.supportsSearch && (
-                  <span className="px-2 py-0.5 bg-amber-500/10 text-amber-600 rounded-md text-[9px] font-bold border border-amber-500/20 flex items-center gap-1">
+                  <span className="px-2 py-0.5 bg-primary-/10 text-primary- rounded-md text-[9px] font-bold border border-primary-/20 flex items-center gap-1">
                     <Search className="h-2.5 w-2.5" />
                     Google Search
                   </span>
                 )}
                 {m.supportsI2I && (
-                  <span className="px-2 py-0.5 bg-blue-500/10 text-blue-600 rounded-md text-[9px] font-bold border border-blue-500/20">i2i</span>
+                  <span className="px-2 py-0.5 bg-primary-/10 text-primary- rounded-md text-[9px] font-bold border border-primary-/20">i2i</span>
                 )}
                 {m.supportsVision && (
-                  <span className="px-2 py-0.5 bg-purple-500/10 text-purple-600 rounded-md text-[9px] font-bold border border-purple-500/20">Vision</span>
+                  <span className="px-2 py-0.5 bg-primary-/10 text-primary- rounded-md text-[9px] font-bold border border-primary-/20">Vision</span>
                 )}
               </div>
               
@@ -218,7 +229,7 @@ export function ModelManagerClient({ initialModels }: Props) {
                 <span className="text-[10px] text-muted-foreground">Durum: <strong className={m.isActive ? "text-primary-500" : ""}>{m.isActive ? "Aktif" : "Pasif"}</strong></span>
                 <button
                   onClick={() => handleDelete(m.id)}
-                  className="p-1.5 hover:bg-red-500/10 text-red-500 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-primary-500/10 text-primary-500 rounded-lg transition-colors"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>
@@ -227,6 +238,31 @@ export function ModelManagerClient({ initialModels }: Props) {
           </div>
         ))}
       </div>
+
+      {/* ── Sayfalama (Pagination Bar) ── */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between p-4 glass-strong rounded-2xl border border-border/50 shadow-soft">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={page === 1}
+            className="px-4 py-2 rounded-xl bg-muted hover:bg-muted/80 text-foreground font-bold text-xs transition-all disabled:opacity-40 cursor-pointer"
+          >
+            ← Önceki Sayfa
+          </button>
+
+          <span className="text-xs font-semibold text-muted-foreground">
+            Sayfa <strong className="text-foreground">{page}</strong> / {totalPages}
+          </span>
+
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={page === totalPages}
+            className="px-4 py-2 rounded-xl bg-muted hover:bg-muted/80 text-foreground font-bold text-xs transition-all disabled:opacity-40 cursor-pointer"
+          >
+            Sonraki Sayfa →
+          </button>
+        </div>
+      )}
 
       {filteredModels.length === 0 && (
         <div className="text-center py-20 bg-muted/10 rounded-3xl border border-dashed border-border">

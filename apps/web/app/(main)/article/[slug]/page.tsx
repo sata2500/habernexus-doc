@@ -10,6 +10,7 @@ import { ViewTracker } from "../components/ViewTracker";
 import { ShareButtons } from "../components/ShareButtons";
 import { CommentSection } from "../components/comments/CommentSection";
 import { AudioPlayer } from "../components/AudioPlayer";
+import { TldrModal } from "../components/TldrModal";
 import { prisma } from "@/lib/prisma";
 
 export const revalidate = 3600; // 1 saatte bir arka planda yenile (ISR)
@@ -189,8 +190,11 @@ export default async function ArticlePage({ params }: { params: Params }) {
         </div>
       </header>
 
-      {/* Metin Seslendirme Oynatıcısı */}
-      <div className="mb-10">
+      {/* Metin Seslendirme Oynatıcısı & AI Özeti */}
+      <div className="mb-10 space-y-4">
+        <div className="flex items-center justify-between">
+          <TldrModal title={article.title} content={article.content} />
+        </div>
         <AudioPlayer content={article.content} title={article.title} />
       </div>
 

@@ -16,6 +16,10 @@ const eslintConfig = defineConfig([
     "lib/generated/**",
     // Database seed (dev-only utility, not production code)
     "prisma/seed.ts",
+    // Dev helper & CLI scripts
+    "scripts/**",
+    "*.js",
+    "setup_admin_auth.ts",
     // Scratch / temp files
     "scratch/**",
   ]),

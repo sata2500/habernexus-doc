@@ -82,7 +82,7 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
                   <button 
                     onClick={handleDelete}
                     disabled={isDeleting}
-                    className="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-muted-foreground hover:text-red-500 transition-colors disabled:opacity-50"
+                    className="p-1.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 text-muted-foreground hover:text-primary-500 transition-colors disabled:opacity-50"
                     title="Sil"
                   >
                     <Trash2 className="h-3.5 w-3.5" />

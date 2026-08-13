@@ -10,9 +10,9 @@ interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 const variantStyles: Record<BadgeVariant, string> = {
   default: "bg-muted text-muted-foreground",
   primary: "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300",
-  success: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300",
-  warning: "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300",
-  error: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300",
+  success: "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300",
+  warning: "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300",
+  error: "bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300",
   outline: "border border-border text-muted-foreground bg-transparent",
 };
 

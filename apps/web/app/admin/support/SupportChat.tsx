@@ -132,7 +132,7 @@ export function SupportChat({ ticket }: Props) {
                 <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
                   {isAdmin ? "Haber Nexus Destek" : ticket.userEmail}
                 </span>
-                {isAdmin && <ShieldCheck className="h-3 w-3 text-blue-500" />}
+                {isAdmin && <ShieldCheck className="h-3 w-3 text-primary-" />}
               </div>
               
               <div

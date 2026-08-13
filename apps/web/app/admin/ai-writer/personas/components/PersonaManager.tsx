@@ -141,8 +141,8 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
       {/* ── Header ── */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-2xl bg-purple-500/20 flex items-center justify-center">
-            <Users className="h-6 w-6 text-purple-500" />
+          <div className="h-12 w-12 rounded-2xl bg-primary-/20 flex items-center justify-center">
+            <Users className="h-6 w-6 text-primary-" />
           </div>
           <div>
             <h2 className="text-2xl font-bold font-display">AI Personaları</h2>
@@ -200,7 +200,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
 
               <div className="space-y-2">
                 <label className="text-sm font-bold flex items-center gap-2">
-                  <ImageIcon className="h-4 w-4 text-blue-500" />
+                  <ImageIcon className="h-4 w-4 text-primary-" />
                   Profil Fotoğrafı
                 </label>
                 <ImageUploader
@@ -253,7 +253,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
             <div className="space-y-6">
               <div className="space-y-2">
                 <label className="text-sm font-bold flex items-center gap-2">
-                  <Wand2 className="h-4 w-4 text-purple-500" />
+                  <Wand2 className="h-4 w-4 text-primary-" />
                   Yazım Komutu (System Prompt)
                 </label>
                 <textarea
@@ -266,7 +266,7 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
 
               <div className="space-y-2">
                 <label className="text-sm font-bold flex items-center gap-2">
-                  <ImageIcon className="h-4 w-4 text-blue-500" />
+                  <ImageIcon className="h-4 w-4 text-primary-" />
                   Görsel Üretim Komutu (Image Prompt)
                 </label>
                 <textarea
@@ -319,13 +319,13 @@ export function PersonaManager({ initialPersonas, allCategories }: Props) {
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => handleEdit(persona)}
-                  className="p-2 hover:bg-blue-500/10 text-blue-500 rounded-lg transition-colors"
+                  className="p-2 hover:bg-primary-/10 text-primary- rounded-lg transition-colors"
                 >
                   <Edit2 className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => handleDelete(persona.id)}
-                  className="p-2 hover:bg-red-500/10 text-red-500 rounded-lg transition-colors"
+                  className="p-2 hover:bg-primary-500/10 text-primary-500 rounded-lg transition-colors"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

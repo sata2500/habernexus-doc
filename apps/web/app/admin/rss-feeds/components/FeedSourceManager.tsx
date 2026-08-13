@@ -156,12 +156,12 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-xl text-sm font-medium">
+        <div className="p-3 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-xl text-sm font-medium">
           {error}
         </div>
       )}
       {success && (
-        <div className="p-3 bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-800 rounded-xl text-sm font-medium">
+        <div className="p-3 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-xl text-sm font-medium">
           {success}
         </div>
       )}
@@ -226,7 +226,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <select
                 value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value as any)}
+                onChange={(e) => setFilterStatus(e.target.value as "all" | "active" | "inactive" | "error")}
                 className="w-full sm:w-auto pl-9 pr-8 py-2.5 rounded-xl bg-background border border-border outline-none focus:ring-2 focus:ring-primary-500 text-sm appearance-none"
               >
                 <option value="all">Tümü</option>
@@ -245,18 +245,18 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
           <span className="text-sm font-medium mr-2">{selectedIds.size} seçili</span>
           <div className="h-4 w-px bg-background/20 mx-1"></div>
           
-          <button onClick={() => handleBulkAction("scan")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-blue-400 hover:text-blue-300 transition-colors" title="Seçilenleri Tara">
+          <button onClick={() => handleBulkAction("scan")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary- hover:text-primary- transition-colors" title="Seçilenleri Tara">
             <RefreshCw className="h-4 w-4" />
           </button>
-          <button onClick={() => handleBulkAction("enable")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-green-400 hover:text-green-300 transition-colors" title="Seçilenleri Etkinleştir">
+          <button onClick={() => handleBulkAction("enable")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary-400 hover:text-primary-300 transition-colors" title="Seçilenleri Etkinleştir">
             <Power className="h-4 w-4" />
           </button>
-          <button onClick={() => handleBulkAction("disable")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-yellow-400 hover:text-yellow-300 transition-colors" title="Seçilenleri Devre Dışı Bırak">
+          <button onClick={() => handleBulkAction("disable")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary-400 hover:text-primary-300 transition-colors" title="Seçilenleri Devre Dışı Bırak">
             <Power className="h-4 w-4 rotate-180" />
           </button>
           
           <div className="h-4 w-px bg-background/20 mx-1"></div>
-          <button onClick={() => handleBulkAction("delete")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-red-400 hover:text-red-300 transition-colors" title="Seçilenleri Sil">
+          <button onClick={() => handleBulkAction("delete")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary-400 hover:text-primary-300 transition-colors" title="Seçilenleri Sil">
             <Trash2 className="h-4 w-4" />
           </button>
           
@@ -346,7 +346,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                     {source.url.slice(0, 50)}...
                   </a>
                   {source.fetchError && (
-                    <p className="text-[10px] text-red-500 mt-0.5">⚠ {source.fetchError.slice(0, 60)}</p>
+                    <p className="text-[10px] text-primary-500 mt-0.5">⚠ {source.fetchError.slice(0, 60)}</p>
                   )}
                   {source.lastFetchedAt && !source.fetchError && (
                     <p className="text-[10px] text-muted-foreground mt-0.5">
@@ -382,7 +382,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                 <button
                   onClick={() => handleDelete(source.id, source.name)}
                   title="Kaynağı Sil"
-                  className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-red-500/10 dark:hover:bg-red-500/15 text-muted-foreground hover:text-red-500 transition-colors cursor-pointer outline-none focus-ring"
+                  className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-primary-500/10 dark:hover:bg-primary-500/15 text-muted-foreground hover:text-primary-500 transition-colors cursor-pointer outline-none focus-ring"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

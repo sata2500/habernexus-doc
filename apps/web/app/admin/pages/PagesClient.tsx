@@ -283,7 +283,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
               </Button>
               <div className="flex items-center gap-3">
                 {success && (
-                  <span className="text-sm text-green-500 font-medium flex items-center gap-1 animate-in fade-in zoom-in">
+                  <span className="text-sm text-primary-500 font-medium flex items-center gap-1 animate-in fade-in zoom-in">
                     <CheckCircle2 className="h-4 w-4" /> Kaydedildi
                   </span>
                 )}

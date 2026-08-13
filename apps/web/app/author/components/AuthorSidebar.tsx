@@ -42,11 +42,13 @@ interface SessionProps {
 export function AuthorSidebar({ session }: SessionProps) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const [prevPathname, setPrevPathname] = useState(pathname);
 
-  // Close drawer on path change
-  useEffect(() => {
+  // Close drawer on path change during render
+  if (pathname !== prevPathname) {
+    setPrevPathname(pathname);
     setIsOpen(false);
-  }, [pathname]);
+  }
 
   // Lock body scroll when drawer is open
   useEffect(() => {
@@ -60,7 +62,6 @@ export function AuthorSidebar({ session }: SessionProps) {
     };
   }, [isOpen]);
 
-  const userName = session?.user?.name || "Yönetici";
   const userRoleName = (session?.user?.role ?? "AUTHOR").toLowerCase();
 
   const renderNavLinks = (isMobile = false) => {
@@ -110,7 +111,7 @@ export function AuthorSidebar({ session }: SessionProps) {
           Profil Ayarlarına Dön
         </Link>
         <div className="pt-2 border-t border-border/40">
-          <SignOutButton className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-red-500 hover:text-red-600 hover:bg-red-500/5 transition-all cursor-pointer" />
+          <SignOutButton className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-primary-500 hover:text-primary-600 hover:bg-primary-500/5 transition-all cursor-pointer" />
         </div>
       </div>
     );
@@ -140,7 +141,7 @@ export function AuthorSidebar({ session }: SessionProps) {
         </div>
         
         {/* Hızlı Çıkış */}
-        <SignOutButton className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-red-500 hover:text-red-600 hover:bg-red-500/5 transition-colors cursor-pointer" />
+        <SignOutButton className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-primary-500 hover:text-primary-600 hover:bg-primary-500/5 transition-colors cursor-pointer" />
       </div>
 
       {/* ── Mobil Çekmece Menüsü (Mobile Drawer Menu) ────────────────────────── */}

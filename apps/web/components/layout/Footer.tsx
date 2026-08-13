@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { subscribeToNewsletter } from "@/app/(main)/newsletter-actions";
@@ -121,7 +122,7 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
             <Link href="/" className="flex items-center gap-2 mb-4">
               {settings?.logoUrl ? (
                 <div className="h-9 w-9 relative rounded-xl overflow-hidden shrink-0 border border-border/50">
-                  <img src={settings.logoUrl} alt={siteName} className="object-cover w-full h-full" />
+                  <Image src={settings.logoUrl} alt={siteName} fill className="object-cover" sizes="36px" unoptimized />
                 </div>
               ) : (
                 <div className="h-9 w-9 rounded-xl bg-gradient-primary flex items-center justify-center shrink-0">
@@ -163,7 +164,7 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
                 </button>
               </div>
               {message && (
-                <div className={`flex items-center gap-1.5 text-xs font-medium ${message.type === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+                <div className={`flex items-center gap-1.5 text-xs font-medium ${message.type === 'success' ? 'text-primary-500' : 'text-primary-500'}`}>
                   {message.type === 'success' ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
                   {message.text}
                 </div>
@@ -196,7 +197,7 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
               Kategoriler
             </h4>
             <ul className="space-y-2.5">
-              {categories.slice(0, 5).map((cat) => (
+              {categories.slice(0, 6).map((cat) => (
                 <li key={cat.id}>
                   <Link
                     href={`/category/${cat.slug}`}

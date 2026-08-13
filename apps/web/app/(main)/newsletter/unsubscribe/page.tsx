@@ -14,7 +14,7 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
     return (
       <div className="min-h-[60vh] flex items-center justify-center p-4">
         <Card className="max-w-md w-full p-8 text-center space-y-6">
-          <div className="h-16 w-16 bg-red-500/10 text-red-600 rounded-full flex items-center justify-center mx-auto">
+          <div className="h-16 w-16 bg-primary-500/10 text-primary-600 rounded-full flex items-center justify-center mx-auto">
             <XCircle className="h-8 w-8" />
           </div>
           <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Geçersiz İşlem</h1>
@@ -40,7 +40,7 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
         <div className="space-y-6">
           {result.success ? (
             <>
-              <div className="h-16 w-16 bg-green-500/10 text-green-600 rounded-full flex items-center justify-center mx-auto">
+              <div className="h-16 w-16 bg-primary-500/10 text-primary-600 rounded-full flex items-center justify-center mx-auto">
                 <CheckCircle2 className="h-8 w-8" />
               </div>
               <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Abonelik İptal Edildi</h1>
@@ -50,7 +50,7 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
             </>
           ) : (
             <>
-              <div className="h-16 w-16 bg-orange-500/10 text-orange-600 rounded-full flex items-center justify-center mx-auto">
+              <div className="h-16 w-16 bg-primary-500/10 text-primary-600 rounded-full flex items-center justify-center mx-auto">
                 <XCircle className="h-8 w-8" />
               </div>
               <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Bir Sorun Oluştu</h1>

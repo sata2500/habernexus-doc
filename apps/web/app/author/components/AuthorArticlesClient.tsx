@@ -12,10 +12,7 @@ import {
   Newspaper, 
   Sparkles, 
   Gauge, 
-  BarChart3, 
-  AlertTriangle,
-  Search,
-  BookOpen
+  AlertTriangle
 } from "lucide-react";
 import { DeleteArticleButton } from "./DeleteArticleButton";
 import { ArticleAnalysisModal } from "@/components/article/ArticleAnalysisModal";
@@ -26,6 +23,8 @@ interface ArticleItem {
   title: string;
   slug: string;
   status: string;
+  excerpt?: string | null;
+  coverImage?: string | null;
   viewCount: number;
   aiPersonaId: string | null;
   categoryId: string | null;
@@ -33,7 +32,7 @@ interface ArticleItem {
   seoScore: number | null;
   readabilityScore: number | null;
   qualityScore: number | null;
-  analysisReport: any;
+  analysisReport: unknown;
   publishedAt: Date | null;
   createdAt: Date;
   category: { id: string; name: string } | null;
@@ -59,6 +58,7 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
   const [articles, setArticles] = useState<ArticleItem[]>(initialArticles);
   const [selectedArticle, setSelectedArticle] = useState<ArticleItem | null>(null);
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAnalysisComplete = (updatedArticle: any) => {
     setArticles((prev) =>
       prev.map((art) => (art.id === updatedArticle.id ? { ...art, ...updatedArticle } : art))

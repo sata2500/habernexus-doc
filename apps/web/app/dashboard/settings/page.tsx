@@ -51,7 +51,7 @@ export default async function SettingsPage() {
           {/* Danger Zone */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
              <div>
-              <h3 className="font-semibold text-red-600 dark:text-red-400">Hesabı Sil</h3>
+              <h3 className="font-semibold text-primary-600 dark:text-primary-400">Hesabı Sil</h3>
               <p className="text-sm text-muted-foreground mt-1">Tüm verilerinizi, yorumlarınızı ve kaydedilenlerinizi kalıcı olarak siler.</p>
             </div>
             <DeleteAccountButton />
