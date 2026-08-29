@@ -3,16 +3,15 @@
 import { useState, useMemo, useTransition } from "react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
-import { 
-  Zap, 
-  Trash2, 
-  CheckCircle2, 
-  Clock, 
+import {
+  Zap,
+  Trash2,
+  CheckCircle2,
+  Clock,
   AlertCircle,
   Loader2,
   Maximize2,
   Search,
-  Filter,
   Image as ImageIcon,
   CheckSquare,
   Square,
@@ -36,11 +35,11 @@ export interface MediaItem {
 
 export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[] }) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [isBulkProcessing, setIsBulkProcessing] = useState(false);
-  
+
   // Arama ve Filtreleme
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
@@ -115,7 +114,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
   const handleBulkOptimize = async () => {
     if (selectedIds.size === 0) return;
     setIsBulkProcessing(true);
-    
+
     const targetIds = Array.from(selectedIds).filter(id => {
       const item = initialMedia.find(m => m.id === id);
       return item?.status === "RAW";
@@ -169,7 +168,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
             className="w-full pl-10 pr-4 py-2 bg-background/50 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
           />
           {searchQuery && (
-            <button 
+            <button
               onClick={() => setSearchQuery("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
             >
@@ -190,8 +189,8 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
               onClick={() => setStatusFilter(f.value)}
               className={cn(
                 "px-4 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap cursor-pointer",
-                statusFilter === f.value 
-                  ? "bg-primary-500 border-primary-500 text-white shadow-md shadow-primary-500/20" 
+                statusFilter === f.value
+                  ? "bg-primary-500 border-primary-500 text-white shadow-md shadow-primary-500/20"
                   : "bg-background border-border text-muted-foreground hover:border-primary-500/30"
               )}
             >
@@ -203,7 +202,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
 
       {/* Seçim Yardımcıları */}
       <div className="flex flex-wrap items-center gap-3 mb-6 px-1">
-        <button 
+        <button
           onClick={toggleSelectAll}
           className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-lg transition-colors"
         >
@@ -227,20 +226,20 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
           const isProcessing = processingIds.has(item.id);
 
           return (
-            <Card 
-              key={item.id} 
+            <Card
+              key={item.id}
               className={cn(
                 "group overflow-hidden flex flex-col rounded-3xl border border-border/50 hover:border-primary-500/30 hover-lift hover:shadow-glow transition-all duration-300 relative bg-background/50",
                 isSelected && "border-primary-500 ring-2 ring-primary-500/20 shadow-lg shadow-primary-500/10"
               )}
             >
               {/* Seçim Checkbox Overlay */}
-              <div 
+              <div
                 onClick={() => toggleSelect(item.id)}
                 className={cn(
                   "absolute top-3 right-3 z-20 h-6 w-6 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all",
-                  isSelected 
-                    ? "bg-primary-500 border-primary-500 text-white" 
+                  isSelected
+                    ? "bg-primary-500 border-primary-500 text-white"
                     : "bg-black/20 border-white/40 opacity-0 group-hover:opacity-100 backdrop-blur-md"
                 )}
               >
@@ -250,15 +249,15 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
               {/* Görsel Önizleme */}
               <div className="relative aspect-video bg-muted overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={item.url} 
+                <img
+                  src={item.url}
                   alt={item.filename}
                   className={cn(
                     "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105",
                     isSelected && "scale-105"
                   )}
                 />
-                
+
                 {/* Durum Rozeti */}
                 <div className="absolute top-3 left-3">
                   {item.status === "OPTIMIZED" ? (
@@ -282,16 +281,16 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
 
                 {/* Hover Actions */}
                 <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <a 
-                    href={item.url} 
-                    target="_blank" 
+                  <a
+                    href={item.url}
+                    target="_blank"
                     rel="noreferrer"
                     className="p-2 bg-white/20 hover:bg-white/30 rounded-xl text-white backdrop-blur-md transition-all"
                   >
                     <Maximize2 className="h-5 w-5" />
                   </a>
                   {!isBulkProcessing && (
-                    <button 
+                    <button
                       onClick={() => handleDelete(item.id)}
                       className="p-2 bg-primary-500/80 hover:bg-primary-500 rounded-xl text-white backdrop-blur-md transition-all"
                     >
@@ -321,7 +320,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
                   </div>
 
                   {item.status === "RAW" && !isProcessing && (
-                    <button 
+                    <button
                       onClick={() => handleOptimize(item.id)}
                       disabled={isBulkProcessing}
                       className="px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white text-[10px] font-bold rounded-lg transition-colors flex items-center gap-1 shadow-lg shadow-primary-500/20 disabled:opacity-50"
@@ -352,7 +351,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
               <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Toplu İşlem</span>
               <span className="text-sm font-bold text-primary-500">{selectedIds.size} öğe seçildi</span>
             </div>
-            
+
             <div className="hidden sm:block h-8 w-[1px] bg-border" />
 
             <div className="flex items-center gap-3 w-full sm:w-auto justify-center">
@@ -364,7 +363,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
                 {isBulkProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4 fill-current" />}
                 Optimize Et
               </button>
-              
+
               <button
                 onClick={handleBulkDelete}
                 disabled={isBulkProcessing}

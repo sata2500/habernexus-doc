@@ -51,14 +51,14 @@ export async function POST(req: NextRequest) {
 
     // 3. Son 24 Saat Haberlerini Çek
     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-    
+
     const latestArticles = await prisma.article.findMany({
       where: {
         status: "PUBLISHED",
         publishedAt: { gte: twentyFourHoursAgo },
       },
-      take: 7, 
-      orderBy: { viewCount: "desc" }, 
+      take: 7,
+      orderBy: { viewCount: "desc" },
       include: { category: { select: { name: true } } },
     });
 
@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
     }
 
     const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
-    
+
     // 4. Alıcıları Birleştir (De-duplication)
     // Eğer bir e-posta hem User hem de Subscriber tablosunda varsa, User (kayıtlı) olanı önceliklendir.
     const subscribersMap = new Map<string, { email: string; unsubscribeUrl: string }>();

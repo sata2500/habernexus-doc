@@ -91,7 +91,7 @@ export async function updateStaticPage(id: string, data: { title: string; conten
 
     revalidatePath(`/admin/pages`);
     revalidatePath(`/(main)/${page.slug}`, "page");
-    
+
     return { success: true, page };
   } catch (error) {
     console.error("Error updating static page:", error);

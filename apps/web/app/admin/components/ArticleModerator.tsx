@@ -1,19 +1,19 @@
 "use client";
 
 import { useState, useTransition, useMemo } from "react";
-import { 
-  updateArticleStatus, 
-  deleteArticle, 
-  bulkUpdateArticleStatus, 
-  bulkDeleteArticles 
+import {
+  updateArticleStatus,
+  deleteArticle,
+  bulkUpdateArticleStatus,
+  bulkDeleteArticles
 } from "../actions";
-import { 
-  Trash2, 
-  Eye, 
-  EyeOff, 
-  Search, 
-  CheckSquare, 
-  Square, 
+import {
+  Trash2,
+  Eye,
+  EyeOff,
+  Search,
+  CheckSquare,
+  Square,
   MoreHorizontal,
   ArrowUpDown,
   CheckCircle2,
@@ -40,12 +40,12 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [isPending, startTransition] = useTransition();
   const [actionId, setActionId] = useState<string | null>(null);
-  
+
   // Arama ve Filtreleme State'leri
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
-  
+
   // Seçim State'i
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
 
@@ -77,11 +77,11 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
   const filteredArticles = useMemo(() => {
     return localArticles.filter(article => {
       const authorName = article.author.name || "İsimsiz Yazar";
-      const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                            authorName.toLowerCase().includes(searchQuery.toLowerCase());
       const matchesStatus = statusFilter === "all" || article.status === statusFilter;
       const matchesCategory = categoryFilter === "all" || article.category?.id === categoryFilter;
-      
+
       return matchesSearch && matchesStatus && matchesCategory;
     });
   }, [localArticles, searchQuery, statusFilter, categoryFilter]);
@@ -124,7 +124,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
   const handleBulkStatus = (status: string) => {
     const ids = Array.from(selectedIds);
     if (ids.length === 0) return;
-    
+
     startTransition(async () => {
       await bulkUpdateArticleStatus(ids, status);
       setSelectedIds(new Set());
@@ -156,7 +156,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
             className="w-full pl-10 pr-4 py-2 bg-background/50 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
           />
         </div>
-        
+
         <div className="flex gap-2 w-full md:w-auto">
           <select
             value={statusFilter}
@@ -223,7 +223,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
       {/* Liste */}
       <div className="glass-strong border border-border/50 rounded-[2.5rem] overflow-hidden shadow-soft">
         <div className="hidden sm:flex items-center gap-4 p-4 border-b border-border bg-muted/20 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-          <button 
+          <button
             onClick={toggleSelectAll}
             className="p-1 hover:bg-muted rounded transition-colors cursor-pointer"
           >
@@ -254,14 +254,14 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
               const isAnalyzed = article.qualityScore !== null;
 
               return (
-                <div 
-                  key={article.id} 
+                <div
+                  key={article.id}
                   className={cn(
                     "flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 transition-all duration-300 group",
                     isSelected ? "bg-[var(--color-primary-500)]/5" : "bg-background/30 hover:bg-primary-500/5"
                   )}
                 >
-                  <button 
+                  <button
                     onClick={() => toggleSelect(article.id)}
                     className="p-1 hover:bg-muted rounded transition-colors cursor-pointer mt-1 sm:mt-0 shrink-0"
                   >
@@ -295,7 +295,7 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                         <span className="font-semibold">{authorName}</span>
                         <span>•</span>
                         {article.category && (
-                          <span 
+                          <span
                             className="px-1.5 py-0.5 rounded-md bg-muted/30 border border-border/50 font-bold"
                             style={{ color: article.category.color || undefined }}
                           >

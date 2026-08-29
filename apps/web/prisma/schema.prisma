@@ -77,9 +77,10 @@ model Article {
   status      String         @default("DRAFT")
   viewCount   Int            @default(0)
   authorId    String
-  categoryId  String?
-  aiPersonaId String?
-  publishedAt DateTime?
+  categoryId       String?
+  aiPersonaId      String?
+  sourceRssItemId  String?        @unique
+  publishedAt      DateTime?
   lang        String         @default("tr")
 
   // Analiz Sonuclari
@@ -93,7 +94,8 @@ model Article {
   updatedAt   DateTime       @updatedAt
   author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
   category    Category?      @relation(fields: [categoryId], references: [id])
-  aiPersona   AiPersona?     @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
+    aiPersona    AiPersona?    @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
+  sourceRssItem RssFeedItem? @relation(fields: [sourceRssItemId], references: [id], onDelete: SetNull)
   bookmarks   Bookmark[]
   comments    Comment[]
   tags        TagOnArticle[]
@@ -281,8 +283,11 @@ model RssFeedItem {
   aiAnalysis     Json?                             // Gemini'nin tam JSON çıktısı
   dismissed      Boolean       @default(false)     // "İlginç değil" işareti
   usedForArticle Boolean       @default(false)     // Bu öneriden haber yazıldıysa
+  processingAt   DateTime?
+  processingToken String?       @unique
   source         RssFeedSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-  googleTrendItems GoogleTrendItem[]
+    googleTrendItems GoogleTrendItem[]
+  article          Article?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
 

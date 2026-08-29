@@ -12,6 +12,7 @@ import { CommentSection } from "../components/comments/CommentSection";
 import { AudioPlayer } from "../components/AudioPlayer";
 import { TldrModal } from "../components/TldrModal";
 import { prisma } from "@/lib/prisma";
+import { sanitizeHtml } from "@/lib/server/sanitize-html";
 
 export const revalidate = 3600; // 1 saatte bir arka planda yenile (ISR)
 
@@ -214,7 +215,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
       {/* ── Ana İçerik Gövdesi (Typography Plugin) ────────────────────────── */}
       <article className="prose prose-lg dark:prose-invert prose-blue mx-auto w-full mb-16">
-        <div dangerouslySetInnerHTML={{ __html: article.content }} />
+        <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }} />
       </article>
 
       {/* ── Yazar Bilgi Kartı ────────────────────────── */}
@@ -263,8 +264,10 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
       {/* ── Yapay Zeka Yorum Özeti ────────────────────────── */}
       {(() => {
-        const report = article.analysisReport as Record<string, any> | null;
-        const summary = report?.commentsSummary;
+        const report = typeof article.analysisReport === "object" && article.analysisReport !== null && !Array.isArray(article.analysisReport)
+          ? article.analysisReport as Record<string, unknown>
+          : null;
+        const summary = typeof report?.commentsSummary === "string" ? report.commentsSummary : null;
         if (!summary) return null;
 
         return (
@@ -278,9 +281,9 @@ export default async function ArticlePage({ params }: { params: Params }) {
                 Yapay Zeka Okur Özetleri
               </h3>
             </div>
-            <div 
+            <div
               className="prose prose-sm dark:prose-invert prose-primary max-w-none text-muted-foreground leading-relaxed"
-              dangerouslySetInnerHTML={{ __html: summary }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(summary) }}
             />
           </div>
         );

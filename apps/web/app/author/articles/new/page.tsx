@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import { useEffect } from "react";
 import { createArticle, getCategories } from "../../actions";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+
 import { Button } from "@/components/ui/Button";
 
 import { Image as ImageIcon, Tag, Loader2, Eye, Save } from "lucide-react";
@@ -165,7 +165,7 @@ export default function NewArticlePage() {
             <h3 className="text-sm font-semibold flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-muted-foreground" /> Kapak Fotoğrafı
             </h3>
-            <ImageUploader 
+            <ImageUploader
               value={coverImage}
               onChange={setCoverImage}
               type="article"

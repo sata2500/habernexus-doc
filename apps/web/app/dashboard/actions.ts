@@ -246,7 +246,7 @@ import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
 export async function testNewsletterEmail() {
   try {
     const session = await getVerifiedSession();
-    
+
     // Test için son 3 haberi alalım
     const latestArticles = await prisma.article.findMany({
       where: { status: "PUBLISHED" },

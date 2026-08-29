@@ -45,7 +45,7 @@ export function TldrModal({ title, content }: TldrModalProps) {
           .slice(0, 3);
         setSummary(sentences.length > 0 ? sentences : ["Makale özeti oluşturulurken bir hata meydana geldi."]);
       }
-    } catch (e) {
+    } catch {
       setSummary(["Makale okundu, detaylar haber metninde mevcuttur."]);
     } finally {
       setLoading(false);
@@ -78,7 +78,7 @@ export function TldrModal({ title, content }: TldrModalProps) {
               </button>
             </div>
 
-            <p className="text-xs font-semibold text-muted-foreground line-clamp-1">"{title}"</p>
+            <p className="text-xs font-semibold text-muted-foreground line-clamp-1">“{title}”</p>
 
             {loading ? (
               <div className="py-12 flex flex-col items-center justify-center gap-3 text-muted-foreground">

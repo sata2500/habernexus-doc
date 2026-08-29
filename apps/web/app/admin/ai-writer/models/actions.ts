@@ -2,19 +2,22 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { requireRole } from "@/lib/server/authz";
 
 export async function getAiModels() {
+  await requireRole("ADMIN");
   return await prisma.aiModel.findMany({
     orderBy: { createdAt: "desc" }
   });
 }
 
 export async function syncModelsFromOpenRouter() {
+  await requireRole("ADMIN");
   try {
     const res = await fetch("https://openrouter.ai/api/v1/models");
     if (!res.ok) throw new Error("OpenRouter API hatası");
     const json = await res.json();
-    
+
     const models = json.data;
     if (!Array.isArray(models)) throw new Error("Geçersiz API yanıtı");
 
@@ -25,7 +28,7 @@ export async function syncModelsFromOpenRouter() {
       fetchedIds.add(m.id);
 
       // Ücret kontrolü
-      const isFree = parseFloat(m.pricing?.prompt || "0") === 0 && 
+      const isFree = parseFloat(m.pricing?.prompt || "0") === 0 &&
                      parseFloat(m.pricing?.completion || "0") === 0;
 
       // Yetenek ve Modalite Analizi (OpenRouter mimarisinden)
@@ -110,6 +113,7 @@ export async function upsertManualModel(data: {
   isFree: boolean;
   isActive: boolean;
 }) {
+  await requireRole("ADMIN");
   try {
     await prisma.aiModel.upsert({
       where: { id: data.id },
@@ -131,6 +135,7 @@ export async function upsertManualModel(data: {
 }
 
 export async function toggleModelActive(id: string, isActive: boolean) {
+  await requireRole("ADMIN");
   try {
     await prisma.aiModel.update({
       where: { id },
@@ -144,6 +149,7 @@ export async function toggleModelActive(id: string, isActive: boolean) {
 }
 
 export async function deleteModel(id: string) {
+  await requireRole("ADMIN");
   try {
     await prisma.aiModel.delete({ where: { id } });
     revalidatePath("/admin/ai-writer/models");

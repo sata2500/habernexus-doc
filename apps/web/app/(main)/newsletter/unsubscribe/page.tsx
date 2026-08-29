@@ -21,8 +21,8 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
           <p className="text-muted-foreground leading-relaxed">
             Abonelikten çıkmak için kullanılan bağlantı geçersiz veya eksik. Lütfen e-postanızdaki bağlantıyı kontrol edin.
           </p>
-          <Link 
-            href="/" 
+          <Link
+            href="/"
             className="inline-flex items-center gap-2 text-primary-500 font-medium hover:underline"
           >
             Anasayfaya Dön <ArrowRight className="h-4 w-4" />
@@ -61,8 +61,8 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
           )}
 
           <div className="pt-6 border-t border-border">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="inline-flex h-11 items-center justify-center px-6 rounded-xl bg-gradient-primary text-white text-sm font-medium hover:opacity-90 transition-opacity"
             >
               Haberleri Okumaya Devam Et

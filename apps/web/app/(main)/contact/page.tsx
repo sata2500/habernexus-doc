@@ -1,6 +1,7 @@
 import { getStaticPageBySlug } from "@/app/actions/static-pages";
 import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { sanitizeHtml } from "@/lib/server/sanitize-html";
 
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("contact");
@@ -12,7 +13,7 @@ export async function generateMetadata() {
 
 export default async function ContactPage() {
   const page = await getStaticPageBySlug("contact");
-  
+
   // Tip güvenliği için extraData dökümü
   const contactData = (page?.extraData as Record<string, unknown>) || {};
   const email = (contactData.email as string) || "info@habernexus.com";
@@ -26,9 +27,9 @@ export default async function ContactPage() {
           {page?.title || "Bize Ulaşın"}
         </h1>
         {page?.content ? (
-          <div 
+          <div
             className="prose dark:prose-invert mx-auto text-lg text-muted-foreground"
-            dangerouslySetInnerHTML={{ __html: page.content }} 
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
           />
         ) : (
           <p className="text-lg text-muted-foreground">

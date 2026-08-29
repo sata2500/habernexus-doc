@@ -15,7 +15,7 @@ export default async function AdminRssFeedsPage({
   searchParams: Promise<{ status?: string; search?: string; category?: string }>;
 }) {
   const params = await searchParams;
-  
+
   const [sources, suggestions, stats, systemSettings, categories, trends] = await Promise.all([
     getRssSources(),
     getRssSuggestions({
@@ -74,9 +74,9 @@ export default async function AdminRssFeedsPage({
 
       {/* ── Otomasyon & Cron ── */}
       <section>
-        <CronSettingsCard 
-          scanCron={systemSettings.rssScanCron} 
-          analyzeCron={systemSettings.rssAnalyzeCron} 
+        <CronSettingsCard
+          scanCron={systemSettings.rssScanCron}
+          analyzeCron={systemSettings.rssAnalyzeCron}
           hasNewsletter={!!systemSettings.qStashNewsletterId}
           retentionDays={systemSettings.rssRetentionDays}
         />
@@ -100,7 +100,7 @@ export default async function AdminRssFeedsPage({
       <section>
         <div className="space-y-6">
           <SuggestionsFilter categories={categoryNames} />
-          
+
           <div className="flex items-center gap-3 mb-2">
             <h2 className="text-lg font-bold font-display flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-primary-500" />
@@ -110,10 +110,10 @@ export default async function AdminRssFeedsPage({
               {suggestions.length} sonuç
             </span>
           </div>
-          
-          <SuggestionsList 
-            key={`${params.status}-${params.search}-${params.category}`} 
-            suggestions={suggestions} 
+
+          <SuggestionsList
+            key={`${params.status}-${params.search}-${params.category}`}
+            suggestions={suggestions}
           />
         </div>
       </section>

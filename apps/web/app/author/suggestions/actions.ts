@@ -2,8 +2,10 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { requireRole } from "@/lib/server/authz";
 
 export async function getAuthorSuggestions() {
+  await requireRole("AUTHOR", "ADMIN");
   return prisma.rssFeedItem.findMany({
     where: {
       status: { in: ["ANALYZED", "APPROVED"] },
@@ -22,6 +24,7 @@ export async function getAuthorSuggestions() {
 }
 
 export async function dismissSuggestionByAuthor(id: string) {
+  await requireRole("AUTHOR", "ADMIN");
   await prisma.rssFeedItem.update({
     where: { id },
     data: { status: "DISMISSED", dismissed: true },
@@ -32,6 +35,7 @@ export async function dismissSuggestionByAuthor(id: string) {
 }
 
 export async function markSuggestionAsUsed(id: string) {
+  await requireRole("AUTHOR", "ADMIN");
   await prisma.rssFeedItem.update({
     where: { id },
     data: { usedForArticle: true },

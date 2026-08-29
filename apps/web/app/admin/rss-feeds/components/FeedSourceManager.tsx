@@ -31,7 +31,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
   const [sources, setSources] = useState(initialSources);
   const [isAdding, setIsAdding] = useState(false);
   const [scanning, setScanningId] = useState<string | null>(null);
-  
+
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState<"all" | "active" | "inactive" | "error">("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
@@ -146,7 +146,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
           await Promise.all(ids.map(id => triggerRssScan(id)));
           setSuccess(`${ids.length} kaynak için tarama tamamlandı.`);
         }
-      } catch (err) {
+      } catch {
         setError("Toplu işlem sırasında bir hata oluştu.");
       }
       setTimeout(() => setSuccess(""), 5000);
@@ -244,7 +244,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 p-2 px-4 rounded-2xl bg-foreground text-background shadow-2xl animate-in slide-in-from-bottom-5">
           <span className="text-sm font-medium mr-2">{selectedIds.size} seçili</span>
           <div className="h-4 w-px bg-background/20 mx-1"></div>
-          
+
           <button onClick={() => handleBulkAction("scan")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary- hover:text-primary- transition-colors" title="Seçilenleri Tara">
             <RefreshCw className="h-4 w-4" />
           </button>
@@ -254,12 +254,12 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
           <button onClick={() => handleBulkAction("disable")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary-400 hover:text-primary-300 transition-colors" title="Seçilenleri Devre Dışı Bırak">
             <Power className="h-4 w-4 rotate-180" />
           </button>
-          
+
           <div className="h-4 w-px bg-background/20 mx-1"></div>
           <button onClick={() => handleBulkAction("delete")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary-400 hover:text-primary-300 transition-colors" title="Seçilenleri Sil">
             <Trash2 className="h-4 w-4" />
           </button>
-          
+
           <div className="h-4 w-px bg-background/20 mx-1"></div>
           <button onClick={() => setSelectedIds(new Set())} className="p-2 rounded-xl hover:bg-background/20 text-muted transition-colors" title="Seçimi İptal Et">
             <X className="h-4 w-4" />

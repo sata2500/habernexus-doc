@@ -28,9 +28,9 @@ const RETENTION_OPTIONS = [
   { label: "30 Gün Sakla", value: 30 },
 ];
 
-export function CronSettingsCard({ 
-  scanCron: initialScan, 
-  analyzeCron: initialAnalyze, 
+export function CronSettingsCard({
+  scanCron: initialScan,
+  analyzeCron: initialAnalyze,
   hasNewsletter: initialHasNewsletter,
   retentionDays: initialRetention
 }: Props) {
@@ -71,7 +71,7 @@ export function CronSettingsCard({
       if (type === "scan") setScanCron(initialScan);
       else setAnalyzeCron(initialAnalyze);
     }
-    
+
     setLoadingType(null);
     setTimeout(() => setMessage(null), 5000);
   };
@@ -94,7 +94,7 @@ export function CronSettingsCard({
 
   const handleManualCleanup = async () => {
     if (!confirm("Eski (süresi geçmiş) haber taslaklarını kalıcı olarak silmek istiyor musunuz?")) return;
-    
+
     setLoadingType("cleanup");
     setMessage(null);
 
@@ -104,7 +104,7 @@ export function CronSettingsCard({
     } else {
       setMessage({ type: "error", text: res.error || "Temizlik sırasında hata oluştu." });
     }
-    
+
     setLoadingType(null);
     setTimeout(() => setMessage(null), 5000);
   };
@@ -115,11 +115,11 @@ export function CronSettingsCard({
         <Clock className="h-5 w-5 text-primary-500" />
         <h3 className="font-bold font-display">Otomasyon ve Temizlik (QStash)</h3>
       </div>
-      
+
       <div className="p-5 space-y-5">
         {message && (
           <div className={`p-3 rounded-xl text-sm font-medium flex items-start gap-2 ${
-            message.type === "success" 
+            message.type === "success"
               ? "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800"
               : "bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800"
           }`}>

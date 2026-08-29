@@ -5,13 +5,13 @@ import Image from "next/image";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { ImageUploader } from "@/components/ui/ImageUploader";
-import { 
-  Settings, 
-  Plus, 
-  Trash2, 
-  GripVertical, 
-  Save, 
-  Loader2, 
+import {
+  Settings,
+  Plus,
+  Trash2,
+  GripVertical,
+  Save,
+  Loader2,
   X,
   ExternalLink,
   EyeOff,
@@ -116,9 +116,9 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Slider Durumu</label>
             <div className="flex items-center gap-3 h-11 px-4 rounded-xl border border-border bg-background/50">
-              <input 
-                type="checkbox" 
-                checked={slider.isActive} 
+              <input
+                type="checkbox"
+                checked={slider.isActive}
                 onChange={(e) => setSlider({...slider, isActive: e.target.checked})}
                 className="h-5 w-5 rounded border-border text-primary-500 focus:ring-primary-500 bg-background/50 cursor-pointer"
               />
@@ -129,9 +129,9 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Otomatik Oynat</label>
             <div className="flex items-center gap-3 h-11 px-4 rounded-xl border border-border bg-background/50">
-              <input 
-                type="checkbox" 
-                checked={slider.autoPlay} 
+              <input
+                type="checkbox"
+                checked={slider.autoPlay}
                 onChange={(e) => setSlider({...slider, autoPlay: e.target.checked})}
                 className="h-5 w-5 rounded border-border text-primary-500 focus:ring-primary-500 bg-background/50 cursor-pointer"
               />
@@ -143,9 +143,9 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
             <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Geçiş Süresi (ms)</label>
             <div className="relative">
               <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <input 
-                type="number" 
-                value={slider.interval} 
+              <input
+                type="number"
+                value={slider.interval}
                 onChange={(e) => setSlider({...slider, interval: parseInt(e.target.value)})}
                 className="w-full h-11 pl-11 pr-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm"
                 step="500"
@@ -155,8 +155,8 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
           </div>
 
           <div className="md:col-span-3 flex items-center justify-end pt-2">
-            <Button 
-              onClick={handleSliderUpdate} 
+            <Button
+              onClick={handleSliderUpdate}
               disabled={loading}
               className="w-full sm:w-auto h-11 rounded-xl gap-2 px-8 shadow-lg shadow-primary-500/20 cursor-pointer"
             >
@@ -176,18 +176,18 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
             </div>
             <h2 className="text-xl font-bold font-display">Slaytlar</h2>
           </div>
-          <Button 
+          <Button
             onClick={() => setEditingSlide({ order: slides.length, isActive: true })}
             className="w-full sm:w-auto cursor-pointer"
           >
             <Plus className="h-4 w-4" /> Yeni Slide Ekle
           </Button>
         </div>
- 
+
         <Reorder.Group axis="y" values={slides} onReorder={handleReorder} className="space-y-3">
           {slides.map((slide) => (
-            <Reorder.Item 
-              key={slide.id} 
+            <Reorder.Item
+              key={slide.id}
               value={slide}
               className="relative group w-full"
             >
@@ -195,11 +195,11 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 <div className="cursor-grab active:cursor-grabbing p-1.5 sm:p-2 text-muted-foreground hover:text-foreground shrink-0">
                   <GripVertical className="h-4 w-4 sm:h-5 sm:w-5" />
                 </div>
-                
+
                 <div className="relative h-12 w-20 sm:h-20 sm:w-32 rounded-lg overflow-hidden shrink-0 border border-border">
-                  <Image 
-                    src={slide.imageUrl} 
-                    alt={slide.title || ""} 
+                  <Image
+                    src={slide.imageUrl}
+                    alt={slide.title || ""}
                     fill
                     className="object-cover"
                     sizes="(max-width: 640px) 80px, 128px"
@@ -211,7 +211,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                     </div>
                   )}
                 </div>
- 
+
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold truncate text-xs sm:text-sm">{slide.title || "Başlıksız Slide"}</h3>
                   <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-2 break-words whitespace-normal">{slide.description || "Açıklama yok"}</p>
@@ -224,16 +224,16 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 </div>
 
                 <div className="flex items-center gap-1 sm:gap-2 shrink-0">
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="icon"
                     onClick={() => setEditingSlide(slide)}
                     className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-primary-500/10 hover:text-primary-500 cursor-pointer"
                   >
                     <Settings className="h-4 w-4" />
                   </Button>
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="icon"
                     onClick={() => handleDeleteSlide(slide.id)}
                     className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-primary-500/10 hover:text-primary-500 cursor-pointer"
@@ -258,12 +258,12 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
       <AnimatePresence>
         {editingSlide && (
           <div className="fixed inset-0 z-(--z-modal) flex items-center justify-center p-4">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="absolute inset-0 bg-background/80 backdrop-blur-sm" 
-              onClick={() => !loading && setEditingSlide(null)} 
+              className="absolute inset-0 bg-background/80 backdrop-blur-sm"
+              onClick={() => !loading && setEditingSlide(null)}
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -284,8 +284,8 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                 <div className="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Slide Görseli</label>
-                    <ImageUploader 
-                      value={editingSlide.imageUrl || ""} 
+                    <ImageUploader
+                      value={editingSlide.imageUrl || ""}
                       onChange={(url) => setEditingSlide({...editingSlide, imageUrl: url})}
                       type="article"
                       autoOptimize={true}
@@ -295,9 +295,9 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Başlık</label>
-                      <input 
-                        type="text" 
-                        value={editingSlide.title || ""} 
+                      <input
+                        type="text"
+                        value={editingSlide.title || ""}
                         onChange={(e) => setEditingSlide({...editingSlide, title: e.target.value})}
                         className="w-full h-11 px-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none text-sm"
                         placeholder="Slide başlığı..."
@@ -305,9 +305,9 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Link (Opsiyonel)</label>
-                      <input 
-                        type="text" 
-                        value={editingSlide.link || ""} 
+                      <input
+                        type="text"
+                        value={editingSlide.link || ""}
                         onChange={(e) => setEditingSlide({...editingSlide, link: e.target.value})}
                         className="w-full h-11 px-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none text-sm"
                         placeholder="https://..."
@@ -317,8 +317,8 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
 
                   <div className="space-y-2">
                     <label className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Açıklama</label>
-                    <textarea 
-                      value={editingSlide.description || ""} 
+                    <textarea
+                      value={editingSlide.description || ""}
                       onChange={(e) => setEditingSlide({...editingSlide, description: e.target.value})}
                       className="w-full h-24 p-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none resize-none text-sm"
                       placeholder="Kısa açıklama metni..."
@@ -327,9 +327,9 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
 
                   <div className="flex items-center gap-4">
                     <label className="flex items-center gap-2 cursor-pointer">
-                      <input 
-                        type="checkbox" 
-                        checked={editingSlide.isActive} 
+                      <input
+                        type="checkbox"
+                        checked={editingSlide.isActive}
                         onChange={(e) => setEditingSlide({...editingSlide, isActive: e.target.checked})}
                         className="h-5 w-5 rounded border-border text-primary-500 focus:ring-primary-500 bg-background/50"
                       />
@@ -342,8 +342,8 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                   <Button variant="ghost" onClick={() => setEditingSlide(null)} disabled={loading} className="flex-1 sm:flex-initial cursor-pointer font-bold">
                     İptal
                   </Button>
-                  <Button 
-                    onClick={handleSlideSave} 
+                  <Button
+                    onClick={handleSlideSave}
                     disabled={loading || !editingSlide.imageUrl}
                     className="flex-1 sm:flex-initial sm:min-w-[140px] gap-2 rounded-xl cursor-pointer"
                   >

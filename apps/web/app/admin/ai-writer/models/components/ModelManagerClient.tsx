@@ -1,23 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Cpu, 
-  RefreshCw, 
-  Search, 
-  Trash2, 
-  CheckCircle2, 
-  XCircle, 
+import {
+  Cpu,
+  RefreshCw,
+  Search,
+  Trash2,
+  CheckCircle2,
+  XCircle,
   Sparkles,
   Zap,
   Image as ImageIcon,
   MessageSquare
 } from "lucide-react";
-import { 
-  syncModelsFromOpenRouter, 
-  toggleModelActive, 
-  deleteModel, 
-  upsertManualModel 
+import {
+  syncModelsFromOpenRouter,
+  toggleModelActive,
+  deleteModel,
+  upsertManualModel
 } from "../actions";
 
 interface AiModel {
@@ -47,7 +47,7 @@ export function ModelManagerClient({ initialModels }: Props) {
 
   const filteredModels = models.filter(m => {
     const matchesSearch = m.name.toLowerCase().includes(search.toLowerCase()) || m.id.toLowerCase().includes(search.toLowerCase());
-    
+
     let matchesFilter = true;
     if (filter === "TEXT") matchesFilter = m.type === "TEXT";
     else if (filter === "T2I") matchesFilter = m.supportsT2I;
@@ -169,12 +169,12 @@ export function ModelManagerClient({ initialModels }: Props) {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${
-                    m.type === "IMAGE" ? "bg-primary-/10 text-primary-" : 
-                    m.type === "MULTIMODAL" ? "bg-primary-/10 text-primary-" : 
+                    m.type === "IMAGE" ? "bg-primary-/10 text-primary-" :
+                    m.type === "MULTIMODAL" ? "bg-primary-/10 text-primary-" :
                     "bg-primary-/10 text-primary-"
                   }`}>
-                    {m.type === "IMAGE" ? <ImageIcon className="h-5 w-5" /> : 
-                     m.type === "MULTIMODAL" ? <Sparkles className="h-5 w-5" /> : 
+                    {m.type === "IMAGE" ? <ImageIcon className="h-5 w-5" /> :
+                     m.type === "MULTIMODAL" ? <Sparkles className="h-5 w-5" /> :
                      <MessageSquare className="h-5 w-5" />}
                   </div>
                   <div>
@@ -182,7 +182,7 @@ export function ModelManagerClient({ initialModels }: Props) {
                     <p className="text-[10px] text-muted-foreground font-mono truncate max-w-[150px]">{m.id}</p>
                   </div>
                 </div>
-                
+
                 <button
                   onClick={() => handleToggle(m.id, !m.isActive)}
                   className={`p-2 rounded-xl transition-all cursor-pointer ${m.isActive ? "bg-primary-500/10 text-primary-500" : "bg-muted text-muted-foreground hover:bg-muted-foreground/10"}`}
@@ -212,7 +212,7 @@ export function ModelManagerClient({ initialModels }: Props) {
                   <span className="px-2 py-0.5 bg-primary-/10 text-primary- rounded-md text-[9px] font-bold border border-primary-/20">Vision</span>
                 )}
               </div>
-              
+
               <div className="flex items-center gap-2">
                 <select
                   value={m.type}

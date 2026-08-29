@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+
 import { Bookmark } from "lucide-react";
 import { toggleBookmark, checkIsBookmarked } from "@/app/dashboard/actions";
 import { cn } from "@/lib/utils";
@@ -11,7 +13,9 @@ interface Props {
 }
 
 export function BookmarkButton({ articleId }: Props) {
-  const { data: session } = authClient.useSession();
+    const { data: session } = authClient.useSession();
+  const router = useRouter();
+
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
@@ -39,7 +43,8 @@ export function BookmarkButton({ articleId }: Props) {
   const handleToggle = async () => {
     if (!session?.user) {
       alert("Haberleri kaydetmek için lütfen giriş yapın.");
-      window.location.href = "/login";
+            router.push("/login");
+
       return;
     }
 

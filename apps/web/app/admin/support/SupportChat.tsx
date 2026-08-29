@@ -58,10 +58,10 @@ export function SupportChat({ ticket }: Props) {
       await updateTicketStatus(ticket.id, status);
     });
   };
-  
+
   const handleDelete = () => {
     if (!confirm("Bu bileti ve tüm mesajları/ekleri kalıcı olarak silmek istediğinize emin misiniz?")) return;
-    
+
     startDeleteTransition(async () => {
       const result = await deleteSupportTicket(ticket.id);
       if (result.success) {
@@ -134,7 +134,7 @@ export function SupportChat({ ticket }: Props) {
                 </span>
                 {isAdmin && <ShieldCheck className="h-3 w-3 text-primary-" />}
               </div>
-              
+
               <div
                 className={cn(
                   "p-4 rounded-2xl text-sm leading-relaxed shadow-sm break-words whitespace-pre-wrap",
@@ -144,12 +144,12 @@ export function SupportChat({ ticket }: Props) {
                 )}
               >
                 {msg.content}
-                
+
                 {/* Attachments */}
                 {msg.attachments && msg.attachments.length > 0 && (
                   <div className="mt-3 pt-3 border-t border-white/10 space-y-2">
                     {msg.attachments.map((att, idx) => {
-                      const isImage = att.contentType.startsWith("image/") || 
+                      const isImage = att.contentType.startsWith("image/") ||
                                     /\.(jpg|jpeg|png|gif|webp)$/i.test(att.name);
                       return (
                         <div key={idx} className="flex flex-col gap-2">
@@ -159,9 +159,9 @@ export function SupportChat({ ticket }: Props) {
                               <img src={att.url} alt={att.name} className="max-w-full h-auto max-h-[300px] object-cover" />
                             </a>
                           ) : (
-                            <a 
-                              href={att.url} 
-                              target="_blank" 
+                            <a
+                              href={att.url}
+                              target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-2 p-2 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-[11px] font-medium min-w-0 w-full"
                             >
@@ -178,7 +178,7 @@ export function SupportChat({ ticket }: Props) {
                   </div>
                 )}
               </div>
-              
+
               <span className="text-[10px] text-muted-foreground mt-1.5 px-1">
                 {format(new Date(msg.createdAt), "HH:mm · d MMMM", { locale: tr })}
               </span>

@@ -19,7 +19,7 @@ export function DeleteArticleButton({ articleId, articleTitle }: Props) {
 
     setIsDeleting(true);
     const result = await deleteArticle(articleId);
-    
+
     if (!result.success) {
       alert(result.error || "Haber silinirken bir hata oluştu.");
       setIsDeleting(false);

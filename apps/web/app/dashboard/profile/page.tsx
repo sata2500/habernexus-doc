@@ -12,24 +12,24 @@ import { cn } from "@/lib/utils";
 
 function getRoleBadge(role: string | null | undefined) {
   if (role === "ADMIN") {
-    return { 
-      label: "Admin", 
-      variant: "error" as const, 
+    return {
+      label: "Admin",
+      variant: "error" as const,
       icon: ShieldCheck,
       badgeClass: "bg-primary-500 text-white dark:bg-primary-500/15 dark:text-primary-400 border border-primary-500/20"
     };
   }
   if (role === "AUTHOR") {
-    return { 
-      label: "Yazar", 
-      variant: "primary" as const, 
+    return {
+      label: "Yazar",
+      variant: "primary" as const,
       icon: PenTool,
       badgeClass: "bg-primary-500 text-white dark:bg-primary-500/15 dark:text-primary-400 border border-primary-500/20"
     };
   }
-  return { 
-    label: "Standart Kullanıcı", 
-    variant: "default" as const, 
+  return {
+    label: "Standart Kullanıcı",
+    variant: "default" as const,
     icon: null,
     badgeClass: "bg-muted text-muted-foreground dark:bg-muted/30 dark:text-muted-foreground border border-border/40"
   };
@@ -117,12 +117,12 @@ export default function ProfilePage() {
 
       <Card variant="glass" className="p-6 md:p-8">
         <form onSubmit={handleUpdate} className="space-y-8">
-          
+
           {/* Avatar Alanı */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-8 border-b border-border/40">
             <div className="space-y-3 flex flex-col items-center sm:items-start shrink-0">
                <label className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Profil Fotoğrafı</label>
-               <ImageUploader 
+               <ImageUploader
                  value={avatarUrl}
                  onChange={setAvatarUrl}
                  type="profile"
@@ -218,7 +218,7 @@ export default function ProfilePage() {
               )}
             </button>
           </div>
-          
+
         </form>
       </Card>
     </div>

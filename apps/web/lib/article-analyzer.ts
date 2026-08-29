@@ -10,8 +10,8 @@ async function generateAnalysisWithOpenRouter(model: string, articleTitle: strin
   const apiKey = process.env.OPENROUTER_API_KEY || "";
   if (!apiKey) throw new Error("OPENROUTER_API_KEY eksik.");
 
-  const systemPrompt = `Sen profesyonel bir haber editoru ve Turkce icerik kalite analistisin. 
-Gorevin, sana verilen haber makalesini detayli bir sekilde analiz etmektir. 
+  const systemPrompt = `Sen profesyonel bir haber editoru ve Turkce icerik kalite analistisin.
+Gorevin, sana verilen haber makalesini detayli bir sekilde analiz etmektir.
 Analizinde anlamsal (semantic) ozgunluk/intihal oranini, SEO uyumlulugunu, Turkce okunabilirlik seviyesini ve genel yazim kalitesini olcmelisin.
 
 Aşağıdaki kurallara gore degerlendir:
@@ -84,7 +84,7 @@ ${articleContent}
   const rawContent = data.choices?.[0]?.message?.content || "";
   try {
     return JSON.parse(rawContent.trim());
-  } catch (_parseError) {
+  } catch {
     console.error("JSON parse hatasi. Gelen ham veri:", rawContent);
     // Regex ile JSON bloklarini ayiklamaya calis
     const jsonMatch = rawContent.match(/\{[\s\S]*\}/);

@@ -1,4 +1,5 @@
 import { getStaticPageBySlug } from "@/app/actions/static-pages";
+import { sanitizeHtml } from "@/lib/server/sanitize-html";
 
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("kvkk");
@@ -26,10 +27,10 @@ export default async function KVKKPage() {
         <h1 className="text-4xl md:text-5xl font-bold font-(family-name:--font-outfit) mb-8">
           {page.title}
         </h1>
-        
-        <div 
+
+        <div
           className="text-foreground"
-          dangerouslySetInnerHTML={{ __html: page.content }} 
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
         />
       </div>
     </div>

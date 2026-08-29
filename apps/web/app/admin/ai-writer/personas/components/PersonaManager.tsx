@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { 
-  Users, 
-  Plus, 
-  Trash2, 
-  Edit2, 
-  X, 
-  Wand2, 
+import {
+  Users,
+  Plus,
+  Trash2,
+  Edit2,
+  X,
+  Wand2,
   Image as ImageIcon,
   ChevronRight,
   Info,

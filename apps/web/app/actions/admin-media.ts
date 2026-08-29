@@ -72,7 +72,7 @@ export async function bulkDeleteMedia(ids: string[]) {
 
   if (mediaItems.length > 0) {
     const urls = mediaItems.map(m => m.url);
-    
+
     try {
       await del(urls);
     } catch (e) {

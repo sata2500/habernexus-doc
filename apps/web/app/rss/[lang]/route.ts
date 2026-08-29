@@ -6,10 +6,10 @@ export async function GET(
   { params }: { params: Promise<{ lang: string }> }
 ) {
   const { lang } = await params;
-  
+
   try {
     const xml = await generateRssXml({ lang });
-    
+
     return new Response(xml, {
       headers: {
         "Content-Type": "application/xml; charset=utf-8",

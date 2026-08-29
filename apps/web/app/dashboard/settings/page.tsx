@@ -33,7 +33,7 @@ export default async function SettingsPage() {
 
       <Card className="p-6 md:p-8">
         <div className="space-y-8">
-          
+
           {/* Theme Selection */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-border">
             <div>

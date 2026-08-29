@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { SiteSettingsInputSchema, SystemSettingsInputSchema } from "@/lib/validation/schemas";
 
 async function assertAdmin() {
   const reqHeaders = await headers();
@@ -61,36 +62,42 @@ export async function getAdminSiteSettings() {
 export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
   await assertAdmin();
 
+  const parsed = SiteSettingsInputSchema.safeParse(data);
+  if (!parsed.success) {
+    throw new Error("Geçersiz site ayarı.");
+  }
+  const input = parsed.data;
+
   const sanitized = {
-    siteName: data.siteName?.trim() || "Haber Nexus",
-    siteTagline: data.siteTagline?.trim() || null,
-    siteDescription: data.siteDescription?.trim() || null,
-    siteUrl: data.siteUrl?.trim() || null,
-    logoText: data.logoText?.trim()?.charAt(0)?.toUpperCase() || "N",
-    logoUrl: data.logoUrl?.trim() || null,
-    faviconUrl: data.faviconUrl?.trim() || null,
-    primaryColorLight: data.primaryColorLight?.trim() || null,
-    primaryColorDark: data.primaryColorDark?.trim() || null,
-    bgLight: data.bgLight?.trim() || null,
-    bgDark: data.bgDark?.trim() || null,
-    fgLight: data.fgLight?.trim() || null,
-    fgDark: data.fgDark?.trim() || null,
-    cardLight: data.cardLight?.trim() || null,
-    cardDark: data.cardDark?.trim() || null,
-    cardFgLight: data.cardFgLight?.trim() || null,
-    cardFgDark: data.cardFgDark?.trim() || null,
-    accentLight: data.accentLight?.trim() || null,
-    accentDark: data.accentDark?.trim() || null,
-    sidebarBgLight: data.sidebarBgLight?.trim() || null,
-    sidebarBgDark: data.sidebarBgDark?.trim() || null,
-    sidebarFgLight: data.sidebarFgLight?.trim() || null,
-    sidebarFgDark: data.sidebarFgDark?.trim() || null,
-    keywords: data.keywords?.trim() || null,
-    socialTwitter: data.socialTwitter?.trim() || null,
-    socialInstagram: data.socialInstagram?.trim() || null,
-    socialYoutube: data.socialYoutube?.trim() || null,
-    socialGithub: data.socialGithub?.trim() || null,
-    footerCopyright: data.footerCopyright?.trim() || null,
+    siteName: input.siteName?.trim() || "Haber Nexus",
+    siteTagline: input.siteTagline?.trim() || null,
+    siteDescription: input.siteDescription?.trim() || null,
+    siteUrl: input.siteUrl?.trim() || null,
+    logoText: input.logoText?.trim()?.charAt(0)?.toUpperCase() || "N",
+    logoUrl: input.logoUrl?.trim() || null,
+    faviconUrl: input.faviconUrl?.trim() || null,
+    primaryColorLight: input.primaryColorLight?.trim() || null,
+    primaryColorDark: input.primaryColorDark?.trim() || null,
+    bgLight: input.bgLight?.trim() || null,
+    bgDark: input.bgDark?.trim() || null,
+    fgLight: input.fgLight?.trim() || null,
+    fgDark: input.fgDark?.trim() || null,
+    cardLight: input.cardLight?.trim() || null,
+    cardDark: input.cardDark?.trim() || null,
+    cardFgLight: input.cardFgLight?.trim() || null,
+    cardFgDark: input.cardFgDark?.trim() || null,
+    accentLight: input.accentLight?.trim() || null,
+    accentDark: input.accentDark?.trim() || null,
+    sidebarBgLight: input.sidebarBgLight?.trim() || null,
+    sidebarBgDark: input.sidebarBgDark?.trim() || null,
+    sidebarFgLight: input.sidebarFgLight?.trim() || null,
+    sidebarFgDark: input.sidebarFgDark?.trim() || null,
+    keywords: input.keywords?.trim() || null,
+    socialTwitter: input.socialTwitter?.trim() || null,
+    socialInstagram: input.socialInstagram?.trim() || null,
+    socialYoutube: input.socialYoutube?.trim() || null,
+    socialGithub: input.socialGithub?.trim() || null,
+    footerCopyright: input.footerCopyright?.trim() || null,
   };
 
   await prisma.siteSettings.upsert({
@@ -107,6 +114,7 @@ export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
 }
 
 export async function updateSystemSettings(data: {
+
   maxNewsAgeHours?: number;
   googleTrendsEnabled?: boolean;
   googleTrendsGeo?: string;
@@ -115,13 +123,16 @@ export async function updateSystemSettings(data: {
 }) {
   await assertAdmin();
 
+  const parsed = SystemSettingsInputSchema.safeParse(data);
+  if (!parsed.success) throw new Error("Geçersiz sistem ayarı.");
+
   await prisma.systemSettings.upsert({
     where: { id: "global" },
     create: {
       id: "global",
-      ...data,
+      ...parsed.data,
     },
-    update: data,
+    update: parsed.data,
   });
 
   revalidatePath("/admin/settings");

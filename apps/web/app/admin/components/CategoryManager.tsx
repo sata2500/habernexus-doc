@@ -138,7 +138,7 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                 required
               />
             </div>
-            
+
             <div className="space-y-1.5">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">URL (Slug)</label>
               <input
@@ -224,12 +224,12 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                     <p className="text-xs text-muted-foreground mt-0.5">/{cat.slug} · Sıra: {cat.order}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-center gap-4 shrink-0 sm:self-center self-end">
                   <div className="text-xs border border-border/50 bg-muted/30 px-2.5 py-1 rounded-md text-muted-foreground font-bold">
                     {cat._count.articles} {cat._count.articles === 1 ? "Haber" : "Haber"}
                   </div>
-                  
+
                   <div className="flex items-center gap-1.5 flex-row">
                     <button
                         onClick={() => startEdit(cat)}

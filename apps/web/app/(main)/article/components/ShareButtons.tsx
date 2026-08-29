@@ -53,7 +53,7 @@ export function ShareButtons({ title, url }: Props) {
       >
         <Share2 className="h-5 w-5" />
       </button>
-      
+
       <button
         onClick={shareOnTwitter}
         className="p-2 rounded-full hover:bg-primary-50 dark:hover:bg-primary-900/20 text-muted-foreground hover:text-primary-400 transition-all cursor-pointer"

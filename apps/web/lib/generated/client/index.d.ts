@@ -248,7 +248,7 @@ export class PrismaClient<
    * Read more in our [docs](https://pris.ly/d/client).
    */
 
-  constructor(optionsArg ?: Prisma.Subset<ClientOptions, Prisma.PrismaClientOptions>);
+  constructor(optionsArg ?: Prisma.PrismaClientConstructorArgs<ClientOptions>);
   $on<V extends U>(eventType: V, callback: (event: V extends 'query' ? Prisma.QueryEvent : Prisma.LogEvent) => void): PrismaClient;
 
   /**
@@ -638,8 +638,8 @@ export namespace Prisma {
   export import Exact = $Public.Exact
 
   /**
-   * Prisma Client JS version: 7.8.0
-   * Query Engine version: 3c6e192761c0362d496ed980de936e2f3cebcd3a
+   * Prisma Client JS version: 7.9.1
+   * Query Engine version: e922089b7d7502aff4249d5da3420f6fa55fc6ad
    */
   export type PrismaVersion = {
     client: string
@@ -774,6 +774,19 @@ export namespace Prisma {
   };
 
   /**
+   * Resolved type of the argument passed to the `PrismaClient` constructor.
+   *
+   * When called without a narrower options type (the common case), this resolves
+   * to `PrismaClientOptions` directly, which produces a clear TypeScript error
+   * message (`not assignable to parameter of type 'PrismaClientOptions'`) when
+   * the argument is missing or incomplete. When the user supplies a narrower
+   * options type (e.g. via a literal), it falls back to `Subset` to keep
+   * filtering out unknown properties.
+   */
+  export type PrismaClientConstructorArgs<Options extends PrismaClientOptions> =
+    [PrismaClientOptions] extends [Options] ? PrismaClientOptions : Subset<Options, PrismaClientOptions>;
+
+  /**
    * SelectSubset
    * @desc From `T` pick properties that exist in `U`. Simple version of Intersection.
    * Additionally, it validates, if both select and include are present. If the case, it errors.
@@ -805,7 +818,7 @@ export namespace Prisma {
   type XOR<T, U> =
     T extends object ?
     U extends object ?
-      (Without<T, U> & U) | (Without<U, T> & T)
+      ((Without<T, U> & U) | (Without<U, T> & T)) & object
     : U : T
 
 
@@ -3059,11 +3072,26 @@ export namespace Prisma {
       isolationLevel?: Prisma.TransactionIsolationLevel
     }
     /**
-     * Instance of a Driver Adapter, e.g., like one provided by `@prisma/adapter-planetscale`
+     * A driver adapter that PrismaClient uses to connect to your database, such as the ones provided by `@prisma/adapter-pg`, `@prisma/adapter-libsql`, `@prisma/adapter-planetscale`, etc.
+     * 
+     * A driver adapter is **required** unless you connect to your database through Prisma Accelerate (in which case use `accelerateUrl` instead).
+     * 
+     * Learn more: https://pris.ly/d/driver-adapters
+     * 
+     * @example
+     * ```ts
+     * import { PrismaPg } from '@prisma/adapter-pg'
+     * import { PrismaClient } from './generated/prisma/client'
+     * 
+     * const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL })
+     * const prisma = new PrismaClient({ adapter })
+     * ```
      */
     adapter?: runtime.SqlDriverAdapterFactory
     /**
-     * Prisma Accelerate URL allowing the client to connect through Accelerate instead of a direct database.
+     * The Prisma Accelerate connection URL. Use this option to connect to your database through Prisma Accelerate instead of using a driver adapter to connect directly.
+     * 
+     * Learn more: https://pris.ly/d/accelerate
      */
     accelerateUrl?: string
     /**
@@ -8241,6 +8269,7 @@ export namespace Prisma {
     authorId: string | null
     categoryId: string | null
     aiPersonaId: string | null
+    sourceRssItemId: string | null
     publishedAt: Date | null
     lang: string | null
     plagiarismRate: number | null
@@ -8263,6 +8292,7 @@ export namespace Prisma {
     authorId: string | null
     categoryId: string | null
     aiPersonaId: string | null
+    sourceRssItemId: string | null
     publishedAt: Date | null
     lang: string | null
     plagiarismRate: number | null
@@ -8285,6 +8315,7 @@ export namespace Prisma {
     authorId: number
     categoryId: number
     aiPersonaId: number
+    sourceRssItemId: number
     publishedAt: number
     lang: number
     plagiarismRate: number
@@ -8326,6 +8357,7 @@ export namespace Prisma {
     authorId?: true
     categoryId?: true
     aiPersonaId?: true
+    sourceRssItemId?: true
     publishedAt?: true
     lang?: true
     plagiarismRate?: true
@@ -8348,6 +8380,7 @@ export namespace Prisma {
     authorId?: true
     categoryId?: true
     aiPersonaId?: true
+    sourceRssItemId?: true
     publishedAt?: true
     lang?: true
     plagiarismRate?: true
@@ -8370,6 +8403,7 @@ export namespace Prisma {
     authorId?: true
     categoryId?: true
     aiPersonaId?: true
+    sourceRssItemId?: true
     publishedAt?: true
     lang?: true
     plagiarismRate?: true
@@ -8480,6 +8514,7 @@ export namespace Prisma {
     authorId: string
     categoryId: string | null
     aiPersonaId: string | null
+    sourceRssItemId: string | null
     publishedAt: Date | null
     lang: string
     plagiarismRate: number | null
@@ -8522,6 +8557,7 @@ export namespace Prisma {
     authorId?: boolean
     categoryId?: boolean
     aiPersonaId?: boolean
+    sourceRssItemId?: boolean
     publishedAt?: boolean
     lang?: boolean
     plagiarismRate?: boolean
@@ -8534,6 +8570,7 @@ export namespace Prisma {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
     aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
+    sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
     tags?: boolean | Article$tagsArgs<ExtArgs>
@@ -8552,6 +8589,7 @@ export namespace Prisma {
     authorId?: boolean
     categoryId?: boolean
     aiPersonaId?: boolean
+    sourceRssItemId?: boolean
     publishedAt?: boolean
     lang?: boolean
     plagiarismRate?: boolean
@@ -8564,6 +8602,7 @@ export namespace Prisma {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
     aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
+    sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
   }, ExtArgs["result"]["article"]>
 
   export type ArticleSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -8578,6 +8617,7 @@ export namespace Prisma {
     authorId?: boolean
     categoryId?: boolean
     aiPersonaId?: boolean
+    sourceRssItemId?: boolean
     publishedAt?: boolean
     lang?: boolean
     plagiarismRate?: boolean
@@ -8590,6 +8630,7 @@ export namespace Prisma {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
     aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
+    sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
   }, ExtArgs["result"]["article"]>
 
   export type ArticleSelectScalar = {
@@ -8604,6 +8645,7 @@ export namespace Prisma {
     authorId?: boolean
     categoryId?: boolean
     aiPersonaId?: boolean
+    sourceRssItemId?: boolean
     publishedAt?: boolean
     lang?: boolean
     plagiarismRate?: boolean
@@ -8615,11 +8657,12 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "content" | "excerpt" | "coverImage" | "status" | "viewCount" | "authorId" | "categoryId" | "aiPersonaId" | "publishedAt" | "lang" | "plagiarismRate" | "seoScore" | "readabilityScore" | "qualityScore" | "analysisReport" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
+  export type ArticleOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "slug" | "content" | "excerpt" | "coverImage" | "status" | "viewCount" | "authorId" | "categoryId" | "aiPersonaId" | "sourceRssItemId" | "publishedAt" | "lang" | "plagiarismRate" | "seoScore" | "readabilityScore" | "qualityScore" | "analysisReport" | "createdAt" | "updatedAt", ExtArgs["result"]["article"]>
   export type ArticleInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
     aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
+    sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
     tags?: boolean | Article$tagsArgs<ExtArgs>
@@ -8629,11 +8672,13 @@ export namespace Prisma {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
     aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
+    sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
   }
   export type ArticleIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     author?: boolean | UserDefaultArgs<ExtArgs>
     category?: boolean | Article$categoryArgs<ExtArgs>
     aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
+    sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
   }
 
   export type $ArticlePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8642,6 +8687,7 @@ export namespace Prisma {
       author: Prisma.$UserPayload<ExtArgs>
       category: Prisma.$CategoryPayload<ExtArgs> | null
       aiPersona: Prisma.$AiPersonaPayload<ExtArgs> | null
+      sourceRssItem: Prisma.$RssFeedItemPayload<ExtArgs> | null
       bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       tags: Prisma.$TagOnArticlePayload<ExtArgs>[]
@@ -8658,6 +8704,7 @@ export namespace Prisma {
       authorId: string
       categoryId: string | null
       aiPersonaId: string | null
+      sourceRssItemId: string | null
       publishedAt: Date | null
       lang: string
       plagiarismRate: number | null
@@ -9064,6 +9111,7 @@ export namespace Prisma {
     author<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     category<T extends Article$categoryArgs<ExtArgs> = {}>(args?: Subset<T, Article$categoryArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     aiPersona<T extends Article$aiPersonaArgs<ExtArgs> = {}>(args?: Subset<T, Article$aiPersonaArgs<ExtArgs>>): Prisma__AiPersonaClient<$Result.GetResult<Prisma.$AiPersonaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    sourceRssItem<T extends Article$sourceRssItemArgs<ExtArgs> = {}>(args?: Subset<T, Article$sourceRssItemArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bookmarks<T extends Article$bookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Article$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends Article$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Article$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tags<T extends Article$tagsArgs<ExtArgs> = {}>(args?: Subset<T, Article$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TagOnArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -9107,6 +9155,7 @@ export namespace Prisma {
     readonly authorId: FieldRef<"Article", 'String'>
     readonly categoryId: FieldRef<"Article", 'String'>
     readonly aiPersonaId: FieldRef<"Article", 'String'>
+    readonly sourceRssItemId: FieldRef<"Article", 'String'>
     readonly publishedAt: FieldRef<"Article", 'DateTime'>
     readonly lang: FieldRef<"Article", 'String'>
     readonly plagiarismRate: FieldRef<"Article", 'Int'>
@@ -9552,6 +9601,25 @@ export namespace Prisma {
      */
     include?: AiPersonaInclude<ExtArgs> | null
     where?: AiPersonaWhereInput
+  }
+
+  /**
+   * Article.sourceRssItem
+   */
+  export type Article$sourceRssItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    where?: RssFeedItemWhereInput
   }
 
   /**
@@ -21782,6 +21850,8 @@ export namespace Prisma {
     aiScore: number | null
     dismissed: boolean | null
     usedForArticle: boolean | null
+    processingAt: Date | null
+    processingToken: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -21799,6 +21869,8 @@ export namespace Prisma {
     aiScore: number | null
     dismissed: boolean | null
     usedForArticle: boolean | null
+    processingAt: Date | null
+    processingToken: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -21817,6 +21889,8 @@ export namespace Prisma {
     aiAnalysis: number
     dismissed: number
     usedForArticle: number
+    processingAt: number
+    processingToken: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -21844,6 +21918,8 @@ export namespace Prisma {
     aiScore?: true
     dismissed?: true
     usedForArticle?: true
+    processingAt?: true
+    processingToken?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -21861,6 +21937,8 @@ export namespace Prisma {
     aiScore?: true
     dismissed?: true
     usedForArticle?: true
+    processingAt?: true
+    processingToken?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -21879,6 +21957,8 @@ export namespace Prisma {
     aiAnalysis?: true
     dismissed?: true
     usedForArticle?: true
+    processingAt?: true
+    processingToken?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -21984,6 +22064,8 @@ export namespace Prisma {
     aiAnalysis: JsonValue | null
     dismissed: boolean
     usedForArticle: boolean
+    processingAt: Date | null
+    processingToken: string | null
     createdAt: Date
     updatedAt: Date
     _count: RssFeedItemCountAggregateOutputType | null
@@ -22021,10 +22103,13 @@ export namespace Prisma {
     aiAnalysis?: boolean
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: boolean
+    processingToken?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
     googleTrendItems?: boolean | RssFeedItem$googleTrendItemsArgs<ExtArgs>
+    article?: boolean | RssFeedItem$articleArgs<ExtArgs>
     _count?: boolean | RssFeedItemCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["rssFeedItem"]>
 
@@ -22042,6 +22127,8 @@ export namespace Prisma {
     aiAnalysis?: boolean
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: boolean
+    processingToken?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
@@ -22061,6 +22148,8 @@ export namespace Prisma {
     aiAnalysis?: boolean
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: boolean
+    processingToken?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
@@ -22080,14 +22169,17 @@ export namespace Prisma {
     aiAnalysis?: boolean
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: boolean
+    processingToken?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type RssFeedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceId" | "title" | "url" | "urlHash" | "excerpt" | "imageUrl" | "publishedAt" | "status" | "aiScore" | "aiAnalysis" | "dismissed" | "usedForArticle" | "createdAt" | "updatedAt", ExtArgs["result"]["rssFeedItem"]>
+  export type RssFeedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceId" | "title" | "url" | "urlHash" | "excerpt" | "imageUrl" | "publishedAt" | "status" | "aiScore" | "aiAnalysis" | "dismissed" | "usedForArticle" | "processingAt" | "processingToken" | "createdAt" | "updatedAt", ExtArgs["result"]["rssFeedItem"]>
   export type RssFeedItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
     googleTrendItems?: boolean | RssFeedItem$googleTrendItemsArgs<ExtArgs>
+    article?: boolean | RssFeedItem$articleArgs<ExtArgs>
     _count?: boolean | RssFeedItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RssFeedItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -22102,6 +22194,7 @@ export namespace Prisma {
     objects: {
       source: Prisma.$RssFeedSourcePayload<ExtArgs>
       googleTrendItems: Prisma.$GoogleTrendItemPayload<ExtArgs>[]
+      article: Prisma.$ArticlePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -22117,6 +22210,8 @@ export namespace Prisma {
       aiAnalysis: Prisma.JsonValue | null
       dismissed: boolean
       usedForArticle: boolean
+      processingAt: Date | null
+      processingToken: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["rssFeedItem"]>
@@ -22515,6 +22610,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     source<T extends RssFeedSourceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedSourceDefaultArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     googleTrendItems<T extends RssFeedItem$googleTrendItemsArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedItem$googleTrendItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    article<T extends RssFeedItem$articleArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedItem$articleArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -22557,6 +22653,8 @@ export namespace Prisma {
     readonly aiAnalysis: FieldRef<"RssFeedItem", 'Json'>
     readonly dismissed: FieldRef<"RssFeedItem", 'Boolean'>
     readonly usedForArticle: FieldRef<"RssFeedItem", 'Boolean'>
+    readonly processingAt: FieldRef<"RssFeedItem", 'DateTime'>
+    readonly processingToken: FieldRef<"RssFeedItem", 'String'>
     readonly createdAt: FieldRef<"RssFeedItem", 'DateTime'>
     readonly updatedAt: FieldRef<"RssFeedItem", 'DateTime'>
   }
@@ -22981,6 +23079,25 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
+  }
+
+  /**
+   * RssFeedItem.article
+   */
+  export type RssFeedItem$articleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    where?: ArticleWhereInput
   }
 
   /**
@@ -33703,6 +33820,7 @@ export namespace Prisma {
     authorId: 'authorId',
     categoryId: 'categoryId',
     aiPersonaId: 'aiPersonaId',
+    sourceRssItemId: 'sourceRssItemId',
     publishedAt: 'publishedAt',
     lang: 'lang',
     plagiarismRate: 'plagiarismRate',
@@ -33876,6 +33994,8 @@ export namespace Prisma {
     aiAnalysis: 'aiAnalysis',
     dismissed: 'dismissed',
     usedForArticle: 'usedForArticle',
+    processingAt: 'processingAt',
+    processingToken: 'processingToken',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -34575,6 +34695,7 @@ export namespace Prisma {
     authorId?: StringFilter<"Article"> | string
     categoryId?: StringNullableFilter<"Article"> | string | null
     aiPersonaId?: StringNullableFilter<"Article"> | string | null
+    sourceRssItemId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     lang?: StringFilter<"Article"> | string
     plagiarismRate?: IntNullableFilter<"Article"> | number | null
@@ -34587,6 +34708,7 @@ export namespace Prisma {
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
     aiPersona?: XOR<AiPersonaNullableScalarRelationFilter, AiPersonaWhereInput> | null
+    sourceRssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     tags?: TagOnArticleListRelationFilter
@@ -34604,6 +34726,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrderInput | SortOrder
     aiPersonaId?: SortOrderInput | SortOrder
+    sourceRssItemId?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     lang?: SortOrder
     plagiarismRate?: SortOrderInput | SortOrder
@@ -34616,6 +34739,7 @@ export namespace Prisma {
     author?: UserOrderByWithRelationInput
     category?: CategoryOrderByWithRelationInput
     aiPersona?: AiPersonaOrderByWithRelationInput
+    sourceRssItem?: RssFeedItemOrderByWithRelationInput
     bookmarks?: BookmarkOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     tags?: TagOnArticleOrderByRelationAggregateInput
@@ -34624,6 +34748,7 @@ export namespace Prisma {
   export type ArticleWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     slug?: string
+    sourceRssItemId?: string
     AND?: ArticleWhereInput | ArticleWhereInput[]
     OR?: ArticleWhereInput[]
     NOT?: ArticleWhereInput | ArticleWhereInput[]
@@ -34648,10 +34773,11 @@ export namespace Prisma {
     author?: XOR<UserScalarRelationFilter, UserWhereInput>
     category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
     aiPersona?: XOR<AiPersonaNullableScalarRelationFilter, AiPersonaWhereInput> | null
+    sourceRssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     tags?: TagOnArticleListRelationFilter
-  }, "id" | "slug">
+  }, "id" | "slug" | "sourceRssItemId">
 
   export type ArticleOrderByWithAggregationInput = {
     id?: SortOrder
@@ -34665,6 +34791,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrderInput | SortOrder
     aiPersonaId?: SortOrderInput | SortOrder
+    sourceRssItemId?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     lang?: SortOrder
     plagiarismRate?: SortOrderInput | SortOrder
@@ -34696,6 +34823,7 @@ export namespace Prisma {
     authorId?: StringWithAggregatesFilter<"Article"> | string
     categoryId?: StringNullableWithAggregatesFilter<"Article"> | string | null
     aiPersonaId?: StringNullableWithAggregatesFilter<"Article"> | string | null
+    sourceRssItemId?: StringNullableWithAggregatesFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableWithAggregatesFilter<"Article"> | Date | string | null
     lang?: StringWithAggregatesFilter<"Article"> | string
     plagiarismRate?: IntNullableWithAggregatesFilter<"Article"> | number | null
@@ -35467,10 +35595,13 @@ export namespace Prisma {
     aiAnalysis?: JsonNullableFilter<"RssFeedItem">
     dismissed?: BoolFilter<"RssFeedItem"> | boolean
     usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
+    processingAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
+    processingToken?: StringNullableFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
     googleTrendItems?: GoogleTrendItemListRelationFilter
+    article?: XOR<ArticleNullableScalarRelationFilter, ArticleWhereInput> | null
   }
 
   export type RssFeedItemOrderByWithRelationInput = {
@@ -35487,16 +35618,20 @@ export namespace Prisma {
     aiAnalysis?: SortOrderInput | SortOrder
     dismissed?: SortOrder
     usedForArticle?: SortOrder
+    processingAt?: SortOrderInput | SortOrder
+    processingToken?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     source?: RssFeedSourceOrderByWithRelationInput
     googleTrendItems?: GoogleTrendItemOrderByRelationAggregateInput
+    article?: ArticleOrderByWithRelationInput
   }
 
   export type RssFeedItemWhereUniqueInput = Prisma.AtLeast<{
     id?: string
     url?: string
     urlHash?: string
+    processingToken?: string
     AND?: RssFeedItemWhereInput | RssFeedItemWhereInput[]
     OR?: RssFeedItemWhereInput[]
     NOT?: RssFeedItemWhereInput | RssFeedItemWhereInput[]
@@ -35510,11 +35645,13 @@ export namespace Prisma {
     aiAnalysis?: JsonNullableFilter<"RssFeedItem">
     dismissed?: BoolFilter<"RssFeedItem"> | boolean
     usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
+    processingAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
     googleTrendItems?: GoogleTrendItemListRelationFilter
-  }, "id" | "url" | "urlHash">
+    article?: XOR<ArticleNullableScalarRelationFilter, ArticleWhereInput> | null
+  }, "id" | "url" | "urlHash" | "processingToken">
 
   export type RssFeedItemOrderByWithAggregationInput = {
     id?: SortOrder
@@ -35530,6 +35667,8 @@ export namespace Prisma {
     aiAnalysis?: SortOrderInput | SortOrder
     dismissed?: SortOrder
     usedForArticle?: SortOrder
+    processingAt?: SortOrderInput | SortOrder
+    processingToken?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: RssFeedItemCountOrderByAggregateInput
@@ -35556,6 +35695,8 @@ export namespace Prisma {
     aiAnalysis?: JsonNullableWithAggregatesFilter<"RssFeedItem">
     dismissed?: BoolWithAggregatesFilter<"RssFeedItem"> | boolean
     usedForArticle?: BoolWithAggregatesFilter<"RssFeedItem"> | boolean
+    processingAt?: DateTimeNullableWithAggregatesFilter<"RssFeedItem"> | Date | string | null
+    processingToken?: StringNullableWithAggregatesFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"RssFeedItem"> | Date | string
   }
@@ -36829,6 +36970,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -36846,6 +36988,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     aiPersonaId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -36881,6 +37024,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -36898,6 +37042,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -36924,6 +37069,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     aiPersonaId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -36967,6 +37113,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -37791,10 +37938,13 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     source: RssFeedSourceCreateNestedOneWithoutItemsInput
     googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
+    article?: ArticleCreateNestedOneWithoutSourceRssItemInput
   }
 
   export type RssFeedItemUncheckedCreateInput = {
@@ -37811,9 +37961,12 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
+    article?: ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput
   }
 
   export type RssFeedItemUpdateInput = {
@@ -37829,10 +37982,13 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
     googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
+    article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
   }
 
   export type RssFeedItemUncheckedUpdateInput = {
@@ -37849,9 +38005,12 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
+    article?: ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput
   }
 
   export type RssFeedItemCreateManyInput = {
@@ -37868,6 +38027,8 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -37885,6 +38046,8 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -37903,6 +38066,8 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39344,6 +39509,11 @@ export namespace Prisma {
     isNot?: AiPersonaWhereInput | null
   }
 
+  export type RssFeedItemNullableScalarRelationFilter = {
+    is?: RssFeedItemWhereInput | null
+    isNot?: RssFeedItemWhereInput | null
+  }
+
   export type TagOnArticleListRelationFilter = {
     every?: TagOnArticleWhereInput
     some?: TagOnArticleWhereInput
@@ -39366,6 +39536,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrder
     aiPersonaId?: SortOrder
+    sourceRssItemId?: SortOrder
     publishedAt?: SortOrder
     lang?: SortOrder
     plagiarismRate?: SortOrder
@@ -39397,6 +39568,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrder
     aiPersonaId?: SortOrder
+    sourceRssItemId?: SortOrder
     publishedAt?: SortOrder
     lang?: SortOrder
     plagiarismRate?: SortOrder
@@ -39419,6 +39591,7 @@ export namespace Prisma {
     authorId?: SortOrder
     categoryId?: SortOrder
     aiPersonaId?: SortOrder
+    sourceRssItemId?: SortOrder
     publishedAt?: SortOrder
     lang?: SortOrder
     plagiarismRate?: SortOrder
@@ -39942,6 +40115,11 @@ export namespace Prisma {
     none?: GoogleTrendItemWhereInput
   }
 
+  export type ArticleNullableScalarRelationFilter = {
+    is?: ArticleWhereInput | null
+    isNot?: ArticleWhereInput | null
+  }
+
   export type GoogleTrendItemOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
@@ -39960,6 +40138,8 @@ export namespace Prisma {
     aiAnalysis?: SortOrder
     dismissed?: SortOrder
     usedForArticle?: SortOrder
+    processingAt?: SortOrder
+    processingToken?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -39981,6 +40161,8 @@ export namespace Prisma {
     aiScore?: SortOrder
     dismissed?: SortOrder
     usedForArticle?: SortOrder
+    processingAt?: SortOrder
+    processingToken?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -39998,6 +40180,8 @@ export namespace Prisma {
     aiScore?: SortOrder
     dismissed?: SortOrder
     usedForArticle?: SortOrder
+    processingAt?: SortOrder
+    processingToken?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -40165,11 +40349,6 @@ export namespace Prisma {
   export type GoogleTrendScalarRelationFilter = {
     is?: GoogleTrendWhereInput
     isNot?: GoogleTrendWhereInput
-  }
-
-  export type RssFeedItemNullableScalarRelationFilter = {
-    is?: RssFeedItemWhereInput | null
-    isNot?: RssFeedItemWhereInput | null
   }
 
   export type GoogleTrendItemCountOrderByAggregateInput = {
@@ -40888,6 +41067,12 @@ export namespace Prisma {
     connect?: AiPersonaWhereUniqueInput
   }
 
+  export type RssFeedItemCreateNestedOneWithoutArticleInput = {
+    create?: XOR<RssFeedItemCreateWithoutArticleInput, RssFeedItemUncheckedCreateWithoutArticleInput>
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutArticleInput
+    connect?: RssFeedItemWhereUniqueInput
+  }
+
   export type BookmarkCreateNestedManyWithoutArticleInput = {
     create?: XOR<BookmarkCreateWithoutArticleInput, BookmarkUncheckedCreateWithoutArticleInput> | BookmarkCreateWithoutArticleInput[] | BookmarkUncheckedCreateWithoutArticleInput[]
     connectOrCreate?: BookmarkCreateOrConnectWithoutArticleInput | BookmarkCreateOrConnectWithoutArticleInput[]
@@ -40972,6 +41157,16 @@ export namespace Prisma {
     delete?: AiPersonaWhereInput | boolean
     connect?: AiPersonaWhereUniqueInput
     update?: XOR<XOR<AiPersonaUpdateToOneWithWhereWithoutArticlesInput, AiPersonaUpdateWithoutArticlesInput>, AiPersonaUncheckedUpdateWithoutArticlesInput>
+  }
+
+  export type RssFeedItemUpdateOneWithoutArticleNestedInput = {
+    create?: XOR<RssFeedItemCreateWithoutArticleInput, RssFeedItemUncheckedCreateWithoutArticleInput>
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutArticleInput
+    upsert?: RssFeedItemUpsertWithoutArticleInput
+    disconnect?: RssFeedItemWhereInput | boolean
+    delete?: RssFeedItemWhereInput | boolean
+    connect?: RssFeedItemWhereUniqueInput
+    update?: XOR<XOR<RssFeedItemUpdateToOneWithWhereWithoutArticleInput, RssFeedItemUpdateWithoutArticleInput>, RssFeedItemUncheckedUpdateWithoutArticleInput>
   }
 
   export type BookmarkUpdateManyWithoutArticleNestedInput = {
@@ -41455,11 +41650,23 @@ export namespace Prisma {
     connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
   }
 
+  export type ArticleCreateNestedOneWithoutSourceRssItemInput = {
+    create?: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutSourceRssItemInput
+    connect?: ArticleWhereUniqueInput
+  }
+
   export type GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput = {
     create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
     connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
     createMany?: GoogleTrendItemCreateManyRssItemInputEnvelope
     connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
+  }
+
+  export type ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput = {
+    create?: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutSourceRssItemInput
+    connect?: ArticleWhereUniqueInput
   }
 
   export type EnumRssItemStatusFieldUpdateOperationsInput = {
@@ -41488,6 +41695,16 @@ export namespace Prisma {
     deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
   }
 
+  export type ArticleUpdateOneWithoutSourceRssItemNestedInput = {
+    create?: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutSourceRssItemInput
+    upsert?: ArticleUpsertWithoutSourceRssItemInput
+    disconnect?: ArticleWhereInput | boolean
+    delete?: ArticleWhereInput | boolean
+    connect?: ArticleWhereUniqueInput
+    update?: XOR<XOR<ArticleUpdateToOneWithWhereWithoutSourceRssItemInput, ArticleUpdateWithoutSourceRssItemInput>, ArticleUncheckedUpdateWithoutSourceRssItemInput>
+  }
+
   export type GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput = {
     create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
     connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
@@ -41500,6 +41717,16 @@ export namespace Prisma {
     update?: GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput | GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput[]
     updateMany?: GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput | GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput[]
     deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
+  }
+
+  export type ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput = {
+    create?: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutSourceRssItemInput
+    upsert?: ArticleUpsertWithoutSourceRssItemInput
+    disconnect?: ArticleWhereInput | boolean
+    delete?: ArticleWhereInput | boolean
+    connect?: ArticleWhereUniqueInput
+    update?: XOR<XOR<ArticleUpdateToOneWithWhereWithoutSourceRssItemInput, ArticleUpdateWithoutSourceRssItemInput>, ArticleUncheckedUpdateWithoutSourceRssItemInput>
   }
 
   export type GoogleTrendItemCreateNestedManyWithoutTrendInput = {
@@ -42102,6 +42329,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -42118,6 +42346,7 @@ export namespace Prisma {
     viewCount?: number
     categoryId?: string | null
     aiPersonaId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -42326,6 +42555,7 @@ export namespace Prisma {
     authorId?: StringFilter<"Article"> | string
     categoryId?: StringNullableFilter<"Article"> | string | null
     aiPersonaId?: StringNullableFilter<"Article"> | string | null
+    sourceRssItemId?: StringNullableFilter<"Article"> | string | null
     publishedAt?: DateTimeNullableFilter<"Article"> | Date | string | null
     lang?: StringFilter<"Article"> | string
     plagiarismRate?: IntNullableFilter<"Article"> | number | null
@@ -42748,6 +42978,53 @@ export namespace Prisma {
     create: XOR<AiPersonaCreateWithoutArticlesInput, AiPersonaUncheckedCreateWithoutArticlesInput>
   }
 
+  export type RssFeedItemCreateWithoutArticleInput = {
+    id?: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    source: RssFeedSourceCreateNestedOneWithoutItemsInput
+    googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
+  }
+
+  export type RssFeedItemUncheckedCreateWithoutArticleInput = {
+    id?: string
+    sourceId: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
+  }
+
+  export type RssFeedItemCreateOrConnectWithoutArticleInput = {
+    where: RssFeedItemWhereUniqueInput
+    create: XOR<RssFeedItemCreateWithoutArticleInput, RssFeedItemUncheckedCreateWithoutArticleInput>
+  }
+
   export type BookmarkCreateWithoutArticleInput = {
     id?: string
     createdAt?: Date | string
@@ -42945,6 +43222,59 @@ export namespace Prisma {
     categories?: AiPersonaOnCategoryUncheckedUpdateManyWithoutPersonaNestedInput
   }
 
+  export type RssFeedItemUpsertWithoutArticleInput = {
+    update: XOR<RssFeedItemUpdateWithoutArticleInput, RssFeedItemUncheckedUpdateWithoutArticleInput>
+    create: XOR<RssFeedItemCreateWithoutArticleInput, RssFeedItemUncheckedCreateWithoutArticleInput>
+    where?: RssFeedItemWhereInput
+  }
+
+  export type RssFeedItemUpdateToOneWithWhereWithoutArticleInput = {
+    where?: RssFeedItemWhereInput
+    data: XOR<RssFeedItemUpdateWithoutArticleInput, RssFeedItemUncheckedUpdateWithoutArticleInput>
+  }
+
+  export type RssFeedItemUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
+    googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
+  }
+
+  export type RssFeedItemUncheckedUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
+  }
+
   export type BookmarkUpsertWithWhereUniqueWithoutArticleInput = {
     where: BookmarkWhereUniqueInput
     update: XOR<BookmarkUpdateWithoutArticleInput, BookmarkUncheckedUpdateWithoutArticleInput>
@@ -43021,6 +43351,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -43037,6 +43368,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     aiPersonaId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -43177,6 +43509,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
   }
@@ -43193,6 +43526,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     aiPersonaId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -43264,6 +43598,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
   }
@@ -43280,6 +43615,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -43341,6 +43677,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
@@ -43357,6 +43694,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     aiPersonaId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -43505,6 +43843,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
@@ -43521,6 +43860,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -43651,6 +43991,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
@@ -43667,6 +44008,7 @@ export namespace Prisma {
     authorId: string
     categoryId?: string | null
     aiPersonaId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -43760,6 +44102,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
@@ -43776,6 +44119,7 @@ export namespace Prisma {
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -44060,9 +44404,12 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
+    article?: ArticleCreateNestedOneWithoutSourceRssItemInput
   }
 
   export type RssFeedItemUncheckedCreateWithoutSourceInput = {
@@ -44078,9 +44425,12 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
+    article?: ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput
   }
 
   export type RssFeedItemCreateOrConnectWithoutSourceInput = {
@@ -44126,6 +44476,8 @@ export namespace Prisma {
     aiAnalysis?: JsonNullableFilter<"RssFeedItem">
     dismissed?: BoolFilter<"RssFeedItem"> | boolean
     usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
+    processingAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
+    processingToken?: StringNullableFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
   }
@@ -44185,6 +44537,63 @@ export namespace Prisma {
   export type GoogleTrendItemCreateManyRssItemInputEnvelope = {
     data: GoogleTrendItemCreateManyRssItemInput | GoogleTrendItemCreateManyRssItemInput[]
     skipDuplicates?: boolean
+  }
+
+  export type ArticleCreateWithoutSourceRssItemInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    publishedAt?: Date | string | null
+    lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutArticlesInput
+    category?: CategoryCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
+    comments?: CommentCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleUncheckedCreateWithoutSourceRssItemInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    authorId: string
+    categoryId?: string | null
+    aiPersonaId?: string | null
+    publishedAt?: Date | string | null
+    lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
+    comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleCreateOrConnectWithoutSourceRssItemInput = {
+    where: ArticleWhereUniqueInput
+    create: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
   }
 
   export type RssFeedSourceUpsertWithoutItemsInput = {
@@ -44250,6 +44659,69 @@ export namespace Prisma {
     matchScore?: IntFilter<"GoogleTrendItem"> | number
     actionTaken?: EnumTrendActionFilter<"GoogleTrendItem"> | $Enums.TrendAction
     createdAt?: DateTimeFilter<"GoogleTrendItem"> | Date | string
+  }
+
+  export type ArticleUpsertWithoutSourceRssItemInput = {
+    update: XOR<ArticleUpdateWithoutSourceRssItemInput, ArticleUncheckedUpdateWithoutSourceRssItemInput>
+    create: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
+    where?: ArticleWhereInput
+  }
+
+  export type ArticleUpdateToOneWithWhereWithoutSourceRssItemInput = {
+    where?: ArticleWhereInput
+    data: XOR<ArticleUpdateWithoutSourceRssItemInput, ArticleUncheckedUpdateWithoutSourceRssItemInput>
+  }
+
+  export type ArticleUpdateWithoutSourceRssItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutArticlesNestedInput
+    category?: CategoryUpdateOneWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
+    comments?: CommentUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
+  }
+
+  export type ArticleUncheckedUpdateWithoutSourceRssItemInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
   export type GoogleTrendItemCreateWithoutTrendInput = {
@@ -44336,9 +44808,12 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     source: RssFeedSourceCreateNestedOneWithoutItemsInput
+    article?: ArticleCreateNestedOneWithoutSourceRssItemInput
   }
 
   export type RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput = {
@@ -44355,8 +44830,11 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    article?: ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput
   }
 
   export type RssFeedItemCreateOrConnectWithoutGoogleTrendItemsInput = {
@@ -44423,9 +44901,12 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
+    article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
   }
 
   export type RssFeedItemUncheckedUpdateWithoutGoogleTrendItemsInput = {
@@ -44442,8 +44923,11 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    article?: ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput
   }
 
   export type AiPersonaOnCategoryCreateWithoutPersonaInput = {
@@ -44486,6 +44970,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -44502,6 +44987,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     categoryId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -44864,6 +45350,7 @@ export namespace Prisma {
     viewCount?: number
     categoryId?: string | null
     aiPersonaId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -44978,6 +45465,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -44994,6 +45482,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -45019,6 +45508,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -45235,6 +45725,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     aiPersonaId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -45271,6 +45762,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -45287,6 +45779,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -45312,6 +45805,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -45441,6 +45935,8 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: boolean
     usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -45458,9 +45954,12 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
+    article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
   }
 
   export type RssFeedItemUncheckedUpdateWithoutSourceInput = {
@@ -45476,9 +45975,12 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
+    article?: ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput
   }
 
   export type RssFeedItemUncheckedUpdateManyWithoutSourceInput = {
@@ -45494,6 +45996,8 @@ export namespace Prisma {
     aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
     dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -45578,6 +46082,7 @@ export namespace Prisma {
     viewCount?: number
     authorId: string
     categoryId?: string | null
+    sourceRssItemId?: string | null
     publishedAt?: Date | string | null
     lang?: string
     plagiarismRate?: number | null
@@ -45624,6 +46129,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -45640,6 +46146,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
@@ -45665,6 +46172,7 @@ export namespace Prisma {
     viewCount?: IntFieldUpdateOperationsInput | number
     authorId?: StringFieldUpdateOperationsInput | string
     categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     lang?: StringFieldUpdateOperationsInput | string
     plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null

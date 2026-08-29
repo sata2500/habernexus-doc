@@ -1,20 +1,32 @@
 import { prisma } from "./prisma";
+import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
+
 import { slugify } from "./utils";
 import { analyzeArticle } from "./article-analyzer";
+import { fetchPublicResource } from "./server/remote-fetch";
 
 // Yardımcı: Belirli bir süre bekle (ms)
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
+function decodeDataImage(value: string) {
+  const match = value.match(/^data:image\/[a-z0-9.+-]+;base64,([a-zA-Z0-9+/=]+)$/);
+  if (!match) throw new Error("Unsupported image data URL.");
+
+  const buffer = Buffer.from(match[1], "base64");
+  if (buffer.length === 0 || buffer.length > 8 * 1024 * 1024) {
+    throw new Error("Generated image exceeds the maximum allowed size.");
+  }
+  return buffer;
+}
+
 // Yardımcı: URL'den görseli indirip base64'e çevirir (Vision analizi için)
-// Yardımcı: URL'den görseli indirip base64'e çevirir (Vision analizi için)
+
 export async function fetchImageAsBase64(url: string): Promise<string | null> {
   try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const arrayBuffer = await res.arrayBuffer();
-    return Buffer.from(arrayBuffer).toString("base64");
-  } catch (_e) {
+    const buffer = await fetchPublicResource(url, { maxBytes: 8 * 1024 * 1024 });
+    return buffer.toString("base64");
+  } catch {
     return null;
   }
 }
@@ -61,7 +73,7 @@ async function generateImageWithOpenRouter(model: string, prompt: string, refere
   try {
     console.log(`[AI Writer] OpenRouter görsel üretimi: model=${model}, referans=${!!referenceImageUrl}`);
     const apiKey = process.env.OPENROUTER_API_KEY || "";
-    
+
     const content: Array<{ type: string; text?: string; image_url?: { url: string } }> = [{ type: "text", text: prompt }];
     if (referenceImageUrl) {
       content.push({ type: "image_url", image_url: { url: referenceImageUrl } });
@@ -87,8 +99,9 @@ async function generateImageWithOpenRouter(model: string, prompt: string, refere
     if (imageContent && (imageContent.startsWith("http") || imageContent.startsWith("data:image"))) {
       // Görseli indir ve Vercel Blob'a kaydet (Kalıcılık ve Optimizasyon için)
       console.log("[AI Writer] OpenRouter görseli Blob'a aktarılıyor...");
-      const res = await fetch(imageContent);
-      const buffer = Buffer.from(await res.arrayBuffer());
+      const buffer = imageContent.startsWith("data:image/")
+        ? decodeDataImage(imageContent)
+        : await fetchPublicResource(imageContent, { maxBytes: 8 * 1024 * 1024 });
       const { url: blobUrl } = await put(`articles/ai-or-${Date.now()}.png`, buffer, {
         access: "public",
         contentType: "image/png",
@@ -103,7 +116,46 @@ async function generateImageWithOpenRouter(model: string, prompt: string, refere
 }
 
 export async function writeArticleWithAI(suggestionId: string) {
+  const processingToken = randomUUID();
+  const staleBefore = new Date(Date.now() - 15 * 60 * 1000);
+  let claimed = false;
+
   try {
+    const existingArticle = await prisma.article.findUnique({
+      where: { sourceRssItemId: suggestionId },
+      select: { id: true, title: true },
+    });
+
+    if (existingArticle) {
+      return {
+        success: true,
+        articleId: existingArticle.id,
+        title: existingArticle.title,
+        skipped: true,
+      };
+    }
+
+    const claim = await prisma.rssFeedItem.updateMany({
+      where: {
+        id: suggestionId,
+        usedForArticle: false,
+        OR: [
+          { processingAt: null },
+          { processingAt: { lt: staleBefore } },
+        ],
+        status: { in: ["ANALYZED", "APPROVED"] },
+      },
+      data: {
+        processingAt: new Date(),
+        processingToken,
+      },
+    });
+
+    if (claim.count !== 1) {
+      throw new Error("Bu haber önerisi başka bir işlem tarafından işleniyor veya kullanıldı.");
+    }
+    claimed = true;
+
     const suggestion = await prisma.rssFeedItem.findUnique({
       where: { id: suggestionId },
       include: { source: true },
@@ -121,7 +173,7 @@ export async function writeArticleWithAI(suggestionId: string) {
     let imagePromptBase = settings?.aiWriterImagePrompt || "Professional news cover image.";
     let categoryId: string | null = null;
     let aiPersonaId: string | null = null;
-    
+
     // Özellik bayrakları (Sadece global ayarlar)
     const useGoogleSearch = settings?.aiWriterSearchEnabled || false;
     const useRssImage = settings?.aiWriterUseRssImage !== false;
@@ -129,7 +181,7 @@ export async function writeArticleWithAI(suggestionId: string) {
     const aiAnalysisObj = suggestion.aiAnalysis as Record<string, unknown> | null;
     if (aiAnalysisObj && typeof aiAnalysisObj.suggestedCategory === "string") {
       const suggestedCatName = aiAnalysisObj.suggestedCategory;
-      
+
       // Önce tam eşleşme dene
       let category = await prisma.category.findUnique({
         where: { name: suggestedCatName },
@@ -155,7 +207,7 @@ export async function writeArticleWithAI(suggestionId: string) {
           aiPersonaId = persona.id;
           systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları:\n${persona.prompt}`;
           imagePromptBase = persona.imagePrompt;
-          
+
           await prisma.aiPersonaOnCategory.update({
             where: { personaId_categoryId: { personaId: persona.id, categoryId: category.id } },
             data: { lastUsedAt: new Date() }
@@ -205,9 +257,8 @@ export async function writeArticleWithAI(suggestionId: string) {
     if (!imageUrl && suggestion.imageUrl) {
       try {
         console.log("[AI Writer] Orijinal RSS görseli sisteme aktarılıyor...");
-        const res = await fetch(suggestion.imageUrl);
-        if (res.ok) {
-          const buffer = Buffer.from(await res.arrayBuffer());
+        const buffer = await fetchPublicResource(suggestion.imageUrl, { maxBytes: 8 * 1024 * 1024 });
+        if (buffer.length > 0) {
           const { url: blobUrl } = await put(`articles/rss-${Date.now()}.png`, buffer, {
             access: "public",
             contentType: "image/png",
@@ -250,6 +301,7 @@ export async function writeArticleWithAI(suggestionId: string) {
         coverImage: imageUrl,
         status: "PUBLISHED",
         authorId: adminUser.id,
+        sourceRssItemId: suggestion.id,
         aiPersonaId,
         categoryId,
         publishedAt: new Date(),
@@ -261,36 +313,40 @@ export async function writeArticleWithAI(suggestionId: string) {
     try {
       const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
       notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
-      
+
       const { publishToTelegram } = await import("./social-publisher");
       publishToTelegram({ title: article.title, excerpt: article.excerpt, slug: article.slug, coverImage: article.coverImage }).catch(err => console.error("Telegram publish error:", err));
     } catch (e) {
       console.error("Failed to load google-indexing or social-publisher helper in writeArticleWithAI:", e);
     }
 
-    await prisma.rssFeedItem.update({
-      where: { id: suggestionId },
-      data: { usedForArticle: true },
+    await prisma.rssFeedItem.updateMany({
+      where: { id: suggestionId, processingToken },
+      data: {
+        usedForArticle: true,
+        processingAt: null,
+        processingToken: null,
+      },
     });
 
     // Otomatik Analiz Tetikleme ve Yeniden Yazım (Rewrite) Kontrolü
     try {
       console.log(`[AI Writer] Yeni makale için otomatik analiz tetikleniyor...`);
       const analysis = await analyzeArticle(article.id);
-      
+
       const PLAGIARISM_THRESHOLD = 30; // %30 intihal eşiği
       let currentPlagiarismRate = analysis.success ? (analysis.plagiarismRate ?? 0) : 0;
-      
+
       if (analysis.success && currentPlagiarismRate > PLAGIARISM_THRESHOLD) {
         console.log(`[AI Writer] Otomatik analiz sonucu yüksek intihal oranı tespit edildi: %${currentPlagiarismRate}. Yeniden yazım başlatılıyor...`);
-        
+
         let rewriteSuccess = false;
         let rewriteAttempt = 1;
         const maxRewriteAttempts = 2;
-        
+
         while (rewriteAttempt <= maxRewriteAttempts && currentPlagiarismRate > PLAGIARISM_THRESHOLD) {
           console.log(`[AI Writer] Yeniden yazım denemesi ${rewriteAttempt}/${maxRewriteAttempts}...`);
-          
+
           const rewritePrompt = `
             Daha önce yazdığın haber makalesinde yüksek oranda anlamsal benzerlik/intihal (%${currentPlagiarismRate}) tespit edildi.
             Lütfen aşağıdaki konuyu tamamen farklı cümle yapılarıyla, son derece özgün, zengin ve tarafsız bir gazetecilik diliyle yeniden yaz.
@@ -301,20 +357,20 @@ export async function writeArticleWithAI(suggestionId: string) {
             Talimat: ${systemPrompt}
             Format: HTML (h2, p, strong). En az 500 kelime.
           `;
-          
+
           let newContent = "";
           try {
             newContent = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: rewritePrompt }], tools);
           } catch (rewriteErr) {
             console.error(`[AI Writer] Yeniden yazım API hatası:`, rewriteErr);
           }
-          
+
           if (newContent) {
             await prisma.article.update({
               where: { id: article.id },
               data: { content: newContent }
             });
-            
+
             // Yeniden analiz et
             const reAnalysis = await analyzeArticle(article.id);
             if (reAnalysis.success) {
@@ -328,7 +384,7 @@ export async function writeArticleWithAI(suggestionId: string) {
           }
           rewriteAttempt++;
         }
-        
+
         if (!rewriteSuccess) {
           console.warn(`[AI Writer] ${maxRewriteAttempts} yeniden yazma denemesine rağmen intihal oranı %${PLAGIARISM_THRESHOLD} altına düşürülemedi. Son oran: %${currentPlagiarismRate}`);
         }
@@ -340,11 +396,22 @@ export async function writeArticleWithAI(suggestionId: string) {
     return { success: true, articleId: article.id, title: article.title };
   } catch (error) {
     console.error("AI Writer Hatası:", error);
-    return { success: false, error: String(error) };
+
+    if (claimed) {
+      await prisma.rssFeedItem.updateMany({
+        where: { id: suggestionId, processingToken },
+        data: { processingAt: null, processingToken: null },
+      }).catch((releaseError) => {
+        console.error("AI Writer claim release error:", releaseError);
+      });
+    }
+
+    return { success: false, error: "AI ile haber üretimi tamamlanamadı." };
   }
 }
 
 export async function writeBatchArticlesWithAI(count: number = 3) {
+  const safeCount = Number.isInteger(count) ? Math.min(Math.max(count, 1), 10) : 3;
   const suggestions = await prisma.rssFeedItem.findMany({
     where: {
       status: { in: ["ANALYZED", "APPROVED"] },
@@ -352,7 +419,7 @@ export async function writeBatchArticlesWithAI(count: number = 3) {
       usedForArticle: false,
     },
     orderBy: { aiScore: "desc" },
-    take: count,
+    take: safeCount,
   });
 
   const results = [];
@@ -374,7 +441,7 @@ export async function rewriteArticleWithAI(articleId: string) {
 
     const settings = await prisma.systemSettings.findFirst();
     const writerModelName = settings?.aiWriterModel || "google/gemini-2.0-flash-001";
-    
+
     // Prompt hazırlığı
     const systemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün.";
     let finalPrompt = systemPrompt;
@@ -388,13 +455,13 @@ export async function rewriteArticleWithAI(articleId: string) {
     const textPrompt = `
       Konu: ${article.title}
       Talimat: ${finalPrompt}
-      Lütfen bu makaleyi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz. 
+      Lütfen bu makaleyi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz.
       Önceki versiyondaki anlatım bozukluklarını düzelt, intihal riski oluşturabilecek ifadelerden kaçın.
       Format: HTML (h2, p, strong). En az 500 kelime.
     `;
 
     console.log(`[AI Writer] Manuel yeniden yazım başlatılıyor: Makale="${article.title}" (${article.id})`);
-    
+
     let content = "";
     for (let i = 0; i < 3; i++) {
       try {

@@ -62,7 +62,7 @@ export function UserRoleManager({ users }: { users: User[] }) {
                 <p className="text-xs text-muted-foreground truncate mt-0.5">{user.email}</p>
               </div>
             </div>
-            
+
             <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 w-full sm:w-auto">
               <div className="hidden sm:block text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2.5 py-1">
                 {user._count.articles} makale

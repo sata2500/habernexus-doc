@@ -4,14 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { 
-  PlusCircle, 
-  Eye, 
-  FileText, 
-  Pencil, 
-  Newspaper, 
-  Sparkles, 
-  Gauge, 
+import {
+  PlusCircle,
+  Eye,
+  FileText,
+  Pencil,
+  Newspaper,
+  Sparkles,
+  Gauge,
   AlertTriangle
 } from "lucide-react";
 import { DeleteArticleButton } from "./DeleteArticleButton";
@@ -188,7 +188,7 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
                     )}
 
                     <Badge variant={variant} className="px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider">{label}</Badge>
-                    
+
                     <span className="flex items-center gap-1 text-xs text-muted-foreground font-medium">
                       <Eye className="h-3.5 w-3.5" /> {article.viewCount}
                     </span>

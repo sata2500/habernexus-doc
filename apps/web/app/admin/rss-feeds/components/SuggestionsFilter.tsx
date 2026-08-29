@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Filter, X, ChevronDown } from "lucide-react";
+import { Search, Filter, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useDebounce } from "@/hooks/use-debounce";
 
@@ -16,18 +16,18 @@ export function SuggestionsFilter({ categories }: Props) {
   const [search, setSearch] = useState(searchParams.get("search") || "");
   const [status, setStatus] = useState(searchParams.get("status") || "ANALYZED");
   const [category, setCategory] = useState(searchParams.get("category") || "all");
-  
+
   const debouncedSearch = useDebounce(search, 500);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     if (debouncedSearch) params.set("search", debouncedSearch);
     else params.delete("search");
-    
+
     if (status) params.set("status", status);
     else params.delete("status");
-    
+
     if (category !== "all") params.set("category", category);
     else params.delete("category");
 
@@ -94,7 +94,7 @@ export function SuggestionsFilter({ categories }: Props) {
           <Filter className="h-3.5 w-3.5 text-muted-foreground" />
           <span className="text-xs font-medium text-muted-foreground">Kategori:</span>
         </div>
-        
+
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value)}

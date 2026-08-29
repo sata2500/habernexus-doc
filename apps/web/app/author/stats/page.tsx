@@ -1,10 +1,10 @@
 import { getAuthorArticles } from "../actions";
 import { Card } from "@/components/ui/Card";
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Eye, 
-  CheckCircle2, 
+import {
+  BarChart3,
+  TrendingUp,
+  Eye,
+  CheckCircle2,
   Clock,
   ArrowUpRight,
 } from "lucide-react";
@@ -90,8 +90,8 @@ export default async function AuthorStatsPage() {
                     {article.viewCount}
                   </div>
                   <div className="w-16 h-1 bg-muted rounded-full mt-1.5 overflow-hidden">
-                    <div 
-                      className="h-full bg-primary-500" 
+                    <div
+                      className="h-full bg-primary-500"
                       style={{ width: `${(article.viewCount / (topArticles[0]?.viewCount || 1)) * 100}%` }}
                     />
                   </div>

@@ -5,8 +5,10 @@ import { prisma } from "@/lib/prisma";
 import { syncGoogleTrends, matchTrendsWithRss } from "@/lib/google-trends";
 import { slugify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
+import { requireRole } from "@/lib/server/authz";
 
 export async function triggerSyncGoogleTrends() {
+  await requireRole("ADMIN");
   try {
     const syncRes = await syncGoogleTrends();
     const matchRes = await matchTrendsWithRss();
@@ -26,6 +28,7 @@ export async function triggerSyncGoogleTrends() {
 }
 
 export async function generateArticleFromTrend(trendId: string) {
+  await requireRole("ADMIN");
   try {
     const trend = await prisma.googleTrend.findUnique({
       where: { id: trendId },

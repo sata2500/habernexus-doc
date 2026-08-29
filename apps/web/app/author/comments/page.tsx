@@ -15,10 +15,10 @@ export default async function AuthorCommentsPage() {
         </div>
       </div>
 
-      <CommentTable 
-        comments={comments} 
-        onDelete={deleteCommentByAuthor} 
-        isAdmin={false} 
+      <CommentTable
+        comments={comments}
+        onDelete={deleteCommentByAuthor}
+        isAdmin={false}
       />
     </div>
   );

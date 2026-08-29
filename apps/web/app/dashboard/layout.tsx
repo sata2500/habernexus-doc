@@ -49,7 +49,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <span className="text-xs text-muted-foreground">{session.user.name}</span>
             </div>
           </div>
-          
+
           <DashboardNav />
 
           <div className="mt-8 pt-6 border-t border-border px-2 space-y-2">

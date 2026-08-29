@@ -7,7 +7,7 @@ import { generateRssXml } from "@/lib/rss-utils";
 export async function GET() {
   try {
     const xml = await generateRssXml({ lang: "tr" });
-    
+
     return new Response(xml, {
       headers: {
         "Content-Type": "application/xml; charset=utf-8",

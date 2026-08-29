@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Play, Pause, Square, Volume2, HelpCircle, Loader2 } from "lucide-react";
+import { useState, useEffect, useRef, useMemo, useSyncExternalStore } from "react";
+import { Play, Pause, Square, Volume2, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface Props {
@@ -9,43 +9,52 @@ interface Props {
   title: string;
 }
 
+const subscribeToSpeechSupport = () => () => undefined;
+const getSpeechSupportSnapshot = () => typeof window !== "undefined" && "speechSynthesis" in window;
+const getSpeechSupportServerSnapshot = () => false;
+
+function stripHtml(value: string) {
+  return value
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export function AudioPlayer({ content, title }: Props) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [progress, setProgress] = useState(0);
   const [rate, setRate] = useState(1); // 0.75, 1, 1.25, 1.5, 2
-  const [isSupported, setIsSupported] = useState(false);
-  const [cleanText, setCleanText] = useState("");
+  const isSupported = useSyncExternalStore(
+    subscribeToSpeechSupport,
+    getSpeechSupportSnapshot,
+    getSpeechSupportServerSnapshot,
+  );
+  const cleanText = useMemo(() => `${title}. ${stripHtml(content)}`.trim(), [content, title]);
 
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const currentSentenceIndex = useRef(0);
   const sentencesRef = useRef<string[]>([]);
 
-  // HTML etiketlerini temizle ve başlıkla birleştir
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setIsSupported("speechSynthesis" in window);
-      
-      // HTML strip
-      const tempDiv = document.createElement("div");
-      tempDiv.innerHTML = content;
-      const textContent = tempDiv.textContent || tempDiv.innerText || "";
-      const fullText = `${title}. ${textContent}`;
-      setCleanText(fullText);
+    if (!isSupported) return;
 
-      // Sesleri yükle ve voiceschanged dinleyicisi ekle
-      const updateVoices = () => {
-        if (window.speechSynthesis) {
-          window.speechSynthesis.getVoices();
-        }
-      };
-      updateVoices();
-      if (window.speechSynthesis) {
-        window.speechSynthesis.onvoiceschanged = updateVoices;
-      }
-    }
-  }, [content, title]);
+    const updateVoices = () => {
+      window.speechSynthesis.getVoices();
+    };
+    const previousHandler = window.speechSynthesis.onvoiceschanged;
+    updateVoices();
+    window.speechSynthesis.onvoiceschanged = updateVoices;
+
+    return () => {
+      window.speechSynthesis.onvoiceschanged = previousHandler;
+    };
+  }, [isSupported]);
 
   // Sayfadan çıkıldığında seslendirmeyi durdur
   useEffect(() => {
@@ -154,14 +163,14 @@ export function AudioPlayer({ content, title }: Props) {
     <div className="w-full glass-strong border border-border/50 rounded-2xl p-4 flex flex-col gap-3 shadow-soft relative overflow-hidden transition-all duration-300">
       {/* Glow Süsleme Arka Planı */}
       <div className="absolute top-0 right-0 w-24 h-24 rounded-full bg-primary-500/5 blur-xl -z-10" />
-      
+
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         {/* Sol Taraf: Durum ve Bilgi */}
         <div className="flex items-center gap-3">
           <div className={cn(
             "h-10 w-10 rounded-xl flex items-center justify-center transition-all",
-            isPlaying 
-              ? "bg-primary-500/10 text-primary-500 animate-pulse-glow" 
+            isPlaying
+              ? "bg-primary-500/10 text-primary-500 animate-pulse-glow"
               : "bg-muted text-muted-foreground"
           )}>
             {isPlaying ? (
@@ -187,8 +196,8 @@ export function AudioPlayer({ content, title }: Props) {
               onClick={() => handleRateChange(r)}
               className={cn(
                 "px-2 py-1 text-xs font-bold rounded-lg border border-border/40 transition-all cursor-pointer",
-                rate === r 
-                  ? "bg-primary-600 border-primary-500 text-white shadow-sm" 
+                rate === r
+                  ? "bg-primary-600 border-primary-500 text-white shadow-sm"
                   : "bg-card/50 hover:bg-muted text-muted-foreground"
               )}
             >
@@ -234,7 +243,7 @@ export function AudioPlayer({ content, title }: Props) {
         {/* İlerleme */}
         <div className="flex-1 flex items-center gap-3">
           <div className="relative flex-1 h-2 bg-muted rounded-full overflow-hidden border border-border/30">
-            <div 
+            <div
               className="absolute left-0 top-0 h-full bg-gradient-primary rounded-full transition-all duration-300"
               style={{ width: `${progress}%` }}
             />

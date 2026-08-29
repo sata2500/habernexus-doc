@@ -83,9 +83,9 @@ export default async function CategoryPage({ params }: { params: Params }) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {category.articles.map((article) => (
             <Link key={article.id} href={`/article/${article.slug}`} className="group block">
-              <Card 
-                variant="interactive" 
-                noPadding 
+              <Card
+                variant="interactive"
+                noPadding
                 className="overflow-hidden h-full flex flex-col shine rounded-2xl card-360-border bg-card/65 hover:bg-card transition-all duration-300 ease-out"
                 style={getCardGlowStyles(category.color)}
               >

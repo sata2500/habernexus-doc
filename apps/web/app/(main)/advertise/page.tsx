@@ -1,6 +1,7 @@
 import { getStaticPageBySlug } from "@/app/actions/static-pages";
 import { Mail } from "lucide-react";
 import { Card } from "@/components/ui/Card";
+import { sanitizeHtml } from "@/lib/server/sanitize-html";
 
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("advertise");
@@ -12,7 +13,7 @@ export async function generateMetadata() {
 
 export default async function AdvertisePage() {
   const page = await getStaticPageBySlug("advertise");
-  
+
   // Reklam iletişim mailini extraData'dan çekiyoruz
   const adsData = (page?.extraData as Record<string, unknown>) || {};
   const adsEmail = (adsData.email as string) || "ads@habernexus.com";
@@ -23,11 +24,11 @@ export default async function AdvertisePage() {
         <h1 className="text-4xl md:text-5xl font-bold font-(family-name:--font-outfit) mb-8">
           {page?.title || "Reklam Verin"}
         </h1>
-        
+
         {page?.content ? (
-          <div 
+          <div
             className="text-foreground"
-            dangerouslySetInnerHTML={{ __html: page.content }} 
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
           />
         ) : (
           <p className="lead text-muted-foreground">
@@ -42,7 +43,7 @@ export default async function AdvertisePage() {
          <p className="text-muted-foreground mb-6">
            Banner reklam alanları, sponsorlu köşe yazıları, sosyal medya kampanyaları ve daha birçok dijital partnerlik seçeneği için reklam satış departmanımıza doğrudan ulaşabilirsiniz.
          </p>
-         
+
          <div className="space-y-4">
            <div className="p-4 bg-background rounded-xl border border-border">
              <p className="text-sm text-muted-foreground mb-1">Kurumsal Reklam İletişimi</p>

@@ -1,27 +1,35 @@
 import type { SiteSettings } from "@/lib/site-settings";
 
+function sanitizeCssColor(value: string | null | undefined) {
+  if (!value) return undefined;
+  const normalized = value.trim();
+  if (/^#[0-9a-fA-F]{3,8}$/.test(normalized)) return normalized;
+  if (/^(rgb|rgba|hsl|hsla)\([0-9.% ,+\-/]+\)$/.test(normalized)) return normalized;
+  return undefined;
+}
+
 export function DynamicThemeColors({ settings }: { settings: Partial<SiteSettings> | null }) {
   if (!settings) return null;
 
   // Açık Tema Renkleri
-  const primaryL = settings.primaryColorLight;
-  const bgL = settings.bgLight;
-  const fgL = settings.fgLight;
-  const cardL = settings.cardLight;
-  const cardFgL = settings.cardFgLight;
-  const accentL = settings.accentLight;
-  const sidebarBgL = settings.sidebarBgLight;
-  const sidebarFgL = settings.sidebarFgLight;
+  const primaryL = sanitizeCssColor(settings.primaryColorLight);
+  const bgL = sanitizeCssColor(settings.bgLight);
+  const fgL = sanitizeCssColor(settings.fgLight);
+  const cardL = sanitizeCssColor(settings.cardLight);
+  const cardFgL = sanitizeCssColor(settings.cardFgLight);
+  const accentL = sanitizeCssColor(settings.accentLight);
+  const sidebarBgL = sanitizeCssColor(settings.sidebarBgLight);
+  const sidebarFgL = sanitizeCssColor(settings.sidebarFgLight);
 
   // Koyu Tema Renkleri
-  const primaryD = settings.primaryColorDark;
-  const bgD = settings.bgDark;
-  const fgD = settings.fgDark;
-  const cardD = settings.cardDark;
-  const cardFgD = settings.cardFgDark;
-  const accentD = settings.accentDark;
-  const sidebarBgD = settings.sidebarBgDark;
-  const sidebarFgD = settings.sidebarFgDark;
+  const primaryD = sanitizeCssColor(settings.primaryColorDark);
+  const bgD = sanitizeCssColor(settings.bgDark);
+  const fgD = sanitizeCssColor(settings.fgDark);
+  const cardD = sanitizeCssColor(settings.cardDark);
+  const cardFgD = sanitizeCssColor(settings.cardFgDark);
+  const accentD = sanitizeCssColor(settings.accentDark);
+  const sidebarBgD = sanitizeCssColor(settings.sidebarBgDark);
+  const sidebarFgD = sanitizeCssColor(settings.sidebarFgDark);
 
   // CSS oluşturma
   const cssString = `

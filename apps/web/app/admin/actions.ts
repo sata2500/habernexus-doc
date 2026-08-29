@@ -87,7 +87,7 @@ export async function updateUserRole(userId: string, role: string) {
 // Kullanıcıyı tamamen sil (Cascade delete devreye girer)
 export async function deleteUser(userId: string) {
   await assertAdmin();
-  
+
   // Kendini silmeye çalışmasın?
   const reqHeaders = await headers();
   const session = await auth.api.getSession({ headers: reqHeaders });
@@ -161,7 +161,7 @@ export async function deleteArticle(articleId: string) {
 // Toplu makale durum güncelleme
 export async function bulkUpdateArticleStatus(articleIds: string[], status: string) {
   await assertAdmin();
-  
+
   const articlesBefore = await prisma.article.findMany({
     where: { id: { in: articleIds } },
     select: { id: true, slug: true, status: true }
@@ -192,7 +192,7 @@ export async function bulkUpdateArticleStatus(articleIds: string[], status: stri
 // Toplu makale silme
 export async function bulkDeleteArticles(articleIds: string[]) {
   await assertAdmin();
-  
+
   const articlesBefore = await prisma.article.findMany({
     where: { id: { in: articleIds } },
     select: { slug: true, status: true }

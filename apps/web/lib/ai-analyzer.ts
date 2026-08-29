@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 
-const SCORE_THRESHOLD = 65; 
-const BATCH_SIZE = 15; 
+const SCORE_THRESHOLD = 65;
+const BATCH_SIZE = 15;
 
 interface GeminiItemResult {
   id: string;
@@ -79,7 +79,7 @@ function fallbackScore(title: string, excerpt: string, publishedAt: Date | null)
 export async function analyzeRssBatch() {
   const apiKey = process.env.OPENROUTER_API_KEY;
   console.log("[AI Analysis] Analiz işlemi başlatıldı.");
-  
+
   if (!apiKey) {
     console.error("[AI Analysis] HATA: OPENROUTER_API_KEY ortam değişkeni bulunamadı!");
     return { analyzed: 0, covered: 0, lowScore: 0, aiUsed: false, error: "API anahtarı bulunamadı." };
@@ -94,7 +94,7 @@ export async function analyzeRssBatch() {
 
   // 2. Halihazırda analiz edilmiş ama henüz yayınlanmamış son RSS önerilerini çek
   const recentSuggestions = await prisma.rssFeedItem.findMany({
-    where: { 
+    where: {
       status: { in: ["ANALYZED", "APPROVED"] },
       publishedAt: { gte: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000) }
     },
@@ -106,9 +106,9 @@ export async function analyzeRssBatch() {
     where: {
       OR: [
         { status: "PENDING" },
-        { 
-          status: "ANALYZED", 
-          aiAnalysis: { path: ["isFallback"], equals: true } 
+        {
+          status: "ANALYZED",
+          aiAnalysis: { path: ["isFallback"], equals: true }
         }
       ],
       dismissed: false
@@ -160,10 +160,10 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "is
     const aiResponse = await callOpenRouter(prompt);
     const cleanedJson = cleanJson(aiResponse);
     let result: GeminiResponse;
-    
+
     try {
       result = JSON.parse(cleanedJson);
-    } catch (_parseErr) {
+    } catch {
       console.error("[AI Analysis] JSON Ayrıştırma Hatası. Ham Yanıt:", aiResponse);
       throw new Error("Yapay zeka geçersiz bir yanıt döndürdü.");
     }
@@ -183,7 +183,7 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "is
 
       if (status === "COVERED") covered++;
       if (status === "LOW_SCORE") lowScore++;
-      
+
       await prisma.rssFeedItem.update({
         where: { id: item.id },
         data: {
@@ -198,20 +198,20 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "is
   } catch (err: unknown) {
     console.error("[AI Analysis] Kritik Hata:", err);
     const errorMessage = err instanceof Error ? err.message : "AI Analysis Failed";
-    
+
     // Hata durumunda fallback'e devam et
     console.log("[AI Analysis] Fallback (kural tabanlı) puanlama yapılıyor...");
     for (const item of pendingItems) {
       const score = fallbackScore(item.title, item.excerpt || "", item.publishedAt);
-      
+
       // Eski retry count'u al
       const prevAnalysis = item.aiAnalysis as Record<string, unknown> | null;
       const retryCount = (typeof prevAnalysis?.retryCount === "number" ? prevAnalysis.retryCount : 0) + 1;
 
       await prisma.rssFeedItem.update({
         where: { id: item.id },
-        data: { 
-          aiScore: score, 
+        data: {
+          aiScore: score,
           status: score < SCORE_THRESHOLD ? "LOW_SCORE" : "ANALYZED",
           aiAnalysis: {
             isFallback: true,
@@ -225,12 +225,12 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "is
       analyzed++;
     }
 
-    return { 
-      analyzed, 
-      covered, 
-      lowScore, 
-      aiUsed: false, 
-      error: errorMessage 
+    return {
+      analyzed,
+      covered,
+      lowScore,
+      aiUsed: false,
+      error: errorMessage
     };
   }
 }

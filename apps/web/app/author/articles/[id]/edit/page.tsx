@@ -5,10 +5,10 @@ import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { getArticleToEdit, updateArticle, getCategories } from "../../../actions";
 import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
+
 import { Button } from "@/components/ui/Button";
 
-import { Image as ImageIcon, Tag, Loader2, Eye, Save, ArrowLeft } from "lucide-react";
+import { Image as ImageIcon, Tag, Loader2, ArrowLeft } from "lucide-react";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import Link from "next/link";
 
@@ -29,7 +29,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const [categoryId, setCategoryId] = useState("");
   const [status, setStatus] = useState<"DRAFT" | "PUBLISHED">("DRAFT");
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
-  
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -199,7 +199,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
             <h3 className="text-sm font-semibold flex items-center gap-2">
               <ImageIcon className="h-4 w-4 text-muted-foreground" /> Kapak Fotoğrafı
             </h3>
-            <ImageUploader 
+            <ImageUploader
               value={coverImage}
               onChange={setCoverImage}
               type="article"

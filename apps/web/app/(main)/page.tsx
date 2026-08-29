@@ -7,8 +7,8 @@ import {
   Flame,
   Zap,
   Newspaper,
-  Sparkles,
-  type LucideIcon
+    Sparkles
+
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -75,9 +75,9 @@ export default async function HomePage() {
         <div className="lg:col-span-2">
           {heroArticle ? (
             <Link href={`/article/${heroArticle.slug}`} className="group block h-full">
-              <Card 
-                variant="interactive" 
-                noPadding 
+              <Card
+                variant="interactive"
+                noPadding
                 className="overflow-hidden h-full shine rounded-2xl card-360-border transition-all duration-300 ease-out"
                 style={getCardGlowStyles(heroArticle.category?.color)}
               >
@@ -168,7 +168,7 @@ export default async function HomePage() {
                       href={`/article/${article.slug}`}
                       className="group block"
                     >
-                      <div 
+                      <div
                         className="p-3.5 rounded-xl border border-border/40 bg-card/30 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_20px_var(--art-glow)] transition-all duration-300 ease-out flex gap-3.5 items-center hover:-translate-y-0.5"
                         style={getCardGlowStyles(article.category?.color)}
                       >
@@ -178,7 +178,7 @@ export default async function HomePage() {
                         <div className="flex-1 min-w-0 space-y-1.5">
                           <div className="flex items-center justify-between gap-2">
                             {article.category && (
-                              <span 
+                              <span
                                 className="text-[10px] font-bold tracking-wider uppercase"
                                 style={{ color: article.category.color || "var(--color-primary-500)" }}
                               >

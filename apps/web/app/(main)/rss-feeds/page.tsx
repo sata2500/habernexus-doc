@@ -48,8 +48,8 @@ export default async function RSSFeedsPage() {
     <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto space-y-16">
         {/* Navigation */}
-        <Link 
-          href="/" 
+        <Link
+          href="/"
           className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-primary-500 transition-colors group"
         >
           <ArrowLeft className="h-4 w-4 group-hover:-translate-x-1 transition-transform" />
@@ -78,8 +78,8 @@ export default async function RSSFeedsPage() {
           <div className="space-y-2">
             <h2 className="text-lg font-bold text-foreground">RSS Nedir?</h2>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              RSS (Really Simple Syndication), favori web sitelerinizden güncellemeleri standart bir formatta almanızı sağlayan bir teknolojidir. 
-              Feedly, Inoreader veya NetNewsWire gibi bir &quot;Haber Okuyucu&quot; (RSS Reader) kullanarak, Haber Nexus&apos;u sosyal medya kirliliğinden 
+              RSS (Really Simple Syndication), favori web sitelerinizden güncellemeleri standart bir formatta almanızı sağlayan bir teknolojidir.
+              Feedly, Inoreader veya NetNewsWire gibi bir &quot;Haber Okuyucu&quot; (RSS Reader) kullanarak, Haber Nexus&apos;u sosyal medya kirliliğinden
               uzak bir şekilde takip edebilirsiniz.
             </p>
           </div>
@@ -109,7 +109,7 @@ export default async function RSSFeedsPage() {
         {/* Footer Note */}
         <div className="text-center pt-8 border-t border-border">
           <p className="text-sm text-muted-foreground">
-            Haber Nexus, içeriklerini standart RSS 2.0 formatında yayınlamaktadır. 
+            Haber Nexus, içeriklerini standart RSS 2.0 formatında yayınlamaktadır.
             Daha fazla bilgi için bizimle <Link href="/contact" className="text-primary-500 hover:underline">iletişime</Link> geçebilirsiniz.
           </p>
         </div>

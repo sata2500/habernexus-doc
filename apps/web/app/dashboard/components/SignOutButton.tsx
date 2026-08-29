@@ -1,12 +1,18 @@
 "use client";
 
 import { LogOut } from "lucide-react";
+import { useRouter } from "next/navigation";
+
 import { signOut } from "@/lib/auth-client";
 
 export function SignOutButton({ className }: { className?: string }) {
+  const router = useRouter();
+
   const handleSignOut = async () => {
+
     await signOut();
-    window.location.href = "/login";
+      router.push("/login");
+
   };
 
   return (

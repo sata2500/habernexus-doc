@@ -3,15 +3,15 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { 
-  PenTool, 
-  LayoutDashboard, 
-  Sparkles, 
-  FileText, 
-  PlusCircle, 
-  BarChart3, 
-  MessageSquare, 
-  Home, 
+import {
+  PenTool,
+  LayoutDashboard,
+  Sparkles,
+  FileText,
+  PlusCircle,
+  BarChart3,
+  MessageSquare,
+  Home,
   UserCircle,
   Menu,
   X
@@ -122,7 +122,7 @@ export function AuthorSidebar({ session }: SessionProps) {
       {/* ── Mobil Üst Bar (Mobile Top Header) ────────────────────────── */}
       <div className="w-full md:hidden flex items-center justify-between pb-4 border-b border-border/40 mb-4">
         <div className="flex items-center gap-2">
-          <button 
+          <button
             onClick={() => setIsOpen(true)}
             className="h-9 w-9 rounded-lg border border-border flex items-center justify-center hover:bg-muted transition-colors outline-none cursor-pointer"
             aria-label="Menüyü Aç"
@@ -139,20 +139,20 @@ export function AuthorSidebar({ session }: SessionProps) {
             </div>
           </div>
         </div>
-        
+
         {/* Hızlı Çıkış */}
         <SignOutButton className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-primary-500 hover:text-primary-600 hover:bg-primary-500/5 transition-colors cursor-pointer" />
       </div>
 
       {/* ── Mobil Çekmece Menüsü (Mobile Drawer Menu) ────────────────────────── */}
-      <div 
+      <div
         className={cn(
           "fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity duration-300 md:hidden",
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         onClick={() => setIsOpen(false)}
       />
-      <div 
+      <div
         className={cn(
           "fixed inset-y-0 left-0 w-72 max-w-xs bg-card border-r border-border p-5 z-50 flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-in-out md:hidden",
           isOpen ? "translate-x-0" : "-translate-x-full"
@@ -170,7 +170,7 @@ export function AuthorSidebar({ session }: SessionProps) {
                 <span className="text-[10px] text-muted-foreground opacity-85 capitalize">{userRoleName}</span>
               </div>
             </div>
-            <button 
+            <button
               onClick={() => setIsOpen(false)}
               className="p-1.5 hover:bg-muted rounded-lg border border-transparent hover:border-border/40 transition-all cursor-pointer outline-none"
               aria-label="Menüyü Kapat"

@@ -1,22 +1,27 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { checkRateLimit } from "@/lib/server/rate-limit";
+import { NewsletterEmailSchema } from "@/lib/validation/schemas";
 
 export async function subscribeToNewsletter(email: string) {
+  const parsedEmail = NewsletterEmailSchema.safeParse(email);
+  if (!parsedEmail.success) {
+    return { success: false, error: "Geçerli bir e-posta adresi giriniz." };
+  }
+
+  const emailLower = parsedEmail.data;
+  const rate = checkRateLimit(`newsletter:${emailLower}`, 3, 60 * 60 * 1000);
+  if (!rate.allowed) {
+    return { success: false, error: "Çok fazla deneme yapıldı. Lütfen daha sonra tekrar deneyin." };
+  }
+
   try {
-    if (!email || !email.includes("@")) {
-      return { success: false, error: "Geçerli bir e-posta adresi giriniz." };
-    }
-
-    const emailLower = email.toLowerCase();
-
-    // 1. Önce kayıtlı bir kullanıcı mı diye bak
     const existingUser = await prisma.user.findUnique({
       where: { email: emailLower },
     });
 
     if (existingUser) {
-      // Çifte e-posta gitmesini engelle (Deduplication): Misafir aboneyi pasife al
       await prisma.subscriber.updateMany({
         where: { email: emailLower },
         data: { isActive: false },
@@ -25,8 +30,7 @@ export async function subscribeToNewsletter(email: string) {
       if (existingUser.newsletterSubscribed) {
         return { success: false, error: "Zaten bültene kayıtlısınız. Ayarlarınızı profilinizden yönetebilirsiniz." };
       }
-      
-      // Kullanıcı kayıtlı ama bülten kapalıysa aktif et
+
       await prisma.user.update({
         where: { id: existingUser.id },
         data: { newsletterSubscribed: true },
@@ -34,7 +38,6 @@ export async function subscribeToNewsletter(email: string) {
       return { success: true, message: "Bülten aboneliğiniz profiliniz üzerinden aktifleştirildi!" };
     }
 
-    // 2. Misafir aboneleri kontrol et
     const existingSubscriber = await prisma.subscriber.findUnique({
       where: { email: emailLower },
     });

@@ -68,19 +68,20 @@ model Verification {
 }
 
 model Article {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  content     String
-  excerpt     String?
-  coverImage  String?
-  status      String    @default("DRAFT")
-  viewCount   Int       @default(0)
-  authorId    String
-  categoryId  String?
-  aiPersonaId String?
-  publishedAt DateTime?
-  lang        String    @default("tr")
+  id              String    @id @default(cuid())
+  title           String
+  slug            String    @unique
+  content         String
+  excerpt         String?
+  coverImage      String?
+  status          String    @default("DRAFT")
+  viewCount       Int       @default(0)
+  authorId        String
+  categoryId      String?
+  aiPersonaId     String?
+  sourceRssItemId String?   @unique
+  publishedAt     DateTime?
+  lang            String    @default("tr")
 
   // Analiz Sonuclari
   plagiarismRate   Int?
@@ -89,14 +90,15 @@ model Article {
   qualityScore     Int?
   analysisReport   Json?
 
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
-  author    User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  category  Category?      @relation(fields: [categoryId], references: [id])
-  aiPersona AiPersona?     @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
-  bookmarks Bookmark[]
-  comments  Comment[]
-  tags      TagOnArticle[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  author        User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category      Category?      @relation(fields: [categoryId], references: [id])
+  aiPersona     AiPersona?     @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
+  sourceRssItem RssFeedItem?   @relation(fields: [sourceRssItemId], references: [id], onDelete: SetNull)
+  bookmarks     Bookmark[]
+  comments      Comment[]
+  tags          TagOnArticle[]
 
   @@index([authorId])
   @@index([categoryId])
@@ -281,8 +283,11 @@ model RssFeedItem {
   aiAnalysis       Json? // Gemini'nin tam JSON çıktısı
   dismissed        Boolean           @default(false) // "İlginç değil" işareti
   usedForArticle   Boolean           @default(false) // Bu öneriden haber yazıldıysa
+  processingAt     DateTime?
+  processingToken  String?           @unique
   source           RssFeedSource     @relation(fields: [sourceId], references: [id], onDelete: Cascade)
   googleTrendItems GoogleTrendItem[]
+  article          Article?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 

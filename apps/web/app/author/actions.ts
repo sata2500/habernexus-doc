@@ -51,7 +51,7 @@ export async function createArticle(data: {
 
     revalidatePath("/author/articles");
     revalidatePath("/");
-    
+
     return { success: true };
   } catch (err) {
     const message = err instanceof Error ? err.message : "Veritabanına kaydedilirken hata oluştu.";

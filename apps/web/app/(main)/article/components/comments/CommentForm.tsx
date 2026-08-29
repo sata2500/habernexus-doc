@@ -6,14 +6,14 @@ import { addComment } from "../../actions";
 
 interface Props {
   articleId: string;
-  userId: string;
+
   parentId?: string;
   onSuccess: () => void;
   onCancel?: () => void;
   isReply?: boolean;
 }
 
-export function CommentForm({ articleId, userId, parentId, onSuccess, onCancel, isReply }: Props) {
+export function CommentForm({ articleId, parentId, onSuccess, onCancel, isReply }: Props) {
   const [content, setContent] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ export function CommentForm({ articleId, userId, parentId, onSuccess, onCancel, 
     setError(null);
     const result = await addComment({
       articleId,
-      userId,
+
       content,
       parentId,
     });

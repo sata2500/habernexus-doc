@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { 
-  FileText, 
-  Settings, 
-  Shield, 
-  Scale, 
-  Info, 
-  Mail, 
-  Briefcase, 
-  Megaphone, 
+import {
+  FileText,
+  Settings,
+  Shield,
+  Scale,
+  Info,
+  Mail,
+  Briefcase,
+  Megaphone,
   X,
   Save,
   Loader2,
@@ -43,9 +43,9 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
   const [success, setSuccess] = useState(false);
 
   const handleEdit = (page: StaticPageWithData) => {
-    setEditingPage({ 
-      ...page, 
-      extraData: page.extraData || {} 
+    setEditingPage({
+      ...page,
+      extraData: page.extraData || {}
     });
     setSuccess(false);
   };
@@ -116,11 +116,11 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                 </p>
               </div>
             </div>
-            
+
             <div className="mt-6 flex justify-end">
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => handleEdit(page)}
                 className="rounded-lg hover:bg-primary-500/10 hover:text-primary-500 cursor-pointer font-bold text-xs"
               >
@@ -151,7 +151,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                   <p className="text-[10px] text-muted-foreground font-mono">slug: /{editingPage.slug}</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => setEditingPage(null)}
                 className="p-2 hover:bg-muted rounded-full transition-colors cursor-pointer"
                 disabled={loading}
@@ -166,7 +166,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Sayfa Başlığı</label>
-                  <input 
+                  <input
                     type="text"
                     value={editingPage.title}
                     onChange={(e) => setEditingPage({...editingPage, title: e.target.value})}
@@ -175,7 +175,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                 </div>
                 <div className="space-y-2">
                   <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">SEO Açıklaması (Keywords/Description)</label>
-                  <input 
+                  <input
                     type="text"
                     value={editingPage.description || ""}
                     onChange={(e) => setEditingPage({...editingPage, description: e.target.value})}
@@ -201,9 +201,9 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                               <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
                                 <Phone className="h-3 w-3" /> Telefon Numarası
                               </label>
-                              <input 
-                                type="text" 
-                                value={editingPage.extraData.phone || ""} 
+                              <input
+                                type="text"
+                                value={editingPage.extraData.phone || ""}
                                 onChange={(e) => updateExtraData("phone", e.target.value)}
                                 className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none"
                                 placeholder="+90 (212) 000 00 00"
@@ -213,9 +213,9 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                               <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
                                 <Mail className="h-3 w-3" /> E-Posta Adresi
                               </label>
-                              <input 
-                                type="text" 
-                                value={editingPage.extraData.email || ""} 
+                              <input
+                                type="text"
+                                value={editingPage.extraData.email || ""}
                                 onChange={(e) => updateExtraData("email", e.target.value)}
                                 className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none"
                                 placeholder="info@habernexus.com"
@@ -225,9 +225,9 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                               <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
                                 <MapPin className="h-3 w-3" /> Ofis Adresi
                               </label>
-                              <input 
-                                type="text" 
-                                value={editingPage.extraData.address || ""} 
+                              <input
+                                type="text"
+                                value={editingPage.extraData.address || ""}
                                 onChange={(e) => updateExtraData("address", e.target.value)}
                                 className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none"
                                 placeholder="Levent Mah. Medya Sk. No: 1, Beşiktaş / İstanbul"
@@ -240,9 +240,9 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                             <label className="text-[10px] font-bold uppercase text-muted-foreground flex items-center gap-1">
                               <Mail className="h-3 w-3" /> Reklam İletişim E-Postası
                             </label>
-                            <input 
-                              type="text" 
-                              value={editingPage.extraData.email || ""} 
+                            <input
+                              type="text"
+                              value={editingPage.extraData.email || ""}
                               onChange={(e) => updateExtraData("email", e.target.value)}
                               className="w-full h-10 px-3 text-sm rounded-lg border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none"
                               placeholder="ads@habernexus.com"
@@ -262,7 +262,7 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                   <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Ana Metin İçeriği (HTML)</label>
                   <span className="text-[10px] text-muted-foreground italic shrink-0">* prose stili otomatik uygulanır</span>
                 </div>
-                <textarea 
+                <textarea
                   value={editingPage.content}
                   onChange={(e) => setEditingPage({...editingPage, content: e.target.value})}
                   className="w-full h-[350px] p-4 rounded-xl border border-border bg-background/50 focus:ring-2 focus:ring-primary-500 outline-none transition-all font-mono text-sm leading-relaxed custom-scrollbar"
@@ -273,9 +273,9 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
 
             {/* Footer */}
             <div className="p-6 border-t border-border/50 flex items-center justify-between bg-muted/20">
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setEditingPage(null)}
                 className="text-muted-foreground hover:text-foreground"
               >
@@ -287,8 +287,8 @@ export function PagesClient({ initialPages }: { initialPages: StaticPageWithData
                     <CheckCircle2 className="h-4 w-4" /> Kaydedildi
                   </span>
                 )}
-                <Button 
-                  onClick={handleSave} 
+                <Button
+                  onClick={handleSave}
                   disabled={loading}
                   className="min-w-[160px] gap-2 rounded-xl h-11 shadow-lg shadow-primary-500/20"
                 >

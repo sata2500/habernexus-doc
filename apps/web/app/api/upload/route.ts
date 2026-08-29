@@ -1,66 +1,59 @@
-import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { handleUpload } from "@vercel/blob/client";
+import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { requireRole } from "@/lib/server/authz";
+
+const ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"] as const;
+const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+const UploadTokenPayloadSchema = z.object({ userId: z.string().min(1).max(100) });
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const body = (await request.json()) as HandleUploadBody;
-
   try {
+    const body = await request.json();
+
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async (
-        _pathname,
-        /* clientPayload */
-      ) => {
-        // Oturum kontrolü
-        const reqHeaders = await headers();
-        const session = await auth.api.getSession({ headers: reqHeaders });
-
-        if (!session) {
-          throw new Error("Görsel yüklemek için giriş yapmalısınız.");
-        }
-
-        // Sadece AUTHOR veya ADMIN yükleme yapabilir (isteğe bağlı kısıtlama)
-        if (session.user.role !== "ADMIN" && session.user.role !== "AUTHOR") {
-          throw new Error("Görsel yükleme yetkiniz yok.");
-        }
+      onBeforeGenerateToken: async () => {
+        const session = await requireRole("AUTHOR", "ADMIN");
 
         return {
-          allowedContentTypes: ["image/jpeg", "image/png", "image/gif", "image/webp"],
-          tokenPayload: JSON.stringify({
-            userId: session.user.id,
-          }),
+          allowedContentTypes: [...ALLOWED_CONTENT_TYPES],
+          maximumSizeInBytes: MAX_UPLOAD_BYTES,
+          addRandomSuffix: true,
+          tokenPayload: JSON.stringify({ userId: session.user.id }),
         };
       },
       onUploadCompleted: async ({ blob, tokenPayload }) => {
-        // Yükleme tamamlandığında DB kaydı oluşturulur
-        try {
-          const { userId } = JSON.parse(tokenPayload as string);
+        const parsedPayload = UploadTokenPayloadSchema.safeParse(
+          typeof tokenPayload === "string" ? JSON.parse(tokenPayload) : null,
+        );
+        if (!parsedPayload.success) throw new Error("Geçersiz upload token payload.");
 
-          await prisma.media.create({
-            data: {
-              url: blob.url,
-              filename: blob.pathname,
-              size: 0, // Dosya boyutu client-side'dan alınabilir veya blob metadata'dan
-              mimeType: blob.contentType || "image/unknown",
-              status: "RAW",
-              userId: userId,
-            },
-          });
-        } catch {
-          throw new Error("Medya kaydı veritabanına işlenemedi.");
+        if (!ALLOWED_CONTENT_TYPES.includes(blob.contentType as (typeof ALLOWED_CONTENT_TYPES)[number])) {
+          throw new Error("Desteklenmeyen görsel türü.");
         }
+
+        await prisma.media.create({
+          data: {
+            url: blob.url,
+            filename: blob.pathname,
+            size: 0,
+            mimeType: blob.contentType,
+            status: "RAW",
+            userId: parsedPayload.data.userId,
+          },
+        });
       },
     });
 
     return NextResponse.json(jsonResponse);
   } catch (error) {
+    console.error("Upload error:", error);
     return NextResponse.json(
-      { error: (error as Error).message },
-      { status: 400 } // The client will give an error if the status is not 200
+      { error: "Görsel yüklenemedi. Dosya türünü ve boyutunu kontrol edin." },
+      { status: 400, headers: { "Cache-Control": "no-store" } },
     );
   }
 }

@@ -44,9 +44,9 @@ export default async function LatestArticlesPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {latestArticles.map((article) => (
           <Link key={article.id} href={`/article/${article.slug}`} className="group block">
-            <Card 
-              variant="interactive" 
-              noPadding 
+            <Card
+              variant="interactive"
+              noPadding
               className="overflow-hidden h-full flex flex-col shine rounded-2xl card-360-border bg-card/65 hover:bg-card transition-all duration-300 ease-out"
               style={getCardGlowStyles(article.category?.color)}
             >
@@ -96,7 +96,7 @@ export default async function LatestArticlesPage() {
                     <Clock className="h-4 w-4" />
                     {article.publishedAt ? formatRelative(article.publishedAt) : "Yeni"}
                   </div>
-                  
+
                   <h3 className="text-xl font-bold font-display leading-snug mb-3 group-hover:text-[var(--art-color)] transition-colors duration-300 line-clamp-2">
                     {article.title}
                   </h3>
@@ -127,7 +127,7 @@ export default async function LatestArticlesPage() {
           </Link>
         ))}
       </div>
-      
+
       {latestArticles.length === 0 && (
         <div className="text-center py-20 text-muted-foreground bg-muted/30 rounded-2xl border border-dashed border-border">
           Henüz hiç yayınlanmış makale bulunmuyor.

@@ -17,7 +17,7 @@ interface Props {
 export function CommentSection({ articleId }: Props) {
   const { data: session, isPending: isSessionLoading } = authClient.useSession();
   const userId = session?.user?.id;
-  
+
   const [comments, setComments] = useState<CommentWithReplies[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -52,10 +52,10 @@ export function CommentSection({ articleId }: Props) {
          <div className="h-24 bg-muted animate-pulse rounded-2xl mb-12" />
       ) : userId ? (
         <div className="mb-12">
-          <CommentForm 
-            articleId={articleId} 
-            userId={userId} 
-            onSuccess={fetchComments} 
+          <CommentForm
+            articleId={articleId}
+
+            onSuccess={fetchComments}
           />
         </div>
       ) : (
@@ -86,10 +86,10 @@ export function CommentSection({ articleId }: Props) {
           </div>
         ) : comments.length > 0 ? (
           comments.map((comment) => (
-            <CommentItem 
-              key={comment.id} 
-              comment={comment} 
-              userId={userId} 
+            <CommentItem
+              key={comment.id}
+              comment={comment}
+              userId={userId}
               articleId={articleId}
               onUpdate={fetchComments}
             />

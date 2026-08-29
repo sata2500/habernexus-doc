@@ -40,14 +40,14 @@ export default async function AdminAiWriterPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Link 
+          <Link
             href="/admin/ai-writer/models"
             className="flex items-center gap-2 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-primary-500/20 cursor-pointer"
           >
             <Cpu className="h-4 w-4" />
             Model Merkezi
           </Link>
-          <Link 
+          <Link
             href="/admin/ai-writer/personas"
             className="flex items-center gap-2 px-5 py-2.5 bg-muted hover:bg-muted/80 rounded-2xl font-bold text-sm transition-all active:scale-95 border border-border cursor-pointer"
           >
@@ -89,7 +89,7 @@ export default async function AdminAiWriterPage() {
       </div>
 
       <div className="flex flex-col gap-8">
-        <AiWriterSettingsCard 
+        <AiWriterSettingsCard
           initialPrompt={settings.aiWriterPrompt}
           initialImagePrompt={settings.aiWriterImagePrompt}
           initialModel={settings.aiWriterModel}
@@ -99,7 +99,7 @@ export default async function AdminAiWriterPage() {
           initialAnalyzerModel={settings.aiAnalyzerModel}
           availableModels={allModels as unknown as AiModel[]}
         />
-        <AiWriterAutomationCard 
+        <AiWriterAutomationCard
           enabled={settings.aiWriterAutoEnabled}
           count={settings.aiWriterAutoCount}
           cron={settings.aiWriterAutoCron}
@@ -109,9 +109,9 @@ export default async function AdminAiWriterPage() {
       <div className="bg-muted/30 border border-border rounded-3xl p-8 text-center space-y-4">
         <h3 className="font-bold text-xl">Sistem Nasıl Çalışır?</h3>
         <p className="text-sm text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-          AI Yazar, RSS kaynaklarından gelen en iyi haber önerilerini alır. Önce <strong>Google Arama Grounding</strong> kullanarak 
-          konu hakkında en güncel bilgileri internetten toplar. Ardından seçtiğiniz yazım modeline göre profesyonel bir makale oluşturur. 
-          Eş zamanlı olarak <strong>Flash Image (Nano Banana)</strong> motoru, haberin orijinal görselini ve başlığını referans alarak 
+          AI Yazar, RSS kaynaklarından gelen en iyi haber önerilerini alır. Önce <strong>Google Arama Grounding</strong> kullanarak
+          konu hakkında en güncel bilgileri internetten toplar. Ardından seçtiğiniz yazım modeline göre profesyonel bir makale oluşturur.
+          Eş zamanlı olarak <strong>Flash Image (Nano Banana)</strong> motoru, haberin orijinal görselini ve başlığını referans alarak
           gerçekçi bir kapak fotoğrafı tasarlar. Tüm bu süreç sonucunda tam teşekküllü bir haber saniyeler içinde yayına hazır hale gelir.
         </p>
       </div>

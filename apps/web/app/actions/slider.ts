@@ -117,7 +117,7 @@ export async function deleteSlide(id: string) {
 export async function reorderSlides(slideIds: string[]) {
   try {
     await checkAdmin();
-    
+
     await prisma.$transaction(
       slideIds.map((id, index) =>
         prisma.slide.update({

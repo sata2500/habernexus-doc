@@ -18,7 +18,7 @@ export default async function AdminCategoriesPage() {
           <p className="text-muted-foreground text-sm">Sitedeki okuyucuların içeriklere ulaşmasını sağlayan kategorileri yönetin.</p>
         </div>
       </div>
-      
+
       <CategoryManager categories={categories} />
     </div>
   );

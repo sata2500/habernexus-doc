@@ -72,8 +72,8 @@ export default async function AdminSupportPage() {
           </div>
         ) : (
           tickets.map((ticket) => (
-            <Link 
-              key={ticket.id} 
+            <Link
+              key={ticket.id}
               href={`/admin/support/${ticket.id}`}
               className="flex flex-col sm:flex-row sm:items-center justify-between p-4 sm:p-5 gap-3 hover:bg-primary-500/5 transition-all group cursor-pointer w-full min-w-0"
             >

@@ -32,7 +32,7 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
     if (!confirm(`${count} adet haberi şimdi yazdırmak istediğinize emin misiniz?`)) return;
     setRunning(true);
     const res = await triggerBatchAiWriter(count);
-    
+
     if (res.success) {
       alert(`${res.enqueued} haber başarıyla kuyruğa eklendi. Arka planda yazılıp yayına alınacaktır.`);
     } else {
@@ -128,8 +128,8 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
             <Zap className="h-4 w-4" />
             Sistem Nasıl Çalışır?
           </p>
-          Sistem, belirlenen vakitte RSS önerileri arasından en yüksek puanlı (analiz edilmiş veya onaylanmış) haberleri seçer. 
-          Ardından seçtiğin AI modelleri ile araştırmasını yapar, görselini üretir ve doğrudan yayına alır. 
+          Sistem, belirlenen vakitte RSS önerileri arasından en yüksek puanlı (analiz edilmiş veya onaylanmış) haberleri seçer.
+          Ardından seçtiğin AI modelleri ile araştırmasını yapar, görselini üretir ve doğrudan yayına alır.
           Bu işlem için <strong>QStash</strong> zamanlayıcısı kullanılır.
         </div>
       </div>

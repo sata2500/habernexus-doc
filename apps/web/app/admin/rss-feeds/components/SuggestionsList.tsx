@@ -205,7 +205,7 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
                     <CheckCheck className="h-3.5 w-3.5" />
                     Haber Yazılsın
                   </Button>
-                  
+
                   <button
                     onClick={async () => {
                       setLoadingId(item.id);

@@ -30,8 +30,8 @@ export default async function AdminDashboardPage() {
       {/* İstatistik Kartları */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {statCards.map((card) => (
-          <div 
-            key={card.label} 
+          <div
+            key={card.label}
             className="glass-strong hover-lift rounded-3xl p-5 border border-border shadow-soft flex items-start gap-4 hover:shadow-glow hover:border-primary-500/30 transition-all duration-300"
           >
             <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 shadow-xs ${card.color}`}>
@@ -62,23 +62,23 @@ export default async function AdminDashboardPage() {
             const count = cat._count.articles;
             const pct = stats.publishedArticles > 0 ? Math.round((count / stats.publishedArticles) * 100) : 0;
             return (
-              <div 
-                key={cat.id} 
+              <div
+                key={cat.id}
                 className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 px-6 py-4.5 hover:bg-muted/30 transition-colors duration-200"
               >
                 <div className="flex items-center gap-3 min-w-[150px] shrink-0">
-                  <div 
-                    className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10 dark:border-white/10 shadow-xs" 
-                    style={{ background: cat.color || "#888" }} 
+                  <div
+                    className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10 dark:border-white/10 shadow-xs"
+                    style={{ background: cat.color || "#888" }}
                   />
                   <span className="text-sm font-semibold text-foreground">{cat.name}</span>
                 </div>
-                
+
                 <div className="flex items-center gap-4 w-full sm:w-auto sm:flex-1 sm:max-w-md">
                   <div className="flex-1 h-2 bg-muted/60 dark:bg-muted/30 rounded-full overflow-hidden">
-                    <div 
-                      className="h-full bg-primary-500 dark:bg-primary-400 rounded-full transition-all duration-500" 
-                      style={{ width: `${pct}%` }} 
+                    <div
+                      className="h-full bg-primary-500 dark:bg-primary-400 rounded-full transition-all duration-500"
+                      style={{ width: `${pct}%` }}
                     />
                   </div>
                   <div className="flex items-center justify-between sm:justify-end gap-3 w-20 shrink-0">
@@ -94,8 +94,8 @@ export default async function AdminDashboardPage() {
 
       {/* Hızlı Erişim */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link 
-          href="/admin/users" 
+        <Link
+          href="/admin/users"
           className="flex items-center gap-4 p-5 glass-strong hover-lift rounded-3xl border border-border/50 hover:border-primary-500/40 hover:shadow-glow transition-all duration-300 group"
         >
           <div className="h-12 w-12 rounded-2xl bg-primary-/10 dark:bg-primary-/15 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
@@ -106,9 +106,9 @@ export default async function AdminDashboardPage() {
             <p className="text-xs text-muted-foreground mt-0.5 font-medium">Rolleri düzenle, listele ve yönet</p>
           </div>
         </Link>
-        
-        <Link 
-          href="/admin/articles" 
+
+        <Link
+          href="/admin/articles"
           className="flex items-center gap-4 p-5 glass-strong hover-lift rounded-3xl border border-border/50 hover:border-primary-500/40 hover:shadow-glow transition-all duration-300 group"
         >
           <div className="h-12 w-12 rounded-2xl bg-primary-500/10 dark:bg-primary-500/15 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">

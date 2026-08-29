@@ -2,12 +2,11 @@
 
 import { getAdminMedia } from "@/app/actions/admin-media";
 import { MediaManagerClient, type MediaItem } from "./MediaManagerClient";
-import { Card } from "@/components/ui/Card";
+
 import { ImageIcon } from "lucide-react";
 
 export default async function AdminMediaPage() {
   const media = await getAdminMedia();
-  type AdminMedia = Awaited<ReturnType<typeof getAdminMedia>>;
 
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">

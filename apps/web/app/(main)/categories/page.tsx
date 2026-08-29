@@ -63,7 +63,7 @@ export default async function CategoriesPage() {
           );
         })}
       </div>
-      
+
       {categories.length === 0 && (
         <div className="text-center py-20 text-muted-foreground">
           Henüz kategori bulunmuyor.

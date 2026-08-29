@@ -3,6 +3,12 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { checkCommentToxicity, generateCommentsSummary } from "@/lib/comment-ai";
+import { requireSession } from "@/lib/server/authz";
+import { CommentIdSchema, CommentInputSchema } from "@/lib/validation/schemas";
+
+function isJsonObject(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 export async function getComments(articleId: string) {
   try {
@@ -13,7 +19,7 @@ export async function getComments(articleId: string) {
         replies: {
           include: {
             user: { select: { id: true, name: true, image: true } },
-            replies: true, // Only 2 levels deep for nested replies in simple fetch
+            replies: true,
           },
           orderBy: { createdAt: "asc" },
         },
@@ -29,58 +35,82 @@ export async function getComments(articleId: string) {
 
 export async function addComment(data: {
   articleId: string;
-  userId: string;
   content: string;
   parentId?: string;
 }) {
   try {
-    // 1. AI Yorum Moderasyonu (Toksisite Kontrolü)
-    const moderation = await checkCommentToxicity(data.content);
+    const session = await requireSession();
+    const parsed = CommentInputSchema.safeParse(data);
+
+    if (!parsed.success) {
+      return { success: false, error: parsed.error.issues[0]?.message || "Geçersiz yorum." };
+    }
+
+    const input = parsed.data;
+    const article = await prisma.article.findFirst({
+      where: { id: input.articleId, status: "PUBLISHED" },
+      select: { id: true },
+    });
+
+    if (!article) {
+      return { success: false, error: "Makale bulunamadı." };
+    }
+
+    if (input.parentId) {
+      const parent = await prisma.comment.findFirst({
+        where: { id: input.parentId, articleId: input.articleId },
+        select: { id: true },
+      });
+
+      if (!parent) {
+        return { success: false, error: "Yanıtlanacak yorum bulunamadı." };
+      }
+    }
+
+    const moderation = await checkCommentToxicity(input.content);
     if (moderation.isToxic) {
-      return { 
-        success: false, 
-        error: `Yorumunuz yapay zeka moderasyonu tarafından elendi: ${moderation.reason}` 
+      return {
+        success: false,
+        error: `Yorumunuz yapay zeka moderasyonu tarafından elendi: ${moderation.reason}`,
       };
     }
 
-    // 2. Yorum Oluşturma
     const comment = await prisma.comment.create({
       data: {
-        content: data.content,
-        articleId: data.articleId,
-        userId: data.userId,
-        parentId: data.parentId || null,
+        content: input.content,
+        articleId: input.articleId,
+        userId: session.user.id,
+        parentId: input.parentId || null,
       },
       include: {
         user: { select: { name: true, image: true } },
       },
     });
 
-    // 3. AI Yorum Özetleyici Tetikleme (Eğer >= 3 yorum varsa)
     const totalCommentsCount = await prisma.comment.count({
-      where: { articleId: data.articleId }
+      where: { articleId: input.articleId },
     });
 
     if (totalCommentsCount >= 3) {
-      const summary = await generateCommentsSummary(data.articleId);
+      const summary = await generateCommentsSummary(input.articleId);
       if (summary) {
-        // Makaleyi çekip mevcut analysisReport'u güncelle
-        const article = await prisma.article.findUnique({
-          where: { id: data.articleId },
-          select: { analysisReport: true }
+        const articleWithReport = await prisma.article.findUnique({
+          where: { id: input.articleId },
+          select: { analysisReport: true },
         });
-        
-        const oldReport = (article?.analysisReport as Record<string, any>) || {};
-        
+
+        const oldReport = isJsonObject(articleWithReport?.analysisReport)
+          ? articleWithReport.analysisReport
+          : {};
+        const updatedReport = {
+          ...oldReport,
+          commentsSummary: summary,
+          commentsSummaryUpdatedAt: new Date().toISOString(),
+        };
+
         await prisma.article.update({
-          where: { id: data.articleId },
-          data: {
-            analysisReport: {
-              ...oldReport,
-              commentsSummary: summary,
-              commentsSummaryUpdatedAt: new Date().toISOString()
-            }
-          }
+          where: { id: input.articleId },
+          data: { analysisReport: JSON.parse(JSON.stringify(updatedReport)) },
         });
       }
     }
@@ -89,27 +119,39 @@ export async function addComment(data: {
     return { success: true, comment };
   } catch (error) {
     console.error("Add comment error:", error);
-    return { success: false, error: error instanceof Error ? error.message : "Yorum gönderilemedi." };
+    return {
+      success: false,
+      error: error instanceof Error && error.message !== "UNAUTHORIZED"
+        ? error.message
+        : "Yorum gönderilemedi.",
+    };
   }
 }
 
-export async function deleteComment(commentId: string, userId: string) {
+export async function deleteComment(commentId: string) {
   try {
+    const session = await requireSession();
+    const parsedId = CommentIdSchema.safeParse(commentId);
+
+    if (!parsedId.success) {
+      return { success: false, error: "Geçersiz yorum." };
+    }
+
     const comment = await prisma.comment.findUnique({
-      where: { id: commentId },
+      where: { id: parsedId.data },
+      select: { id: true, userId: true },
     });
 
-    if (!comment || comment.userId !== userId) {
+    if (!comment || comment.userId !== session.user.id) {
       return { success: false, error: "Bu yorumu silme yetkiniz yok." };
     }
 
-    await prisma.comment.delete({
-      where: { id: commentId },
-    });
+    await prisma.comment.delete({ where: { id: comment.id } });
 
     revalidatePath(`/article/[slug]`, "page");
     return { success: true };
-  } catch {
+  } catch (error) {
+    console.error("Delete comment error:", error);
     return { success: false, error: "Silme işlemi sırasında hata oluştu." };
   }
 }

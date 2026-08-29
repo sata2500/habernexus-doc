@@ -30,9 +30,9 @@ export default async function PersonasPage() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <PersonaManager 
+      <PersonaManager
         initialPersonas={personas as unknown as Persona[]}
-        allCategories={allCategories} 
+        allCategories={allCategories}
       />
     </div>
   );

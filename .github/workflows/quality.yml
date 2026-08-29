@@ -1,0 +1,57 @@
+name: Quality Gates
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web-quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        working-directory: .
+        run: npm ci
+
+      - name: Generate Prisma client
+        working-directory: apps/web
+        run: npm run prisma:generate
+
+      - name: Typecheck
+        working-directory: apps/web
+        run: npm run typecheck
+
+      - name: Lint
+        working-directory: apps/web
+        run: npm run lint
+
+      - name: Unit tests
+        working-directory: apps/web
+        run: npm run test
+
+      - name: Production dependency audit (critical gate)
+        working-directory: .
+        run: npm audit --omit=dev --audit-level=critical
+
+      - name: Full dependency audit (informational)
+        working-directory: .
+        continue-on-error: true
+        run: npm audit --audit-level=high

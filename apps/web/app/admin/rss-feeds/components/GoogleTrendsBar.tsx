@@ -5,8 +5,19 @@ import { TrendingUp, RefreshCw, Wand2, Sparkles, CheckCircle2 } from "lucide-rea
 import { triggerSyncGoogleTrends, generateArticleFromTrend } from "../../google-trends/actions";
 import { cn } from "@/lib/utils";
 
+interface TrendItem {
+  rssItem?: { id: string; title: string } | null;
+}
+
+interface Trend {
+  id: string;
+  keyword: string;
+  searchVolume?: string | null;
+  items?: TrendItem[];
+}
+
 interface GoogleTrendsBarProps {
-  trends: Record<string, unknown>[];
+  trends: Trend[];
 }
 
 export function GoogleTrendsBar({ trends }: GoogleTrendsBarProps) {
@@ -77,8 +88,8 @@ export function GoogleTrendsBar({ trends }: GoogleTrendsBarProps) {
             Henüz trend çekilmemiş. &quot;Trends Güncelle&quot; butonuna tıklayarak ilk aramayı yapabilirsiniz.
           </div>
         ) : (
-          trends.slice(0, 6).map((trend: any) => {
-            const hasMatchedRss = trend.items?.some((i: any) => i.rssItem);
+          trends.slice(0, 6).map((trend) => {
+            const hasMatchedRss = trend.items?.some((item) => Boolean(item.rssItem));
             const isLoading = loadingTrendId === trend.id;
 
             return (

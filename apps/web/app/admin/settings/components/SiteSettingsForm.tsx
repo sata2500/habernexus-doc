@@ -270,7 +270,7 @@ function generateSmartPalette(primaryHex: string): Partial<SiteSettingsInput> {
   const fgDark = hslToHex(h, Math.min(s, 10), 92);
   const cardDark = hslToHex(h, Math.min(s, 12), 11);
   const cardFgDark = fgDark;
-  
+
   const sidebarBgDark = hslToHex(h, Math.min(s, 15), 4);
   const sidebarFgDark = "#FFFFFF";
 
@@ -466,12 +466,12 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
       --color-primary-400: ${form.primaryColorLight}ee !important;
       --ring: ${form.primaryColorLight} !important;
       --gradient-primary: linear-gradient(135deg, ${form.primaryColorLight}, ${form.primaryColorLight}dd) !important;` : ""}
-      
+
       ${form.accentLight ? `--color-accent-500: ${form.accentLight} !important;
       --gradient-accent: linear-gradient(135deg, ${form.accentLight}, ${form.accentLight}dd) !important;` : ""}
-      
+
       ${(form.primaryColorLight && form.accentLight) ? `--text-gradient: linear-gradient(135deg, ${form.primaryColorLight}, ${form.accentLight}) !important;` : ""}
-      
+
       ${form.bgLight ? `--bg: ${form.bgLight} !important;` : ""}
       ${form.fgLight ? `--fg: ${form.fgLight} !important;` : ""}
       ${form.cardLight ? `--card: ${form.cardLight} !important;
@@ -480,19 +480,19 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
       ${form.sidebarBgLight ? `--sidebar-bg: ${form.sidebarBgLight} !important;` : ""}
       ${form.sidebarFgLight ? `--sidebar-fg: ${form.sidebarFgLight} !important;` : ""}
     }
-    
+
     [data-theme="dark"] {
       ${form.primaryColorDark ? `--color-primary-500: ${form.primaryColorDark} !important;
       --color-primary-600: ${form.primaryColorDark}dd !important;
       --color-primary-400: ${form.primaryColorDark}ee !important;
       --ring: ${form.primaryColorDark} !important;
       --gradient-primary: linear-gradient(135deg, ${form.primaryColorDark}, ${form.primaryColorDark}dd) !important;` : ""}
-      
+
       ${form.accentDark ? `--color-accent-500: ${form.accentDark} !important;
       --gradient-accent: linear-gradient(135deg, ${form.accentDark}, ${form.accentDark}dd) !important;` : ""}
-      
+
       ${(form.primaryColorDark && form.accentDark) ? `--text-gradient: linear-gradient(135deg, ${form.primaryColorDark}, ${form.accentDark}) !important;` : ""}
-      
+
       ${form.bgDark ? `--bg: ${form.bgDark} !important;` : ""}
       ${form.fgDark ? `--fg: ${form.fgDark} !important;` : ""}
       ${form.cardDark ? `--card: ${form.cardDark} !important;
@@ -509,12 +509,12 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
         --color-primary-400: ${form.primaryColorDark}ee !important;
         --ring: ${form.primaryColorDark} !important;
         --gradient-primary: linear-gradient(135deg, ${form.primaryColorDark}, ${form.primaryColorDark}dd) !important;` : ""}
-        
+
         ${form.accentDark ? `--color-accent-500: ${form.accentDark} !important;
         --gradient-accent: linear-gradient(135deg, ${form.accentDark}, ${form.accentDark}dd) !important;` : ""}
-        
+
         ${(form.primaryColorDark && form.accentDark) ? `--text-gradient: linear-gradient(135deg, ${form.primaryColorDark}, ${form.accentDark}) !important;` : ""}
-        
+
         ${form.bgDark ? `--bg: ${form.bgDark} !important;` : ""}
         ${form.fgDark ? `--fg: ${form.fgDark} !important;` : ""}
         ${form.cardDark ? `--card: ${form.cardDark} !important;
@@ -728,7 +728,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
           <Palette className="h-4 w-4 text-primary-500" />
           Medya ve Tema Renkleri
         </h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <FieldGroup
             label="Platform Logosu (Resim)"
@@ -814,7 +814,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
             <p className="text-xs text-muted-foreground mb-4">
               Dilediğiniz bir ana renk seçin. Akıllı algoritmamız, bu rengi temel alarak açık ve koyu temalar için okunabilirliği ve kontrastı en yüksek 16 uyumlu rengi otomatik üretecektir.
             </p>
-            
+
             <div className="flex flex-col sm:flex-row items-center gap-4 bg-muted/40 p-4 rounded-2xl border border-border/60">
               <div className="flex items-center gap-3 w-full sm:w-auto">
                 <input
@@ -836,7 +836,7 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
                   placeholder="#6366f1"
                 />
               </div>
-              
+
               <button
                 type="button"
                 onClick={() => applyGeneratedPalette(generatorColor)}

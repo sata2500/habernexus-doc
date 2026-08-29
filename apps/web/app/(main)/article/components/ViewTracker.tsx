@@ -12,7 +12,7 @@ export function ViewTracker({ articleId }: Props) {
 
   useEffect(() => {
     if (tracked.current) return;
-    
+
     // Haberi görüntülemeyi bir kez artır
     const track = async () => {
       try {
@@ -24,7 +24,7 @@ export function ViewTracker({ articleId }: Props) {
     };
 
     // Sayfa tamamen yüklendikten sonra (reaksiyon süresini etkilememesi için)
-    const timeout = setTimeout(track, 2000); 
+    const timeout = setTimeout(track, 2000);
 
     return () => clearTimeout(timeout);
   }, [articleId]);

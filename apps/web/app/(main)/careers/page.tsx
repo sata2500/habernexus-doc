@@ -1,6 +1,7 @@
 import { Briefcase, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { getStaticPageBySlug } from "@/app/actions/static-pages";
+import { sanitizeHtml } from "@/lib/server/sanitize-html";
 
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("careers");
@@ -19,11 +20,11 @@ export default async function CareersPage() {
         <h1 className="text-4xl md:text-5xl font-bold font-(family-name:--font-outfit) mb-8">
           {page?.title || "Kariyer"}
         </h1>
-        
+
         {page?.content ? (
-          <div 
+          <div
             className="text-foreground"
-            dangerouslySetInnerHTML={{ __html: page.content }} 
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
           />
         ) : (
           <p className="text-lg text-muted-foreground">

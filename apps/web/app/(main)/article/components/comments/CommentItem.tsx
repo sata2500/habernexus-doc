@@ -37,9 +37,9 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
 
   const handleDelete = async () => {
     if (!confirm("Bu yorumu silmek istediğinize emin misiniz?")) return;
-    
+
     setIsDeleting(true);
-    const result = await deleteComment(comment.id, userId!);
+    const result = await deleteComment(comment.id);
     if (result.success) {
       onUpdate();
     } else {
@@ -54,10 +54,10 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
   return (
     <div className={`group animate-in fade-in slide-in-from-left-2 duration-300 ${isReply ? "ml-8 sm:ml-12 border-l-2 border-border pl-6 py-2" : ""}`}>
       <div className="flex gap-4">
-        <Avatar 
-          src={userImage} 
-          fallback={userName} 
-          size="sm" 
+        <Avatar
+          src={userImage}
+          fallback={userName}
+          size="sm"
           className="shrink-0 ring-2 ring-background shadow-sm"
         />
         <div className="flex-1 min-w-0 space-y-1.5">
@@ -66,11 +66,11 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
               <span className="text-sm font-bold font-(family-name:--font-outfit) hover:text-primary-600 transition-colors cursor-pointer">{userName}</span>
               <span className="text-[10px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded leading-none">{createdAt}</span>
             </div>
-            
+
             {(canDelete || userId) && (
               <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 {userId && !isReplying && (
-                  <button 
+                  <button
                     onClick={() => setIsReplying(true)}
                     className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-primary-500 transition-colors"
                     title="Yanıtla"
@@ -79,7 +79,7 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
                   </button>
                 )}
                 {canDelete && (
-                  <button 
+                  <button
                     onClick={handleDelete}
                     disabled={isDeleting}
                     className="p-1.5 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 text-muted-foreground hover:text-primary-500 transition-colors disabled:opacity-50"
@@ -98,7 +98,7 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
 
           {/* Aksiyon Butonları (Mobil ve Normal Görünüm İçin Alternatif) */}
           {!isReplying && userId && !isReply && (
-             <button 
+             <button
                onClick={() => setIsReplying(true)}
                className="text-[11px] font-bold text-muted-foreground hover:text-primary-600 flex items-center gap-1 mt-1 transition-colors"
              >
@@ -110,9 +110,9 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
 
       {isReplying && (
         <div className="mt-4">
-          <CommentForm 
-            articleId={articleId} 
-            userId={userId!} 
+          <CommentForm
+            articleId={articleId}
+
             parentId={comment.id}
             isReply
             onSuccess={() => {
@@ -128,11 +128,11 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply }: P
       {comment.replies && comment.replies.length > 0 && (
         <div className="mt-4 space-y-4">
           {comment.replies.map((reply) => (
-            <CommentItem 
-              key={reply.id} 
-              comment={reply} 
-              userId={userId} 
-              articleId={articleId} 
+            <CommentItem
+              key={reply.id}
+              comment={reply}
+              userId={userId}
+              articleId={articleId}
               onUpdate={onUpdate}
               isReply
             />

@@ -273,7 +273,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
                     <Sparkles className="h-4 w-4 text-primary-500" />
                     <h3 className="font-semibold text-sm">Yapay Zeka Analizi</h3>
                   </div>
-                  
+
                   {analysis.suggestedTitles && analysis.suggestedTitles.length > 0 && (
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Alternatif Başlıklar:</p>
@@ -284,7 +284,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
                       </ul>
                     </div>
                   )}
-                  
+
                   {analysis.reasoning && (
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Neden Önerildi?</p>
@@ -306,7 +306,7 @@ export function SuggestionCard({ item, onRemove }: { item: SuggestionItem; onRem
                 <ExternalLink className="h-4 w-4" />
                 Orijinal Kaynağa Git
               </a>
-              
+
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowPreview(false)}

@@ -2,13 +2,13 @@
 
 import { useState, useRef, useEffect } from "react";
 import type { LucideIcon } from "lucide-react";
-import { 
-  Sparkles, 
-  Save, 
-  Loader2, 
-  Wand2, 
-  Image as ImageIcon, 
-  ChevronDown, 
+import {
+  Sparkles,
+  Save,
+  Loader2,
+  Wand2,
+  Image as ImageIcon,
+  ChevronDown,
   Check,
   Cpu,
   Zap,
@@ -45,15 +45,15 @@ interface Props {
 /**
  * Premium Stilize Seçim Bileşeni
  */
-function StylishSelect({ 
-  options, 
-  value, 
-  onChange, 
-  label, 
-  icon: Icon 
-}: { 
-  options: AiModel[], 
-  value: string, 
+function StylishSelect({
+  options,
+  value,
+  onChange,
+  label,
+  icon: Icon
+}: {
+  options: AiModel[],
+  value: string,
   onChange: (val: string) => void,
   label: string,
   icon: LucideIcon
@@ -78,7 +78,7 @@ function StylishSelect({
         <Icon className="h-3.5 w-3.5" />
         {label}
       </label>
-      
+
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
@@ -183,12 +183,12 @@ export function AiWriterSettingsCard({
     setLoading(true);
     setSuccess(false);
     type UpdateResult = { success: boolean };
-    const res = await (updateAiWriterSettings as (...args: unknown[]) => Promise<UpdateResult>)({ 
-      prompt, 
-      imagePrompt, 
-      model, 
-      imageModel, 
-      useRssImage, 
+    const res = await (updateAiWriterSettings as (...args: unknown[]) => Promise<UpdateResult>)({
+      prompt,
+      imagePrompt,
+      model,
+      imageModel,
+      useRssImage,
       searchEnabled,
       analyzerModel
     });
@@ -225,21 +225,21 @@ export function AiWriterSettingsCard({
       <div className="p-8 space-y-10">
         {/* ── Modeller Seksiyonu ── */}
         <div className="grid grid-cols-1 gap-8 max-w-2xl">
-          <StylishSelect 
+          <StylishSelect
             label="Makale Yazım Modeli"
             icon={Zap}
             value={model}
             onChange={setModel}
             options={textModels}
           />
-          <StylishSelect 
+          <StylishSelect
             label="Görsel Üretim Modeli"
             icon={ImageIcon}
             value={imageModel}
             onChange={setImageModel}
             options={imageModels}
           />
-          <StylishSelect 
+          <StylishSelect
             label="AI Analiz ve Özet Modeli"
             icon={Search}
             value={analyzerModel}
@@ -303,7 +303,7 @@ export function AiWriterSettingsCard({
               <div className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-all shadow-md ${useRssImage ? "translate-x-7" : ""}`} />
             </button>
           </div>
-          
+
           <div className="flex-1 w-full flex items-center justify-between p-5 bg-[var(--card)] text-[var(--card-fg)] rounded-[1.5rem] border border-border transition-all hover:bg-black/5 dark:hover:bg-white/5">
              <div className="flex items-center gap-4">
               <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${searchEnabled ? "bg-primary-/10 text-primary-" : "bg-neutral-500/10 text-neutral-500"}`}>

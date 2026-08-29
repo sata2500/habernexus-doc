@@ -39,7 +39,7 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
   const handleTimeChange = async (newTime: string) => {
     setIsLoading(true);
     setTime(newTime);
-    
+
     const result = await updateNewsletterTime(newTime);
     if (!result.success) {
       alert(result.error || "Saat güncellenemedi.");
@@ -50,9 +50,9 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
   const handleTestEmail = async () => {
     setTestStatus("loading");
     setTestMessage("");
-    
+
     const result = await testNewsletterEmail();
-    
+
     if (result.success) {
       setTestStatus("success");
       setTestMessage(result.message || "Başarılı");
@@ -60,7 +60,7 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
       setTestStatus("error");
       setTestMessage(result.error || "Hata oluştu");
     }
-    
+
     setTimeout(() => {
       setTestStatus("idle");
     }, 5000);
@@ -94,7 +94,7 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
             {isLoading && <Loader2 className="h-4 w-4 animate-spin text-primary-500" />}
           </div>
         )}
-        
+
         {testStatus !== "idle" && (
           <div className={`text-xs font-medium flex items-center gap-1.5 ${testStatus === "success" ? "text-primary-600" : "text-primary-500"}`}>
             {testStatus === "success" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
@@ -105,9 +105,9 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
 
       <div className="flex flex-col items-end gap-4 w-full sm:w-auto">
         <label className="relative inline-flex items-center cursor-pointer">
-          <input 
-            type="checkbox" 
-            className="sr-only peer" 
+          <input
+            type="checkbox"
+            className="sr-only peer"
             checked={isSubscribed}
             onChange={handleToggle}
             disabled={isLoading}

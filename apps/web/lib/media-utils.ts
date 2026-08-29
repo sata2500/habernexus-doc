@@ -1,6 +1,7 @@
 import { prisma } from "./prisma";
 import { put, del } from "@vercel/blob";
 import sharp from "sharp";
+import { fetchPublicResource } from "./server/remote-fetch";
 
 /**
  * Mevcut bir ham görseli Vercel Blob'dan çeker, Sharp ile optimize eder
@@ -22,10 +23,8 @@ export async function optimizeMedia(mediaId: string) {
       data: { status: "PROCESSING" },
     });
 
-    // 2. Ham dosyayı indir
-    const response = await fetch(media.url);
-    const arrayBuffer = await response.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
+    // 2. Ham dosyayı indir; private IP, redirect ve boyut sınırını uygula
+    const buffer = await fetchPublicResource(media.url, { maxBytes: 8 * 1024 * 1024 });
 
     // 3. Sharp ile optimize et
     const processedBuffer = await sharp(buffer)
