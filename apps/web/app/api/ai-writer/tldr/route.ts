@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { checkRateLimit, getRequestIdentity } from "@/lib/server/rate-limit";
+import { checkRateLimitAsync, getRequestIdentity } from "@/lib/server/rate-limit";
 
 const TldrInputSchema = z.object({
   title: z.string().trim().max(300).default(""),
@@ -22,7 +22,7 @@ function safeBullets(value: unknown) {
 }
 
 export async function POST(req: Request) {
-  const rate = checkRateLimit(`tldr:${getRequestIdentity(req)}`, RATE_LIMIT, RATE_WINDOW_MS);
+  const rate = await checkRateLimitAsync(`tldr:${getRequestIdentity(req)}`, RATE_LIMIT, RATE_WINDOW_MS);
 
   if (!rate.allowed) {
     return NextResponse.json(

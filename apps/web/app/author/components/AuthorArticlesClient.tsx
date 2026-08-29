@@ -14,9 +14,14 @@ import {
   Gauge,
   AlertTriangle
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { DeleteArticleButton } from "./DeleteArticleButton";
-import { ArticleAnalysisModal } from "@/components/article/ArticleAnalysisModal";
 import { cn } from "@/lib/utils";
+
+const ArticleAnalysisModal = dynamic(
+  () => import("@/components/article/ArticleAnalysisModal").then((mod) => mod.ArticleAnalysisModal),
+  { ssr: false }
+);
 
 interface ArticleItem {
   id: string;

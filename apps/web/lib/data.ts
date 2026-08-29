@@ -1,126 +1,138 @@
 import { cache } from "react";
 import { prisma } from "./prisma";
+import { appCache } from "./cache";
 
 // Vercel build sürecinde veritabanı bağlantısı olmayabilir.
-// Bu durumda Prisma'yı çağırmadan boş veri dönmek için kontrol ekliyoruz.
 const isMissingDb = !process.env.DATABASE_URL;
 
 // Kapak haberi
 export const getHeroArticle = cache(async () => {
   if (isMissingDb) return null;
-  try {
-    return await prisma.article.findFirst({
-      where: { status: "PUBLISHED" },
-      orderBy: { publishedAt: "desc" },
-      include: {
-        category: true,
-        author: true,
-        aiPersona: true,
-      },
-    });
-  } catch (e) {
-    console.error("getHeroArticle error:", e);
-    return null;
-  }
+  return appCache.getOrSet("data:hero-article", 60, async () => {
+    try {
+      return await prisma.article.findFirst({
+        where: { status: "PUBLISHED" },
+        orderBy: { publishedAt: "desc" },
+        include: {
+          category: true,
+          author: true,
+          aiPersona: true,
+        },
+      });
+    } catch (e) {
+      console.error("getHeroArticle error:", e);
+      return null;
+    }
+  });
 });
 
 // Trend haberler
 export const getTrendingArticles = cache(async (limit: number = 4) => {
   if (isMissingDb) return [];
-  try {
-    return await prisma.article.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { viewCount: "desc" },
-      take: limit,
-      include: {
-        category: true,
-        author: true,
-        aiPersona: true,
-      },
-    });
-  } catch (e) {
-    console.error("getTrendingArticles error:", e);
-    return [];
-  }
+  return appCache.getOrSet(`data:trending:${limit}`, 60, async () => {
+    try {
+      return await prisma.article.findMany({
+        where: { status: "PUBLISHED" },
+        orderBy: { viewCount: "desc" },
+        take: limit,
+        include: {
+          category: true,
+          author: true,
+          aiPersona: true,
+        },
+      });
+    } catch (e) {
+      console.error("getTrendingArticles error:", e);
+      return [];
+    }
+  });
 });
 
 // Son haberler
 export const getLatestArticles = cache(async (limit: number = 6) => {
   if (isMissingDb) return [];
-  try {
-    return await prisma.article.findMany({
-      where: { status: "PUBLISHED" },
-      orderBy: { publishedAt: "desc" },
-      take: limit,
-      include: {
-        category: true,
-        author: true,
-        aiPersona: true,
-      },
-    });
-  } catch (e) {
-    console.error("getLatestArticles error:", e);
-    return [];
-  }
+  return appCache.getOrSet(`data:latest:${limit}`, 60, async () => {
+    try {
+      return await prisma.article.findMany({
+        where: { status: "PUBLISHED" },
+        orderBy: { publishedAt: "desc" },
+        take: limit,
+        include: {
+          category: true,
+          author: true,
+          aiPersona: true,
+        },
+      });
+    } catch (e) {
+      console.error("getLatestArticles error:", e);
+      return [];
+    }
+  });
 });
 
 // Kategoriler ve onlara ait yayınlanmış makale sayısı
 export const getCategoriesWithCount = cache(async () => {
   if (isMissingDb) return [];
-  try {
-    return await prisma.category.findMany({
-      include: {
-        _count: {
-          select: { articles: { where: { status: "PUBLISHED" } } },
+  return appCache.getOrSet("data:categories-count", 300, async () => {
+    try {
+      return await prisma.category.findMany({
+        include: {
+          _count: {
+            select: { articles: { where: { status: "PUBLISHED" } } },
+          },
         },
-      },
-      orderBy: {
-        order: "asc", 
-      },
-    });
-  } catch (e) {
-    console.error("getCategoriesWithCount error:", e);
-    return [];
-  }
+        orderBy: {
+          order: "asc", 
+        },
+      });
+    } catch (e) {
+      console.error("getCategoriesWithCount error:", e);
+      return [];
+    }
+  });
 });
 
 // Tekil Makale Detayı Çekimi
 export const getArticleBySlug = cache(async (slug: string) => {
   if (isMissingDb) return null;
-  try {
-    return await prisma.article.findUnique({
-      where: { slug, status: "PUBLISHED" },
-      include: {
-        author: true,
-        category: true,
-        aiPersona: true,
-        tags: { include: { tag: true } }
-      }
-    });
-  } catch (e) {
-    console.error(`getArticleBySlug error (${slug}):`, e);
-    return null;
-  }
+  return appCache.getOrSet(`data:article:${slug}`, 180, async () => {
+    try {
+      return await prisma.article.findUnique({
+        where: { slug, status: "PUBLISHED" },
+        include: {
+          author: true,
+          category: true,
+          aiPersona: true,
+          tags: { include: { tag: true } },
+        },
+      });
+    } catch (e) {
+      console.error(`getArticleBySlug error (${slug}):`, e);
+      return null;
+    }
+  });
 });
 
 // Tekil Kategori ve İlgili Güncel Haberleri Çekimi
 export const getCategoryWithArticles = cache(async (slug: string) => {
   if (isMissingDb) return null;
-  try {
-    return await prisma.category.findUnique({
-      where: { slug },
-      include: {
-        articles: {
-          where: { status: "PUBLISHED" },
-          orderBy: { publishedAt: "desc" },
-          include: { author: true, category: true, aiPersona: true }
-        }
-      }
-    });
-  } catch (e) {
-    console.error(`getCategoryWithArticles error (${slug}):`, e);
-    return null;
-  }
+  return appCache.getOrSet(`data:category:${slug}`, 120, async () => {
+    try {
+      return await prisma.category.findUnique({
+        where: { slug },
+        include: {
+          articles: {
+            where: { status: "PUBLISHED" },
+            orderBy: { publishedAt: "desc" },
+            include: { author: true, category: true, aiPersona: true },
+          },
+        },
+      });
+    } catch (e) {
+      console.error(`getCategoryWithArticles error (${slug}):`, e);
+      return null;
+    }
+  });
 });
 
 // Arama Motoru
@@ -131,13 +143,13 @@ export const searchArticles = cache(async (query: string) => {
       where: {
         status: "PUBLISHED",
         OR: [
-          { title: { contains: query } },
-          { excerpt: { contains: query } },
-          { content: { contains: query } }
-        ]
+          { title: { contains: query, mode: "insensitive" } },
+          { excerpt: { contains: query, mode: "insensitive" } },
+          { content: { contains: query, mode: "insensitive" } },
+        ],
       },
       orderBy: { publishedAt: "desc" },
-      include: { author: true, category: true, aiPersona: true }
+      include: { author: true, category: true, aiPersona: true },
     });
   } catch (e) {
     console.error("searchArticles error:", e);
@@ -159,10 +171,10 @@ export const getRecommendedArticles = cache(async (userId?: string, limit: numbe
       select: {
         article: {
           select: {
-            categoryId: true
-          }
-        }
-      }
+            categoryId: true,
+          },
+        },
+      },
     });
 
     const categoryIds = Array.from(
@@ -180,42 +192,42 @@ export const getRecommendedArticles = cache(async (userId?: string, limit: numbe
     // Zaten bookmark edilmiş haberlerin ID'lerini çek
     const bookmarkedIds = await prisma.bookmark.findMany({
       where: { userId },
-      select: { articleId: true }
-    }).then(list => list.map(b => b.articleId));
+      select: { articleId: true },
+    }).then((list) => list.map((b) => b.articleId));
 
     // Bu kategorilerdeki makaleleri çek (zaten kaydedilenleri hariç tut)
     const recommended = await prisma.article.findMany({
       where: {
         status: "PUBLISHED",
         categoryId: { in: categoryIds },
-        id: { notIn: bookmarkedIds }
+        id: { notIn: bookmarkedIds },
       },
       orderBy: { publishedAt: "desc" },
       take: limit,
       include: {
         category: true,
         author: true,
-        aiPersona: true
-      }
+        aiPersona: true,
+      },
     });
 
     // Eğer yeterli öneri yoksa, trend veya en yeni haberlerle doldur
     if (recommended.length < limit) {
       const needed = limit - recommended.length;
-      const excludeIds = [...bookmarkedIds, ...recommended.map(r => r.id)];
+      const excludeIds = [...bookmarkedIds, ...recommended.map((r) => r.id)];
 
       const fallback = await prisma.article.findMany({
         where: {
           status: "PUBLISHED",
-          id: { notIn: excludeIds }
+          id: { notIn: excludeIds },
         },
         orderBy: { viewCount: "desc" },
         take: needed,
         include: {
           category: true,
           author: true,
-          aiPersona: true
-        }
+          aiPersona: true,
+        },
       });
 
       return [...recommended, ...fallback];

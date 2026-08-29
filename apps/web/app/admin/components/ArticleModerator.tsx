@@ -22,9 +22,14 @@ import {
   Sparkles,
   AlertTriangle
 } from "lucide-react";
+import dynamic from "next/dynamic";
 import { cn } from "@/lib/utils";
 import { ArticleWithRelations } from "@/lib/types";
-import { ArticleAnalysisModal } from "@/components/article/ArticleAnalysisModal";
+
+const ArticleAnalysisModal = dynamic(
+  () => import("@/components/article/ArticleAnalysisModal").then((mod) => mod.ArticleAnalysisModal),
+  { ssr: false }
+);
 
 type Article = ArticleWithRelations;
 

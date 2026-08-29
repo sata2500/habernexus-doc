@@ -10,13 +10,16 @@ import { ViewTracker } from "../components/ViewTracker";
 import { ShareButtons } from "../components/ShareButtons";
 import { CommentSection } from "../components/comments/CommentSection";
 import { AudioPlayer } from "../components/AudioPlayer";
-import { TldrModal } from "../components/TldrModal";
+import { TldrCard } from "../components/TldrCard";
+import { ReadingProgressBar } from "../components/ReadingProgressBar";
+import { ArticleReactions } from "../components/ArticleReactions";
 import { prisma } from "@/lib/prisma";
 import { sanitizeHtml } from "@/lib/server/sanitize-html";
+import { ARTICLE_COVER_BLUR_DATA_URL } from "@/lib/image-placeholder";
 
 export const revalidate = 3600; // 1 saatte bir arka planda yenile (ISR)
 
-// Async Params Arayüzü (Next.js 15 Zorunluluğu)
+// Async Params Arayüzü (Next.js 15/16 Zorunluluğu)
 type Params = Promise<{ slug: string }>;
 
 export async function generateStaticParams() {
@@ -93,12 +96,14 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
   const readTime = estimateReadingTime(article.content);
 
-
   // Kelime sayısını hesapla (JSON-LD wordCount için)
   const wordCount = article.content ? article.content.trim().split(/\s+/).length : 0;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* ── Canlı Okuma İlerleme Çubuğu ────────────────────────── */}
+      <ReadingProgressBar estimatedMinutes={readTime} />
+
       {/* ── SEO: Structured Data ────────────────────────── */}
       <NewsArticleJsonLd
         title={article.title}
@@ -128,8 +133,9 @@ export default async function ArticlePage({ params }: { params: Params }) {
       />
 
       <ViewTracker articleId={article.id} />
+
       {/* ── Üst Bilgi ve Başlık Alanı ────────────────────────── */}
-      <header className="mb-10 space-y-6 text-center lg:text-left">
+      <header className="mb-8 space-y-6 text-center lg:text-left">
         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3">
           {article.category && (
             <Badge
@@ -162,12 +168,12 @@ export default async function ArticlePage({ params }: { params: Params }) {
           </span>
         </div>
 
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-(family-name:--font-outfit) leading-tight">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display leading-tight tracking-tight">
           {article.title}
         </h1>
 
         {article.excerpt && (
-          <p className="text-lg text-muted-foreground md:text-xl font-medium">
+          <p className="text-lg text-muted-foreground md:text-xl font-medium leading-relaxed">
             {article.excerpt}
           </p>
         )}
@@ -191,11 +197,9 @@ export default async function ArticlePage({ params }: { params: Params }) {
         </div>
       </header>
 
-      {/* Metin Seslendirme Oynatıcısı & AI Özeti */}
+      {/* ── Yapay Zeka Hızlı Özeti (TL;DR) & Sesli Dinleme ────────────────── */}
       <div className="mb-10 space-y-4">
-        <div className="flex items-center justify-between">
-          <TldrModal title={article.title} content={article.content} />
-        </div>
+        <TldrCard title={article.title} content={article.content} />
         <AudioPlayer content={article.content} title={article.title} />
       </div>
 
@@ -208,15 +212,20 @@ export default async function ArticlePage({ params }: { params: Params }) {
             fill
             className="object-cover"
             priority
+            placeholder="blur"
+            blurDataURL={ARTICLE_COVER_BLUR_DATA_URL}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
           />
         </div>
       )}
 
       {/* ── Ana İçerik Gövdesi (Typography Plugin) ────────────────────────── */}
-      <article className="prose prose-lg dark:prose-invert prose-blue mx-auto w-full mb-16">
+      <article className="prose prose-lg dark:prose-invert prose-blue mx-auto w-full mb-12">
         <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }} />
       </article>
+
+      {/* ── Okuyucu Reaksiyon & Düşünce Modülü ────────────────── */}
+      <ArticleReactions articleId={article.id} />
 
       {/* ── Yazar Bilgi Kartı ────────────────────────── */}
       <section className="bg-muted/30 rounded-2xl p-6 md:p-8 mb-12 border border-border">
@@ -229,7 +238,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
           />
           <div className="flex-1 space-y-3">
             <div>
-              <h3 className="text-xl font-bold font-(family-name:--font-outfit)">{article.aiPersona?.name || article.author.name}</h3>
+              <h3 className="text-xl font-bold font-display">{article.aiPersona?.name || article.author.name}</h3>
               <p className="text-sm text-primary-600 font-medium">{article.aiPersona?.role || "Haber Nexus Yazarı"}</p>
             </div>
             {(article.aiPersona?.description || article.author.bio) ? (
@@ -241,17 +250,14 @@ export default async function ArticlePage({ params }: { params: Params }) {
                 Bu yazar henüz bir biyografi eklememiş.
               </p>
             )}
-            <div className="pt-2 flex justify-center md:justify-start gap-4">
-               {/* Gelecekte sosyal medya linkleri buraya gelebilir */}
-            </div>
           </div>
         </div>
       </section>
 
       {/* ── Etiketler (Tags) Alanı ────────────────────────── */}
       {article.tags.length > 0 && (
-        <div className="flex items-center gap-2 border-t border-border pt-6 mt-8">
-          <span className="font-semibold font-(family-name:--font-outfit)">Etiketler:</span>
+        <div className="flex items-center gap-2 border-t border-border pt-6 mt-8 mb-8">
+          <span className="font-semibold font-display">Etiketler:</span>
           <div className="flex flex-wrap gap-2">
             {article.tags.map((tagRel) => (
               <Badge key={tagRel.tag.id} variant="default" className="hover:bg-primary-500 hover:text-white transition-colors cursor-pointer">
@@ -277,7 +283,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
               <div className="h-8 w-8 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-500">
                 <Sparkles className="h-4 w-4" />
               </div>
-              <h3 className="text-base font-bold font-(family-name:--font-outfit)">
+              <h3 className="text-base font-bold font-display">
                 Yapay Zeka Okur Özetleri
               </h3>
             </div>

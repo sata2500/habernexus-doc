@@ -7,21 +7,29 @@ interface UploadOptions {
   type: UploadType;
   maxWidth?: number;
   maxHeight?: number;
+  format?: "webp" | "avif";
 }
 
 /**
- * Görseli işler (isteğe bağlı) ve Vercel Blob üzerine kaydeder.
+ * Görseli işler (Sharp ile optimize eder) ve Vercel Blob üzerine kaydeder.
  */
 export async function processAndSaveImage(
   file: File,
   options: UploadOptions
-): Promise<{ success: boolean; url?: string; error?: string }> {
+): Promise<{
+  success: boolean;
+  url?: string;
+  width?: number;
+  height?: number;
+  size?: number;
+  error?: string;
+}> {
   try {
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
-    // Sharp ile işle (WebP dönüşümü ve Boyutlandırma)
-    let sharpInstance = sharp(buffer).webp({ quality: 80 });
+    const targetFormat = options.format || "webp";
+    let sharpInstance = sharp(buffer);
 
     if (options.type === "profile") {
       // Profil: 400x400 Kare Kesim
@@ -31,28 +39,43 @@ export async function processAndSaveImage(
       });
     } else {
       // Makale: Max 1200px Genişlik (Enboy oranını koru)
-      sharpInstance = sharpInstance.resize(1200, undefined, {
+      const maxWidth = options.maxWidth || 1200;
+      sharpInstance = sharpInstance.resize(maxWidth, options.maxHeight, {
         withoutEnlargement: true,
         fit: "inside",
       });
     }
 
-    // İşlenmiş buffer'ı al
+    if (targetFormat === "avif") {
+      sharpInstance = sharpInstance.avif({ quality: 75, effort: 4 });
+    } else {
+      sharpInstance = sharpInstance.webp({ quality: 80, effort: 4 });
+    }
+
+    // İşlenmiş buffer'ı ve metadata'yı al
     const processedBuffer = await sharpInstance.toBuffer();
+    const metadata = await sharp(processedBuffer).metadata();
 
     // Vercel Blob'a yükle
-    const filename = `${options.type}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}.webp`;
-    
+    const ext = targetFormat === "avif" ? "avif" : "webp";
+    const contentType = targetFormat === "avif" ? "image/avif" : "image/webp";
+    const filename = `${options.type}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.]/g, "_")}.${ext}`;
+
     const { url } = await put(filename, processedBuffer, {
       access: "public",
       addRandomSuffix: true,
-      contentType: "image/webp",
+      contentType,
     });
 
-    return { success: true, url };
+    return {
+      success: true,
+      url,
+      width: metadata.width,
+      height: metadata.height,
+      size: processedBuffer.length,
+    };
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : "Bilinmeyen hata";
-    // Vercel Serverless Logs'da detaylı hatayı görebilmek için:
     console.error("Vercel Blob / Sharp yükleme hatası detayları:", error);
     return { success: false, error: `Görsel yüklenirken bir hata oluştu: ${message}` };
   }
@@ -64,7 +87,7 @@ export async function processAndSaveImage(
  */
 export async function deleteOldImage(url: string | null | undefined) {
   if (!url || !url.includes("blob.vercel-storage.com")) return;
-  
+
   try {
     await del(url);
   } catch (error) {
