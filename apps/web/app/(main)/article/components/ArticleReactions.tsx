@@ -29,6 +29,10 @@ export function ArticleReactions({ articleId }: ArticleReactionsProps) {
 
   useEffect(() => {
     setHasMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!hasMounted) return;
     const storageKey = `reactions:${articleId}`;
     const userSelectedKey = `user_reaction:${articleId}`;
 

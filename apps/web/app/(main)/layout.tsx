@@ -18,7 +18,7 @@ export default async function MainLayout({
     <>
       <PwaRegister />
       <Navbar categories={categories} settings={settings} />
-      <main className="flex-1 pt-16 md:pt-20">{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer categories={categories} settings={settings} />
     </>
   );

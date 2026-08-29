@@ -56,7 +56,7 @@ const nextConfig: NextConfig = {
       {
         // Google OAuth avatar'ları
         protocol: "https",
-        hostname: "lh3.googleusercontent.com",
+        hostname: "*.googleusercontent.com",
       },
       {
         // GitHub avatar'ları (ileride OAuth eklenirse)

@@ -157,6 +157,7 @@ exports.Prisma.AccountScalarFieldEnum = {
   scope: 'scope',
   idToken: 'idToken',
   password: 'password',
+  issuer: 'issuer',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
