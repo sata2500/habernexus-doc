@@ -90,6 +90,7 @@ export default async function AdminAiWriterPage() {
 
       <div className="flex flex-col gap-8">
         <AiWriterSettingsCard
+          initialAiProvider={settings.aiProvider}
           initialPrompt={settings.aiWriterPrompt}
           initialImagePrompt={settings.aiWriterImagePrompt}
           initialModel={settings.aiWriterModel}

@@ -23166,6 +23166,7 @@ export namespace Prisma {
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
+    aiProvider: string | null
     aiAnalyzerModel: string | null
     aiWriterModel: string | null
     aiWriterImageModel: string | null
@@ -23193,6 +23194,7 @@ export namespace Prisma {
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
+    aiProvider: string | null
     aiAnalyzerModel: string | null
     aiWriterModel: string | null
     aiWriterImageModel: string | null
@@ -23220,6 +23222,7 @@ export namespace Prisma {
     qStashScanId: number
     qStashAnalyzeId: number
     qStashNewsletterId: number
+    aiProvider: number
     aiAnalyzerModel: number
     aiWriterModel: number
     aiWriterImageModel: number
@@ -23263,6 +23266,7 @@ export namespace Prisma {
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
+    aiProvider?: true
     aiAnalyzerModel?: true
     aiWriterModel?: true
     aiWriterImageModel?: true
@@ -23290,6 +23294,7 @@ export namespace Prisma {
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
+    aiProvider?: true
     aiAnalyzerModel?: true
     aiWriterModel?: true
     aiWriterImageModel?: true
@@ -23317,6 +23322,7 @@ export namespace Prisma {
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
+    aiProvider?: true
     aiAnalyzerModel?: true
     aiWriterModel?: true
     aiWriterImageModel?: true
@@ -23431,6 +23437,7 @@ export namespace Prisma {
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
+    aiProvider: string
     aiAnalyzerModel: string
     aiWriterModel: string
     aiWriterImageModel: string
@@ -23477,6 +23484,7 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
+    aiProvider?: boolean
     aiAnalyzerModel?: boolean
     aiWriterModel?: boolean
     aiWriterImageModel?: boolean
@@ -23504,6 +23512,7 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
+    aiProvider?: boolean
     aiAnalyzerModel?: boolean
     aiWriterModel?: boolean
     aiWriterImageModel?: boolean
@@ -23531,6 +23540,7 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
+    aiProvider?: boolean
     aiAnalyzerModel?: boolean
     aiWriterModel?: boolean
     aiWriterImageModel?: boolean
@@ -23558,6 +23568,7 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
+    aiProvider?: boolean
     aiAnalyzerModel?: boolean
     aiWriterModel?: boolean
     aiWriterImageModel?: boolean
@@ -23577,7 +23588,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiAnalyzerModel" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "aiWriterSearchEnabled" | "maxNewsAgeHours" | "googleTrendsEnabled" | "googleTrendsGeo" | "trendAutoPublishThreshold" | "trendSearchGenerateEnabled" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiProvider" | "aiAnalyzerModel" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "aiWriterSearchEnabled" | "maxNewsAgeHours" | "googleTrendsEnabled" | "googleTrendsGeo" | "trendAutoPublishThreshold" | "trendSearchGenerateEnabled" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -23590,6 +23601,7 @@ export namespace Prisma {
       qStashScanId: string | null
       qStashAnalyzeId: string | null
       qStashNewsletterId: string | null
+      aiProvider: string
       aiAnalyzerModel: string
       aiWriterModel: string
       aiWriterImageModel: string
@@ -24037,6 +24049,7 @@ export namespace Prisma {
     readonly qStashScanId: FieldRef<"SystemSettings", 'String'>
     readonly qStashAnalyzeId: FieldRef<"SystemSettings", 'String'>
     readonly qStashNewsletterId: FieldRef<"SystemSettings", 'String'>
+    readonly aiProvider: FieldRef<"SystemSettings", 'String'>
     readonly aiAnalyzerModel: FieldRef<"SystemSettings", 'String'>
     readonly aiWriterModel: FieldRef<"SystemSettings", 'String'>
     readonly aiWriterImageModel: FieldRef<"SystemSettings", 'String'>
@@ -34025,6 +34038,7 @@ export namespace Prisma {
     qStashScanId: 'qStashScanId',
     qStashAnalyzeId: 'qStashAnalyzeId',
     qStashNewsletterId: 'qStashNewsletterId',
+    aiProvider: 'aiProvider',
     aiAnalyzerModel: 'aiAnalyzerModel',
     aiWriterModel: 'aiWriterModel',
     aiWriterImageModel: 'aiWriterImageModel',
@@ -35731,6 +35745,7 @@ export namespace Prisma {
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
+    aiProvider?: StringFilter<"SystemSettings"> | string
     aiAnalyzerModel?: StringFilter<"SystemSettings"> | string
     aiWriterModel?: StringFilter<"SystemSettings"> | string
     aiWriterImageModel?: StringFilter<"SystemSettings"> | string
@@ -35758,6 +35773,7 @@ export namespace Prisma {
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
     qStashNewsletterId?: SortOrderInput | SortOrder
+    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiWriterModel?: SortOrder
     aiWriterImageModel?: SortOrder
@@ -35788,6 +35804,7 @@ export namespace Prisma {
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
+    aiProvider?: StringFilter<"SystemSettings"> | string
     aiAnalyzerModel?: StringFilter<"SystemSettings"> | string
     aiWriterModel?: StringFilter<"SystemSettings"> | string
     aiWriterImageModel?: StringFilter<"SystemSettings"> | string
@@ -35815,6 +35832,7 @@ export namespace Prisma {
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
     qStashNewsletterId?: SortOrderInput | SortOrder
+    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiWriterModel?: SortOrder
     aiWriterImageModel?: SortOrder
@@ -35850,6 +35868,7 @@ export namespace Prisma {
     qStashScanId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
+    aiProvider?: StringWithAggregatesFilter<"SystemSettings"> | string
     aiAnalyzerModel?: StringWithAggregatesFilter<"SystemSettings"> | string
     aiWriterModel?: StringWithAggregatesFilter<"SystemSettings"> | string
     aiWriterImageModel?: StringWithAggregatesFilter<"SystemSettings"> | string
@@ -38106,6 +38125,7 @@ export namespace Prisma {
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
+    aiProvider?: string
     aiAnalyzerModel?: string
     aiWriterModel?: string
     aiWriterImageModel?: string
@@ -38133,6 +38153,7 @@ export namespace Prisma {
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
+    aiProvider?: string
     aiAnalyzerModel?: string
     aiWriterModel?: string
     aiWriterImageModel?: string
@@ -38160,6 +38181,7 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiProvider?: StringFieldUpdateOperationsInput | string
     aiAnalyzerModel?: StringFieldUpdateOperationsInput | string
     aiWriterModel?: StringFieldUpdateOperationsInput | string
     aiWriterImageModel?: StringFieldUpdateOperationsInput | string
@@ -38187,6 +38209,7 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiProvider?: StringFieldUpdateOperationsInput | string
     aiAnalyzerModel?: StringFieldUpdateOperationsInput | string
     aiWriterModel?: StringFieldUpdateOperationsInput | string
     aiWriterImageModel?: StringFieldUpdateOperationsInput | string
@@ -38214,6 +38237,7 @@ export namespace Prisma {
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
+    aiProvider?: string
     aiAnalyzerModel?: string
     aiWriterModel?: string
     aiWriterImageModel?: string
@@ -38241,6 +38265,7 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiProvider?: StringFieldUpdateOperationsInput | string
     aiAnalyzerModel?: StringFieldUpdateOperationsInput | string
     aiWriterModel?: StringFieldUpdateOperationsInput | string
     aiWriterImageModel?: StringFieldUpdateOperationsInput | string
@@ -38268,6 +38293,7 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiProvider?: StringFieldUpdateOperationsInput | string
     aiAnalyzerModel?: StringFieldUpdateOperationsInput | string
     aiWriterModel?: StringFieldUpdateOperationsInput | string
     aiWriterImageModel?: StringFieldUpdateOperationsInput | string
@@ -40237,6 +40263,7 @@ export namespace Prisma {
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
+    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiWriterModel?: SortOrder
     aiWriterImageModel?: SortOrder
@@ -40271,6 +40298,7 @@ export namespace Prisma {
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
+    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiWriterModel?: SortOrder
     aiWriterImageModel?: SortOrder
@@ -40298,6 +40326,7 @@ export namespace Prisma {
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
+    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiWriterModel?: SortOrder
     aiWriterImageModel?: SortOrder

@@ -307,6 +307,7 @@ export async function triggerAiWriter(suggestionId: string) {
 }
 
 export async function updateAiWriterSettings(data: {
+  aiProvider: string;
   prompt: string;
   imagePrompt: string;
   model: string;
@@ -321,7 +322,8 @@ export async function updateAiWriterSettings(data: {
   await prisma.systemSettings.update({
     where: { id: "global" },
     data: {
-aiWriterPrompt: parsed.data.prompt,
+      aiProvider: parsed.data.aiProvider,
+      aiWriterPrompt: parsed.data.prompt,
       aiWriterImagePrompt: parsed.data.imagePrompt,
       aiWriterModel: parsed.data.model,
       aiWriterImageModel: parsed.data.imageModel,

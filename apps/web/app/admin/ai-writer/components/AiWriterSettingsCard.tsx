@@ -39,6 +39,7 @@ interface Props {
   initialUseRssImage: boolean;
   initialSearchEnabled: boolean;
   initialAnalyzerModel: string;
+  initialAiProvider: string;
   availableModels: AiModel[];
 }
 
@@ -163,6 +164,7 @@ export function AiWriterSettingsCard({
   initialUseRssImage,
   initialSearchEnabled,
   initialAnalyzerModel,
+  initialAiProvider,
   availableModels,
 }: Props) {
   const [prompt, setPrompt] = useState(initialPrompt);
@@ -171,11 +173,23 @@ export function AiWriterSettingsCard({
   const [useRssImage, setUseRssImage] = useState(initialUseRssImage);
   const [searchEnabled, setSearchEnabled] = useState(initialSearchEnabled);
   const [analyzerModel, setAnalyzerModel] = useState(initialAnalyzerModel);
+  const [aiProvider, setAiProvider] = useState(initialAiProvider);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const textModels = availableModels.filter(m => m.type === "TEXT" || m.type === "MULTIMODAL" || (Array.isArray((m as unknown as Record<string, unknown>).outputModalities) && ((m as unknown as Record<string, unknown>).outputModalities as string[]).includes("text")));
-  const imageModels = availableModels.filter(m => m.type === "IMAGE" || m.supportsT2I || (Array.isArray((m as unknown as Record<string, unknown>).outputModalities) && ((m as unknown as Record<string, unknown>).outputModalities as string[]).includes("image")));
+  const googleTextModels: AiModel[] = [
+    { id: "gemini-2.5-pro", name: "Gemini 2.5 Pro", type: "TEXT", isFree: false, supportsSearch: true, supportsVision: true, supportsT2I: false, supportsI2I: false, description: null },
+    { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash", type: "TEXT", isFree: false, supportsSearch: true, supportsVision: true, supportsT2I: false, supportsI2I: false, description: null },
+    { id: "gemini-2.0-flash-001", name: "Gemini 2.0 Flash", type: "TEXT", isFree: true, supportsSearch: true, supportsVision: true, supportsT2I: false, supportsI2I: false, description: null },
+    { id: "gemini-2.5-flash-8b", name: "Gemini 2.5 Flash 8B", type: "TEXT", isFree: true, supportsSearch: true, supportsVision: true, supportsT2I: false, supportsI2I: false, description: null }
+  ];
+  const googleImageModels: AiModel[] = [
+    { id: "gemini-2.5-flash-image", name: "Gemini 2.5 Flash Image", type: "IMAGE", isFree: false, supportsSearch: false, supportsVision: false, supportsT2I: true, supportsI2I: false, description: null },
+    { id: "imagen-3.0-generate-002", name: "Imagen 3.0", type: "IMAGE", isFree: false, supportsSearch: false, supportsVision: false, supportsT2I: true, supportsI2I: false, description: null }
+  ];
+
+  const textModels = aiProvider === "GOOGLE" ? googleTextModels : availableModels.filter(m => m.type === "TEXT" || m.type === "MULTIMODAL" || (Array.isArray((m as unknown as Record<string, unknown>).outputModalities) && ((m as unknown as Record<string, unknown>).outputModalities as string[]).includes("text")));
+  const imageModels = aiProvider === "GOOGLE" ? googleImageModels : availableModels.filter(m => m.type === "IMAGE" || m.supportsT2I || (Array.isArray((m as unknown as Record<string, unknown>).outputModalities) && ((m as unknown as Record<string, unknown>).outputModalities as string[]).includes("image")));
 
   const [imageModel, setImageModel] = useState(() => initialImageModel || (imageModels[0]?.id ?? ""));
 
@@ -184,6 +198,7 @@ export function AiWriterSettingsCard({
     setSuccess(false);
     type UpdateResult = { success: boolean };
     const res = await (updateAiWriterSettings as (...args: unknown[]) => Promise<UpdateResult>)({
+      aiProvider,
       prompt,
       imagePrompt,
       model,
@@ -212,14 +227,30 @@ export function AiWriterSettingsCard({
             <p className="text-xs text-neutral-500 dark:text-neutral-400">Yapay zeka modellerini ve yazım parametrelerini yapılandırın.</p>
           </div>
         </div>
-        <button
-          onClick={handleSave}
-          disabled={loading}
-          className="px-6 py-3 rounded-2xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-primary-500/25 active:scale-95 disabled:opacity-50 cursor-pointer"
-        >
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
-          {success ? "Kaydedildi!" : "Ayarları Kaydet"}
-        </button>
+        <div className="flex flex-col sm:flex-row items-center gap-4">
+          <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-2xl">
+            <button 
+              onClick={() => setAiProvider("OPENROUTER")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${aiProvider === "OPENROUTER" ? "bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-white" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
+            >
+              OpenRouter
+            </button>
+            <button 
+              onClick={() => setAiProvider("GOOGLE")}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${aiProvider === "GOOGLE" ? "bg-[var(--color-primary-500)] text-white shadow-sm shadow-primary-500/30" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
+            >
+              Google Gemini
+            </button>
+          </div>
+          <button
+            onClick={handleSave}
+            disabled={loading}
+            className="px-6 py-3 rounded-2xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold transition-all flex items-center gap-2 shadow-lg shadow-primary-500/25 active:scale-95 disabled:opacity-50 cursor-pointer"
+          >
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+            {success ? "Kaydedildi!" : "Ayarları Kaydet"}
+          </button>
+        </div>
       </div>
 
       <div className="p-8 space-y-10">

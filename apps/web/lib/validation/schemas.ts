@@ -94,6 +94,7 @@ export const SystemSettingsInputSchema = z.object({
 }).strict();
 
 export const AiWriterSettingsSchema = z.object({
+  aiProvider: z.string().trim().min(1).max(50).optional().default("OPENROUTER"),
   prompt: z.string().trim().min(1).max(20000),
   imagePrompt: z.string().trim().min(1).max(10000),
   model: z.string().trim().min(1).max(200),

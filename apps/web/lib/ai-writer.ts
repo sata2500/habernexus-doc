@@ -32,6 +32,68 @@ export async function fetchImageAsBase64(url: string): Promise<string | null> {
 }
 
 /**
+ * Google GenAI API kullanarak içerik üretir.
+ */
+async function generateContentWithGoogleGenAI(model: string, prompt: string, useGoogleSearch: boolean): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new Error("GEMINI_API_KEY eksik.");
+
+  const { GoogleGenAI } = await import("@google/genai");
+  const ai = new GoogleGenAI({ apiKey });
+
+  const tools = useGoogleSearch ? [{ googleSearch: {} }] : undefined;
+
+  const response = await ai.models.generateContent({
+    model: model,
+    contents: prompt,
+    config: {
+      tools: tools,
+    }
+  });
+
+  return response.text || "";
+}
+
+/**
+ * Google GenAI API kullanarak görsel üretir.
+ */
+async function generateImageWithGoogleGenAI(model: string, prompt: string): Promise<string | null> {
+  try {
+    console.log(`[AI Writer] Google GenAI görsel üretimi: model=${model}`);
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) throw new Error("GEMINI_API_KEY eksik.");
+
+    const { GoogleGenAI } = await import("@google/genai");
+    const ai = new GoogleGenAI({ apiKey });
+
+    const response = await ai.models.generateImages({
+      model: model,
+      prompt: prompt,
+      config: {
+        numberOfImages: 1,
+        outputMimeType: "image/jpeg",
+        aspectRatio: "16:9",
+      }
+    });
+
+    const base64Image = response.generatedImages?.[0]?.image?.imageBytes;
+    if (base64Image) {
+      console.log("[AI Writer] Google GenAI görseli Blob'a aktarılıyor...");
+      const buffer = Buffer.from(base64Image, 'base64');
+      const { url: blobUrl } = await put(`articles/ai-gg-${Date.now()}.jpg`, buffer, {
+        access: "public",
+        contentType: "image/jpeg",
+      });
+      return blobUrl;
+    }
+    return null;
+  } catch (err) {
+    console.error("Google GenAI Image Generation Hatası:", err);
+    return null;
+  }
+}
+
+/**
  * OpenRouter API kullanarak içerik üretir.
  */
 async function generateContentWithOpenRouter(model: string, messages: Array<{ role: string; content: string | unknown[] }>, tools?: unknown[]): Promise<string> {
@@ -164,8 +226,15 @@ export async function writeArticleWithAI(suggestionId: string) {
     if (!suggestion) throw new Error("Öneri bulunamadı.");
 
     const settings = await prisma.systemSettings.findFirst();
-    const writerModelName = settings?.aiWriterModel || "google/gemini-2.0-flash-001";
-    const imageModelName = settings?.aiWriterImageModel || "openai/dall-e-3";
+    if (!settings) throw new Error("Sistem ayarları bulunamadı.");
+
+    const isGoogle = settings.aiProvider === "GOOGLE";
+
+    if (isGoogle && !process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY yapılandırılmamış.");
+    if (!isGoogle && !process.env.OPENROUTER_API_KEY) throw new Error("OPENROUTER_API_KEY yapılandırılmamış.");
+
+    const writerModelName = settings?.aiWriterModel || "gemini-2.5-flash";
+    const imageModelName = settings?.aiWriterImageModel || "imagen-3.0-generate-002";
 
     // ── Persona & Kategori Zekası ──
     const globalSystemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın.";
@@ -230,8 +299,13 @@ export async function writeArticleWithAI(suggestionId: string) {
     let content = "";
     for (let i = 0; i < 3; i++) {
       try {
-        console.log(`[AI Writer] Metin üretiliyor: Model=${writerModelName}, Deneme=${i + 1}, Arama=${useGoogleSearch}`);
-        content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }], tools);
+        console.log(`[AI Writer] Metin üretiliyor: Model=${writerModelName}, Deneme=${i + 1}, Arama=${useGoogleSearch}, Provider=${settings.aiProvider}`);
+        
+        if (isGoogle) {
+          content = await generateContentWithGoogleGenAI(writerModelName, textPrompt, useGoogleSearch);
+        } else {
+          content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }], tools);
+        }
         break;
       } catch (err: unknown) {
         const errorMsg = String(err);
@@ -250,7 +324,14 @@ export async function writeArticleWithAI(suggestionId: string) {
     const finalImagePrompt = `${imagePromptBase}\nNews headline: "${suggestion.title}"\nStyle: Photorealistic, 16:9, no text.`;
     const referenceUrl = useRssImage && suggestion.imageUrl ? suggestion.imageUrl : undefined;
 
-    const generatedImageUrl = await generateImageWithOpenRouter(imageModelName, finalImagePrompt, referenceUrl);
+    let generatedImageUrl = null;
+    
+    if (isGoogle) {
+      generatedImageUrl = await generateImageWithGoogleGenAI(imageModelName, finalImagePrompt);
+    } else {
+      generatedImageUrl = await generateImageWithOpenRouter(imageModelName, finalImagePrompt, referenceUrl);
+    }
+    
     let imageUrl = generatedImageUrl;
 
     // Eğer AI görsel üretmediyse veya hata oluştuysa RSS görselini kullan ve sisteme kaydet

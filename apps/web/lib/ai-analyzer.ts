@@ -67,6 +67,34 @@ async function callOpenRouter(prompt: string): Promise<string> {
   return content;
 }
 
+/**
+ * Google GenAI API üzerinden analiz yapar.
+ */
+async function callGoogleGenAI(model: string, prompt: string): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    console.error("[AI Analysis] HATA: GEMINI_API_KEY bulunamadı.");
+    throw new Error("GEMINI_API_KEY bulunamadı.");
+  }
+
+  console.log(`[AI Analyzer] Google GenAI İstek gönderiliyor. Model: ${model}`);
+
+  const { GoogleGenAI } = await import("@google/genai");
+  const ai = new GoogleGenAI({ apiKey });
+
+  const response = await ai.models.generateContent({
+    model: model,
+    contents: prompt,
+    config: {
+      responseMimeType: "application/json",
+    }
+  });
+
+  const content = response.text || "";
+  console.log(`[AI Analyzer] Google GenAI Yanıtı alındı (${content.length} karakter)`);
+  return content;
+}
+
 function fallbackScore(title: string, excerpt: string, publishedAt: Date | null): number {
   let score = 50;
   const age = publishedAt ? (Date.now() - publishedAt.getTime()) / (1000 * 60 * 60) : 48;
@@ -77,10 +105,15 @@ function fallbackScore(title: string, excerpt: string, publishedAt: Date | null)
 }
 
 export async function analyzeRssBatch() {
-  const apiKey = process.env.OPENROUTER_API_KEY;
   console.log("[AI Analysis] Analiz işlemi başlatıldı.");
 
-  if (!apiKey) {
+  const settings = await prisma.systemSettings.findFirst();
+  const isGoogle = settings?.aiProvider === "GOOGLE";
+
+  if (isGoogle && !process.env.GEMINI_API_KEY) {
+    console.error("[AI Analysis] HATA: GEMINI_API_KEY ortam değişkeni bulunamadı!");
+    return { analyzed: 0, covered: 0, lowScore: 0, aiUsed: false, error: "GEMINI_API_KEY bulunamadı." };
+  } else if (!isGoogle && !process.env.OPENROUTER_API_KEY) {
     console.error("[AI Analysis] HATA: OPENROUTER_API_KEY ortam değişkeni bulunamadı!");
     return { analyzed: 0, covered: 0, lowScore: 0, aiUsed: false, error: "API anahtarı bulunamadı." };
   }
@@ -157,14 +190,25 @@ MEVCUT KATEGORİLER: ${categoryNames}
 
 Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "isStale": true/false, "suggestedTitles": ["..."], "suggestedCategory": "...", "reasoning": "..." } ] }`;
 
-    const aiResponse = await callOpenRouter(prompt);
-    const cleanedJson = cleanJson(aiResponse);
+    let aiResponseStr = "";
+    try {
+      if (isGoogle) {
+        aiResponseStr = await callGoogleGenAI(settings?.aiAnalyzerModel || "gemini-2.5-flash", prompt);
+      } else {
+        aiResponseStr = await callOpenRouter(prompt);
+      }
+    } catch (e) {
+      console.error("[AI Analysis] API Çağrısı başarısız:", e);
+      aiResponseStr = "";
+      throw e;
+    }
+    const cleanedJson = cleanJson(aiResponseStr);
     let result: GeminiResponse;
 
     try {
       result = JSON.parse(cleanedJson);
     } catch {
-      console.error("[AI Analysis] JSON Ayrıştırma Hatası. Ham Yanıt:", aiResponse);
+      console.error("[AI Analysis] JSON Ayrıştırma Hatası. Ham Yanıt:", aiResponseStr);
       throw new Error("Yapay zeka geçersiz bir yanıt döndürdü.");
     }
 
