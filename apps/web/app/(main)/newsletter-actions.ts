@@ -1,7 +1,9 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { checkRateLimit } from "@/lib/server/rate-limit";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { checkRateLimit, checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
 import { NewsletterEmailSchema } from "@/lib/validation/schemas";
 
 export async function subscribeToNewsletter(email: string) {
@@ -11,8 +13,9 @@ export async function subscribeToNewsletter(email: string) {
   }
 
   const emailLower = parsedEmail.data;
+  const ipRate = await checkRateLimitAsync(`newsletter-ip:${await getActionIdentity()}`, 10, 60 * 60 * 1000);
   const rate = checkRateLimit(`newsletter:${emailLower}`, 3, 60 * 60 * 1000);
-  if (!rate.allowed) {
+  if (!ipRate.allowed || !rate.allowed) {
     return { success: false, error: "Çok fazla deneme yapıldı. Lütfen daha sonra tekrar deneyin." };
   }
 
@@ -22,6 +25,15 @@ export async function subscribeToNewsletter(email: string) {
     });
 
     if (existingUser) {
+      // Kayıtlı bir hesabın bülten tercihini yalnızca hesabın sahibi değiştirebilir
+      const session = await auth.api.getSession({ headers: await headers() });
+      if (session?.user.id !== existingUser.id) {
+        return {
+          success: false,
+          error: "Bu e-posta adresi kayıtlı bir hesaba ait. Bülteni giriş yaptıktan sonra hesap ayarlarınızdan açabilirsiniz.",
+        };
+      }
+
       await prisma.subscriber.updateMany({
         where: { email: emailLower },
         data: { isActive: false },

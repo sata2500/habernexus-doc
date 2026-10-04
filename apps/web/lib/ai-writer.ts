@@ -1,3 +1,4 @@
+import { after } from "next/server";
 import { prisma } from "./prisma";
 import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
@@ -393,10 +394,10 @@ export async function writeArticleWithAI(suggestionId: string) {
     // Google Indexing API bildirimi ve Sosyal Medya Paylaşımı
     try {
       const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
-      notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+      after(() => notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
 
       const { publishToTelegram } = await import("./social-publisher");
-      publishToTelegram({ title: article.title, excerpt: article.excerpt, slug: article.slug, coverImage: article.coverImage }).catch(err => console.error("Telegram publish error:", err));
+      after(() => publishToTelegram({ title: article.title, excerpt: article.excerpt, slug: article.slug, coverImage: article.coverImage }).catch(err => console.error("Telegram publish error:", err)));
     } catch (e) {
       console.error("Failed to load google-indexing or social-publisher helper in writeArticleWithAI:", e);
     }
@@ -568,7 +569,7 @@ export async function rewriteArticleWithAI(articleId: string) {
     if (updatedArticle.status === "PUBLISHED") {
       try {
         const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
-        notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+        after(() => notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
       } catch (e) {
         console.error("Failed to load google-indexing helper in rewriteArticleWithAI:", e);
       }

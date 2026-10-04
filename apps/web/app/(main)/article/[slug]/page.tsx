@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: { params: Params }) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
 
-  if (!article) return { title: "Makale Bulunamadı | Haber Nexus" };
+  if (!article) return { title: "Makale Bulunamadı" };
 
   const isPublished = article.status === "PUBLISHED";
 

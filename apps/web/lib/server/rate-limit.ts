@@ -1,3 +1,5 @@
+import { headers } from "next/headers";
+
 interface RateLimitEntry {
   count: number;
   resetAt: number;
@@ -52,7 +54,7 @@ export async function checkRateLimitAsync(key: string, limit: number, windowMs: 
       const redisKey = `ratelimit:${key}`;
       const expireSeconds = Math.ceil(windowMs / 1000);
 
-      // Upstash REST Pipeline: INCR + EXPIRE (sadece ilk seferde)
+      // Upstash REST Pipeline: INCR + EXPIRE NX (TTL sadece ilk seferde, aynı istekte atomik olarak ayarlanır)
       const res = await fetch(`${UPSTASH_URL}/pipeline`, {
         method: "POST",
         headers: {
@@ -61,6 +63,7 @@ export async function checkRateLimitAsync(key: string, limit: number, windowMs: 
         },
         body: JSON.stringify([
           ["INCR", redisKey],
+          ["EXPIRE", redisKey, String(expireSeconds), "NX"],
           ["TTL", redisKey],
         ]),
         signal: AbortSignal.timeout(1500),
@@ -69,15 +72,8 @@ export async function checkRateLimitAsync(key: string, limit: number, windowMs: 
       if (res.ok) {
         const data = (await res.json()) as Array<{ result: number }>;
         const count = data[0]?.result ?? 1;
-        let ttl = data[1]?.result ?? expireSeconds;
-
-        if (ttl === -1) {
-          // TTL ayarlı değilse pexpire gönder
-          fetch(`${UPSTASH_URL}/EXPIRE/${redisKey}/${expireSeconds}`, {
-            headers: { Authorization: `Bearer ${UPSTASH_TOKEN}` },
-          }).catch(() => undefined);
-          ttl = expireSeconds;
-        }
+        const rawTtl = data[2]?.result ?? expireSeconds;
+        const ttl = rawTtl > 0 ? rawTtl : expireSeconds;
 
         const allowed = count <= limit;
         return {
@@ -107,3 +103,12 @@ export function getRequestIdentity(request: Request) {
   return forwardedFor || request.headers.get("x-real-ip") || "unknown";
 }
 
+
+/**
+ * Server Action'lar için istek kimliği (Request nesnesi olmadığından header'lardan okunur).
+ */
+export async function getActionIdentity() {
+  const reqHeaders = await headers();
+  const forwardedFor = reqHeaders.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwardedFor || reqHeaders.get("x-real-ip") || "unknown";
+}

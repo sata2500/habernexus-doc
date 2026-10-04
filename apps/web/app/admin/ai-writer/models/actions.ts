@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { requireRole } from "@/lib/server/authz";
+import { ManualAiModelSchema } from "@/lib/validation/schemas";
 
 export async function getAiModels() {
   await requireRole("ADMIN");
@@ -114,17 +115,21 @@ export async function upsertManualModel(data: {
   isActive: boolean;
 }) {
   await requireRole("ADMIN");
+  const parsed = ManualAiModelSchema.safeParse(data);
+  if (!parsed.success) return { success: false, error: "Geçersiz model bilgisi." };
+
   try {
+    const model = parsed.data;
     await prisma.aiModel.upsert({
-      where: { id: data.id },
+      where: { id: model.id },
       update: {
-        name: data.name,
-        type: data.type,
-        isFree: data.isFree,
-        isActive: data.isActive,
+        name: model.name,
+        type: model.type,
+        isFree: model.isFree,
+        isActive: model.isActive,
       },
       create: {
-        ...data,
+        ...model,
       }
     });
     revalidatePath("/admin/ai-writer/models");

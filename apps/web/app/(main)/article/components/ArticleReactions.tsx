@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Sparkles } from "lucide-react";
 
 interface Reaction {
@@ -22,42 +22,46 @@ interface ArticleReactionsProps {
   articleId: string;
 }
 
-export function ArticleReactions({ articleId }: ArticleReactionsProps) {
-  const [selectedReaction, setSelectedReaction] = useState<string | null>(null);
-  const [counts, setCounts] = useState<Record<string, number>>({});
-  const [hasMounted, setHasMounted] = useState(false);
+const subscribeNoop = () => () => {};
 
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
+function getInitialCounts(): Record<string, number> {
+  return DEFAULT_REACTIONS.reduce((acc, r) => {
+    acc[r.id] = r.baseCount;
+    return acc;
+  }, {} as Record<string, number>);
+}
 
-  useEffect(() => {
-    if (!hasMounted) return;
-    const storageKey = `reactions:${articleId}`;
-    const userSelectedKey = `user_reaction:${articleId}`;
+function readStoredReactions(articleId: string) {
+  const state = {
+    articleId,
+    selectedReaction: null as string | null,
+    counts: getInitialCounts(),
+  };
+  if (typeof window === "undefined") return state;
 
-    try {
-      const storedCounts = localStorage.getItem(storageKey);
-      const userSelected = localStorage.getItem(userSelectedKey);
-
-      if (userSelected) {
-        setSelectedReaction(userSelected);
-      }
-
-      if (storedCounts) {
-        setCounts(JSON.parse(storedCounts));
-      } else {
-        // Initialize with default base counts
-        const initial = DEFAULT_REACTIONS.reduce((acc, r) => {
-          acc[r.id] = r.baseCount;
-          return acc;
-        }, {} as Record<string, number>);
-        setCounts(initial);
-      }
-    } catch {
-      // Ignored
+  try {
+    const storedCounts = localStorage.getItem(`reactions:${articleId}`);
+    state.selectedReaction = localStorage.getItem(`user_reaction:${articleId}`);
+    if (storedCounts) {
+      state.counts = JSON.parse(storedCounts);
     }
-  }, [articleId]);
+  } catch {
+    // Ignored
+  }
+  return state;
+}
+
+export function ArticleReactions({ articleId }: ArticleReactionsProps) {
+  // Sunucuda ve hidrasyon sırasında false, istemcide true döner
+  const hasMounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const [stored, setStored] = useState(() => readStoredReactions(articleId));
+
+  // articleId değişirse localStorage'dan yeniden oku (render sırasında state ayarlama deseni)
+  if (stored.articleId !== articleId) {
+    setStored(readStoredReactions(articleId));
+  }
+
+  const { selectedReaction, counts } = stored;
 
   const handleSelect = (reactionId: string) => {
     const storageKey = `reactions:${articleId}`;
@@ -68,7 +72,7 @@ export function ArticleReactions({ articleId }: ArticleReactionsProps) {
     if (selectedReaction === reactionId) {
       // Toggle off
       newCounts[reactionId] = Math.max(0, (newCounts[reactionId] || 1) - 1);
-      setSelectedReaction(null);
+      setStored({ articleId, selectedReaction: null, counts: newCounts });
       try {
         localStorage.removeItem(userSelectedKey);
         localStorage.setItem(storageKey, JSON.stringify(newCounts));
@@ -82,7 +86,7 @@ export function ArticleReactions({ articleId }: ArticleReactionsProps) {
       }
       // Increment new
       newCounts[reactionId] = (newCounts[reactionId] || 0) + 1;
-      setSelectedReaction(reactionId);
+      setStored({ articleId, selectedReaction: reactionId, counts: newCounts });
       try {
         localStorage.setItem(userSelectedKey, reactionId);
         localStorage.setItem(storageKey, JSON.stringify(newCounts));
@@ -90,8 +94,6 @@ export function ArticleReactions({ articleId }: ArticleReactionsProps) {
         // Ignored
       }
     }
-
-    setCounts(newCounts);
   };
 
   const totalReactions = Object.values(counts).reduce((a, b) => a + b, 0);

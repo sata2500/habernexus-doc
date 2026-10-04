@@ -4,6 +4,10 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { checkRateLimitAsync } from "@/lib/server/rate-limit";
+import { NewsletterTimeSchema } from "@/lib/validation/schemas";
+
+const MAX_BIO_LENGTH = 1000;
 
 /**
  * Kullanıcının session'ını doğrular ve döner.
@@ -25,6 +29,9 @@ async function getVerifiedSession() {
 export async function updateUserBio(bio: string) {
   try {
     const session = await getVerifiedSession();
+    if (typeof bio !== "string" || bio.length > MAX_BIO_LENGTH) {
+      return { success: false, error: `Biyografi en fazla ${MAX_BIO_LENGTH} karakter olabilir.` };
+    }
     await prisma.user.update({
       where: { id: session.user.id },
       data: { bio },
@@ -76,7 +83,8 @@ export async function getUserBookmarks() {
     const bookmarks = await prisma.bookmark.findMany({
       where: { userId: session.user.id },
       include: {
-        article: { include: { category: true, author: true } },
+        // Yazarın e-posta vb. özel alanlarını istemciye sızdırma
+        article: { include: { category: true, author: { select: { id: true, name: true, image: true } } } },
       },
       orderBy: { createdAt: "desc" },
     });
@@ -225,9 +233,14 @@ export async function updateNewsletterSubscription(subscribed: boolean) {
 export async function updateNewsletterTime(time: string) {
   try {
     const session = await getVerifiedSession();
+    const parsedTime = NewsletterTimeSchema.safeParse(time);
+    // Bülten cron'u saat başı çalışır; dakikalı saatler hiçbir zaman eşleşmez
+    if (!parsedTime.success || !parsedTime.data.endsWith(":00")) {
+      return { success: false, error: "Geçerli bir saat seçin." };
+    }
     await prisma.user.update({
       where: { id: session.user.id },
-      data: { newsletterTime: time },
+      data: { newsletterTime: parsedTime.data },
     });
     revalidatePath("/dashboard/settings");
     return { success: true };
@@ -246,6 +259,11 @@ import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
 export async function testNewsletterEmail() {
   try {
     const session = await getVerifiedSession();
+
+    const rate = await checkRateLimitAsync(`test-newsletter:${session.user.id}`, 3, 60 * 60 * 1000);
+    if (!rate.allowed) {
+      return { success: false, error: "Çok fazla test e-postası istendi. Lütfen daha sonra tekrar deneyin." };
+    }
 
     // Test için son 3 haberi alalım
     const latestArticles = await prisma.article.findMany({

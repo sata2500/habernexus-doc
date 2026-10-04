@@ -1,5 +1,6 @@
 "use server";
 
+import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
@@ -8,6 +9,7 @@ import { ActionResponse } from "@/lib/types";
 import { slugify } from "@/lib/utils";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { rewriteArticleWithAI } from "@/lib/ai-writer";
+import { checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
 
 
 export async function createArticle(data: {
@@ -46,7 +48,7 @@ export async function createArticle(data: {
 
     if (createdArticle.status === "PUBLISHED") {
       const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-      notifyGoogle(getArticleUrl(createdArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+      after(() => notifyGoogle(getArticleUrl(createdArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
     }
 
     revalidatePath("/author/articles");
@@ -154,10 +156,10 @@ export async function updateArticle(id: string, data: {
 
     if (updatedArticle.status === "PUBLISHED") {
       const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-      notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err));
+      after(() => notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
     } else if (article.status === "PUBLISHED" && updatedArticle.status !== "PUBLISHED") {
       const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-      notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err));
+      after(() => notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
     }
 
     revalidatePath("/author/articles");
@@ -209,7 +211,7 @@ export async function deleteArticle(id: string) {
 
     if (article && article.status === "PUBLISHED") {
       const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-      notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err));
+      after(() => notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
     }
 
     revalidatePath("/author/articles");
@@ -224,8 +226,14 @@ export async function deleteArticle(id: string) {
 
 export async function incrementViewCount(id: string) {
   try {
+    if (typeof id !== "string" || id.length === 0 || id.length > 100) return { success: false };
+
+    // Aynı IP'nin aynı haberi tekrar tekrar sayması (görüntülenme şişirme) engellenir
+    const rate = await checkRateLimitAsync(`view:${await getActionIdentity()}:${id}`, 1, 30 * 60 * 1000);
+    if (!rate.allowed) return { success: true };
+
     await prisma.article.update({
-      where: { id },
+      where: { id, status: "PUBLISHED" },
       data: { viewCount: { increment: 1 } },
     });
     return { success: true };

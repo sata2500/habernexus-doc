@@ -19,7 +19,7 @@ const REQUIRED_PAGES = [
 /**
  * Gerekli sayfaların veritabanında mevcut olduğundan emin olur.
  */
-export async function seedStaticPages() {
+async function seedStaticPages() {
   try {
     for (const page of REQUIRED_PAGES) {
       await prisma.staticPage.upsert({

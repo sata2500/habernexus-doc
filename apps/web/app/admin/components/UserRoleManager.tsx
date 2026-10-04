@@ -26,8 +26,8 @@ export function UserRoleManager({ users }: { users: User[] }) {
   const handleRoleChange = (userId: string, newRole: string) => {
     setChangingId(userId);
     startTransition(async () => {
-      await updateUserRole(userId, newRole);
-      setChangingId(userId === "FORCE_REFRESH" ? "" : null); // Simple reset
+      const result = await updateUserRole(userId, newRole);
+      if (!result.success) alert(result.error);
       setChangingId(null);
     });
   };
