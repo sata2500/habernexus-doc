@@ -1,15 +1,11 @@
 import { prisma } from "./prisma";
+import { AiError, generateText, parseJsonResponse } from "./ai/client";
 
-// Helper to wait
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /**
- * OpenRouter API kullanarak analiz verisini JSON formatinda uretir.
+ * Analiz modelinden makale kalite raporunu JSON olarak alır.
  */
-async function generateAnalysisWithOpenRouter(model: string, articleTitle: string, articleContent: string): Promise<Record<string, unknown>> {
-  const apiKey = process.env.OPENROUTER_API_KEY || "";
-  if (!apiKey) throw new Error("OPENROUTER_API_KEY eksik.");
-
+async function generateAnalysis(articleTitle: string, articleContent: string): Promise<Record<string, unknown>> {
   const systemPrompt = `Sen profesyonel bir haber editoru ve Turkce icerik kalite analistisin.
 Gorevin, sana verilen haber makalesini detayli bir sekilde analiz etmektir.
 Analizinde anlamsal (semantic) ozgunluk/intihal oranini, SEO uyumlulugunu, Turkce okunabilirlik seviyesini ve genel yazim kalitesini olcmelisin.
@@ -51,48 +47,14 @@ Donus formatin MUTLAKA asagidaki JSON semasina birebir uymali ve sadece gecerli 
   }
 }`;
 
-  const userPrompt = `
-Haber Basligi: "${articleTitle}"
-Haber Icerigi:
-${articleContent}
-  `;
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com",
-      "X-Title": "Haber Nexus",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt }
-      ],
-      response_format: { type: "json_object" },
-      temperature: 0.2
-    })
+  const plain = articleContent.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim().slice(0, 30000);
+  const { text } = await generateText("analyzer", {
+    system: systemPrompt,
+    prompt: `Haber Basligi: "${articleTitle}"\nHaber Icerigi:\n${plain}`,
+    json: true,
+    temperature: 0.2,
   });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(`OpenRouter Analiz Hatasi: ${data.error?.message || response.statusText}`);
-  }
-
-  const rawContent = data.choices?.[0]?.message?.content || "";
-  try {
-    return JSON.parse(rawContent.trim());
-  } catch {
-    console.error("JSON parse hatasi. Gelen ham veri:", rawContent);
-    // Regex ile JSON bloklarini ayiklamaya calis
-    const jsonMatch = rawContent.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      return JSON.parse(jsonMatch[0].trim());
-    }
-    throw new Error("Yapay zeka gecersiz bir JSON formatinda yanit verdi.");
-  }
+  return parseJsonResponse<Record<string, unknown>>(text);
 }
 
 /**
@@ -109,33 +71,10 @@ export async function analyzeArticle(articleId: string) {
       throw new Error(`Makale bulunamadi: ${articleId}`);
     }
 
-    const settings = await prisma.systemSettings.findFirst();
-    const analyzerModel = settings?.aiAnalyzerModel || "google/gemini-2.0-flash-001";
+    console.log(`[Article Analyzer] Analiz baslatiliyor. Makale: "${article.title}" (${article.id})`);
 
-    console.log(`[Article Analyzer] Analiz baslatiliyor. Makale: "${article.title}" (${article.id}), Model: ${analyzerModel}`);
-
-    let analysisResult: Record<string, unknown> | null = null;
-    let error: unknown = null;
-
-    // Retry mantigi
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        analysisResult = await generateAnalysisWithOpenRouter(analyzerModel, article.title, article.content);
-        break;
-      } catch (err: unknown) {
-        error = err;
-        const msg = err instanceof Error ? err.message : String(err);
-        console.warn(`[Article Analyzer] Deneme ${attempt} basarisiz. Hata:`, msg);
-        if (attempt < 3) {
-          await sleep(2000 * attempt);
-        }
-      }
-    }
-
-    if (!analysisResult) {
-      const errMsg = error instanceof Error ? error.message : String(error);
-      throw new Error(`Makale analiz edilemedi. Son hata: ${errMsg}`);
-    }
+    // Tekrar deneme ve yedek model ortak AI katmanında yapılır
+    const analysisResult = await generateAnalysis(article.title, article.content);
 
     // Degerlerin dogrulanmasi ve veritabanina kaydedilmesi
     const plagiarismRate = Math.min(100, Math.max(0, typeof analysisResult.plagiarismRate === "number" ? analysisResult.plagiarismRate : 0));
@@ -168,7 +107,9 @@ export async function analyzeArticle(articleId: string) {
     };
 
   } catch (err: unknown) {
-    const errMsg = err instanceof Error ? err.message : "Bilinmeyen bir analiz hatasi olustu.";
+    const errMsg = err instanceof AiError
+      ? `${err.message}${err.raw ? ` Ayrıntı: ${err.raw}` : ""}`
+      : err instanceof Error ? err.message : "Bilinmeyen bir analiz hatasi olustu.";
     console.error(`[Article Analyzer] HATA:`, errMsg);
     return {
       success: false,

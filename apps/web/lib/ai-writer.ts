@@ -4,177 +4,42 @@ import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
 
 import { slugify } from "./utils";
+import { AiError, cleanHtmlResponse, generateImage, generateText, toAiError } from "./ai/client";
 import { analyzeArticle } from "./article-analyzer";
 import { fetchPublicResource } from "./server/remote-fetch";
 
 // Yardımcı: Belirli bir süre bekle (ms)
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-function decodeDataImage(value: string) {
-  const match = value.match(/^data:image\/[a-z0-9.+-]+;base64,([a-zA-Z0-9+/=]+)$/);
-  if (!match) throw new Error("Unsupported image data URL.");
-
-  const buffer = Buffer.from(match[1], "base64");
-  if (buffer.length === 0 || buffer.length > 8 * 1024 * 1024) {
-    throw new Error("Generated image exceeds the maximum allowed size.");
-  }
-  return buffer;
+/** Üretilen kapak görselini Vercel Blob'a kaydeder. */
+async function saveCoverImage(buffer: Buffer, mimeType: string) {
+  const ext = mimeType.includes("jpeg") || mimeType.includes("jpg") ? "jpg" : mimeType.includes("webp") ? "webp" : "png";
+  const { url } = await put(`articles/ai-${Date.now()}.${ext}`, buffer, { access: "public", contentType: mimeType });
+  return url;
 }
 
-// Yardımcı: URL'den görseli indirip base64'e çevirir (Vision analizi için)
+/** Haber metni için ortak yazım çerçevesi */
+const WRITER_FORMAT = `Çıktı kuralları:
+- Yalnızca makale gövdesini HTML olarak döndür (h2, h3, p, strong, ul, li, blockquote). Başlık (h1), markdown veya kod bloğu kullanma.
+- En az 500 kelime, kısa ve okunur paragraflar.
+- Kaynak metni kopyalama; bilgiyi kendi cümlelerinle, tarafsız gazetecilik diliyle yaz.
+- Doğrulanamayan bilgi uydurma.`;
 
-export async function fetchImageAsBase64(url: string): Promise<string | null> {
+/** Kapak görseli üret; başarısızsa RSS görselini sisteme aktar. */
+async function produceCoverImage(imagePromptBase: string, title: string, rssImageUrl: string | null, useRssImageAsReference: boolean) {
   try {
-    const buffer = await fetchPublicResource(url, { maxBytes: 8 * 1024 * 1024 });
-    return buffer.toString("base64");
+    const prompt = `${imagePromptBase}\nHaber başlığı: "${title}"\nStil: Fotogerçekçi haber fotoğrafı, 16:9, üzerinde yazı veya logo yok.`;
+    const image = await generateImage(prompt, { referenceImageUrl: useRssImageAsReference && rssImageUrl ? rssImageUrl : undefined });
+    return await saveCoverImage(image.buffer, image.mimeType);
+  } catch (error) {
+    console.warn("[AI Writer] Kapak görseli üretilemedi:", toAiError(error).message);
+  }
+  if (!rssImageUrl) return null;
+  try {
+    const buffer = await fetchPublicResource(rssImageUrl, { maxBytes: 8 * 1024 * 1024 });
+    return buffer.length > 0 ? await saveCoverImage(buffer, "image/jpeg") : rssImageUrl;
   } catch {
-    return null;
-  }
-}
-
-/**
- * Google GenAI API kullanarak içerik üretir.
- */
-async function generateContentWithGoogleGenAI(model: string, prompt: string, useGoogleSearch: boolean): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new Error("GEMINI_API_KEY eksik.");
-
-  const { GoogleGenAI } = await import("@google/genai");
-  const ai = new GoogleGenAI({ apiKey });
-
-  const tools = useGoogleSearch ? [{ googleSearch: {} }] : undefined;
-
-  const response = await ai.models.generateContent({
-    model: model,
-    contents: prompt,
-    config: {
-      tools: tools,
-    }
-  });
-
-  return response.text || "";
-}
-
-/**
- * Google GenAI API kullanarak görsel üretir.
- */
-async function generateImageWithGoogleGenAI(model: string, prompt: string): Promise<string | null> {
-  try {
-    console.log(`[AI Writer] Google GenAI görsel üretimi: model=${model}`);
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) throw new Error("GEMINI_API_KEY eksik.");
-
-    const { GoogleGenAI } = await import("@google/genai");
-    const ai = new GoogleGenAI({ apiKey });
-
-    const response = await ai.models.generateImages({
-      model: model,
-      prompt: prompt,
-      config: {
-        numberOfImages: 1,
-        outputMimeType: "image/jpeg",
-        aspectRatio: "16:9",
-      }
-    });
-
-    const base64Image = response.generatedImages?.[0]?.image?.imageBytes;
-    if (base64Image) {
-      console.log("[AI Writer] Google GenAI görseli Blob'a aktarılıyor...");
-      const buffer = Buffer.from(base64Image, 'base64');
-      const { url: blobUrl } = await put(`articles/ai-gg-${Date.now()}.jpg`, buffer, {
-        access: "public",
-        contentType: "image/jpeg",
-      });
-      return blobUrl;
-    }
-    return null;
-  } catch (err) {
-    console.error("Google GenAI Image Generation Hatası:", err);
-    return null;
-  }
-}
-
-/**
- * OpenRouter API kullanarak içerik üretir.
- */
-async function generateContentWithOpenRouter(model: string, messages: Array<{ role: string; content: string | unknown[] }>, tools?: unknown[]): Promise<string> {
-  const apiKey = process.env.OPENROUTER_API_KEY || "";
-  if (!apiKey) throw new Error("OPENROUTER_API_KEY eksik.");
-
-  const body: Record<string, unknown> = {
-    model: model,
-    messages: messages,
-    response_format: { type: "text" }
-  };
-
-  if (tools && tools.length > 0) {
-    body.tools = tools;
-  }
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com",
-      "X-Title": "Haber Nexus",
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(body)
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    throw new Error(`OpenRouter Hatası: ${data.error?.message || response.statusText}`);
-  }
-  return data.choices?.[0]?.message?.content || "";
-}
-
-/**
- * OpenRouter API kullanarak görsel üretir.
- */
-async function generateImageWithOpenRouter(model: string, prompt: string, referenceImageUrl?: string): Promise<string | null> {
-  try {
-    console.log(`[AI Writer] OpenRouter görsel üretimi: model=${model}, referans=${!!referenceImageUrl}`);
-    const apiKey = process.env.OPENROUTER_API_KEY || "";
-
-    const content: Array<{ type: string; text?: string; image_url?: { url: string } }> = [{ type: "text", text: prompt }];
-    if (referenceImageUrl) {
-      content.push({ type: "image_url", image_url: { url: referenceImageUrl } });
-    }
-
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: model,
-        messages: [{ role: "user", content: content }],
-        modalities: ["image"]
-      })
-    });
-
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error?.message || "OpenRouter Image Error");
-
-    const imageContent = data.choices?.[0]?.message?.content;
-    if (imageContent && (imageContent.startsWith("http") || imageContent.startsWith("data:image"))) {
-      // Görseli indir ve Vercel Blob'a kaydet (Kalıcılık ve Optimizasyon için)
-      console.log("[AI Writer] OpenRouter görseli Blob'a aktarılıyor...");
-      const buffer = imageContent.startsWith("data:image/")
-        ? decodeDataImage(imageContent)
-        : await fetchPublicResource(imageContent, { maxBytes: 8 * 1024 * 1024 });
-      const { url: blobUrl } = await put(`articles/ai-or-${Date.now()}.png`, buffer, {
-        access: "public",
-        contentType: "image/png",
-      });
-      return blobUrl;
-    }
-    return null;
-  } catch (err) {
-    console.error("OpenRouter Image Generation Hatası:", err);
-    return null;
+    return rssImageUrl;
   }
 }
 
@@ -229,14 +94,6 @@ export async function writeArticleWithAI(suggestionId: string) {
     const settings = await prisma.systemSettings.findFirst();
     if (!settings) throw new Error("Sistem ayarları bulunamadı.");
 
-    const isGoogle = settings.aiProvider === "GOOGLE";
-
-    if (isGoogle && !process.env.GEMINI_API_KEY) throw new Error("GEMINI_API_KEY yapılandırılmamış.");
-    if (!isGoogle && !process.env.OPENROUTER_API_KEY) throw new Error("OPENROUTER_API_KEY yapılandırılmamış.");
-
-    const writerModelName = settings?.aiWriterModel || "gemini-2.5-flash";
-    const imageModelName = settings?.aiWriterImageModel || "imagen-3.0-generate-002";
-
     // ── Persona & Kategori Zekası ──
     const globalSystemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın.";
     let systemPrompt = globalSystemPrompt;
@@ -286,72 +143,26 @@ export async function writeArticleWithAI(suggestionId: string) {
       }
     }
 
-    // 2. Metin Üret
-    const textPrompt = `
-      Konu: ${suggestion.title}
-      Kaynak Özet: ${suggestion.excerpt || ""}
-      Talimat: ${systemPrompt}
-      Format: HTML (h2, p, strong). En az 500 kelime.
-    `;
+    // 2. Metin Üret (model, yedekler ve tekrar denemeler ortak AI katmanında)
+    const suggestedTitles = Array.isArray(aiAnalysisObj?.suggestedTitles)
+      ? (aiAnalysisObj.suggestedTitles as unknown[]).filter((t): t is string => typeof t === "string")
+      : [];
+    const textPrompt = `Konu: ${suggestion.title}
+${suggestedTitles.length ? `Önerilen başlıklar: ${suggestedTitles.join(" | ")}\n` : ""}Kaynak özet: ${suggestion.excerpt || "(yok)"}
+Kaynak: ${suggestion.source.name}${useGoogleSearch ? "\nKonuyu web/Google araması ile doğrula ve en güncel bilgileri kullan." : ""}`;
 
-    // Google Arama Tool'u hazırla
-    const tools = useGoogleSearch ? [{ type: "openrouter:web_search" }] : undefined;
-
-    let content = "";
-    for (let i = 0; i < 3; i++) {
-      try {
-        console.log(`[AI Writer] Metin üretiliyor: Model=${writerModelName}, Deneme=${i + 1}, Arama=${useGoogleSearch}, Provider=${settings.aiProvider}`);
-        
-        if (isGoogle) {
-          content = await generateContentWithGoogleGenAI(writerModelName, textPrompt, useGoogleSearch);
-        } else {
-          content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }], tools);
-        }
-        break;
-      } catch (err: unknown) {
-        const errorMsg = String(err);
-        const isRetryable = errorMsg.includes("429") || errorMsg.includes("503") || errorMsg.includes("UNAVAILABLE") || errorMsg.includes("high demand") || errorMsg.includes("timeout");
-        if (isRetryable && i < 2) {
-          await sleep(errorMsg.includes("503") ? 10000 : 5000);
-          continue;
-        }
-        throw err;
-      }
-    }
-
+    const { text: rawContent, model: usedModel } = await generateText("writer", {
+      system: `${systemPrompt}\n\n${WRITER_FORMAT}`,
+      prompt: textPrompt,
+      search: useGoogleSearch,
+      temperature: 0.7,
+    });
+    const content = cleanHtmlResponse(rawContent);
     if (!content) throw new Error("Yapay zeka metin üretemedi.");
+    console.log(`[AI Writer] Metin üretildi: ${usedModel}`);
 
-    // 3. Görsel Üret
-    const finalImagePrompt = `${imagePromptBase}\nNews headline: "${suggestion.title}"\nStyle: Photorealistic, 16:9, no text.`;
-    const referenceUrl = useRssImage && suggestion.imageUrl ? suggestion.imageUrl : undefined;
-
-    let generatedImageUrl = null;
-    
-    if (isGoogle) {
-      generatedImageUrl = await generateImageWithGoogleGenAI(imageModelName, finalImagePrompt);
-    } else {
-      generatedImageUrl = await generateImageWithOpenRouter(imageModelName, finalImagePrompt, referenceUrl);
-    }
-    
-    let imageUrl = generatedImageUrl;
-
-    // Eğer AI görsel üretmediyse veya hata oluştuysa RSS görselini kullan ve sisteme kaydet
-    if (!imageUrl && suggestion.imageUrl) {
-      try {
-        console.log("[AI Writer] Orijinal RSS görseli sisteme aktarılıyor...");
-        const buffer = await fetchPublicResource(suggestion.imageUrl, { maxBytes: 8 * 1024 * 1024 });
-        if (buffer.length > 0) {
-          const { url: blobUrl } = await put(`articles/rss-${Date.now()}.png`, buffer, {
-            access: "public",
-            contentType: "image/png",
-          });
-          imageUrl = blobUrl;
-        }
-      } catch (e) {
-        console.warn("[AI Writer] RSS görseli aktarılamadı, orijinal URL kullanılacak:", e);
-        imageUrl = suggestion.imageUrl;
-      }
-    }
+    // 3. Kapak görseli
+    const imageUrl = await produceCoverImage(imagePromptBase, suggestion.title, suggestion.imageUrl, useRssImage);
 
     // 4. Kaydet
     const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
@@ -371,7 +182,8 @@ export async function writeArticleWithAI(suggestionId: string) {
       }).catch(e => console.error("Media kütüphanesine eklenemedi:", e));
     }
 
-    const title = suggestion.title;
+    // Analizde önerilen özgün başlık varsa onu kullan (kaynak başlığı birebir kopyalamamak için)
+    const title = suggestedTitles[0]?.trim() || suggestion.title;
     const slug = `${slugify(title)}-${Date.now().toString().slice(-4)}`;
 
     const article = await prisma.article.create({
@@ -429,22 +241,22 @@ export async function writeArticleWithAI(suggestionId: string) {
         while (rewriteAttempt <= maxRewriteAttempts && currentPlagiarismRate > PLAGIARISM_THRESHOLD) {
           console.log(`[AI Writer] Yeniden yazım denemesi ${rewriteAttempt}/${maxRewriteAttempts}...`);
 
-          const rewritePrompt = `
-            Daha önce yazdığın haber makalesinde yüksek oranda anlamsal benzerlik/intihal (%${currentPlagiarismRate}) tespit edildi.
-            Lütfen aşağıdaki konuyu tamamen farklı cümle yapılarıyla, son derece özgün, zengin ve tarafsız bir gazetecilik diliyle yeniden yaz.
-            Benzerlik taşıyan klişe kalıplardan ve doğrudan kopya cümlelerden kaçın.
+          const rewritePrompt = `Daha önce yazdığın haber makalesinde yüksek anlamsal benzerlik (%${currentPlagiarismRate}) tespit edildi.
+Aşağıdaki konuyu tamamen farklı cümle yapılarıyla, özgün ve tarafsız bir gazetecilik diliyle yeniden yaz. Klişe ve kopya ifadelerden kaçın.
 
-            Konu: ${suggestion.title}
-            Kaynak Özet: ${suggestion.excerpt || ""}
-            Talimat: ${systemPrompt}
-            Format: HTML (h2, p, strong). En az 500 kelime.
-          `;
+${textPrompt}`;
 
           let newContent = "";
           try {
-            newContent = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: rewritePrompt }], tools);
+            const res = await generateText("writer", {
+              system: `${systemPrompt}\n\n${WRITER_FORMAT}`,
+              prompt: rewritePrompt,
+              search: useGoogleSearch,
+              temperature: 0.8,
+            });
+            newContent = cleanHtmlResponse(res.text);
           } catch (rewriteErr) {
-            console.error(`[AI Writer] Yeniden yazım API hatası:`, rewriteErr);
+            console.error(`[AI Writer] Yeniden yazım hatası:`, toAiError(rewriteErr).message);
           }
 
           if (newContent) {
@@ -477,7 +289,8 @@ export async function writeArticleWithAI(suggestionId: string) {
 
     return { success: true, articleId: article.id, title: article.title };
   } catch (error) {
-    console.error("AI Writer Hatası:", error);
+    const aiError = error instanceof AiError ? error : null;
+    console.error("AI Writer Hatası:", aiError ? `${aiError.message} — ${aiError.raw}` : error);
 
     if (claimed) {
       await prisma.rssFeedItem.updateMany({
@@ -488,7 +301,12 @@ export async function writeArticleWithAI(suggestionId: string) {
       });
     }
 
-    return { success: false, error: "AI ile haber üretimi tamamlanamadı." };
+    return {
+      success: false,
+      error: aiError
+        ? `${aiError.message}${aiError.raw ? ` Ayrıntı: ${aiError.raw}` : ""}`
+        : error instanceof Error ? error.message : "AI ile haber üretimi tamamlanamadı.",
+    };
   }
 }
 
@@ -522,7 +340,6 @@ export async function rewriteArticleWithAI(articleId: string) {
     if (!article) throw new Error("Makale bulunamadı.");
 
     const settings = await prisma.systemSettings.findFirst();
-    const writerModelName = settings?.aiWriterModel || "google/gemini-2.0-flash-001";
 
     // Prompt hazırlığı
     const systemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün.";
@@ -531,32 +348,20 @@ export async function rewriteArticleWithAI(articleId: string) {
       finalPrompt = `${systemPrompt}\n\nÖzel Yazım Talimatları:\n${article.aiPersona.prompt}`;
     }
 
-    const useGoogleSearch = settings?.aiWriterSearchEnabled || false;
-    const tools = useGoogleSearch ? [{ type: "openrouter:web_search" }] : undefined;
-
-    const textPrompt = `
-      Konu: ${article.title}
-      Talimat: ${finalPrompt}
-      Lütfen bu makaleyi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz.
-      Önceki versiyondaki anlatım bozukluklarını düzelt, intihal riski oluşturabilecek ifadelerden kaçın.
-      Format: HTML (h2, p, strong). En az 500 kelime.
-    `;
-
     console.log(`[AI Writer] Manuel yeniden yazım başlatılıyor: Makale="${article.title}" (${article.id})`);
 
-    let content = "";
-    for (let i = 0; i < 3; i++) {
-      try {
-        content = await generateContentWithOpenRouter(writerModelName, [{ role: "user", content: textPrompt }], tools);
-        break;
-      } catch (_err: unknown) {
-        if (i < 2) {
-          await sleep(5000);
-          continue;
-        }
-        throw _err;
-      }
-    }
+    const { text } = await generateText("writer", {
+      system: `${finalPrompt}\n\n${WRITER_FORMAT}`,
+      prompt: `Aşağıdaki haberi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz. Anlatım bozukluklarını düzelt, bilgileri koru.
+
+Başlık: ${article.title}
+
+Mevcut metin:
+${article.content.slice(0, 20000)}`,
+      search: settings?.aiWriterSearchEnabled ?? false,
+      temperature: 0.7,
+    });
+    const content = cleanHtmlResponse(text);
 
     if (!content) throw new Error("Yeniden yazım başarısız oldu, içerik üretilemedi.");
 
@@ -583,8 +388,10 @@ export async function rewriteArticleWithAI(articleId: string) {
       analysis
     };
   } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : String(error);
-    console.error("Manuel Yeniden Yazım Hatası:", error);
+    const errMsg = error instanceof AiError
+      ? `${error.message}${error.raw ? ` Ayrıntı: ${error.raw}` : ""}`
+      : error instanceof Error ? error.message : String(error);
+    console.error("Manuel Yeniden Yazım Hatası:", errMsg);
     return { success: false, error: errMsg };
   }
 }

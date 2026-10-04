@@ -1,63 +1,103 @@
+import Link from "next/link";
+import { Settings2, Sparkles, ServerCog, SlidersHorizontal } from "lucide-react";
+import { cn } from "@/lib/utils";
 import { getAdminSiteSettings } from "./actions";
+import { getAiOverview } from "./ai-actions";
 import { SiteSettingsForm } from "./components/SiteSettingsForm";
-import { Settings2, Palette, Globe } from "lucide-react";
+import { AiSettingsPanel } from "./components/AiSettingsPanel";
+import { SystemPanel } from "./components/SystemPanel";
+import { getMigrationStatus, type MigrationStatus } from "@/lib/server/db-migrations";
 
 export const dynamic = "force-dynamic";
+// Veritabanı güncellemeleri ve model testleri için yeterli süre
+export const maxDuration = 300;
 
-export default async function AdminSettingsPage() {
-  const settings = await getAdminSiteSettings();
+const SERVICES = [
+  { key: "DATABASE_URL", label: "Veritabanı (PostgreSQL)" },
+  { key: "BETTER_AUTH_SECRET", label: "Oturum güvenliği (Better Auth)" },
+  { key: "GEMINI_API_KEY", label: "Google Gemini (AI yazar, seslendirme)" },
+  { key: "OPENROUTER_API_KEY", label: "OpenRouter (AI analiz, özet)" },
+  { key: "BLOB_READ_WRITE_TOKEN", label: "Vercel Blob (görsel ve ses depolama)" },
+  { key: "QSTASH_TOKEN", label: "Upstash QStash (zamanlanmış görevler)" },
+  { key: "UPSTASH_REDIS_REST_URL", label: "Upstash Redis (önbellek, hız sınırı)" },
+  { key: "RESEND_API_KEY", label: "Resend (e-posta)" },
+  { key: "GOOGLE_CLIENT_EMAIL", label: "Google Indexing API" },
+  { key: "TELEGRAM_BOT_TOKEN", label: "Telegram paylaşımı" },
+] as const;
+
+const TABS = [
+  { id: "genel", label: "Genel", icon: SlidersHorizontal, description: "Site adı, logo, SEO, sosyal medya ve tema renkleri." },
+  { id: "yapay-zeka", label: "Yapay Zekâ", icon: Sparkles, description: "Modeller, sağlayıcılar ve yapay zekâ talimatları." },
+  { id: "sistem", label: "Sistem", icon: ServerCog, description: "Veritabanı güncellemeleri ve servis yapılandırması." },
+] as const;
+
+type TabId = (typeof TABS)[number]["id"];
+
+export default async function AdminSettingsPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
+  const { tab: rawTab } = await searchParams;
+  const tab: TabId = TABS.some((t) => t.id === rawTab) ? (rawTab as TabId) : "genel";
+  const active = TABS.find((t) => t.id === tab)!;
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* Header */}
-      <div className="flex flex-col gap-2">
-        <h1 className="text-3xl font-bold font-display flex items-center gap-3">
-          <div className="h-12 w-12 rounded-2xl bg-primary-500/20 flex items-center justify-center">
-            <Settings2 className="h-6 w-6 text-primary-500" />
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-col gap-1.5">
+        <h1 className="text-2xl md:text-3xl font-bold font-display flex items-center gap-3">
+          <div className="h-11 w-11 rounded-2xl bg-primary-500/20 flex items-center justify-center">
+            <Settings2 className="h-5.5 w-5.5 text-primary-500" />
           </div>
-          Site Ayarları
+          Ayarlar
         </h1>
-        <p className="text-muted-foreground text-sm max-w-2xl">
-          Platform adı, logo, slogan, SEO bilgileri ve sosyal medya hesaplarını buradan yönetin.
-          Değişiklikler kaydedildiğinde tüm sayfalar anında güncellenir.
-        </p>
+        <p className="text-muted-foreground text-sm">{active.description}</p>
       </div>
 
-      {/* Info Cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-start gap-4">
-          <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500 shrink-0">
-            <Globe className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">SEO Etkisi</p>
-            <p className="text-sm text-foreground">Platform adı ve açıklama tüm meta etiketlere otomatik yansır.</p>
-          </div>
-        </div>
-        <div className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-start gap-4">
-          <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500 shrink-0">
-            <Palette className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Anlık Güncelleme</p>
-            <p className="text-sm text-foreground">Kayıt sonrası Navbar, Footer ve tüm sayfalar otomatik güncellenir.</p>
-          </div>
-        </div>
-        <div className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-start gap-4">
-          <div className="h-10 w-10 rounded-xl bg-success/10 flex items-center justify-center text-success shrink-0">
-            <Settings2 className="h-5 w-5" />
-          </div>
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-1">Vercel Uyumlu</p>
-            <p className="text-sm text-foreground">Ayarlar veritabanında saklanır, env var değişikliği gerekmez.</p>
-          </div>
-        </div>
-      </div>
+      <nav aria-label="Ayar bölümleri" className="grid grid-cols-3 gap-1 p-1 rounded-2xl bg-muted border border-border">
+        {TABS.map((t) => (
+          <Link
+            key={t.id}
+            href={`/admin/settings?tab=${t.id}`}
+            aria-current={t.id === tab ? "page" : undefined}
+            className={cn(
+              "h-10 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-all",
+              t.id === tab ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            <t.icon className="h-4 w-4 shrink-0" />
+            <span className="truncate">{t.label}</span>
+          </Link>
+        ))}
+      </nav>
 
-      {/* Form Card */}
-      <div className="bg-card rounded-3xl border border-border shadow-soft p-6 md:p-8">
-        <SiteSettingsForm initialSettings={settings} />
-      </div>
+      {tab === "genel" && <GeneralTab />}
+      {tab === "yapay-zeka" && <AiTab />}
+      {tab === "sistem" && <SystemTab />}
     </div>
   );
+}
+
+async function GeneralTab() {
+  const settings = await getAdminSiteSettings();
+  return (
+    <div className="bg-card rounded-3xl border border-border shadow-soft p-4 sm:p-6 md:p-8">
+      <SiteSettingsForm initialSettings={settings} />
+    </div>
+  );
+}
+
+async function AiTab() {
+  const overview = await getAiOverview();
+  return <AiSettingsPanel {...overview} />;
+}
+
+async function SystemTab() {
+  let status: MigrationStatus | null = null;
+  let dbError: string | null = null;
+  try {
+    status = await getMigrationStatus();
+  } catch (error) {
+    console.error("Migration status error:", error);
+    dbError = "Veritabanına bağlanılamadı veya durum okunamadı.";
+  }
+  // Değerlerin kendisi asla istemciye gönderilmez, yalnızca tanımlı olup olmadıkları
+  const services = SERVICES.map((s) => ({ label: s.label, configured: !!process.env[s.key] }));
+  return <SystemPanel initialStatus={status} dbError={dbError} services={services} />;
 }

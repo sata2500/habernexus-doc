@@ -1,6 +1,8 @@
 "use me";
 "use server";
 
+import { AiError, cleanHtmlResponse, generateText, parseJsonResponse } from "@/lib/ai/client";
+
 import { prisma } from "@/lib/prisma";
 import { syncGoogleTrends, matchTrendsWithRss } from "@/lib/google-trends";
 import { slugify } from "@/lib/utils";
@@ -22,7 +24,9 @@ export async function triggerSyncGoogleTrends() {
       contentGapCount: matchRes.contentGapCount,
     };
   } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : String(error);
+    const errMsg = error instanceof AiError
+      ? `${error.message}${error.raw ? ` Ayrıntı: ${error.raw}` : ""}`
+      : error instanceof Error ? error.message : String(error);
     return { success: false, error: errMsg };
   }
 }
@@ -40,38 +44,23 @@ export async function generateArticleFromTrend(trendId: string) {
     if (!adminUser) throw new Error("Admin kullanıcı bulunamadı.");
 
     const settings = await prisma.systemSettings.findFirst();
-    const writerModelName = settings?.aiWriterModel || "google/gemini-2.0-flash-001";
-    const apiKey = process.env.OPENROUTER_API_KEY;
 
-    if (!apiKey) throw new Error("OPENROUTER_API_KEY bulunamadı.");
+    // Güncel bilgi için arama açık; başlık, özet ve gövde tek JSON'da istenir
+    const { text } = await generateText("writer", {
+      system: settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün.",
+      prompt: `Aşağıdaki Google Trends konusunu web/Google araması ile araştır ve güncel bilgilerle özgün bir haber yaz.
+Konu: "${trend.keyword}"
 
-    // Google Arama aracı ile makale yaz promptu
-    const prompt = `Aşağıdaki Google Trends konusunu derinlemesine araştır ve güncel bilgilerle profesyonel bir haber makalesi yaz.
-Konu/Keyword: "${trend.keyword}"
-Format: HTML (h2, p, strong). En az 500 kelime. Tarafsız, ilgi çekici ve özgün bir haber dili kullan.`;
-
-    const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://habernexus.com",
-        "X-Title": "Haber Nexus Trend AI Writer",
-      },
-      body: JSON.stringify({
-        model: writerModelName,
-        messages: [{ role: "user", content: prompt }],
-        tools: [{ type: "openrouter:web_search" }],
-      }),
+Yanıtı SADECE şu JSON biçiminde ver:
+{ "title": "En fazla 90 karakterlik haber başlığı", "excerpt": "1-2 cümlelik spot", "content": "HTML gövde (h2, p, strong; en az 500 kelime; başlık yok)" }`,
+      search: true,
+      temperature: 0.7,
     });
-
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error?.message || "AI Writer Error");
-
-    const content = data.choices?.[0]?.message?.content || "";
+    const parsed = parseJsonResponse<{ title?: string; excerpt?: string; content?: string }>(text);
+    const content = cleanHtmlResponse(parsed.content || "");
     if (!content) throw new Error("İçerik üretilemedi.");
 
-    const title = `${trend.keyword} Gündeminde Son Gelişmeler`;
+    const title = parsed.title?.trim().slice(0, 140) || `${trend.keyword}: Son Gelişmeler`;
     const slug = `${slugify(title)}-${Date.now().toString().slice(-4)}`;
 
     const article = await prisma.article.create({
@@ -79,7 +68,7 @@ Format: HTML (h2, p, strong). En az 500 kelime. Tarafsız, ilgi çekici ve özg�
         title,
         slug,
         content,
-        excerpt: `Google Trends'te popüler olan "${trend.keyword}" konusu hakkında en son gelişmeler ve analizler.`,
+        excerpt: parsed.excerpt?.trim().slice(0, 300) || `"${trend.keyword}" hakkında son gelişmeler.`,
         status: "PUBLISHED",
         authorId: adminUser.id,
         publishedAt: new Date(),

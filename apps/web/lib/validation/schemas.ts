@@ -93,29 +93,9 @@ export const SystemSettingsInputSchema = z.object({
   trendSearchGenerateEnabled: z.boolean().optional(),
 }).strict();
 
-export const AiWriterSettingsSchema = z.object({
-  aiProvider: z.string().trim().min(1).max(50).optional().default("OPENROUTER"),
-  prompt: z.string().trim().min(1).max(20000),
-  imagePrompt: z.string().trim().min(1).max(10000),
-  model: z.string().trim().min(1).max(200),
-  imageModel: z.string().trim().min(1).max(200),
-  useRssImage: z.boolean(),
-  searchEnabled: z.boolean(),
-  analyzerModel: z.string().trim().min(1).max(200),
-});
-
 export const AiWriterAutomationSchema = z.object({
   enabled: z.boolean(),
   count: AiBatchCountSchema,
   cron: CronExpressionSchema,
 });
 
-export const AiModelIdSchema = z.string().trim().min(1).max(200);
-
-export const ManualAiModelSchema = z.object({
-  id: AiModelIdSchema,
-  name: z.string().trim().min(1).max(200),
-  type: z.enum(["TEXT", "IMAGE", "MULTIMODAL"]),
-  isFree: z.boolean(),
-  isActive: z.boolean(),
-});

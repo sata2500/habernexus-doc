@@ -35,13 +35,13 @@ export default async function AdminDashboardPage() {
 
       {pendingMigrations > 0 && (
         <Link
-          href="/admin/system"
+          href="/admin/settings?tab=sistem"
           className="flex items-center gap-3 rounded-2xl border border-warning/40 bg-warning/10 p-4 hover:bg-warning/15 transition-colors"
         >
           <AlertTriangle className="h-5 w-5 text-warning shrink-0" />
           <div className="flex-1 min-w-0 text-sm">
             <p className="font-semibold text-foreground">{pendingMigrations} veritabanı güncellemesi bekliyor</p>
-            <p className="text-muted-foreground">Yeni özelliklerin çalışması için Sistem Durumu sayfasından uygulayın.</p>
+            <p className="text-muted-foreground">Yeni özelliklerin çalışması için Ayarlar › Sistem sekmesinden uygulayın.</p>
           </div>
           <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
         </Link>

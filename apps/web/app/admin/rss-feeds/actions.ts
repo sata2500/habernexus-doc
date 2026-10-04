@@ -10,7 +10,6 @@ import { requireRole, getSafeActionError } from "@/lib/server/authz";
 import {
   AiBatchCountSchema,
   AiWriterAutomationSchema,
-  AiWriterSettingsSchema,
   RssSourceIdSchema,
   RssSourceSchema,
   RssSourceUpdateSchema,
@@ -306,35 +305,6 @@ export async function triggerAiWriter(suggestionId: string) {
   }
 }
 
-export async function updateAiWriterSettings(data: {
-  aiProvider: string;
-  prompt: string;
-  imagePrompt: string;
-  model: string;
-  imageModel: string;
-  useRssImage: boolean;
-  searchEnabled: boolean;
-  analyzerModel: string;
-}) {
-  await assertAdmin();
-  const parsed = AiWriterSettingsSchema.safeParse(data);
-  if (!parsed.success) return { success: false, error: "Geçersiz AI Writer ayarları." };
-  await prisma.systemSettings.update({
-    where: { id: "global" },
-    data: {
-      aiProvider: parsed.data.aiProvider,
-      aiWriterPrompt: parsed.data.prompt,
-      aiWriterImagePrompt: parsed.data.imagePrompt,
-      aiWriterModel: parsed.data.model,
-      aiWriterImageModel: parsed.data.imageModel,
-      aiWriterUseRssImage: parsed.data.useRssImage,
-      aiWriterSearchEnabled: parsed.data.searchEnabled,
-      aiAnalyzerModel: parsed.data.analyzerModel,
-    },
-  });
-  revalidatePath("/admin/rss-feeds");
-  return { success: true };
-}
 export async function triggerBatchAiWriter(count: number) {
   await assertAdmin();
 

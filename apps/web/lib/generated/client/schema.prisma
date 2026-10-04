@@ -344,12 +344,16 @@ model SystemSettings {
   // AI Sağlayıcısı (OPENROUTER veya GOOGLE)
   aiProvider String @default("OPENROUTER")
 
-  // AI Analiz ve Özet Modeli (RSS Puanlama & Özetleme)
-  aiAnalyzerModel String @default("google/gemini-2.0-flash-001")
+  // AI Analiz ve Özet Modeli (RSS Puanlama & Özetleme). Biçim: "sağlayıcı:model"
+  aiAnalyzerModel  String  @default("google:gemini-3.5-flash-lite")
+  /// RSS haberlerini puanlarken uygulanacak editoryal kriterler (boşsa varsayılan)
+  aiAnalyzerPrompt String? @db.Text
+  /// Haber seslendirme modeli (yalnızca Google)
+  aiTtsModel       String  @default("google:gemini-3.8-flash-tts")
 
   // AI Writer Ayarları
-  aiWriterModel       String  @default("google/gemini-2.0-flash-001")
-  aiWriterImageModel  String  @default("gemini-2.5-flash-image")
+  aiWriterModel       String  @default("google:gemini-3.8-flash")
+  aiWriterImageModel  String  @default("google:gemini-3.1-flash-image")
   aiWriterPrompt      String  @default("Sen profesyonel bir haber editörüsün. Verilen konuyu Google Arama kullanarak araştır ve en güncel, doğru bilgilerle son derece kaliteli, özgün ve tarafsız bir haber makalesi yaz. HTML formatında (h2, p, strong etiketlerini kullanarak) döndür. Başlık dahil etme.")
   aiWriterImagePrompt String  @default("Profesyonel, gerçekçi bir haber fotoğrafı. Fotoğrafçılık kalitesinde, 16:9 oranında, haberin konusuyla ilgili.")
   aiWriterUseRssImage Boolean @default(true)

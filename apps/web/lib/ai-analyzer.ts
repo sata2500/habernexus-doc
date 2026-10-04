@@ -1,4 +1,11 @@
 import { prisma } from "@/lib/prisma";
+import { AiError, generateText, parseJsonResponse } from "@/lib/ai/client";
+
+/** Admin panelinde editoryal kriter girilmemişse kullanılan varsayılan */
+export const DEFAULT_EDITORIAL_CRITERIA = `- Türkiye okurunu doğrudan ilgilendiren, güncel ve yeni gelişmelere yüksek puan ver.
+- Kamu yararı, ekonomi, teknoloji, bilim ve önemli dünya olaylarını öne çıkar.
+- Magazin dedikodusu, tıklama tuzağı, reklam/basın bülteni ve tekrar eden içeriklere düşük puan ver.
+- Doğrulanmamış iddia veya tek kaynaklı söylentileri düşük puanla.`;
 
 const SCORE_THRESHOLD = 65;
 const BATCH_SIZE = 15;
@@ -17,84 +24,6 @@ interface GeminiResponse {
   items: GeminiItemResult[];
 }
 
-function cleanJson(text: string) {
-  return text.replace(/```json/g, "").replace(/```/g, "").trim();
-}
-
-/**
- * OpenRouter API üzerinden analiz yapar.
- */
-async function callOpenRouter(prompt: string): Promise<string> {
-  const settings = await prisma.systemSettings.findFirst();
-  const model = settings?.aiAnalyzerModel;
-
-  if (!model) {
-    throw new Error("Analiz ve Özet (AI Analyzer) modeli seçilmemiş. Lütfen admin panelinden bir model seçin.");
-  }
-  const apiKey = process.env.OPENROUTER_API_KEY;
-
-  if (!apiKey) {
-    console.error("[AI Analysis] HATA: OPENROUTER_API_KEY bulunamadı. Lütfen .env dosyasını veya Vercel ayarlarını kontrol edin.");
-    throw new Error("OPENROUTER_API_KEY bulunamadı.");
-  }
-
-  console.log(`[AI Analyzer] İstek gönderiliyor. Model: ${model}`);
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": "https://habernexus.com",
-      "X-Title": "Haber Nexus Analysis"
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: [{ role: "user", content: prompt }],
-      // Bazı modeller json_object desteklemez, o yüzden text alıp temizleyeceğiz
-      response_format: { type: "json_object" }
-    })
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    console.error("[AI Analyzer] API Hatası:", data.error);
-    throw new Error(data.error?.message || "OpenRouter Error");
-  }
-
-  const content = data.choices?.[0]?.message?.content || "";
-  console.log(`[AI Analyzer] API Yanıtı alındı (${content.length} karakter)`);
-  return content;
-}
-
-/**
- * Google GenAI API üzerinden analiz yapar.
- */
-async function callGoogleGenAI(model: string, prompt: string): Promise<string> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.error("[AI Analysis] HATA: GEMINI_API_KEY bulunamadı.");
-    throw new Error("GEMINI_API_KEY bulunamadı.");
-  }
-
-  console.log(`[AI Analyzer] Google GenAI İstek gönderiliyor. Model: ${model}`);
-
-  const { GoogleGenAI } = await import("@google/genai");
-  const ai = new GoogleGenAI({ apiKey });
-
-  const response = await ai.models.generateContent({
-    model: model,
-    contents: prompt,
-    config: {
-      responseMimeType: "application/json",
-    }
-  });
-
-  const content = response.text || "";
-  console.log(`[AI Analyzer] Google GenAI Yanıtı alındı (${content.length} karakter)`);
-  return content;
-}
-
 function fallbackScore(title: string, excerpt: string, publishedAt: Date | null): number {
   let score = 50;
   const age = publishedAt ? (Date.now() - publishedAt.getTime()) / (1000 * 60 * 60) : 48;
@@ -108,14 +37,8 @@ export async function analyzeRssBatch() {
   console.log("[AI Analysis] Analiz işlemi başlatıldı.");
 
   const settings = await prisma.systemSettings.findFirst();
-  const isGoogle = settings?.aiProvider === "GOOGLE";
-
-  if (isGoogle && !process.env.GEMINI_API_KEY) {
-    console.error("[AI Analysis] HATA: GEMINI_API_KEY ortam değişkeni bulunamadı!");
-    return { analyzed: 0, covered: 0, lowScore: 0, aiUsed: false, error: "GEMINI_API_KEY bulunamadı." };
-  } else if (!isGoogle && !process.env.OPENROUTER_API_KEY) {
-    console.error("[AI Analysis] HATA: OPENROUTER_API_KEY ortam değişkeni bulunamadı!");
-    return { analyzed: 0, covered: 0, lowScore: 0, aiUsed: false, error: "API anahtarı bulunamadı." };
+  if (!process.env.GEMINI_API_KEY && !process.env.OPENROUTER_API_KEY) {
+    return { analyzed: 0, covered: 0, lowScore: 0, aiUsed: false, error: "Hiçbir yapay zekâ API anahtarı tanımlı değil." };
   }
 
   // 1. Yayınlanmış son haberleri çek
@@ -173,7 +96,12 @@ export async function analyzeRssBatch() {
 
     const newItems = pendingItems.map((item) => `ID: ${item.id}\nBaşlık: ${item.title}\nKaynak: ${item.source.name}\nÖzet: ${item.excerpt || ""}`).join("\n\n---\n\n");
 
+    const editorial = settings?.aiAnalyzerPrompt?.trim() || DEFAULT_EDITORIAL_CRITERIA;
     const prompt = `Aşağıdaki haberleri analiz et ve JSON formatında döndür.
+
+Editoryal kriterler (puanlamada bunlara göre karar ver):
+${editorial}
+
 Sistemdeki mevcut konular (mükerrer kontrolü için - hem yayınlanmış hem öneri aşamasında):
 ${existingTitles}
 
@@ -190,33 +118,19 @@ MEVCUT KATEGORİLER: ${categoryNames}
 
 Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "isStale": true/false, "suggestedTitles": ["..."], "suggestedCategory": "...", "reasoning": "..." } ] }`;
 
-    let aiResponseStr = "";
-    try {
-      if (isGoogle) {
-        aiResponseStr = await callGoogleGenAI(settings?.aiAnalyzerModel || "gemini-2.5-flash", prompt);
-      } else {
-        aiResponseStr = await callOpenRouter(prompt);
-      }
-    } catch (e) {
-      console.error("[AI Analysis] API Çağrısı başarısız:", e);
-      aiResponseStr = "";
-      throw e;
-    }
-    const cleanedJson = cleanJson(aiResponseStr);
-    let result: GeminiResponse;
-
-    try {
-      result = JSON.parse(cleanedJson);
-    } catch {
-      console.error("[AI Analysis] JSON Ayrıştırma Hatası. Ham Yanıt:", aiResponseStr);
-      throw new Error("Yapay zeka geçersiz bir yanıt döndürdü.");
-    }
+    const { text: aiResponseStr, model } = await generateText("analyzer", { prompt, json: true, temperature: 0.2 });
+    console.log(`[AI Analysis] Yanıt alındı: ${model}`);
+    const result = parseJsonResponse<GeminiResponse>(aiResponseStr);
 
     if (!result.items || !Array.isArray(result.items)) {
       throw new Error("Yapay zeka yanıtı beklenen formatta değil (items dizisi bulunamadı).");
     }
 
+    // Model yalnızca bu partideki haberleri güncelleyebilir; uydurma/yanlış kimlikler atlanır
+    const pendingIds = new Set(pendingItems.map((p) => p.id));
     for (const item of result.items) {
+      if (!item || typeof item.id !== "string" || !pendingIds.has(item.id)) continue;
+      item.score = Math.min(100, Math.max(0, Math.round(Number(item.score) || 0)));
       const status = item.isStale
         ? "EXPIRED_STALE"
         : item.isCovered
@@ -241,7 +155,9 @@ Format: { "items": [ { "id": "...", "score": 0-100, "isCovered": true/false, "is
     return { analyzed, covered, lowScore, aiUsed: true };
   } catch (err: unknown) {
     console.error("[AI Analysis] Kritik Hata:", err);
-    const errorMessage = err instanceof Error ? err.message : "AI Analysis Failed";
+    const errorMessage = err instanceof AiError
+      ? `${err.message}${err.raw ? ` Ayrıntı: ${err.raw}` : ""}`
+      : err instanceof Error ? err.message : "AI Analysis Failed";
 
     // Hata durumunda fallback'e devam et
     console.log("[AI Analysis] Fallback (kural tabanlı) puanlama yapılıyor...");

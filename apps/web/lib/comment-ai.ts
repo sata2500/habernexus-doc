@@ -1,40 +1,9 @@
 import { prisma } from "./prisma";
+import { cleanHtmlResponse, generateText, parseJsonResponse } from "./ai/client";
 
-/**
- * OpenRouter API çağrısını gerçekleştiren genel yardımcı.
- */
-async function callOpenRouter(prompt: string, isJson: boolean = true): Promise<string> {
-  const settings = await prisma.systemSettings.findFirst();
-  const model = settings?.aiAnalyzerModel || "google/gemini-2.0-flash-001";
-  const apiKey = process.env.OPENROUTER_API_KEY;
-
-  if (!apiKey) {
-    throw new Error("OPENROUTER_API_KEY environment variable is not configured.");
-  }
-
-  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
-      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com",
-      "X-Title": "Haber Nexus Comments AI"
-    },
-    body: JSON.stringify({
-      model: model,
-      messages: [{ role: "user", content: prompt }],
-      response_format: isJson ? { type: "json_object" } : undefined,
-      temperature: 0.2
-    })
-  });
-
-  const data = await response.json();
-  if (!response.ok) {
-    console.error("[Comments AI] API Hatası:", data.error);
-    throw new Error(data.error?.message || "OpenRouter Error");
-  }
-
-  return data.choices?.[0]?.message?.content || "";
+async function callAnalyzer(prompt: string, isJson: boolean = true): Promise<string> {
+  const { text } = await generateText("analyzer", { prompt, json: isJson, temperature: 0.2 });
+  return text;
 }
 
 /**
@@ -55,8 +24,8 @@ Yanıtını SADECE aşağıdaki JSON formatında döndür:
   "reason": "Yorumun elenme sebebi (Örn: Küfür veya hakaret içeriyor)"
 }`;
 
-    const rawResponse = await callOpenRouter(prompt, true);
-    const result = JSON.parse(rawResponse.trim());
+    const rawResponse = await callAnalyzer(prompt, true);
+    const result = parseJsonResponse<{ isToxic?: boolean; reason?: string }>(rawResponse);
     return {
       isToxic: !!result.isToxic,
       reason: result.reason || "Uygunsuz içerik."
@@ -89,8 +58,8 @@ Yorumlar:
 ${commentsText}`;
 
     // JSON formatı yerine HTML döneceği için text formatında alıyoruz
-    const rawResponse = await callOpenRouter(prompt, false);
-    return rawResponse.trim();
+    const rawResponse = await callAnalyzer(prompt, false);
+    return cleanHtmlResponse(rawResponse);
   } catch (error) {
     console.error("[Comments AI] Generate summary error:", error);
     return null;

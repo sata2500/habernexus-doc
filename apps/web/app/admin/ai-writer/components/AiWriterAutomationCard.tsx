@@ -123,15 +123,6 @@ export function AiWriterAutomationCard({ enabled: initialEnabled, count: initial
           </div>
         </div>
 
-        <div className="bg-warning/5 border border-warning/10 rounded-[1.5rem] p-6 text-xs text-muted-foreground leading-relaxed">
-          <p className="font-bold text-foreground mb-2 flex items-center gap-2">
-            <Zap className="h-4 w-4" />
-            Sistem Nasıl Çalışır?
-          </p>
-          Sistem, belirlenen vakitte RSS önerileri arasından en yüksek puanlı (analiz edilmiş veya onaylanmış) haberleri seçer.
-          Ardından seçtiğin AI modelleri ile araştırmasını yapar, görselini üretir ve doğrudan yayına alır.
-          Bu işlem için <strong>QStash</strong> zamanlayıcısı kullanılır.
-        </div>
       </div>
     </div>
   );
