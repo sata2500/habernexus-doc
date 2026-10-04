@@ -98,6 +98,7 @@ model Article {
   category      Category?         @relation(fields: [categoryId], references: [id])
   aiPersona     AiPersona?        @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
   sourceRssItem RssFeedItem?      @relation(fields: [sourceRssItemId], references: [id], onDelete: SetNull)
+  story         NewsStory?        @relation("StoryArticle")
   bookmarks     Bookmark[]
   comments      Comment[]
   reactions     ArticleReaction[]
@@ -307,6 +308,9 @@ model RssFeedItem {
   usedForArticle   Boolean           @default(false) // Bu öneriden haber yazıldıysa
   processingAt     DateTime?
   processingToken  String?           @unique
+  /// Bu haberin ait olduğu konu (aynı olayı anlatan haberler tek konuda toplanır)
+  storyId          String?
+  story            NewsStory?        @relation(fields: [storyId], references: [id], onDelete: SetNull)
   source           RssFeedSource     @relation(fields: [sourceId], references: [id], onDelete: Cascade)
   googleTrendItems GoogleTrendItem[]
   article          Article?
@@ -319,6 +323,75 @@ model RssFeedItem {
   @@index([publishedAt])
   @@index([dismissed])
   @@index([usedForArticle])
+  @@index([storyId])
+}
+
+/// Karar Merkezi: aynı olayı anlatan RSS haberlerinin kümesi. Puanlanır, sıraya girer ve en fazla bir kez haberleştirilir.
+model NewsStory {
+  id                 String        @id @default(cuid())
+  /// Temsilci başlık (kaynaklardan)
+  title              String
+  /// Yapay zekânın önerdiği özgün başlık
+  headline           String?
+  summary            String?
+  /// Benzerlik için başlık kökleri ve özel isimler
+  tokens             String[]
+  entities           String[]
+  categoryName       String?
+  status             StoryStatus   @default(NEW)
+  urgency            StoryUrgency  @default(NORMAL)
+  /// Nihai öncelik puanı (0-100) ve bileşenleri
+  score              Int           @default(0)
+  aiScore            Int?
+  trendScore         Int           @default(0)
+  trendKeyword       String?
+  sourceCount        Int           @default(1)
+  itemCount          Int           @default(1)
+  firstSeenAt        DateTime      @default(now())
+  lastSeenAt         DateTime      @default(now())
+  /// Planlı olay zamanı (maç, toplantı) ve haberin geçerliliğini yitirdiği an
+  eventAt            DateTime?
+  expiresAt          DateTime?
+  pinned             Boolean       @default(false)
+  /// Durumun okunur açıklaması (ör. "Aynı haber zaten yayında")
+  reason             String?
+  analysis           Json?
+  analyzedAt         DateTime?
+  /// Devam haberi ise önceki makale; tekrar ise eşleştiği makale
+  relatedArticleId   String?
+  duplicateArticleId String?
+  articleId          String?       @unique
+  article            Article?      @relation("StoryArticle", fields: [articleId], references: [id], onDelete: SetNull)
+  attempts           Int           @default(0)
+  lastError          String?
+  processingAt       DateTime?
+  processingToken    String?       @unique
+  items              RssFeedItem[]
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@index([status, score])
+  @@index([lastSeenAt])
+  @@index([expiresAt])
+}
+
+enum StoryStatus {
+  NEW // Analiz bekliyor
+  READY // Puanlandı; puanı eşiği geçerse yazım sırasında
+  WRITING // AI Yazar şu an yazıyor
+  PUBLISHED // Haberleştirildi
+  DUPLICATE // Aynı haber zaten yayında
+  LOW_SCORE // Haber değeri düşük
+  EXPIRED // Güncelliğini yitirdi
+  DISMISSED // Editör eledi
+  FAILED // Yazım tekrar tekrar başarısız oldu
+}
+
+enum StoryUrgency {
+  BREAKING // Son dakika
+  TIME_SENSITIVE // Belirli bir zamana bağlı (maç, toplantı, karar)
+  NORMAL
+  EVERGREEN // Güncelliğini uzun süre korur
 }
 
 enum RssItemStatus {
@@ -371,6 +444,8 @@ model SystemSettings {
   googleTrendsGeo            String  @default("TR") // Bölge kodu ("TR", "US" vb.)
   trendAutoPublishThreshold  Int     @default(70) // Trend eşleşme skoru kaç üzerindeyse öncelikli otomatik yayın
   trendSearchGenerateEnabled Boolean @default(true) // Trends'te olup RSS'te olmayan konu için aramayla haber üret
+  /// Karar Merkezi: bu puanın altındaki konular otomatik yazılmaz
+  storyMinScore              Int     @default(60)
 
   updatedAt DateTime @updatedAt
 }

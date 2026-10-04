@@ -3,7 +3,7 @@ import { Wand2, Users, SlidersHorizontal, Rss, PenLine, ImageIcon, Send, Timer, 
 import { getTaskModel } from "@/lib/ai/client";
 import { modelDisplayName } from "@/lib/ai/models";
 import { getAutomationStatus, getSettingsRow } from "@/lib/server/automation";
-import { prisma } from "@/lib/prisma";
+import { countQueue } from "@/lib/news/queries";
 import { formatRelativeTime } from "@/lib/utils";
 import { RunJobButton } from "../components/RunJobButton";
 
@@ -21,19 +21,19 @@ export default async function AdminAiWriterPage() {
     getTaskModel("writer"),
     getTaskModel("image"),
     getAutomationStatus(),
-    prisma.rssFeedItem.count({ where: { status: { in: ["ANALYZED", "APPROVED"] }, dismissed: false, usedForArticle: false } }),
+    countQueue(),
   ]);
   const job = jobs.find((j) => j.job === "writer")!;
 
   const stats = [
     { label: "Yazım modeli", value: modelDisplayName(writer) },
     { label: "Görsel modeli", value: modelDisplayName(image) },
-    { label: "Bekleyen öneri", value: pending.toLocaleString("tr-TR") },
+    { label: "Yazım sırası", value: `${pending.toLocaleString("tr-TR")} konu` },
   ];
 
   const steps = [
-    { icon: Rss, title: "Seçim", text: "RSS haberleri analiz modeliyle puanlanır; en iyi öneriler seçilir." },
-    { icon: PenLine, title: "Yazım", text: "Yazım modeli (isteğe bağlı web aramasıyla) özgün bir haber yazar." },
+    { icon: Rss, title: "Seçim", text: "Karar Merkezi'nde aynı olayın haberleri tek konuda toplanır, tekrarlar elenir ve konular puanlanır; en yüksek puanlı konu seçilir." },
+    { icon: PenLine, title: "Yazım", text: "Konudaki tüm kaynaklar birleştirilerek (isteğe bağlı web aramasıyla) özgün bir haber yazılır; yazmadan önce son kez tekrar kontrolü yapılır." },
     { icon: ImageIcon, title: "Görsel", text: "Görsel modeli kapak üretir; olmazsa kaynak görsel kullanılır." },
     { icon: Send, title: "Yayın", text: "Haber yayınlanır, kalite analizi yapılır, Google ve Telegram bilgilendirilir." },
   ];
@@ -109,7 +109,7 @@ export default async function AdminAiWriterPage() {
           ))}
         </ol>
         <p className="mt-4 text-xs text-muted-foreground">
-          Önerileri tek tek yazdırmak için <Link href="/admin/rss-feeds" className="text-primary-500 font-semibold">RSS Önerileri</Link> sayfasını kullanın.
+          Sıradaki konuları görmek, öne almak ya da tek tek yazdırmak için <Link href="/admin/karar-merkezi" className="text-primary-500 font-semibold">Karar Merkezi</Link>&apos;ni kullanın.
         </p>
       </section>
     </div>

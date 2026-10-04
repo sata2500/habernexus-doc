@@ -104,6 +104,11 @@ export type RssFeedSource = $Result.DefaultSelection<Prisma.$RssFeedSourcePayloa
  */
 export type RssFeedItem = $Result.DefaultSelection<Prisma.$RssFeedItemPayload>
 /**
+ * Model NewsStory
+ * Karar Merkezi: aynı olayı anlatan RSS haberlerinin kümesi. Puanlanır, sıraya girer ve en fazla bir kez haberleştirilir.
+ */
+export type NewsStory = $Result.DefaultSelection<Prisma.$NewsStoryPayload>
+/**
  * Model SystemSettings
  * Sistem genel ayarları ve aktif QStash Cron görev ID'leri
  */
@@ -163,6 +168,31 @@ export namespace $Enums {
 export type MediaStatus = (typeof MediaStatus)[keyof typeof MediaStatus]
 
 
+export const StoryStatus: {
+  NEW: 'NEW',
+  READY: 'READY',
+  WRITING: 'WRITING',
+  PUBLISHED: 'PUBLISHED',
+  DUPLICATE: 'DUPLICATE',
+  LOW_SCORE: 'LOW_SCORE',
+  EXPIRED: 'EXPIRED',
+  DISMISSED: 'DISMISSED',
+  FAILED: 'FAILED'
+};
+
+export type StoryStatus = (typeof StoryStatus)[keyof typeof StoryStatus]
+
+
+export const StoryUrgency: {
+  BREAKING: 'BREAKING',
+  TIME_SENSITIVE: 'TIME_SENSITIVE',
+  NORMAL: 'NORMAL',
+  EVERGREEN: 'EVERGREEN'
+};
+
+export type StoryUrgency = (typeof StoryUrgency)[keyof typeof StoryUrgency]
+
+
 export const RssItemStatus: {
   PENDING: 'PENDING',
   ANALYZED: 'ANALYZED',
@@ -200,6 +230,14 @@ export type AiModelType = (typeof AiModelType)[keyof typeof AiModelType]
 export type MediaStatus = $Enums.MediaStatus
 
 export const MediaStatus: typeof $Enums.MediaStatus
+
+export type StoryStatus = $Enums.StoryStatus
+
+export const StoryStatus: typeof $Enums.StoryStatus
+
+export type StoryUrgency = $Enums.StoryUrgency
+
+export const StoryUrgency: typeof $Enums.StoryUrgency
 
 export type RssItemStatus = $Enums.RssItemStatus
 
@@ -513,6 +551,16 @@ export class PrismaClient<
     * ```
     */
   get rssFeedItem(): Prisma.RssFeedItemDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.newsStory`: Exposes CRUD operations for the **NewsStory** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more NewsStories
+    * const newsStories = await prisma.newsStory.findMany()
+    * ```
+    */
+  get newsStory(): Prisma.NewsStoryDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.systemSettings`: Exposes CRUD operations for the **SystemSettings** model.
@@ -1068,6 +1116,7 @@ export namespace Prisma {
     SupportMessage: 'SupportMessage',
     RssFeedSource: 'RssFeedSource',
     RssFeedItem: 'RssFeedItem',
+    NewsStory: 'NewsStory',
     SystemSettings: 'SystemSettings',
     GoogleTrend: 'GoogleTrend',
     GoogleTrendItem: 'GoogleTrendItem',
@@ -1092,7 +1141,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "newsStory" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2428,6 +2477,80 @@ export namespace Prisma {
           }
         }
       }
+      NewsStory: {
+        payload: Prisma.$NewsStoryPayload<ExtArgs>
+        fields: Prisma.NewsStoryFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.NewsStoryFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.NewsStoryFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload>
+          }
+          findFirst: {
+            args: Prisma.NewsStoryFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.NewsStoryFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload>
+          }
+          findMany: {
+            args: Prisma.NewsStoryFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload>[]
+          }
+          create: {
+            args: Prisma.NewsStoryCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload>
+          }
+          createMany: {
+            args: Prisma.NewsStoryCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.NewsStoryCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload>[]
+          }
+          delete: {
+            args: Prisma.NewsStoryDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload>
+          }
+          update: {
+            args: Prisma.NewsStoryUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload>
+          }
+          deleteMany: {
+            args: Prisma.NewsStoryDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.NewsStoryUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.NewsStoryUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload>[]
+          }
+          upsert: {
+            args: Prisma.NewsStoryUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$NewsStoryPayload>
+          }
+          aggregate: {
+            args: Prisma.NewsStoryAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateNewsStory>
+          }
+          groupBy: {
+            args: Prisma.NewsStoryGroupByArgs<ExtArgs>
+            result: $Utils.Optional<NewsStoryGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.NewsStoryCountArgs<ExtArgs>
+            result: $Utils.Optional<NewsStoryCountAggregateOutputType> | number
+          }
+        }
+      }
       SystemSettings: {
         payload: Prisma.$SystemSettingsPayload<ExtArgs>
         fields: Prisma.SystemSettingsFieldRefs
@@ -3235,6 +3358,7 @@ export namespace Prisma {
     supportMessage?: SupportMessageOmit
     rssFeedSource?: RssFeedSourceOmit
     rssFeedItem?: RssFeedItemOmit
+    newsStory?: NewsStoryOmit
     systemSettings?: SystemSettingsOmit
     googleTrend?: GoogleTrendOmit
     googleTrendItem?: GoogleTrendItemOmit
@@ -3654,6 +3778,37 @@ export namespace Prisma {
    */
   export type RssFeedItemCountOutputTypeCountGoogleTrendItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: GoogleTrendItemWhereInput
+  }
+
+
+  /**
+   * Count Type NewsStoryCountOutputType
+   */
+
+  export type NewsStoryCountOutputType = {
+    items: number
+  }
+
+  export type NewsStoryCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    items?: boolean | NewsStoryCountOutputTypeCountItemsArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * NewsStoryCountOutputType without action
+   */
+  export type NewsStoryCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStoryCountOutputType
+     */
+    select?: NewsStoryCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * NewsStoryCountOutputType without action
+   */
+  export type NewsStoryCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: RssFeedItemWhereInput
   }
 
 
@@ -8721,6 +8876,7 @@ export namespace Prisma {
     category?: boolean | Article$categoryArgs<ExtArgs>
     aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
     sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
+    story?: boolean | Article$storyArgs<ExtArgs>
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
     reactions?: boolean | Article$reactionsArgs<ExtArgs>
@@ -8814,6 +8970,7 @@ export namespace Prisma {
     category?: boolean | Article$categoryArgs<ExtArgs>
     aiPersona?: boolean | Article$aiPersonaArgs<ExtArgs>
     sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
+    story?: boolean | Article$storyArgs<ExtArgs>
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
     reactions?: boolean | Article$reactionsArgs<ExtArgs>
@@ -8840,6 +8997,7 @@ export namespace Prisma {
       category: Prisma.$CategoryPayload<ExtArgs> | null
       aiPersona: Prisma.$AiPersonaPayload<ExtArgs> | null
       sourceRssItem: Prisma.$RssFeedItemPayload<ExtArgs> | null
+      story: Prisma.$NewsStoryPayload<ExtArgs> | null
       bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       reactions: Prisma.$ArticleReactionPayload<ExtArgs>[]
@@ -9265,6 +9423,7 @@ export namespace Prisma {
     category<T extends Article$categoryArgs<ExtArgs> = {}>(args?: Subset<T, Article$categoryArgs<ExtArgs>>): Prisma__CategoryClient<$Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     aiPersona<T extends Article$aiPersonaArgs<ExtArgs> = {}>(args?: Subset<T, Article$aiPersonaArgs<ExtArgs>>): Prisma__AiPersonaClient<$Result.GetResult<Prisma.$AiPersonaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     sourceRssItem<T extends Article$sourceRssItemArgs<ExtArgs> = {}>(args?: Subset<T, Article$sourceRssItemArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    story<T extends Article$storyArgs<ExtArgs> = {}>(args?: Subset<T, Article$storyArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bookmarks<T extends Article$bookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Article$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends Article$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Article$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reactions<T extends Article$reactionsArgs<ExtArgs> = {}>(args?: Subset<T, Article$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -9774,6 +9933,25 @@ export namespace Prisma {
      */
     include?: RssFeedItemInclude<ExtArgs> | null
     where?: RssFeedItemWhereInput
+  }
+
+  /**
+   * Article.story
+   */
+  export type Article$storyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    where?: NewsStoryWhereInput
   }
 
   /**
@@ -23152,6 +23330,7 @@ export namespace Prisma {
     usedForArticle: boolean | null
     processingAt: Date | null
     processingToken: string | null
+    storyId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -23171,6 +23350,7 @@ export namespace Prisma {
     usedForArticle: boolean | null
     processingAt: Date | null
     processingToken: string | null
+    storyId: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -23191,6 +23371,7 @@ export namespace Prisma {
     usedForArticle: number
     processingAt: number
     processingToken: number
+    storyId: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -23220,6 +23401,7 @@ export namespace Prisma {
     usedForArticle?: true
     processingAt?: true
     processingToken?: true
+    storyId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -23239,6 +23421,7 @@ export namespace Prisma {
     usedForArticle?: true
     processingAt?: true
     processingToken?: true
+    storyId?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -23259,6 +23442,7 @@ export namespace Prisma {
     usedForArticle?: true
     processingAt?: true
     processingToken?: true
+    storyId?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -23366,6 +23550,7 @@ export namespace Prisma {
     usedForArticle: boolean
     processingAt: Date | null
     processingToken: string | null
+    storyId: string | null
     createdAt: Date
     updatedAt: Date
     _count: RssFeedItemCountAggregateOutputType | null
@@ -23405,8 +23590,10 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: boolean
     processingToken?: boolean
+    storyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    story?: boolean | RssFeedItem$storyArgs<ExtArgs>
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
     googleTrendItems?: boolean | RssFeedItem$googleTrendItemsArgs<ExtArgs>
     article?: boolean | RssFeedItem$articleArgs<ExtArgs>
@@ -23429,8 +23616,10 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: boolean
     processingToken?: boolean
+    storyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    story?: boolean | RssFeedItem$storyArgs<ExtArgs>
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["rssFeedItem"]>
 
@@ -23450,8 +23639,10 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: boolean
     processingToken?: boolean
+    storyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    story?: boolean | RssFeedItem$storyArgs<ExtArgs>
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["rssFeedItem"]>
 
@@ -23471,27 +23662,32 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: boolean
     processingToken?: boolean
+    storyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type RssFeedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceId" | "title" | "url" | "urlHash" | "excerpt" | "imageUrl" | "publishedAt" | "status" | "aiScore" | "aiAnalysis" | "dismissed" | "usedForArticle" | "processingAt" | "processingToken" | "createdAt" | "updatedAt", ExtArgs["result"]["rssFeedItem"]>
+  export type RssFeedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceId" | "title" | "url" | "urlHash" | "excerpt" | "imageUrl" | "publishedAt" | "status" | "aiScore" | "aiAnalysis" | "dismissed" | "usedForArticle" | "processingAt" | "processingToken" | "storyId" | "createdAt" | "updatedAt", ExtArgs["result"]["rssFeedItem"]>
   export type RssFeedItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    story?: boolean | RssFeedItem$storyArgs<ExtArgs>
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
     googleTrendItems?: boolean | RssFeedItem$googleTrendItemsArgs<ExtArgs>
     article?: boolean | RssFeedItem$articleArgs<ExtArgs>
     _count?: boolean | RssFeedItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RssFeedItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    story?: boolean | RssFeedItem$storyArgs<ExtArgs>
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
   }
   export type RssFeedItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    story?: boolean | RssFeedItem$storyArgs<ExtArgs>
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
   }
 
   export type $RssFeedItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "RssFeedItem"
     objects: {
+      story: Prisma.$NewsStoryPayload<ExtArgs> | null
       source: Prisma.$RssFeedSourcePayload<ExtArgs>
       googleTrendItems: Prisma.$GoogleTrendItemPayload<ExtArgs>[]
       article: Prisma.$ArticlePayload<ExtArgs> | null
@@ -23512,6 +23708,10 @@ export namespace Prisma {
       usedForArticle: boolean
       processingAt: Date | null
       processingToken: string | null
+      /**
+       * Bu haberin ait olduğu konu (aynı olayı anlatan haberler tek konuda toplanır)
+       */
+      storyId: string | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["rssFeedItem"]>
@@ -23908,6 +24108,7 @@ export namespace Prisma {
    */
   export interface Prisma__RssFeedItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    story<T extends RssFeedItem$storyArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedItem$storyArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     source<T extends RssFeedSourceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedSourceDefaultArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     googleTrendItems<T extends RssFeedItem$googleTrendItemsArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedItem$googleTrendItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     article<T extends RssFeedItem$articleArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedItem$articleArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -23955,6 +24156,7 @@ export namespace Prisma {
     readonly usedForArticle: FieldRef<"RssFeedItem", 'Boolean'>
     readonly processingAt: FieldRef<"RssFeedItem", 'DateTime'>
     readonly processingToken: FieldRef<"RssFeedItem", 'String'>
+    readonly storyId: FieldRef<"RssFeedItem", 'String'>
     readonly createdAt: FieldRef<"RssFeedItem", 'DateTime'>
     readonly updatedAt: FieldRef<"RssFeedItem", 'DateTime'>
   }
@@ -24358,6 +24560,25 @@ export namespace Prisma {
   }
 
   /**
+   * RssFeedItem.story
+   */
+  export type RssFeedItem$storyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    where?: NewsStoryWhereInput
+  }
+
+  /**
    * RssFeedItem.googleTrendItems
    */
   export type RssFeedItem$googleTrendItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -24420,6 +24641,1532 @@ export namespace Prisma {
 
 
   /**
+   * Model NewsStory
+   */
+
+  export type AggregateNewsStory = {
+    _count: NewsStoryCountAggregateOutputType | null
+    _avg: NewsStoryAvgAggregateOutputType | null
+    _sum: NewsStorySumAggregateOutputType | null
+    _min: NewsStoryMinAggregateOutputType | null
+    _max: NewsStoryMaxAggregateOutputType | null
+  }
+
+  export type NewsStoryAvgAggregateOutputType = {
+    score: number | null
+    aiScore: number | null
+    trendScore: number | null
+    sourceCount: number | null
+    itemCount: number | null
+    attempts: number | null
+  }
+
+  export type NewsStorySumAggregateOutputType = {
+    score: number | null
+    aiScore: number | null
+    trendScore: number | null
+    sourceCount: number | null
+    itemCount: number | null
+    attempts: number | null
+  }
+
+  export type NewsStoryMinAggregateOutputType = {
+    id: string | null
+    title: string | null
+    headline: string | null
+    summary: string | null
+    categoryName: string | null
+    status: $Enums.StoryStatus | null
+    urgency: $Enums.StoryUrgency | null
+    score: number | null
+    aiScore: number | null
+    trendScore: number | null
+    trendKeyword: string | null
+    sourceCount: number | null
+    itemCount: number | null
+    firstSeenAt: Date | null
+    lastSeenAt: Date | null
+    eventAt: Date | null
+    expiresAt: Date | null
+    pinned: boolean | null
+    reason: string | null
+    analyzedAt: Date | null
+    relatedArticleId: string | null
+    duplicateArticleId: string | null
+    articleId: string | null
+    attempts: number | null
+    lastError: string | null
+    processingAt: Date | null
+    processingToken: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NewsStoryMaxAggregateOutputType = {
+    id: string | null
+    title: string | null
+    headline: string | null
+    summary: string | null
+    categoryName: string | null
+    status: $Enums.StoryStatus | null
+    urgency: $Enums.StoryUrgency | null
+    score: number | null
+    aiScore: number | null
+    trendScore: number | null
+    trendKeyword: string | null
+    sourceCount: number | null
+    itemCount: number | null
+    firstSeenAt: Date | null
+    lastSeenAt: Date | null
+    eventAt: Date | null
+    expiresAt: Date | null
+    pinned: boolean | null
+    reason: string | null
+    analyzedAt: Date | null
+    relatedArticleId: string | null
+    duplicateArticleId: string | null
+    articleId: string | null
+    attempts: number | null
+    lastError: string | null
+    processingAt: Date | null
+    processingToken: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type NewsStoryCountAggregateOutputType = {
+    id: number
+    title: number
+    headline: number
+    summary: number
+    tokens: number
+    entities: number
+    categoryName: number
+    status: number
+    urgency: number
+    score: number
+    aiScore: number
+    trendScore: number
+    trendKeyword: number
+    sourceCount: number
+    itemCount: number
+    firstSeenAt: number
+    lastSeenAt: number
+    eventAt: number
+    expiresAt: number
+    pinned: number
+    reason: number
+    analysis: number
+    analyzedAt: number
+    relatedArticleId: number
+    duplicateArticleId: number
+    articleId: number
+    attempts: number
+    lastError: number
+    processingAt: number
+    processingToken: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type NewsStoryAvgAggregateInputType = {
+    score?: true
+    aiScore?: true
+    trendScore?: true
+    sourceCount?: true
+    itemCount?: true
+    attempts?: true
+  }
+
+  export type NewsStorySumAggregateInputType = {
+    score?: true
+    aiScore?: true
+    trendScore?: true
+    sourceCount?: true
+    itemCount?: true
+    attempts?: true
+  }
+
+  export type NewsStoryMinAggregateInputType = {
+    id?: true
+    title?: true
+    headline?: true
+    summary?: true
+    categoryName?: true
+    status?: true
+    urgency?: true
+    score?: true
+    aiScore?: true
+    trendScore?: true
+    trendKeyword?: true
+    sourceCount?: true
+    itemCount?: true
+    firstSeenAt?: true
+    lastSeenAt?: true
+    eventAt?: true
+    expiresAt?: true
+    pinned?: true
+    reason?: true
+    analyzedAt?: true
+    relatedArticleId?: true
+    duplicateArticleId?: true
+    articleId?: true
+    attempts?: true
+    lastError?: true
+    processingAt?: true
+    processingToken?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NewsStoryMaxAggregateInputType = {
+    id?: true
+    title?: true
+    headline?: true
+    summary?: true
+    categoryName?: true
+    status?: true
+    urgency?: true
+    score?: true
+    aiScore?: true
+    trendScore?: true
+    trendKeyword?: true
+    sourceCount?: true
+    itemCount?: true
+    firstSeenAt?: true
+    lastSeenAt?: true
+    eventAt?: true
+    expiresAt?: true
+    pinned?: true
+    reason?: true
+    analyzedAt?: true
+    relatedArticleId?: true
+    duplicateArticleId?: true
+    articleId?: true
+    attempts?: true
+    lastError?: true
+    processingAt?: true
+    processingToken?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type NewsStoryCountAggregateInputType = {
+    id?: true
+    title?: true
+    headline?: true
+    summary?: true
+    tokens?: true
+    entities?: true
+    categoryName?: true
+    status?: true
+    urgency?: true
+    score?: true
+    aiScore?: true
+    trendScore?: true
+    trendKeyword?: true
+    sourceCount?: true
+    itemCount?: true
+    firstSeenAt?: true
+    lastSeenAt?: true
+    eventAt?: true
+    expiresAt?: true
+    pinned?: true
+    reason?: true
+    analysis?: true
+    analyzedAt?: true
+    relatedArticleId?: true
+    duplicateArticleId?: true
+    articleId?: true
+    attempts?: true
+    lastError?: true
+    processingAt?: true
+    processingToken?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type NewsStoryAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NewsStory to aggregate.
+     */
+    where?: NewsStoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NewsStories to fetch.
+     */
+    orderBy?: NewsStoryOrderByWithRelationInput | NewsStoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: NewsStoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NewsStories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NewsStories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned NewsStories
+    **/
+    _count?: true | NewsStoryCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: NewsStoryAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: NewsStorySumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: NewsStoryMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: NewsStoryMaxAggregateInputType
+  }
+
+  export type GetNewsStoryAggregateType<T extends NewsStoryAggregateArgs> = {
+        [P in keyof T & keyof AggregateNewsStory]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateNewsStory[P]>
+      : GetScalarType<T[P], AggregateNewsStory[P]>
+  }
+
+
+
+
+  export type NewsStoryGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: NewsStoryWhereInput
+    orderBy?: NewsStoryOrderByWithAggregationInput | NewsStoryOrderByWithAggregationInput[]
+    by: NewsStoryScalarFieldEnum[] | NewsStoryScalarFieldEnum
+    having?: NewsStoryScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: NewsStoryCountAggregateInputType | true
+    _avg?: NewsStoryAvgAggregateInputType
+    _sum?: NewsStorySumAggregateInputType
+    _min?: NewsStoryMinAggregateInputType
+    _max?: NewsStoryMaxAggregateInputType
+  }
+
+  export type NewsStoryGroupByOutputType = {
+    id: string
+    title: string
+    headline: string | null
+    summary: string | null
+    tokens: string[]
+    entities: string[]
+    categoryName: string | null
+    status: $Enums.StoryStatus
+    urgency: $Enums.StoryUrgency
+    score: number
+    aiScore: number | null
+    trendScore: number
+    trendKeyword: string | null
+    sourceCount: number
+    itemCount: number
+    firstSeenAt: Date
+    lastSeenAt: Date
+    eventAt: Date | null
+    expiresAt: Date | null
+    pinned: boolean
+    reason: string | null
+    analysis: JsonValue | null
+    analyzedAt: Date | null
+    relatedArticleId: string | null
+    duplicateArticleId: string | null
+    articleId: string | null
+    attempts: number
+    lastError: string | null
+    processingAt: Date | null
+    processingToken: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: NewsStoryCountAggregateOutputType | null
+    _avg: NewsStoryAvgAggregateOutputType | null
+    _sum: NewsStorySumAggregateOutputType | null
+    _min: NewsStoryMinAggregateOutputType | null
+    _max: NewsStoryMaxAggregateOutputType | null
+  }
+
+  type GetNewsStoryGroupByPayload<T extends NewsStoryGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<NewsStoryGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof NewsStoryGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], NewsStoryGroupByOutputType[P]>
+            : GetScalarType<T[P], NewsStoryGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type NewsStorySelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    headline?: boolean
+    summary?: boolean
+    tokens?: boolean
+    entities?: boolean
+    categoryName?: boolean
+    status?: boolean
+    urgency?: boolean
+    score?: boolean
+    aiScore?: boolean
+    trendScore?: boolean
+    trendKeyword?: boolean
+    sourceCount?: boolean
+    itemCount?: boolean
+    firstSeenAt?: boolean
+    lastSeenAt?: boolean
+    eventAt?: boolean
+    expiresAt?: boolean
+    pinned?: boolean
+    reason?: boolean
+    analysis?: boolean
+    analyzedAt?: boolean
+    relatedArticleId?: boolean
+    duplicateArticleId?: boolean
+    articleId?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    processingAt?: boolean
+    processingToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    article?: boolean | NewsStory$articleArgs<ExtArgs>
+    items?: boolean | NewsStory$itemsArgs<ExtArgs>
+    _count?: boolean | NewsStoryCountOutputTypeDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["newsStory"]>
+
+  export type NewsStorySelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    headline?: boolean
+    summary?: boolean
+    tokens?: boolean
+    entities?: boolean
+    categoryName?: boolean
+    status?: boolean
+    urgency?: boolean
+    score?: boolean
+    aiScore?: boolean
+    trendScore?: boolean
+    trendKeyword?: boolean
+    sourceCount?: boolean
+    itemCount?: boolean
+    firstSeenAt?: boolean
+    lastSeenAt?: boolean
+    eventAt?: boolean
+    expiresAt?: boolean
+    pinned?: boolean
+    reason?: boolean
+    analysis?: boolean
+    analyzedAt?: boolean
+    relatedArticleId?: boolean
+    duplicateArticleId?: boolean
+    articleId?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    processingAt?: boolean
+    processingToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    article?: boolean | NewsStory$articleArgs<ExtArgs>
+  }, ExtArgs["result"]["newsStory"]>
+
+  export type NewsStorySelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    title?: boolean
+    headline?: boolean
+    summary?: boolean
+    tokens?: boolean
+    entities?: boolean
+    categoryName?: boolean
+    status?: boolean
+    urgency?: boolean
+    score?: boolean
+    aiScore?: boolean
+    trendScore?: boolean
+    trendKeyword?: boolean
+    sourceCount?: boolean
+    itemCount?: boolean
+    firstSeenAt?: boolean
+    lastSeenAt?: boolean
+    eventAt?: boolean
+    expiresAt?: boolean
+    pinned?: boolean
+    reason?: boolean
+    analysis?: boolean
+    analyzedAt?: boolean
+    relatedArticleId?: boolean
+    duplicateArticleId?: boolean
+    articleId?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    processingAt?: boolean
+    processingToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    article?: boolean | NewsStory$articleArgs<ExtArgs>
+  }, ExtArgs["result"]["newsStory"]>
+
+  export type NewsStorySelectScalar = {
+    id?: boolean
+    title?: boolean
+    headline?: boolean
+    summary?: boolean
+    tokens?: boolean
+    entities?: boolean
+    categoryName?: boolean
+    status?: boolean
+    urgency?: boolean
+    score?: boolean
+    aiScore?: boolean
+    trendScore?: boolean
+    trendKeyword?: boolean
+    sourceCount?: boolean
+    itemCount?: boolean
+    firstSeenAt?: boolean
+    lastSeenAt?: boolean
+    eventAt?: boolean
+    expiresAt?: boolean
+    pinned?: boolean
+    reason?: boolean
+    analysis?: boolean
+    analyzedAt?: boolean
+    relatedArticleId?: boolean
+    duplicateArticleId?: boolean
+    articleId?: boolean
+    attempts?: boolean
+    lastError?: boolean
+    processingAt?: boolean
+    processingToken?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type NewsStoryOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "headline" | "summary" | "tokens" | "entities" | "categoryName" | "status" | "urgency" | "score" | "aiScore" | "trendScore" | "trendKeyword" | "sourceCount" | "itemCount" | "firstSeenAt" | "lastSeenAt" | "eventAt" | "expiresAt" | "pinned" | "reason" | "analysis" | "analyzedAt" | "relatedArticleId" | "duplicateArticleId" | "articleId" | "attempts" | "lastError" | "processingAt" | "processingToken" | "createdAt" | "updatedAt", ExtArgs["result"]["newsStory"]>
+  export type NewsStoryInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    article?: boolean | NewsStory$articleArgs<ExtArgs>
+    items?: boolean | NewsStory$itemsArgs<ExtArgs>
+    _count?: boolean | NewsStoryCountOutputTypeDefaultArgs<ExtArgs>
+  }
+  export type NewsStoryIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    article?: boolean | NewsStory$articleArgs<ExtArgs>
+  }
+  export type NewsStoryIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    article?: boolean | NewsStory$articleArgs<ExtArgs>
+  }
+
+  export type $NewsStoryPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "NewsStory"
+    objects: {
+      article: Prisma.$ArticlePayload<ExtArgs> | null
+      items: Prisma.$RssFeedItemPayload<ExtArgs>[]
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      /**
+       * Temsilci başlık (kaynaklardan)
+       */
+      title: string
+      /**
+       * Yapay zekânın önerdiği özgün başlık
+       */
+      headline: string | null
+      summary: string | null
+      /**
+       * Benzerlik için başlık kökleri ve özel isimler
+       */
+      tokens: string[]
+      entities: string[]
+      categoryName: string | null
+      status: $Enums.StoryStatus
+      urgency: $Enums.StoryUrgency
+      /**
+       * Nihai öncelik puanı (0-100) ve bileşenleri
+       */
+      score: number
+      aiScore: number | null
+      trendScore: number
+      trendKeyword: string | null
+      sourceCount: number
+      itemCount: number
+      firstSeenAt: Date
+      lastSeenAt: Date
+      /**
+       * Planlı olay zamanı (maç, toplantı) ve haberin geçerliliğini yitirdiği an
+       */
+      eventAt: Date | null
+      expiresAt: Date | null
+      pinned: boolean
+      /**
+       * Durumun okunur açıklaması (ör. "Aynı haber zaten yayında")
+       */
+      reason: string | null
+      analysis: Prisma.JsonValue | null
+      analyzedAt: Date | null
+      /**
+       * Devam haberi ise önceki makale; tekrar ise eşleştiği makale
+       */
+      relatedArticleId: string | null
+      duplicateArticleId: string | null
+      articleId: string | null
+      attempts: number
+      lastError: string | null
+      processingAt: Date | null
+      processingToken: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["newsStory"]>
+    composites: {}
+  }
+
+  type NewsStoryGetPayload<S extends boolean | null | undefined | NewsStoryDefaultArgs> = $Result.GetResult<Prisma.$NewsStoryPayload, S>
+
+  type NewsStoryCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<NewsStoryFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: NewsStoryCountAggregateInputType | true
+    }
+
+  export interface NewsStoryDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['NewsStory'], meta: { name: 'NewsStory' } }
+    /**
+     * Find zero or one NewsStory that matches the filter.
+     * @param {NewsStoryFindUniqueArgs} args - Arguments to find a NewsStory
+     * @example
+     * // Get one NewsStory
+     * const newsStory = await prisma.newsStory.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends NewsStoryFindUniqueArgs>(args: SelectSubset<T, NewsStoryFindUniqueArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one NewsStory that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {NewsStoryFindUniqueOrThrowArgs} args - Arguments to find a NewsStory
+     * @example
+     * // Get one NewsStory
+     * const newsStory = await prisma.newsStory.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends NewsStoryFindUniqueOrThrowArgs>(args: SelectSubset<T, NewsStoryFindUniqueOrThrowArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NewsStory that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewsStoryFindFirstArgs} args - Arguments to find a NewsStory
+     * @example
+     * // Get one NewsStory
+     * const newsStory = await prisma.newsStory.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends NewsStoryFindFirstArgs>(args?: SelectSubset<T, NewsStoryFindFirstArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first NewsStory that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewsStoryFindFirstOrThrowArgs} args - Arguments to find a NewsStory
+     * @example
+     * // Get one NewsStory
+     * const newsStory = await prisma.newsStory.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends NewsStoryFindFirstOrThrowArgs>(args?: SelectSubset<T, NewsStoryFindFirstOrThrowArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more NewsStories that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewsStoryFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all NewsStories
+     * const newsStories = await prisma.newsStory.findMany()
+     * 
+     * // Get first 10 NewsStories
+     * const newsStories = await prisma.newsStory.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const newsStoryWithIdOnly = await prisma.newsStory.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends NewsStoryFindManyArgs>(args?: SelectSubset<T, NewsStoryFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a NewsStory.
+     * @param {NewsStoryCreateArgs} args - Arguments to create a NewsStory.
+     * @example
+     * // Create one NewsStory
+     * const NewsStory = await prisma.newsStory.create({
+     *   data: {
+     *     // ... data to create a NewsStory
+     *   }
+     * })
+     * 
+     */
+    create<T extends NewsStoryCreateArgs>(args: SelectSubset<T, NewsStoryCreateArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many NewsStories.
+     * @param {NewsStoryCreateManyArgs} args - Arguments to create many NewsStories.
+     * @example
+     * // Create many NewsStories
+     * const newsStory = await prisma.newsStory.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends NewsStoryCreateManyArgs>(args?: SelectSubset<T, NewsStoryCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many NewsStories and returns the data saved in the database.
+     * @param {NewsStoryCreateManyAndReturnArgs} args - Arguments to create many NewsStories.
+     * @example
+     * // Create many NewsStories
+     * const newsStory = await prisma.newsStory.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many NewsStories and only return the `id`
+     * const newsStoryWithIdOnly = await prisma.newsStory.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends NewsStoryCreateManyAndReturnArgs>(args?: SelectSubset<T, NewsStoryCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a NewsStory.
+     * @param {NewsStoryDeleteArgs} args - Arguments to delete one NewsStory.
+     * @example
+     * // Delete one NewsStory
+     * const NewsStory = await prisma.newsStory.delete({
+     *   where: {
+     *     // ... filter to delete one NewsStory
+     *   }
+     * })
+     * 
+     */
+    delete<T extends NewsStoryDeleteArgs>(args: SelectSubset<T, NewsStoryDeleteArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one NewsStory.
+     * @param {NewsStoryUpdateArgs} args - Arguments to update one NewsStory.
+     * @example
+     * // Update one NewsStory
+     * const newsStory = await prisma.newsStory.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends NewsStoryUpdateArgs>(args: SelectSubset<T, NewsStoryUpdateArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more NewsStories.
+     * @param {NewsStoryDeleteManyArgs} args - Arguments to filter NewsStories to delete.
+     * @example
+     * // Delete a few NewsStories
+     * const { count } = await prisma.newsStory.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends NewsStoryDeleteManyArgs>(args?: SelectSubset<T, NewsStoryDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NewsStories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewsStoryUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many NewsStories
+     * const newsStory = await prisma.newsStory.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends NewsStoryUpdateManyArgs>(args: SelectSubset<T, NewsStoryUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more NewsStories and returns the data updated in the database.
+     * @param {NewsStoryUpdateManyAndReturnArgs} args - Arguments to update many NewsStories.
+     * @example
+     * // Update many NewsStories
+     * const newsStory = await prisma.newsStory.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more NewsStories and only return the `id`
+     * const newsStoryWithIdOnly = await prisma.newsStory.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends NewsStoryUpdateManyAndReturnArgs>(args: SelectSubset<T, NewsStoryUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one NewsStory.
+     * @param {NewsStoryUpsertArgs} args - Arguments to update or create a NewsStory.
+     * @example
+     * // Update or create a NewsStory
+     * const newsStory = await prisma.newsStory.upsert({
+     *   create: {
+     *     // ... data to create a NewsStory
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the NewsStory we want to update
+     *   }
+     * })
+     */
+    upsert<T extends NewsStoryUpsertArgs>(args: SelectSubset<T, NewsStoryUpsertArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of NewsStories.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewsStoryCountArgs} args - Arguments to filter NewsStories to count.
+     * @example
+     * // Count the number of NewsStories
+     * const count = await prisma.newsStory.count({
+     *   where: {
+     *     // ... the filter for the NewsStories we want to count
+     *   }
+     * })
+    **/
+    count<T extends NewsStoryCountArgs>(
+      args?: Subset<T, NewsStoryCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], NewsStoryCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a NewsStory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewsStoryAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends NewsStoryAggregateArgs>(args: Subset<T, NewsStoryAggregateArgs>): Prisma.PrismaPromise<GetNewsStoryAggregateType<T>>
+
+    /**
+     * Group by NewsStory.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {NewsStoryGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends NewsStoryGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: NewsStoryGroupByArgs['orderBy'] }
+        : { orderBy?: NewsStoryGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, NewsStoryGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetNewsStoryGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the NewsStory model
+   */
+  readonly fields: NewsStoryFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for NewsStory.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__NewsStoryClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    article<T extends NewsStory$articleArgs<ExtArgs> = {}>(args?: Subset<T, NewsStory$articleArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    items<T extends NewsStory$itemsArgs<ExtArgs> = {}>(args?: Subset<T, NewsStory$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the NewsStory model
+   */
+  interface NewsStoryFieldRefs {
+    readonly id: FieldRef<"NewsStory", 'String'>
+    readonly title: FieldRef<"NewsStory", 'String'>
+    readonly headline: FieldRef<"NewsStory", 'String'>
+    readonly summary: FieldRef<"NewsStory", 'String'>
+    readonly tokens: FieldRef<"NewsStory", 'String[]'>
+    readonly entities: FieldRef<"NewsStory", 'String[]'>
+    readonly categoryName: FieldRef<"NewsStory", 'String'>
+    readonly status: FieldRef<"NewsStory", 'StoryStatus'>
+    readonly urgency: FieldRef<"NewsStory", 'StoryUrgency'>
+    readonly score: FieldRef<"NewsStory", 'Int'>
+    readonly aiScore: FieldRef<"NewsStory", 'Int'>
+    readonly trendScore: FieldRef<"NewsStory", 'Int'>
+    readonly trendKeyword: FieldRef<"NewsStory", 'String'>
+    readonly sourceCount: FieldRef<"NewsStory", 'Int'>
+    readonly itemCount: FieldRef<"NewsStory", 'Int'>
+    readonly firstSeenAt: FieldRef<"NewsStory", 'DateTime'>
+    readonly lastSeenAt: FieldRef<"NewsStory", 'DateTime'>
+    readonly eventAt: FieldRef<"NewsStory", 'DateTime'>
+    readonly expiresAt: FieldRef<"NewsStory", 'DateTime'>
+    readonly pinned: FieldRef<"NewsStory", 'Boolean'>
+    readonly reason: FieldRef<"NewsStory", 'String'>
+    readonly analysis: FieldRef<"NewsStory", 'Json'>
+    readonly analyzedAt: FieldRef<"NewsStory", 'DateTime'>
+    readonly relatedArticleId: FieldRef<"NewsStory", 'String'>
+    readonly duplicateArticleId: FieldRef<"NewsStory", 'String'>
+    readonly articleId: FieldRef<"NewsStory", 'String'>
+    readonly attempts: FieldRef<"NewsStory", 'Int'>
+    readonly lastError: FieldRef<"NewsStory", 'String'>
+    readonly processingAt: FieldRef<"NewsStory", 'DateTime'>
+    readonly processingToken: FieldRef<"NewsStory", 'String'>
+    readonly createdAt: FieldRef<"NewsStory", 'DateTime'>
+    readonly updatedAt: FieldRef<"NewsStory", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * NewsStory findUnique
+   */
+  export type NewsStoryFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NewsStory to fetch.
+     */
+    where: NewsStoryWhereUniqueInput
+  }
+
+  /**
+   * NewsStory findUniqueOrThrow
+   */
+  export type NewsStoryFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NewsStory to fetch.
+     */
+    where: NewsStoryWhereUniqueInput
+  }
+
+  /**
+   * NewsStory findFirst
+   */
+  export type NewsStoryFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NewsStory to fetch.
+     */
+    where?: NewsStoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NewsStories to fetch.
+     */
+    orderBy?: NewsStoryOrderByWithRelationInput | NewsStoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NewsStories.
+     */
+    cursor?: NewsStoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NewsStories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NewsStories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NewsStories.
+     */
+    distinct?: NewsStoryScalarFieldEnum | NewsStoryScalarFieldEnum[]
+  }
+
+  /**
+   * NewsStory findFirstOrThrow
+   */
+  export type NewsStoryFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NewsStory to fetch.
+     */
+    where?: NewsStoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NewsStories to fetch.
+     */
+    orderBy?: NewsStoryOrderByWithRelationInput | NewsStoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for NewsStories.
+     */
+    cursor?: NewsStoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NewsStories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NewsStories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NewsStories.
+     */
+    distinct?: NewsStoryScalarFieldEnum | NewsStoryScalarFieldEnum[]
+  }
+
+  /**
+   * NewsStory findMany
+   */
+  export type NewsStoryFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    /**
+     * Filter, which NewsStories to fetch.
+     */
+    where?: NewsStoryWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of NewsStories to fetch.
+     */
+    orderBy?: NewsStoryOrderByWithRelationInput | NewsStoryOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing NewsStories.
+     */
+    cursor?: NewsStoryWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` NewsStories from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` NewsStories.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of NewsStories.
+     */
+    distinct?: NewsStoryScalarFieldEnum | NewsStoryScalarFieldEnum[]
+  }
+
+  /**
+   * NewsStory create
+   */
+  export type NewsStoryCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    /**
+     * The data needed to create a NewsStory.
+     */
+    data: XOR<NewsStoryCreateInput, NewsStoryUncheckedCreateInput>
+  }
+
+  /**
+   * NewsStory createMany
+   */
+  export type NewsStoryCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many NewsStories.
+     */
+    data: NewsStoryCreateManyInput | NewsStoryCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * NewsStory createManyAndReturn
+   */
+  export type NewsStoryCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * The data used to create many NewsStories.
+     */
+    data: NewsStoryCreateManyInput | NewsStoryCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NewsStory update
+   */
+  export type NewsStoryUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    /**
+     * The data needed to update a NewsStory.
+     */
+    data: XOR<NewsStoryUpdateInput, NewsStoryUncheckedUpdateInput>
+    /**
+     * Choose, which NewsStory to update.
+     */
+    where: NewsStoryWhereUniqueInput
+  }
+
+  /**
+   * NewsStory updateMany
+   */
+  export type NewsStoryUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update NewsStories.
+     */
+    data: XOR<NewsStoryUpdateManyMutationInput, NewsStoryUncheckedUpdateManyInput>
+    /**
+     * Filter which NewsStories to update
+     */
+    where?: NewsStoryWhereInput
+    /**
+     * Limit how many NewsStories to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * NewsStory updateManyAndReturn
+   */
+  export type NewsStoryUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * The data used to update NewsStories.
+     */
+    data: XOR<NewsStoryUpdateManyMutationInput, NewsStoryUncheckedUpdateManyInput>
+    /**
+     * Filter which NewsStories to update
+     */
+    where?: NewsStoryWhereInput
+    /**
+     * Limit how many NewsStories to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * NewsStory upsert
+   */
+  export type NewsStoryUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    /**
+     * The filter to search for the NewsStory to update in case it exists.
+     */
+    where: NewsStoryWhereUniqueInput
+    /**
+     * In case the NewsStory found by the `where` argument doesn't exist, create a new NewsStory with this data.
+     */
+    create: XOR<NewsStoryCreateInput, NewsStoryUncheckedCreateInput>
+    /**
+     * In case the NewsStory was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<NewsStoryUpdateInput, NewsStoryUncheckedUpdateInput>
+  }
+
+  /**
+   * NewsStory delete
+   */
+  export type NewsStoryDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+    /**
+     * Filter which NewsStory to delete.
+     */
+    where: NewsStoryWhereUniqueInput
+  }
+
+  /**
+   * NewsStory deleteMany
+   */
+  export type NewsStoryDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which NewsStories to delete
+     */
+    where?: NewsStoryWhereInput
+    /**
+     * Limit how many NewsStories to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * NewsStory.article
+   */
+  export type NewsStory$articleArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Article
+     */
+    select?: ArticleSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Article
+     */
+    omit?: ArticleOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleInclude<ExtArgs> | null
+    where?: ArticleWhereInput
+  }
+
+  /**
+   * NewsStory.items
+   */
+  export type NewsStory$itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the RssFeedItem
+     */
+    select?: RssFeedItemSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the RssFeedItem
+     */
+    omit?: RssFeedItemOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: RssFeedItemInclude<ExtArgs> | null
+    where?: RssFeedItemWhereInput
+    orderBy?: RssFeedItemOrderByWithRelationInput | RssFeedItemOrderByWithRelationInput[]
+    cursor?: RssFeedItemWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: RssFeedItemScalarFieldEnum | RssFeedItemScalarFieldEnum[]
+  }
+
+  /**
+   * NewsStory without action
+   */
+  export type NewsStoryDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the NewsStory
+     */
+    select?: NewsStorySelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the NewsStory
+     */
+    omit?: NewsStoryOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: NewsStoryInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model SystemSettings
    */
 
@@ -24436,6 +26183,7 @@ export namespace Prisma {
     aiWriterAutoCount: number | null
     maxNewsAgeHours: number | null
     trendAutoPublishThreshold: number | null
+    storyMinScore: number | null
   }
 
   export type SystemSettingsSumAggregateOutputType = {
@@ -24443,6 +26191,7 @@ export namespace Prisma {
     aiWriterAutoCount: number | null
     maxNewsAgeHours: number | null
     trendAutoPublishThreshold: number | null
+    storyMinScore: number | null
   }
 
   export type SystemSettingsMinAggregateOutputType = {
@@ -24472,6 +26221,7 @@ export namespace Prisma {
     googleTrendsGeo: string | null
     trendAutoPublishThreshold: number | null
     trendSearchGenerateEnabled: boolean | null
+    storyMinScore: number | null
     updatedAt: Date | null
   }
 
@@ -24502,6 +26252,7 @@ export namespace Prisma {
     googleTrendsGeo: string | null
     trendAutoPublishThreshold: number | null
     trendSearchGenerateEnabled: boolean | null
+    storyMinScore: number | null
     updatedAt: Date | null
   }
 
@@ -24532,6 +26283,7 @@ export namespace Prisma {
     googleTrendsGeo: number
     trendAutoPublishThreshold: number
     trendSearchGenerateEnabled: number
+    storyMinScore: number
     updatedAt: number
     _all: number
   }
@@ -24542,6 +26294,7 @@ export namespace Prisma {
     aiWriterAutoCount?: true
     maxNewsAgeHours?: true
     trendAutoPublishThreshold?: true
+    storyMinScore?: true
   }
 
   export type SystemSettingsSumAggregateInputType = {
@@ -24549,6 +26302,7 @@ export namespace Prisma {
     aiWriterAutoCount?: true
     maxNewsAgeHours?: true
     trendAutoPublishThreshold?: true
+    storyMinScore?: true
   }
 
   export type SystemSettingsMinAggregateInputType = {
@@ -24578,6 +26332,7 @@ export namespace Prisma {
     googleTrendsGeo?: true
     trendAutoPublishThreshold?: true
     trendSearchGenerateEnabled?: true
+    storyMinScore?: true
     updatedAt?: true
   }
 
@@ -24608,6 +26363,7 @@ export namespace Prisma {
     googleTrendsGeo?: true
     trendAutoPublishThreshold?: true
     trendSearchGenerateEnabled?: true
+    storyMinScore?: true
     updatedAt?: true
   }
 
@@ -24638,6 +26394,7 @@ export namespace Prisma {
     googleTrendsGeo?: true
     trendAutoPublishThreshold?: true
     trendSearchGenerateEnabled?: true
+    storyMinScore?: true
     updatedAt?: true
     _all?: true
   }
@@ -24755,6 +26512,7 @@ export namespace Prisma {
     googleTrendsGeo: string
     trendAutoPublishThreshold: number
     trendSearchGenerateEnabled: boolean
+    storyMinScore: number
     updatedAt: Date
     _count: SystemSettingsCountAggregateOutputType | null
     _avg: SystemSettingsAvgAggregateOutputType | null
@@ -24804,6 +26562,7 @@ export namespace Prisma {
     googleTrendsGeo?: boolean
     trendAutoPublishThreshold?: boolean
     trendSearchGenerateEnabled?: boolean
+    storyMinScore?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -24834,6 +26593,7 @@ export namespace Prisma {
     googleTrendsGeo?: boolean
     trendAutoPublishThreshold?: boolean
     trendSearchGenerateEnabled?: boolean
+    storyMinScore?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -24864,6 +26624,7 @@ export namespace Prisma {
     googleTrendsGeo?: boolean
     trendAutoPublishThreshold?: boolean
     trendSearchGenerateEnabled?: boolean
+    storyMinScore?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
 
@@ -24894,10 +26655,11 @@ export namespace Prisma {
     googleTrendsGeo?: boolean
     trendAutoPublishThreshold?: boolean
     trendSearchGenerateEnabled?: boolean
+    storyMinScore?: boolean
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiProvider" | "aiAnalyzerModel" | "aiAnalyzerPrompt" | "aiTtsModel" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "aiWriterSearchEnabled" | "maxNewsAgeHours" | "googleTrendsEnabled" | "googleTrendsGeo" | "trendAutoPublishThreshold" | "trendSearchGenerateEnabled" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiProvider" | "aiAnalyzerModel" | "aiAnalyzerPrompt" | "aiTtsModel" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "aiWriterSearchEnabled" | "maxNewsAgeHours" | "googleTrendsEnabled" | "googleTrendsGeo" | "trendAutoPublishThreshold" | "trendSearchGenerateEnabled" | "storyMinScore" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -24935,6 +26697,10 @@ export namespace Prisma {
       googleTrendsGeo: string
       trendAutoPublishThreshold: number
       trendSearchGenerateEnabled: boolean
+      /**
+       * Karar Merkezi: bu puanın altındaki konular otomatik yazılmaz
+       */
+      storyMinScore: number
       updatedAt: Date
     }, ExtArgs["result"]["systemSettings"]>
     composites: {}
@@ -25385,6 +27151,7 @@ export namespace Prisma {
     readonly googleTrendsGeo: FieldRef<"SystemSettings", 'String'>
     readonly trendAutoPublishThreshold: FieldRef<"SystemSettings", 'Int'>
     readonly trendSearchGenerateEnabled: FieldRef<"SystemSettings", 'Boolean'>
+    readonly storyMinScore: FieldRef<"SystemSettings", 'Int'>
     readonly updatedAt: FieldRef<"SystemSettings", 'DateTime'>
   }
     
@@ -35355,11 +37122,50 @@ export namespace Prisma {
     usedForArticle: 'usedForArticle',
     processingAt: 'processingAt',
     processingToken: 'processingToken',
+    storyId: 'storyId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
 
   export type RssFeedItemScalarFieldEnum = (typeof RssFeedItemScalarFieldEnum)[keyof typeof RssFeedItemScalarFieldEnum]
+
+
+  export const NewsStoryScalarFieldEnum: {
+    id: 'id',
+    title: 'title',
+    headline: 'headline',
+    summary: 'summary',
+    tokens: 'tokens',
+    entities: 'entities',
+    categoryName: 'categoryName',
+    status: 'status',
+    urgency: 'urgency',
+    score: 'score',
+    aiScore: 'aiScore',
+    trendScore: 'trendScore',
+    trendKeyword: 'trendKeyword',
+    sourceCount: 'sourceCount',
+    itemCount: 'itemCount',
+    firstSeenAt: 'firstSeenAt',
+    lastSeenAt: 'lastSeenAt',
+    eventAt: 'eventAt',
+    expiresAt: 'expiresAt',
+    pinned: 'pinned',
+    reason: 'reason',
+    analysis: 'analysis',
+    analyzedAt: 'analyzedAt',
+    relatedArticleId: 'relatedArticleId',
+    duplicateArticleId: 'duplicateArticleId',
+    articleId: 'articleId',
+    attempts: 'attempts',
+    lastError: 'lastError',
+    processingAt: 'processingAt',
+    processingToken: 'processingToken',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type NewsStoryScalarFieldEnum = (typeof NewsStoryScalarFieldEnum)[keyof typeof NewsStoryScalarFieldEnum]
 
 
   export const SystemSettingsScalarFieldEnum: {
@@ -35389,6 +37195,7 @@ export namespace Prisma {
     googleTrendsGeo: 'googleTrendsGeo',
     trendAutoPublishThreshold: 'trendAutoPublishThreshold',
     trendSearchGenerateEnabled: 'trendSearchGenerateEnabled',
+    storyMinScore: 'storyMinScore',
     updatedAt: 'updatedAt'
   };
 
@@ -35672,6 +37479,34 @@ export namespace Prisma {
    * Reference to a field of type 'RssItemStatus[]'
    */
   export type ListEnumRssItemStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RssItemStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'StoryStatus'
+   */
+  export type EnumStoryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StoryStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'StoryStatus[]'
+   */
+  export type ListEnumStoryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StoryStatus[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'StoryUrgency'
+   */
+  export type EnumStoryUrgencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StoryUrgency'>
+    
+
+
+  /**
+   * Reference to a field of type 'StoryUrgency[]'
+   */
+  export type ListEnumStoryUrgencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StoryUrgency[]'>
     
 
 
@@ -36079,6 +37914,7 @@ export namespace Prisma {
     category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
     aiPersona?: XOR<AiPersonaNullableScalarRelationFilter, AiPersonaWhereInput> | null
     sourceRssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
+    story?: XOR<NewsStoryNullableScalarRelationFilter, NewsStoryWhereInput> | null
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     reactions?: ArticleReactionListRelationFilter
@@ -36111,6 +37947,7 @@ export namespace Prisma {
     category?: CategoryOrderByWithRelationInput
     aiPersona?: AiPersonaOrderByWithRelationInput
     sourceRssItem?: RssFeedItemOrderByWithRelationInput
+    story?: NewsStoryOrderByWithRelationInput
     bookmarks?: BookmarkOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     reactions?: ArticleReactionOrderByRelationAggregateInput
@@ -36146,6 +37983,7 @@ export namespace Prisma {
     category?: XOR<CategoryNullableScalarRelationFilter, CategoryWhereInput> | null
     aiPersona?: XOR<AiPersonaNullableScalarRelationFilter, AiPersonaWhereInput> | null
     sourceRssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
+    story?: XOR<NewsStoryNullableScalarRelationFilter, NewsStoryWhereInput> | null
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     reactions?: ArticleReactionListRelationFilter
@@ -37040,8 +38878,10 @@ export namespace Prisma {
     usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
     processingAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
     processingToken?: StringNullableFilter<"RssFeedItem"> | string | null
+    storyId?: StringNullableFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
+    story?: XOR<NewsStoryNullableScalarRelationFilter, NewsStoryWhereInput> | null
     source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
     googleTrendItems?: GoogleTrendItemListRelationFilter
     article?: XOR<ArticleNullableScalarRelationFilter, ArticleWhereInput> | null
@@ -37063,8 +38903,10 @@ export namespace Prisma {
     usedForArticle?: SortOrder
     processingAt?: SortOrderInput | SortOrder
     processingToken?: SortOrderInput | SortOrder
+    storyId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    story?: NewsStoryOrderByWithRelationInput
     source?: RssFeedSourceOrderByWithRelationInput
     googleTrendItems?: GoogleTrendItemOrderByRelationAggregateInput
     article?: ArticleOrderByWithRelationInput
@@ -37089,8 +38931,10 @@ export namespace Prisma {
     dismissed?: BoolFilter<"RssFeedItem"> | boolean
     usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
     processingAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
+    storyId?: StringNullableFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
+    story?: XOR<NewsStoryNullableScalarRelationFilter, NewsStoryWhereInput> | null
     source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
     googleTrendItems?: GoogleTrendItemListRelationFilter
     article?: XOR<ArticleNullableScalarRelationFilter, ArticleWhereInput> | null
@@ -37112,6 +38956,7 @@ export namespace Prisma {
     usedForArticle?: SortOrder
     processingAt?: SortOrderInput | SortOrder
     processingToken?: SortOrderInput | SortOrder
+    storyId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: RssFeedItemCountOrderByAggregateInput
@@ -37140,8 +38985,204 @@ export namespace Prisma {
     usedForArticle?: BoolWithAggregatesFilter<"RssFeedItem"> | boolean
     processingAt?: DateTimeNullableWithAggregatesFilter<"RssFeedItem"> | Date | string | null
     processingToken?: StringNullableWithAggregatesFilter<"RssFeedItem"> | string | null
+    storyId?: StringNullableWithAggregatesFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"RssFeedItem"> | Date | string
+  }
+
+  export type NewsStoryWhereInput = {
+    AND?: NewsStoryWhereInput | NewsStoryWhereInput[]
+    OR?: NewsStoryWhereInput[]
+    NOT?: NewsStoryWhereInput | NewsStoryWhereInput[]
+    id?: StringFilter<"NewsStory"> | string
+    title?: StringFilter<"NewsStory"> | string
+    headline?: StringNullableFilter<"NewsStory"> | string | null
+    summary?: StringNullableFilter<"NewsStory"> | string | null
+    tokens?: StringNullableListFilter<"NewsStory">
+    entities?: StringNullableListFilter<"NewsStory">
+    categoryName?: StringNullableFilter<"NewsStory"> | string | null
+    status?: EnumStoryStatusFilter<"NewsStory"> | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFilter<"NewsStory"> | $Enums.StoryUrgency
+    score?: IntFilter<"NewsStory"> | number
+    aiScore?: IntNullableFilter<"NewsStory"> | number | null
+    trendScore?: IntFilter<"NewsStory"> | number
+    trendKeyword?: StringNullableFilter<"NewsStory"> | string | null
+    sourceCount?: IntFilter<"NewsStory"> | number
+    itemCount?: IntFilter<"NewsStory"> | number
+    firstSeenAt?: DateTimeFilter<"NewsStory"> | Date | string
+    lastSeenAt?: DateTimeFilter<"NewsStory"> | Date | string
+    eventAt?: DateTimeNullableFilter<"NewsStory"> | Date | string | null
+    expiresAt?: DateTimeNullableFilter<"NewsStory"> | Date | string | null
+    pinned?: BoolFilter<"NewsStory"> | boolean
+    reason?: StringNullableFilter<"NewsStory"> | string | null
+    analysis?: JsonNullableFilter<"NewsStory">
+    analyzedAt?: DateTimeNullableFilter<"NewsStory"> | Date | string | null
+    relatedArticleId?: StringNullableFilter<"NewsStory"> | string | null
+    duplicateArticleId?: StringNullableFilter<"NewsStory"> | string | null
+    articleId?: StringNullableFilter<"NewsStory"> | string | null
+    attempts?: IntFilter<"NewsStory"> | number
+    lastError?: StringNullableFilter<"NewsStory"> | string | null
+    processingAt?: DateTimeNullableFilter<"NewsStory"> | Date | string | null
+    processingToken?: StringNullableFilter<"NewsStory"> | string | null
+    createdAt?: DateTimeFilter<"NewsStory"> | Date | string
+    updatedAt?: DateTimeFilter<"NewsStory"> | Date | string
+    article?: XOR<ArticleNullableScalarRelationFilter, ArticleWhereInput> | null
+    items?: RssFeedItemListRelationFilter
+  }
+
+  export type NewsStoryOrderByWithRelationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    headline?: SortOrderInput | SortOrder
+    summary?: SortOrderInput | SortOrder
+    tokens?: SortOrder
+    entities?: SortOrder
+    categoryName?: SortOrderInput | SortOrder
+    status?: SortOrder
+    urgency?: SortOrder
+    score?: SortOrder
+    aiScore?: SortOrderInput | SortOrder
+    trendScore?: SortOrder
+    trendKeyword?: SortOrderInput | SortOrder
+    sourceCount?: SortOrder
+    itemCount?: SortOrder
+    firstSeenAt?: SortOrder
+    lastSeenAt?: SortOrder
+    eventAt?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    pinned?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    analysis?: SortOrderInput | SortOrder
+    analyzedAt?: SortOrderInput | SortOrder
+    relatedArticleId?: SortOrderInput | SortOrder
+    duplicateArticleId?: SortOrderInput | SortOrder
+    articleId?: SortOrderInput | SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    processingAt?: SortOrderInput | SortOrder
+    processingToken?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    article?: ArticleOrderByWithRelationInput
+    items?: RssFeedItemOrderByRelationAggregateInput
+  }
+
+  export type NewsStoryWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    articleId?: string
+    processingToken?: string
+    AND?: NewsStoryWhereInput | NewsStoryWhereInput[]
+    OR?: NewsStoryWhereInput[]
+    NOT?: NewsStoryWhereInput | NewsStoryWhereInput[]
+    title?: StringFilter<"NewsStory"> | string
+    headline?: StringNullableFilter<"NewsStory"> | string | null
+    summary?: StringNullableFilter<"NewsStory"> | string | null
+    tokens?: StringNullableListFilter<"NewsStory">
+    entities?: StringNullableListFilter<"NewsStory">
+    categoryName?: StringNullableFilter<"NewsStory"> | string | null
+    status?: EnumStoryStatusFilter<"NewsStory"> | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFilter<"NewsStory"> | $Enums.StoryUrgency
+    score?: IntFilter<"NewsStory"> | number
+    aiScore?: IntNullableFilter<"NewsStory"> | number | null
+    trendScore?: IntFilter<"NewsStory"> | number
+    trendKeyword?: StringNullableFilter<"NewsStory"> | string | null
+    sourceCount?: IntFilter<"NewsStory"> | number
+    itemCount?: IntFilter<"NewsStory"> | number
+    firstSeenAt?: DateTimeFilter<"NewsStory"> | Date | string
+    lastSeenAt?: DateTimeFilter<"NewsStory"> | Date | string
+    eventAt?: DateTimeNullableFilter<"NewsStory"> | Date | string | null
+    expiresAt?: DateTimeNullableFilter<"NewsStory"> | Date | string | null
+    pinned?: BoolFilter<"NewsStory"> | boolean
+    reason?: StringNullableFilter<"NewsStory"> | string | null
+    analysis?: JsonNullableFilter<"NewsStory">
+    analyzedAt?: DateTimeNullableFilter<"NewsStory"> | Date | string | null
+    relatedArticleId?: StringNullableFilter<"NewsStory"> | string | null
+    duplicateArticleId?: StringNullableFilter<"NewsStory"> | string | null
+    attempts?: IntFilter<"NewsStory"> | number
+    lastError?: StringNullableFilter<"NewsStory"> | string | null
+    processingAt?: DateTimeNullableFilter<"NewsStory"> | Date | string | null
+    createdAt?: DateTimeFilter<"NewsStory"> | Date | string
+    updatedAt?: DateTimeFilter<"NewsStory"> | Date | string
+    article?: XOR<ArticleNullableScalarRelationFilter, ArticleWhereInput> | null
+    items?: RssFeedItemListRelationFilter
+  }, "id" | "articleId" | "processingToken">
+
+  export type NewsStoryOrderByWithAggregationInput = {
+    id?: SortOrder
+    title?: SortOrder
+    headline?: SortOrderInput | SortOrder
+    summary?: SortOrderInput | SortOrder
+    tokens?: SortOrder
+    entities?: SortOrder
+    categoryName?: SortOrderInput | SortOrder
+    status?: SortOrder
+    urgency?: SortOrder
+    score?: SortOrder
+    aiScore?: SortOrderInput | SortOrder
+    trendScore?: SortOrder
+    trendKeyword?: SortOrderInput | SortOrder
+    sourceCount?: SortOrder
+    itemCount?: SortOrder
+    firstSeenAt?: SortOrder
+    lastSeenAt?: SortOrder
+    eventAt?: SortOrderInput | SortOrder
+    expiresAt?: SortOrderInput | SortOrder
+    pinned?: SortOrder
+    reason?: SortOrderInput | SortOrder
+    analysis?: SortOrderInput | SortOrder
+    analyzedAt?: SortOrderInput | SortOrder
+    relatedArticleId?: SortOrderInput | SortOrder
+    duplicateArticleId?: SortOrderInput | SortOrder
+    articleId?: SortOrderInput | SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrderInput | SortOrder
+    processingAt?: SortOrderInput | SortOrder
+    processingToken?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: NewsStoryCountOrderByAggregateInput
+    _avg?: NewsStoryAvgOrderByAggregateInput
+    _max?: NewsStoryMaxOrderByAggregateInput
+    _min?: NewsStoryMinOrderByAggregateInput
+    _sum?: NewsStorySumOrderByAggregateInput
+  }
+
+  export type NewsStoryScalarWhereWithAggregatesInput = {
+    AND?: NewsStoryScalarWhereWithAggregatesInput | NewsStoryScalarWhereWithAggregatesInput[]
+    OR?: NewsStoryScalarWhereWithAggregatesInput[]
+    NOT?: NewsStoryScalarWhereWithAggregatesInput | NewsStoryScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"NewsStory"> | string
+    title?: StringWithAggregatesFilter<"NewsStory"> | string
+    headline?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    summary?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    tokens?: StringNullableListFilter<"NewsStory">
+    entities?: StringNullableListFilter<"NewsStory">
+    categoryName?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    status?: EnumStoryStatusWithAggregatesFilter<"NewsStory"> | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyWithAggregatesFilter<"NewsStory"> | $Enums.StoryUrgency
+    score?: IntWithAggregatesFilter<"NewsStory"> | number
+    aiScore?: IntNullableWithAggregatesFilter<"NewsStory"> | number | null
+    trendScore?: IntWithAggregatesFilter<"NewsStory"> | number
+    trendKeyword?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    sourceCount?: IntWithAggregatesFilter<"NewsStory"> | number
+    itemCount?: IntWithAggregatesFilter<"NewsStory"> | number
+    firstSeenAt?: DateTimeWithAggregatesFilter<"NewsStory"> | Date | string
+    lastSeenAt?: DateTimeWithAggregatesFilter<"NewsStory"> | Date | string
+    eventAt?: DateTimeNullableWithAggregatesFilter<"NewsStory"> | Date | string | null
+    expiresAt?: DateTimeNullableWithAggregatesFilter<"NewsStory"> | Date | string | null
+    pinned?: BoolWithAggregatesFilter<"NewsStory"> | boolean
+    reason?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    analysis?: JsonNullableWithAggregatesFilter<"NewsStory">
+    analyzedAt?: DateTimeNullableWithAggregatesFilter<"NewsStory"> | Date | string | null
+    relatedArticleId?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    duplicateArticleId?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    articleId?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    attempts?: IntWithAggregatesFilter<"NewsStory"> | number
+    lastError?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    processingAt?: DateTimeNullableWithAggregatesFilter<"NewsStory"> | Date | string | null
+    processingToken?: StringNullableWithAggregatesFilter<"NewsStory"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"NewsStory"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"NewsStory"> | Date | string
   }
 
   export type SystemSettingsWhereInput = {
@@ -37174,6 +39215,7 @@ export namespace Prisma {
     googleTrendsGeo?: StringFilter<"SystemSettings"> | string
     trendAutoPublishThreshold?: IntFilter<"SystemSettings"> | number
     trendSearchGenerateEnabled?: BoolFilter<"SystemSettings"> | boolean
+    storyMinScore?: IntFilter<"SystemSettings"> | number
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }
 
@@ -37204,6 +39246,7 @@ export namespace Prisma {
     googleTrendsGeo?: SortOrder
     trendAutoPublishThreshold?: SortOrder
     trendSearchGenerateEnabled?: SortOrder
+    storyMinScore?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -37237,6 +39280,7 @@ export namespace Prisma {
     googleTrendsGeo?: StringFilter<"SystemSettings"> | string
     trendAutoPublishThreshold?: IntFilter<"SystemSettings"> | number
     trendSearchGenerateEnabled?: BoolFilter<"SystemSettings"> | boolean
+    storyMinScore?: IntFilter<"SystemSettings"> | number
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }, "id">
 
@@ -37267,6 +39311,7 @@ export namespace Prisma {
     googleTrendsGeo?: SortOrder
     trendAutoPublishThreshold?: SortOrder
     trendSearchGenerateEnabled?: SortOrder
+    storyMinScore?: SortOrder
     updatedAt?: SortOrder
     _count?: SystemSettingsCountOrderByAggregateInput
     _avg?: SystemSettingsAvgOrderByAggregateInput
@@ -37305,6 +39350,7 @@ export namespace Prisma {
     googleTrendsGeo?: StringWithAggregatesFilter<"SystemSettings"> | string
     trendAutoPublishThreshold?: IntWithAggregatesFilter<"SystemSettings"> | number
     trendSearchGenerateEnabled?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
+    storyMinScore?: IntWithAggregatesFilter<"SystemSettings"> | number
     updatedAt?: DateTimeWithAggregatesFilter<"SystemSettings"> | Date | string
   }
 
@@ -38440,6 +40486,7 @@ export namespace Prisma {
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
@@ -38468,6 +40515,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
@@ -38496,6 +40544,7 @@ export namespace Prisma {
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
@@ -38524,6 +40573,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
@@ -39483,6 +41533,7 @@ export namespace Prisma {
     processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryCreateNestedOneWithoutItemsInput
     source: RssFeedSourceCreateNestedOneWithoutItemsInput
     googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
     article?: ArticleCreateNestedOneWithoutSourceRssItemInput
@@ -39504,6 +41555,7 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: Date | string | null
     processingToken?: string | null
+    storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
@@ -39527,6 +41579,7 @@ export namespace Prisma {
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUpdateOneWithoutItemsNestedInput
     source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
     googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
     article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
@@ -39548,6 +41601,7 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
@@ -39570,6 +41624,7 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: Date | string | null
     processingToken?: string | null
+    storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -39609,6 +41664,255 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    storyId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NewsStoryCreateInput = {
+    id?: string
+    title: string
+    headline?: string | null
+    summary?: string | null
+    tokens?: NewsStoryCreatetokensInput | string[]
+    entities?: NewsStoryCreateentitiesInput | string[]
+    categoryName?: string | null
+    status?: $Enums.StoryStatus
+    urgency?: $Enums.StoryUrgency
+    score?: number
+    aiScore?: number | null
+    trendScore?: number
+    trendKeyword?: string | null
+    sourceCount?: number
+    itemCount?: number
+    firstSeenAt?: Date | string
+    lastSeenAt?: Date | string
+    eventAt?: Date | string | null
+    expiresAt?: Date | string | null
+    pinned?: boolean
+    reason?: string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: Date | string | null
+    relatedArticleId?: string | null
+    duplicateArticleId?: string | null
+    attempts?: number
+    lastError?: string | null
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    article?: ArticleCreateNestedOneWithoutStoryInput
+    items?: RssFeedItemCreateNestedManyWithoutStoryInput
+  }
+
+  export type NewsStoryUncheckedCreateInput = {
+    id?: string
+    title: string
+    headline?: string | null
+    summary?: string | null
+    tokens?: NewsStoryCreatetokensInput | string[]
+    entities?: NewsStoryCreateentitiesInput | string[]
+    categoryName?: string | null
+    status?: $Enums.StoryStatus
+    urgency?: $Enums.StoryUrgency
+    score?: number
+    aiScore?: number | null
+    trendScore?: number
+    trendKeyword?: string | null
+    sourceCount?: number
+    itemCount?: number
+    firstSeenAt?: Date | string
+    lastSeenAt?: Date | string
+    eventAt?: Date | string | null
+    expiresAt?: Date | string | null
+    pinned?: boolean
+    reason?: string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: Date | string | null
+    relatedArticleId?: string | null
+    duplicateArticleId?: string | null
+    articleId?: string | null
+    attempts?: number
+    lastError?: string | null
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: RssFeedItemUncheckedCreateNestedManyWithoutStoryInput
+  }
+
+  export type NewsStoryUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    summary?: NullableStringFieldUpdateOperationsInput | string | null
+    tokens?: NewsStoryUpdatetokensInput | string[]
+    entities?: NewsStoryUpdateentitiesInput | string[]
+    categoryName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumStoryStatusFieldUpdateOperationsInput | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFieldUpdateOperationsInput | $Enums.StoryUrgency
+    score?: IntFieldUpdateOperationsInput | number
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    trendScore?: IntFieldUpdateOperationsInput | number
+    trendKeyword?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceCount?: IntFieldUpdateOperationsInput | number
+    itemCount?: IntFieldUpdateOperationsInput | number
+    firstSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    relatedArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    duplicateArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    article?: ArticleUpdateOneWithoutStoryNestedInput
+    items?: RssFeedItemUpdateManyWithoutStoryNestedInput
+  }
+
+  export type NewsStoryUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    summary?: NullableStringFieldUpdateOperationsInput | string | null
+    tokens?: NewsStoryUpdatetokensInput | string[]
+    entities?: NewsStoryUpdateentitiesInput | string[]
+    categoryName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumStoryStatusFieldUpdateOperationsInput | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFieldUpdateOperationsInput | $Enums.StoryUrgency
+    score?: IntFieldUpdateOperationsInput | number
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    trendScore?: IntFieldUpdateOperationsInput | number
+    trendKeyword?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceCount?: IntFieldUpdateOperationsInput | number
+    itemCount?: IntFieldUpdateOperationsInput | number
+    firstSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    relatedArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    duplicateArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    articleId?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: RssFeedItemUncheckedUpdateManyWithoutStoryNestedInput
+  }
+
+  export type NewsStoryCreateManyInput = {
+    id?: string
+    title: string
+    headline?: string | null
+    summary?: string | null
+    tokens?: NewsStoryCreatetokensInput | string[]
+    entities?: NewsStoryCreateentitiesInput | string[]
+    categoryName?: string | null
+    status?: $Enums.StoryStatus
+    urgency?: $Enums.StoryUrgency
+    score?: number
+    aiScore?: number | null
+    trendScore?: number
+    trendKeyword?: string | null
+    sourceCount?: number
+    itemCount?: number
+    firstSeenAt?: Date | string
+    lastSeenAt?: Date | string
+    eventAt?: Date | string | null
+    expiresAt?: Date | string | null
+    pinned?: boolean
+    reason?: string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: Date | string | null
+    relatedArticleId?: string | null
+    duplicateArticleId?: string | null
+    articleId?: string | null
+    attempts?: number
+    lastError?: string | null
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NewsStoryUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    summary?: NullableStringFieldUpdateOperationsInput | string | null
+    tokens?: NewsStoryUpdatetokensInput | string[]
+    entities?: NewsStoryUpdateentitiesInput | string[]
+    categoryName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumStoryStatusFieldUpdateOperationsInput | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFieldUpdateOperationsInput | $Enums.StoryUrgency
+    score?: IntFieldUpdateOperationsInput | number
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    trendScore?: IntFieldUpdateOperationsInput | number
+    trendKeyword?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceCount?: IntFieldUpdateOperationsInput | number
+    itemCount?: IntFieldUpdateOperationsInput | number
+    firstSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    relatedArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    duplicateArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type NewsStoryUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    summary?: NullableStringFieldUpdateOperationsInput | string | null
+    tokens?: NewsStoryUpdatetokensInput | string[]
+    entities?: NewsStoryUpdateentitiesInput | string[]
+    categoryName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumStoryStatusFieldUpdateOperationsInput | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFieldUpdateOperationsInput | $Enums.StoryUrgency
+    score?: IntFieldUpdateOperationsInput | number
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    trendScore?: IntFieldUpdateOperationsInput | number
+    trendKeyword?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceCount?: IntFieldUpdateOperationsInput | number
+    itemCount?: IntFieldUpdateOperationsInput | number
+    firstSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    relatedArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    duplicateArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    articleId?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39640,6 +41944,7 @@ export namespace Prisma {
     googleTrendsGeo?: string
     trendAutoPublishThreshold?: number
     trendSearchGenerateEnabled?: boolean
+    storyMinScore?: number
     updatedAt?: Date | string
   }
 
@@ -39670,6 +41975,7 @@ export namespace Prisma {
     googleTrendsGeo?: string
     trendAutoPublishThreshold?: number
     trendSearchGenerateEnabled?: boolean
+    storyMinScore?: number
     updatedAt?: Date | string
   }
 
@@ -39700,6 +42006,7 @@ export namespace Prisma {
     googleTrendsGeo?: StringFieldUpdateOperationsInput | string
     trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
     trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
+    storyMinScore?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -39730,6 +42037,7 @@ export namespace Prisma {
     googleTrendsGeo?: StringFieldUpdateOperationsInput | string
     trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
     trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
+    storyMinScore?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -39760,6 +42068,7 @@ export namespace Prisma {
     googleTrendsGeo?: string
     trendAutoPublishThreshold?: number
     trendSearchGenerateEnabled?: boolean
+    storyMinScore?: number
     updatedAt?: Date | string
   }
 
@@ -39790,6 +42099,7 @@ export namespace Prisma {
     googleTrendsGeo?: StringFieldUpdateOperationsInput | string
     trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
     trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
+    storyMinScore?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -39820,6 +42130,7 @@ export namespace Prisma {
     googleTrendsGeo?: StringFieldUpdateOperationsInput | string
     trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
     trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
+    storyMinScore?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
@@ -41089,6 +43400,11 @@ export namespace Prisma {
     isNot?: RssFeedItemWhereInput | null
   }
 
+  export type NewsStoryNullableScalarRelationFilter = {
+    is?: NewsStoryWhereInput | null
+    isNot?: NewsStoryWhereInput | null
+  }
+
   export type TagOnArticleListRelationFilter = {
     every?: TagOnArticleWhereInput
     some?: TagOnArticleWhereInput
@@ -41760,6 +44076,7 @@ export namespace Prisma {
     usedForArticle?: SortOrder
     processingAt?: SortOrder
     processingToken?: SortOrder
+    storyId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -41783,6 +44100,7 @@ export namespace Prisma {
     usedForArticle?: SortOrder
     processingAt?: SortOrder
     processingToken?: SortOrder
+    storyId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -41802,6 +44120,7 @@ export namespace Prisma {
     usedForArticle?: SortOrder
     processingAt?: SortOrder
     processingToken?: SortOrder
+    storyId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -41818,6 +44137,165 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumRssItemStatusFilter<$PrismaModel>
     _max?: NestedEnumRssItemStatusFilter<$PrismaModel>
+  }
+
+  export type StringNullableListFilter<$PrismaModel = never> = {
+    equals?: string[] | ListStringFieldRefInput<$PrismaModel> | null
+    has?: string | StringFieldRefInput<$PrismaModel> | null
+    hasEvery?: string[] | ListStringFieldRefInput<$PrismaModel>
+    hasSome?: string[] | ListStringFieldRefInput<$PrismaModel>
+    isEmpty?: boolean
+  }
+
+  export type EnumStoryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.StoryStatus | EnumStoryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.StoryStatus[] | ListEnumStoryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StoryStatus[] | ListEnumStoryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStoryStatusFilter<$PrismaModel> | $Enums.StoryStatus
+  }
+
+  export type EnumStoryUrgencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.StoryUrgency | EnumStoryUrgencyFieldRefInput<$PrismaModel>
+    in?: $Enums.StoryUrgency[] | ListEnumStoryUrgencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StoryUrgency[] | ListEnumStoryUrgencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumStoryUrgencyFilter<$PrismaModel> | $Enums.StoryUrgency
+  }
+
+  export type NewsStoryCountOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    headline?: SortOrder
+    summary?: SortOrder
+    tokens?: SortOrder
+    entities?: SortOrder
+    categoryName?: SortOrder
+    status?: SortOrder
+    urgency?: SortOrder
+    score?: SortOrder
+    aiScore?: SortOrder
+    trendScore?: SortOrder
+    trendKeyword?: SortOrder
+    sourceCount?: SortOrder
+    itemCount?: SortOrder
+    firstSeenAt?: SortOrder
+    lastSeenAt?: SortOrder
+    eventAt?: SortOrder
+    expiresAt?: SortOrder
+    pinned?: SortOrder
+    reason?: SortOrder
+    analysis?: SortOrder
+    analyzedAt?: SortOrder
+    relatedArticleId?: SortOrder
+    duplicateArticleId?: SortOrder
+    articleId?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    processingAt?: SortOrder
+    processingToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NewsStoryAvgOrderByAggregateInput = {
+    score?: SortOrder
+    aiScore?: SortOrder
+    trendScore?: SortOrder
+    sourceCount?: SortOrder
+    itemCount?: SortOrder
+    attempts?: SortOrder
+  }
+
+  export type NewsStoryMaxOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    headline?: SortOrder
+    summary?: SortOrder
+    categoryName?: SortOrder
+    status?: SortOrder
+    urgency?: SortOrder
+    score?: SortOrder
+    aiScore?: SortOrder
+    trendScore?: SortOrder
+    trendKeyword?: SortOrder
+    sourceCount?: SortOrder
+    itemCount?: SortOrder
+    firstSeenAt?: SortOrder
+    lastSeenAt?: SortOrder
+    eventAt?: SortOrder
+    expiresAt?: SortOrder
+    pinned?: SortOrder
+    reason?: SortOrder
+    analyzedAt?: SortOrder
+    relatedArticleId?: SortOrder
+    duplicateArticleId?: SortOrder
+    articleId?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    processingAt?: SortOrder
+    processingToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NewsStoryMinOrderByAggregateInput = {
+    id?: SortOrder
+    title?: SortOrder
+    headline?: SortOrder
+    summary?: SortOrder
+    categoryName?: SortOrder
+    status?: SortOrder
+    urgency?: SortOrder
+    score?: SortOrder
+    aiScore?: SortOrder
+    trendScore?: SortOrder
+    trendKeyword?: SortOrder
+    sourceCount?: SortOrder
+    itemCount?: SortOrder
+    firstSeenAt?: SortOrder
+    lastSeenAt?: SortOrder
+    eventAt?: SortOrder
+    expiresAt?: SortOrder
+    pinned?: SortOrder
+    reason?: SortOrder
+    analyzedAt?: SortOrder
+    relatedArticleId?: SortOrder
+    duplicateArticleId?: SortOrder
+    articleId?: SortOrder
+    attempts?: SortOrder
+    lastError?: SortOrder
+    processingAt?: SortOrder
+    processingToken?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type NewsStorySumOrderByAggregateInput = {
+    score?: SortOrder
+    aiScore?: SortOrder
+    trendScore?: SortOrder
+    sourceCount?: SortOrder
+    itemCount?: SortOrder
+    attempts?: SortOrder
+  }
+
+  export type EnumStoryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StoryStatus | EnumStoryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.StoryStatus[] | ListEnumStoryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StoryStatus[] | ListEnumStoryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStoryStatusWithAggregatesFilter<$PrismaModel> | $Enums.StoryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStoryStatusFilter<$PrismaModel>
+    _max?: NestedEnumStoryStatusFilter<$PrismaModel>
+  }
+
+  export type EnumStoryUrgencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StoryUrgency | EnumStoryUrgencyFieldRefInput<$PrismaModel>
+    in?: $Enums.StoryUrgency[] | ListEnumStoryUrgencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StoryUrgency[] | ListEnumStoryUrgencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumStoryUrgencyWithAggregatesFilter<$PrismaModel> | $Enums.StoryUrgency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStoryUrgencyFilter<$PrismaModel>
+    _max?: NestedEnumStoryUrgencyFilter<$PrismaModel>
   }
 
   export type SystemSettingsCountOrderByAggregateInput = {
@@ -41847,6 +44325,7 @@ export namespace Prisma {
     googleTrendsGeo?: SortOrder
     trendAutoPublishThreshold?: SortOrder
     trendSearchGenerateEnabled?: SortOrder
+    storyMinScore?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -41855,6 +44334,7 @@ export namespace Prisma {
     aiWriterAutoCount?: SortOrder
     maxNewsAgeHours?: SortOrder
     trendAutoPublishThreshold?: SortOrder
+    storyMinScore?: SortOrder
   }
 
   export type SystemSettingsMaxOrderByAggregateInput = {
@@ -41884,6 +44364,7 @@ export namespace Prisma {
     googleTrendsGeo?: SortOrder
     trendAutoPublishThreshold?: SortOrder
     trendSearchGenerateEnabled?: SortOrder
+    storyMinScore?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -41914,6 +44395,7 @@ export namespace Prisma {
     googleTrendsGeo?: SortOrder
     trendAutoPublishThreshold?: SortOrder
     trendSearchGenerateEnabled?: SortOrder
+    storyMinScore?: SortOrder
     updatedAt?: SortOrder
   }
 
@@ -41922,6 +44404,7 @@ export namespace Prisma {
     aiWriterAutoCount?: SortOrder
     maxNewsAgeHours?: SortOrder
     trendAutoPublishThreshold?: SortOrder
+    storyMinScore?: SortOrder
   }
 
   export type GoogleTrendCountOrderByAggregateInput = {
@@ -42744,6 +45227,12 @@ export namespace Prisma {
     connect?: RssFeedItemWhereUniqueInput
   }
 
+  export type NewsStoryCreateNestedOneWithoutArticleInput = {
+    create?: XOR<NewsStoryCreateWithoutArticleInput, NewsStoryUncheckedCreateWithoutArticleInput>
+    connectOrCreate?: NewsStoryCreateOrConnectWithoutArticleInput
+    connect?: NewsStoryWhereUniqueInput
+  }
+
   export type BookmarkCreateNestedManyWithoutArticleInput = {
     create?: XOR<BookmarkCreateWithoutArticleInput, BookmarkUncheckedCreateWithoutArticleInput> | BookmarkCreateWithoutArticleInput[] | BookmarkUncheckedCreateWithoutArticleInput[]
     connectOrCreate?: BookmarkCreateOrConnectWithoutArticleInput | BookmarkCreateOrConnectWithoutArticleInput[]
@@ -42770,6 +45259,12 @@ export namespace Prisma {
     connectOrCreate?: TagOnArticleCreateOrConnectWithoutArticleInput | TagOnArticleCreateOrConnectWithoutArticleInput[]
     createMany?: TagOnArticleCreateManyArticleInputEnvelope
     connect?: TagOnArticleWhereUniqueInput | TagOnArticleWhereUniqueInput[]
+  }
+
+  export type NewsStoryUncheckedCreateNestedOneWithoutArticleInput = {
+    create?: XOR<NewsStoryCreateWithoutArticleInput, NewsStoryUncheckedCreateWithoutArticleInput>
+    connectOrCreate?: NewsStoryCreateOrConnectWithoutArticleInput
+    connect?: NewsStoryWhereUniqueInput
   }
 
   export type BookmarkUncheckedCreateNestedManyWithoutArticleInput = {
@@ -42854,6 +45349,16 @@ export namespace Prisma {
     update?: XOR<XOR<RssFeedItemUpdateToOneWithWhereWithoutArticleInput, RssFeedItemUpdateWithoutArticleInput>, RssFeedItemUncheckedUpdateWithoutArticleInput>
   }
 
+  export type NewsStoryUpdateOneWithoutArticleNestedInput = {
+    create?: XOR<NewsStoryCreateWithoutArticleInput, NewsStoryUncheckedCreateWithoutArticleInput>
+    connectOrCreate?: NewsStoryCreateOrConnectWithoutArticleInput
+    upsert?: NewsStoryUpsertWithoutArticleInput
+    disconnect?: NewsStoryWhereInput | boolean
+    delete?: NewsStoryWhereInput | boolean
+    connect?: NewsStoryWhereUniqueInput
+    update?: XOR<XOR<NewsStoryUpdateToOneWithWhereWithoutArticleInput, NewsStoryUpdateWithoutArticleInput>, NewsStoryUncheckedUpdateWithoutArticleInput>
+  }
+
   export type BookmarkUpdateManyWithoutArticleNestedInput = {
     create?: XOR<BookmarkCreateWithoutArticleInput, BookmarkUncheckedCreateWithoutArticleInput> | BookmarkCreateWithoutArticleInput[] | BookmarkUncheckedCreateWithoutArticleInput[]
     connectOrCreate?: BookmarkCreateOrConnectWithoutArticleInput | BookmarkCreateOrConnectWithoutArticleInput[]
@@ -42908,6 +45413,16 @@ export namespace Prisma {
     update?: TagOnArticleUpdateWithWhereUniqueWithoutArticleInput | TagOnArticleUpdateWithWhereUniqueWithoutArticleInput[]
     updateMany?: TagOnArticleUpdateManyWithWhereWithoutArticleInput | TagOnArticleUpdateManyWithWhereWithoutArticleInput[]
     deleteMany?: TagOnArticleScalarWhereInput | TagOnArticleScalarWhereInput[]
+  }
+
+  export type NewsStoryUncheckedUpdateOneWithoutArticleNestedInput = {
+    create?: XOR<NewsStoryCreateWithoutArticleInput, NewsStoryUncheckedCreateWithoutArticleInput>
+    connectOrCreate?: NewsStoryCreateOrConnectWithoutArticleInput
+    upsert?: NewsStoryUpsertWithoutArticleInput
+    disconnect?: NewsStoryWhereInput | boolean
+    delete?: NewsStoryWhereInput | boolean
+    connect?: NewsStoryWhereUniqueInput
+    update?: XOR<XOR<NewsStoryUpdateToOneWithWhereWithoutArticleInput, NewsStoryUpdateWithoutArticleInput>, NewsStoryUncheckedUpdateWithoutArticleInput>
   }
 
   export type BookmarkUncheckedUpdateManyWithoutArticleNestedInput = {
@@ -43380,6 +45895,12 @@ export namespace Prisma {
     deleteMany?: RssFeedItemScalarWhereInput | RssFeedItemScalarWhereInput[]
   }
 
+  export type NewsStoryCreateNestedOneWithoutItemsInput = {
+    create?: XOR<NewsStoryCreateWithoutItemsInput, NewsStoryUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: NewsStoryCreateOrConnectWithoutItemsInput
+    connect?: NewsStoryWhereUniqueInput
+  }
+
   export type RssFeedSourceCreateNestedOneWithoutItemsInput = {
     create?: XOR<RssFeedSourceCreateWithoutItemsInput, RssFeedSourceUncheckedCreateWithoutItemsInput>
     connectOrCreate?: RssFeedSourceCreateOrConnectWithoutItemsInput
@@ -43414,6 +45935,16 @@ export namespace Prisma {
 
   export type EnumRssItemStatusFieldUpdateOperationsInput = {
     set?: $Enums.RssItemStatus
+  }
+
+  export type NewsStoryUpdateOneWithoutItemsNestedInput = {
+    create?: XOR<NewsStoryCreateWithoutItemsInput, NewsStoryUncheckedCreateWithoutItemsInput>
+    connectOrCreate?: NewsStoryCreateOrConnectWithoutItemsInput
+    upsert?: NewsStoryUpsertWithoutItemsInput
+    disconnect?: NewsStoryWhereInput | boolean
+    delete?: NewsStoryWhereInput | boolean
+    connect?: NewsStoryWhereUniqueInput
+    update?: XOR<XOR<NewsStoryUpdateToOneWithWhereWithoutItemsInput, NewsStoryUpdateWithoutItemsInput>, NewsStoryUncheckedUpdateWithoutItemsInput>
   }
 
   export type RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput = {
@@ -43470,6 +46001,90 @@ export namespace Prisma {
     delete?: ArticleWhereInput | boolean
     connect?: ArticleWhereUniqueInput
     update?: XOR<XOR<ArticleUpdateToOneWithWhereWithoutSourceRssItemInput, ArticleUpdateWithoutSourceRssItemInput>, ArticleUncheckedUpdateWithoutSourceRssItemInput>
+  }
+
+  export type NewsStoryCreatetokensInput = {
+    set: string[]
+  }
+
+  export type NewsStoryCreateentitiesInput = {
+    set: string[]
+  }
+
+  export type ArticleCreateNestedOneWithoutStoryInput = {
+    create?: XOR<ArticleCreateWithoutStoryInput, ArticleUncheckedCreateWithoutStoryInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutStoryInput
+    connect?: ArticleWhereUniqueInput
+  }
+
+  export type RssFeedItemCreateNestedManyWithoutStoryInput = {
+    create?: XOR<RssFeedItemCreateWithoutStoryInput, RssFeedItemUncheckedCreateWithoutStoryInput> | RssFeedItemCreateWithoutStoryInput[] | RssFeedItemUncheckedCreateWithoutStoryInput[]
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutStoryInput | RssFeedItemCreateOrConnectWithoutStoryInput[]
+    createMany?: RssFeedItemCreateManyStoryInputEnvelope
+    connect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+  }
+
+  export type RssFeedItemUncheckedCreateNestedManyWithoutStoryInput = {
+    create?: XOR<RssFeedItemCreateWithoutStoryInput, RssFeedItemUncheckedCreateWithoutStoryInput> | RssFeedItemCreateWithoutStoryInput[] | RssFeedItemUncheckedCreateWithoutStoryInput[]
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutStoryInput | RssFeedItemCreateOrConnectWithoutStoryInput[]
+    createMany?: RssFeedItemCreateManyStoryInputEnvelope
+    connect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+  }
+
+  export type NewsStoryUpdatetokensInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type NewsStoryUpdateentitiesInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
+  export type EnumStoryStatusFieldUpdateOperationsInput = {
+    set?: $Enums.StoryStatus
+  }
+
+  export type EnumStoryUrgencyFieldUpdateOperationsInput = {
+    set?: $Enums.StoryUrgency
+  }
+
+  export type ArticleUpdateOneWithoutStoryNestedInput = {
+    create?: XOR<ArticleCreateWithoutStoryInput, ArticleUncheckedCreateWithoutStoryInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutStoryInput
+    upsert?: ArticleUpsertWithoutStoryInput
+    disconnect?: ArticleWhereInput | boolean
+    delete?: ArticleWhereInput | boolean
+    connect?: ArticleWhereUniqueInput
+    update?: XOR<XOR<ArticleUpdateToOneWithWhereWithoutStoryInput, ArticleUpdateWithoutStoryInput>, ArticleUncheckedUpdateWithoutStoryInput>
+  }
+
+  export type RssFeedItemUpdateManyWithoutStoryNestedInput = {
+    create?: XOR<RssFeedItemCreateWithoutStoryInput, RssFeedItemUncheckedCreateWithoutStoryInput> | RssFeedItemCreateWithoutStoryInput[] | RssFeedItemUncheckedCreateWithoutStoryInput[]
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutStoryInput | RssFeedItemCreateOrConnectWithoutStoryInput[]
+    upsert?: RssFeedItemUpsertWithWhereUniqueWithoutStoryInput | RssFeedItemUpsertWithWhereUniqueWithoutStoryInput[]
+    createMany?: RssFeedItemCreateManyStoryInputEnvelope
+    set?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    disconnect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    delete?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    connect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    update?: RssFeedItemUpdateWithWhereUniqueWithoutStoryInput | RssFeedItemUpdateWithWhereUniqueWithoutStoryInput[]
+    updateMany?: RssFeedItemUpdateManyWithWhereWithoutStoryInput | RssFeedItemUpdateManyWithWhereWithoutStoryInput[]
+    deleteMany?: RssFeedItemScalarWhereInput | RssFeedItemScalarWhereInput[]
+  }
+
+  export type RssFeedItemUncheckedUpdateManyWithoutStoryNestedInput = {
+    create?: XOR<RssFeedItemCreateWithoutStoryInput, RssFeedItemUncheckedCreateWithoutStoryInput> | RssFeedItemCreateWithoutStoryInput[] | RssFeedItemUncheckedCreateWithoutStoryInput[]
+    connectOrCreate?: RssFeedItemCreateOrConnectWithoutStoryInput | RssFeedItemCreateOrConnectWithoutStoryInput[]
+    upsert?: RssFeedItemUpsertWithWhereUniqueWithoutStoryInput | RssFeedItemUpsertWithWhereUniqueWithoutStoryInput[]
+    createMany?: RssFeedItemCreateManyStoryInputEnvelope
+    set?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    disconnect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    delete?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    connect?: RssFeedItemWhereUniqueInput | RssFeedItemWhereUniqueInput[]
+    update?: RssFeedItemUpdateWithWhereUniqueWithoutStoryInput | RssFeedItemUpdateWithWhereUniqueWithoutStoryInput[]
+    updateMany?: RssFeedItemUpdateManyWithWhereWithoutStoryInput | RssFeedItemUpdateManyWithWhereWithoutStoryInput[]
+    deleteMany?: RssFeedItemScalarWhereInput | RssFeedItemScalarWhereInput[]
   }
 
   export type GoogleTrendItemCreateNestedManyWithoutTrendInput = {
@@ -43978,6 +46593,40 @@ export namespace Prisma {
     _max?: NestedEnumRssItemStatusFilter<$PrismaModel>
   }
 
+  export type NestedEnumStoryStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.StoryStatus | EnumStoryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.StoryStatus[] | ListEnumStoryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StoryStatus[] | ListEnumStoryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStoryStatusFilter<$PrismaModel> | $Enums.StoryStatus
+  }
+
+  export type NestedEnumStoryUrgencyFilter<$PrismaModel = never> = {
+    equals?: $Enums.StoryUrgency | EnumStoryUrgencyFieldRefInput<$PrismaModel>
+    in?: $Enums.StoryUrgency[] | ListEnumStoryUrgencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StoryUrgency[] | ListEnumStoryUrgencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumStoryUrgencyFilter<$PrismaModel> | $Enums.StoryUrgency
+  }
+
+  export type NestedEnumStoryStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StoryStatus | EnumStoryStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.StoryStatus[] | ListEnumStoryStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StoryStatus[] | ListEnumStoryStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumStoryStatusWithAggregatesFilter<$PrismaModel> | $Enums.StoryStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStoryStatusFilter<$PrismaModel>
+    _max?: NestedEnumStoryStatusFilter<$PrismaModel>
+  }
+
+  export type NestedEnumStoryUrgencyWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.StoryUrgency | EnumStoryUrgencyFieldRefInput<$PrismaModel>
+    in?: $Enums.StoryUrgency[] | ListEnumStoryUrgencyFieldRefInput<$PrismaModel>
+    notIn?: $Enums.StoryUrgency[] | ListEnumStoryUrgencyFieldRefInput<$PrismaModel>
+    not?: NestedEnumStoryUrgencyWithAggregatesFilter<$PrismaModel> | $Enums.StoryUrgency
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumStoryUrgencyFilter<$PrismaModel>
+    _max?: NestedEnumStoryUrgencyFilter<$PrismaModel>
+  }
+
   export type NestedEnumTrendActionFilter<$PrismaModel = never> = {
     equals?: $Enums.TrendAction | EnumTrendActionFieldRefInput<$PrismaModel>
     in?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
@@ -44075,6 +46724,7 @@ export namespace Prisma {
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
@@ -44102,6 +46752,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
@@ -44810,6 +47461,7 @@ export namespace Prisma {
     processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryCreateNestedOneWithoutItemsInput
     source: RssFeedSourceCreateNestedOneWithoutItemsInput
     googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
   }
@@ -44830,6 +47482,7 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: Date | string | null
     processingToken?: string | null
+    storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
@@ -44838,6 +47491,81 @@ export namespace Prisma {
   export type RssFeedItemCreateOrConnectWithoutArticleInput = {
     where: RssFeedItemWhereUniqueInput
     create: XOR<RssFeedItemCreateWithoutArticleInput, RssFeedItemUncheckedCreateWithoutArticleInput>
+  }
+
+  export type NewsStoryCreateWithoutArticleInput = {
+    id?: string
+    title: string
+    headline?: string | null
+    summary?: string | null
+    tokens?: NewsStoryCreatetokensInput | string[]
+    entities?: NewsStoryCreateentitiesInput | string[]
+    categoryName?: string | null
+    status?: $Enums.StoryStatus
+    urgency?: $Enums.StoryUrgency
+    score?: number
+    aiScore?: number | null
+    trendScore?: number
+    trendKeyword?: string | null
+    sourceCount?: number
+    itemCount?: number
+    firstSeenAt?: Date | string
+    lastSeenAt?: Date | string
+    eventAt?: Date | string | null
+    expiresAt?: Date | string | null
+    pinned?: boolean
+    reason?: string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: Date | string | null
+    relatedArticleId?: string | null
+    duplicateArticleId?: string | null
+    attempts?: number
+    lastError?: string | null
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: RssFeedItemCreateNestedManyWithoutStoryInput
+  }
+
+  export type NewsStoryUncheckedCreateWithoutArticleInput = {
+    id?: string
+    title: string
+    headline?: string | null
+    summary?: string | null
+    tokens?: NewsStoryCreatetokensInput | string[]
+    entities?: NewsStoryCreateentitiesInput | string[]
+    categoryName?: string | null
+    status?: $Enums.StoryStatus
+    urgency?: $Enums.StoryUrgency
+    score?: number
+    aiScore?: number | null
+    trendScore?: number
+    trendKeyword?: string | null
+    sourceCount?: number
+    itemCount?: number
+    firstSeenAt?: Date | string
+    lastSeenAt?: Date | string
+    eventAt?: Date | string | null
+    expiresAt?: Date | string | null
+    pinned?: boolean
+    reason?: string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: Date | string | null
+    relatedArticleId?: string | null
+    duplicateArticleId?: string | null
+    attempts?: number
+    lastError?: string | null
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    items?: RssFeedItemUncheckedCreateNestedManyWithoutStoryInput
+  }
+
+  export type NewsStoryCreateOrConnectWithoutArticleInput = {
+    where: NewsStoryWhereUniqueInput
+    create: XOR<NewsStoryCreateWithoutArticleInput, NewsStoryUncheckedCreateWithoutArticleInput>
   }
 
   export type BookmarkCreateWithoutArticleInput = {
@@ -45095,6 +47823,7 @@ export namespace Prisma {
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUpdateOneWithoutItemsNestedInput
     source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
     googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
   }
@@ -45115,9 +47844,91 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
+  }
+
+  export type NewsStoryUpsertWithoutArticleInput = {
+    update: XOR<NewsStoryUpdateWithoutArticleInput, NewsStoryUncheckedUpdateWithoutArticleInput>
+    create: XOR<NewsStoryCreateWithoutArticleInput, NewsStoryUncheckedCreateWithoutArticleInput>
+    where?: NewsStoryWhereInput
+  }
+
+  export type NewsStoryUpdateToOneWithWhereWithoutArticleInput = {
+    where?: NewsStoryWhereInput
+    data: XOR<NewsStoryUpdateWithoutArticleInput, NewsStoryUncheckedUpdateWithoutArticleInput>
+  }
+
+  export type NewsStoryUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    summary?: NullableStringFieldUpdateOperationsInput | string | null
+    tokens?: NewsStoryUpdatetokensInput | string[]
+    entities?: NewsStoryUpdateentitiesInput | string[]
+    categoryName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumStoryStatusFieldUpdateOperationsInput | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFieldUpdateOperationsInput | $Enums.StoryUrgency
+    score?: IntFieldUpdateOperationsInput | number
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    trendScore?: IntFieldUpdateOperationsInput | number
+    trendKeyword?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceCount?: IntFieldUpdateOperationsInput | number
+    itemCount?: IntFieldUpdateOperationsInput | number
+    firstSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    relatedArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    duplicateArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: RssFeedItemUpdateManyWithoutStoryNestedInput
+  }
+
+  export type NewsStoryUncheckedUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    summary?: NullableStringFieldUpdateOperationsInput | string | null
+    tokens?: NewsStoryUpdatetokensInput | string[]
+    entities?: NewsStoryUpdateentitiesInput | string[]
+    categoryName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumStoryStatusFieldUpdateOperationsInput | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFieldUpdateOperationsInput | $Enums.StoryUrgency
+    score?: IntFieldUpdateOperationsInput | number
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    trendScore?: IntFieldUpdateOperationsInput | number
+    trendKeyword?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceCount?: IntFieldUpdateOperationsInput | number
+    itemCount?: IntFieldUpdateOperationsInput | number
+    firstSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    relatedArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    duplicateArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    items?: RssFeedItemUncheckedUpdateManyWithoutStoryNestedInput
   }
 
   export type BookmarkUpsertWithWhereUniqueWithoutArticleInput = {
@@ -45213,6 +48024,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
@@ -45240,6 +48052,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
@@ -45373,6 +48186,7 @@ export namespace Prisma {
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
@@ -45400,6 +48214,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
@@ -45464,6 +48279,7 @@ export namespace Prisma {
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
@@ -45491,6 +48307,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
@@ -45545,6 +48362,7 @@ export namespace Prisma {
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -45572,6 +48390,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
@@ -45715,6 +48534,7 @@ export namespace Prisma {
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -45742,6 +48562,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
@@ -45867,6 +48688,7 @@ export namespace Prisma {
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -45894,6 +48716,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
@@ -45982,6 +48805,7 @@ export namespace Prisma {
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -46009,6 +48833,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
@@ -46087,6 +48912,7 @@ export namespace Prisma {
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
@@ -46114,6 +48940,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
@@ -46202,6 +49029,7 @@ export namespace Prisma {
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
@@ -46229,6 +49057,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
@@ -46515,6 +49344,7 @@ export namespace Prisma {
     processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryCreateNestedOneWithoutItemsInput
     googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
     article?: ArticleCreateNestedOneWithoutSourceRssItemInput
   }
@@ -46534,6 +49364,7 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: Date | string | null
     processingToken?: string | null
+    storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
@@ -46585,8 +49416,84 @@ export namespace Prisma {
     usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
     processingAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
     processingToken?: StringNullableFilter<"RssFeedItem"> | string | null
+    storyId?: StringNullableFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
+  }
+
+  export type NewsStoryCreateWithoutItemsInput = {
+    id?: string
+    title: string
+    headline?: string | null
+    summary?: string | null
+    tokens?: NewsStoryCreatetokensInput | string[]
+    entities?: NewsStoryCreateentitiesInput | string[]
+    categoryName?: string | null
+    status?: $Enums.StoryStatus
+    urgency?: $Enums.StoryUrgency
+    score?: number
+    aiScore?: number | null
+    trendScore?: number
+    trendKeyword?: string | null
+    sourceCount?: number
+    itemCount?: number
+    firstSeenAt?: Date | string
+    lastSeenAt?: Date | string
+    eventAt?: Date | string | null
+    expiresAt?: Date | string | null
+    pinned?: boolean
+    reason?: string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: Date | string | null
+    relatedArticleId?: string | null
+    duplicateArticleId?: string | null
+    attempts?: number
+    lastError?: string | null
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    article?: ArticleCreateNestedOneWithoutStoryInput
+  }
+
+  export type NewsStoryUncheckedCreateWithoutItemsInput = {
+    id?: string
+    title: string
+    headline?: string | null
+    summary?: string | null
+    tokens?: NewsStoryCreatetokensInput | string[]
+    entities?: NewsStoryCreateentitiesInput | string[]
+    categoryName?: string | null
+    status?: $Enums.StoryStatus
+    urgency?: $Enums.StoryUrgency
+    score?: number
+    aiScore?: number | null
+    trendScore?: number
+    trendKeyword?: string | null
+    sourceCount?: number
+    itemCount?: number
+    firstSeenAt?: Date | string
+    lastSeenAt?: Date | string
+    eventAt?: Date | string | null
+    expiresAt?: Date | string | null
+    pinned?: boolean
+    reason?: string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: Date | string | null
+    relatedArticleId?: string | null
+    duplicateArticleId?: string | null
+    articleId?: string | null
+    attempts?: number
+    lastError?: string | null
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type NewsStoryCreateOrConnectWithoutItemsInput = {
+    where: NewsStoryWhereUniqueInput
+    create: XOR<NewsStoryCreateWithoutItemsInput, NewsStoryUncheckedCreateWithoutItemsInput>
   }
 
   export type RssFeedSourceCreateWithoutItemsInput = {
@@ -46667,6 +49574,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
@@ -46694,6 +49602,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
@@ -46703,6 +49612,87 @@ export namespace Prisma {
   export type ArticleCreateOrConnectWithoutSourceRssItemInput = {
     where: ArticleWhereUniqueInput
     create: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
+  }
+
+  export type NewsStoryUpsertWithoutItemsInput = {
+    update: XOR<NewsStoryUpdateWithoutItemsInput, NewsStoryUncheckedUpdateWithoutItemsInput>
+    create: XOR<NewsStoryCreateWithoutItemsInput, NewsStoryUncheckedCreateWithoutItemsInput>
+    where?: NewsStoryWhereInput
+  }
+
+  export type NewsStoryUpdateToOneWithWhereWithoutItemsInput = {
+    where?: NewsStoryWhereInput
+    data: XOR<NewsStoryUpdateWithoutItemsInput, NewsStoryUncheckedUpdateWithoutItemsInput>
+  }
+
+  export type NewsStoryUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    summary?: NullableStringFieldUpdateOperationsInput | string | null
+    tokens?: NewsStoryUpdatetokensInput | string[]
+    entities?: NewsStoryUpdateentitiesInput | string[]
+    categoryName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumStoryStatusFieldUpdateOperationsInput | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFieldUpdateOperationsInput | $Enums.StoryUrgency
+    score?: IntFieldUpdateOperationsInput | number
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    trendScore?: IntFieldUpdateOperationsInput | number
+    trendKeyword?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceCount?: IntFieldUpdateOperationsInput | number
+    itemCount?: IntFieldUpdateOperationsInput | number
+    firstSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    relatedArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    duplicateArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    article?: ArticleUpdateOneWithoutStoryNestedInput
+  }
+
+  export type NewsStoryUncheckedUpdateWithoutItemsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    headline?: NullableStringFieldUpdateOperationsInput | string | null
+    summary?: NullableStringFieldUpdateOperationsInput | string | null
+    tokens?: NewsStoryUpdatetokensInput | string[]
+    entities?: NewsStoryUpdateentitiesInput | string[]
+    categoryName?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: EnumStoryStatusFieldUpdateOperationsInput | $Enums.StoryStatus
+    urgency?: EnumStoryUrgencyFieldUpdateOperationsInput | $Enums.StoryUrgency
+    score?: IntFieldUpdateOperationsInput | number
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    trendScore?: IntFieldUpdateOperationsInput | number
+    trendKeyword?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceCount?: IntFieldUpdateOperationsInput | number
+    itemCount?: IntFieldUpdateOperationsInput | number
+    firstSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    lastSeenAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    eventAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    expiresAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    pinned?: BoolFieldUpdateOperationsInput | boolean
+    reason?: NullableStringFieldUpdateOperationsInput | string | null
+    analysis?: NullableJsonNullValueInput | InputJsonValue
+    analyzedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    relatedArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    duplicateArticleId?: NullableStringFieldUpdateOperationsInput | string | null
+    articleId?: NullableStringFieldUpdateOperationsInput | string | null
+    attempts?: IntFieldUpdateOperationsInput | number
+    lastError?: NullableStringFieldUpdateOperationsInput | string | null
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RssFeedSourceUpsertWithoutItemsInput = {
@@ -46802,6 +49792,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
@@ -46829,10 +49820,209 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
+  }
+
+  export type ArticleCreateWithoutStoryInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    publishedAt?: Date | string | null
+    lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutArticlesInput
+    category?: CategoryCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
+    comments?: CommentCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleUncheckedCreateWithoutStoryInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    authorId: string
+    categoryId?: string | null
+    aiPersonaId?: string | null
+    sourceRssItemId?: string | null
+    publishedAt?: Date | string | null
+    lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
+    comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleCreateOrConnectWithoutStoryInput = {
+    where: ArticleWhereUniqueInput
+    create: XOR<ArticleCreateWithoutStoryInput, ArticleUncheckedCreateWithoutStoryInput>
+  }
+
+  export type RssFeedItemCreateWithoutStoryInput = {
+    id?: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    source: RssFeedSourceCreateNestedOneWithoutItemsInput
+    googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
+    article?: ArticleCreateNestedOneWithoutSourceRssItemInput
+  }
+
+  export type RssFeedItemUncheckedCreateWithoutStoryInput = {
+    id?: string
+    sourceId: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
+    article?: ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput
+  }
+
+  export type RssFeedItemCreateOrConnectWithoutStoryInput = {
+    where: RssFeedItemWhereUniqueInput
+    create: XOR<RssFeedItemCreateWithoutStoryInput, RssFeedItemUncheckedCreateWithoutStoryInput>
+  }
+
+  export type RssFeedItemCreateManyStoryInputEnvelope = {
+    data: RssFeedItemCreateManyStoryInput | RssFeedItemCreateManyStoryInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ArticleUpsertWithoutStoryInput = {
+    update: XOR<ArticleUpdateWithoutStoryInput, ArticleUncheckedUpdateWithoutStoryInput>
+    create: XOR<ArticleCreateWithoutStoryInput, ArticleUncheckedCreateWithoutStoryInput>
+    where?: ArticleWhereInput
+  }
+
+  export type ArticleUpdateToOneWithWhereWithoutStoryInput = {
+    where?: ArticleWhereInput
+    data: XOR<ArticleUpdateWithoutStoryInput, ArticleUncheckedUpdateWithoutStoryInput>
+  }
+
+  export type ArticleUpdateWithoutStoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutArticlesNestedInput
+    category?: CategoryUpdateOneWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
+    comments?: CommentUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
+  }
+
+  export type ArticleUncheckedUpdateWithoutStoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
+  }
+
+  export type RssFeedItemUpsertWithWhereUniqueWithoutStoryInput = {
+    where: RssFeedItemWhereUniqueInput
+    update: XOR<RssFeedItemUpdateWithoutStoryInput, RssFeedItemUncheckedUpdateWithoutStoryInput>
+    create: XOR<RssFeedItemCreateWithoutStoryInput, RssFeedItemUncheckedCreateWithoutStoryInput>
+  }
+
+  export type RssFeedItemUpdateWithWhereUniqueWithoutStoryInput = {
+    where: RssFeedItemWhereUniqueInput
+    data: XOR<RssFeedItemUpdateWithoutStoryInput, RssFeedItemUncheckedUpdateWithoutStoryInput>
+  }
+
+  export type RssFeedItemUpdateManyWithWhereWithoutStoryInput = {
+    where: RssFeedItemScalarWhereInput
+    data: XOR<RssFeedItemUpdateManyMutationInput, RssFeedItemUncheckedUpdateManyWithoutStoryInput>
   }
 
   export type GoogleTrendItemCreateWithoutTrendInput = {
@@ -46923,6 +50113,7 @@ export namespace Prisma {
     processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryCreateNestedOneWithoutItemsInput
     source: RssFeedSourceCreateNestedOneWithoutItemsInput
     article?: ArticleCreateNestedOneWithoutSourceRssItemInput
   }
@@ -46943,6 +50134,7 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: Date | string | null
     processingToken?: string | null
+    storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     article?: ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput
@@ -47016,6 +50208,7 @@ export namespace Prisma {
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUpdateOneWithoutItemsNestedInput
     source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
     article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
   }
@@ -47036,6 +50229,7 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     article?: ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput
@@ -47082,6 +50276,7 @@ export namespace Prisma {
     author: UserCreateNestedOneWithoutArticlesInput
     category?: CategoryCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
@@ -47109,6 +50304,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
     updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
@@ -47592,6 +50788,7 @@ export namespace Prisma {
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
@@ -47619,6 +50816,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
@@ -47954,6 +51152,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
@@ -47981,6 +51180,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
@@ -48130,6 +51330,7 @@ export namespace Prisma {
     usedForArticle?: boolean
     processingAt?: Date | string | null
     processingToken?: string | null
+    storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -48151,6 +51352,7 @@ export namespace Prisma {
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUpdateOneWithoutItemsNestedInput
     googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
     article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
   }
@@ -48170,6 +51372,7 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
@@ -48191,6 +51394,7 @@ export namespace Prisma {
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
     processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -48225,6 +51429,90 @@ export namespace Prisma {
     matchScore?: IntFieldUpdateOperationsInput | number
     actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type RssFeedItemCreateManyStoryInput = {
+    id?: string
+    sourceId: string
+    title: string
+    url: string
+    urlHash: string
+    excerpt?: string | null
+    imageUrl?: string | null
+    publishedAt?: Date | string | null
+    status?: $Enums.RssItemStatus
+    aiScore?: number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: boolean
+    usedForArticle?: boolean
+    processingAt?: Date | string | null
+    processingToken?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type RssFeedItemUpdateWithoutStoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
+    googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
+    article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
+  }
+
+  export type RssFeedItemUncheckedUpdateWithoutStoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
+    article?: ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput
+  }
+
+  export type RssFeedItemUncheckedUpdateManyWithoutStoryInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    sourceId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    url?: StringFieldUpdateOperationsInput | string
+    urlHash?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
+    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
+    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
+    dismissed?: BoolFieldUpdateOperationsInput | boolean
+    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
+    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type GoogleTrendItemCreateManyTrendInput = {
@@ -48323,6 +51611,7 @@ export namespace Prisma {
     author?: UserUpdateOneRequiredWithoutArticlesNestedInput
     category?: CategoryUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
@@ -48350,6 +51639,7 @@ export namespace Prisma {
     analysisReport?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput

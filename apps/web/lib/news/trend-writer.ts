@@ -1,0 +1,96 @@
+import "server-only";
+
+import { prisma } from "@/lib/prisma";
+import { AiError, cleanHtmlResponse, generateText, parseJsonResponse } from "@/lib/ai/client";
+import { slugify } from "@/lib/utils";
+import { keyTokens, signature } from "./text";
+
+const HOUR = 3_600_000;
+
+/** Trend kelimesi son 2 günde yazdığımız bir haberin başlığında tamamen geçiyor mu? */
+export async function findTrendCoverage(keyword: string) {
+  const tokens = keyTokens(keyword);
+  if (tokens.length === 0) return null;
+  const [story, articles] = await Promise.all([
+    prisma.newsStory.findFirst({ where: { trendKeyword: keyword, status: "PUBLISHED", articleId: { not: null } }, select: { article: { select: { id: true, title: true, slug: true } } } }),
+    prisma.article.findMany({
+      where: { status: "PUBLISHED", publishedAt: { gte: new Date(Date.now() - 48 * HOUR) } },
+      select: { id: true, title: true, slug: true },
+      take: 400,
+      orderBy: { publishedAt: "desc" },
+    }),
+  ]);
+  if (story?.article) return story.article;
+  return articles.find((a) => {
+    const t = new Set(keyTokens(a.title));
+    return tokens.every((k) => t.has(k));
+  }) ?? null;
+}
+
+/**
+ * RSS'te karşılığı olmayan bir trend için web aramasıyla haber yazar.
+ * Aynı trend için daha önce haber yazıldıysa ya da konu son 2 günde işlendiyse yazmaz.
+ */
+export async function writeTrendArticle(trendId: string) {
+  try {
+    const trend = await prisma.googleTrend.findUnique({ where: { id: trendId } });
+    if (!trend) return { success: false as const, error: "Trend bulunamadı." };
+
+    const covered = await findTrendCoverage(trend.keyword);
+    if (covered) return { success: false as const, error: `Bu konu zaten yayında: "${covered.title}"` };
+
+    const [adminUser, settings, categories] = await Promise.all([
+      prisma.user.findFirst({ where: { role: "ADMIN" } }),
+      prisma.systemSettings.findFirst(),
+      prisma.category.findMany({ select: { id: true, name: true } }),
+    ]);
+    if (!adminUser) return { success: false as const, error: "Admin kullanıcı bulunamadı." };
+
+    const { text } = await generateText("writer", {
+      system: settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün.",
+      prompt: `Bugün: ${new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul", dateStyle: "long", timeStyle: "short" })}
+Türkiye'de şu an çok aranan konu: "${trend.keyword}"
+Bu konuyu web/Google araması ile araştır; insanların neden aradığını ve son gelişmeyi doğru, tarafsız ve özgün bir haberle anlat.
+Doğrulanamayan bilgi uydurma.
+
+Yanıtı SADECE şu JSON biçiminde ver:
+{ "title": "En fazla 90 karakterlik başlık", "excerpt": "1-2 cümlelik spot", "category": "${categories.map((c) => c.name).join(" | ") || "Gündem"}", "content": "HTML gövde (h2, p, strong; en az 400 kelime; başlık yok)" }`,
+      search: true,
+      temperature: 0.6,
+    });
+    const parsed = parseJsonResponse<{ title?: string; excerpt?: string; content?: string; category?: string }>(text);
+    const content = cleanHtmlResponse(parsed.content || "");
+    if (!content) return { success: false as const, error: "İçerik üretilemedi." };
+
+    const title = parsed.title?.trim().slice(0, 140) || `${trend.keyword}: Son gelişmeler`;
+    const categoryId = categories.find((c) => c.name.toLocaleLowerCase("tr") === parsed.category?.trim().toLocaleLowerCase("tr"))?.id ?? null;
+    const sig = signature(title);
+
+    const article = await prisma.article.create({
+      data: {
+        title,
+        slug: `${slugify(title)}-${Date.now().toString().slice(-4)}`,
+        content,
+        excerpt: parsed.excerpt?.trim().slice(0, 300) || null,
+        status: "PUBLISHED",
+        authorId: adminUser.id,
+        categoryId,
+        publishedAt: new Date(),
+        lang: "tr",
+      },
+    });
+    // Karar Merkezi kaydı: bu trend artık "yazıldı" görünür ve tekrar yazılmaz
+    await prisma.newsStory.create({
+      data: {
+        title, headline: title, tokens: sig.tokens, entities: sig.entities, status: "PUBLISHED",
+        trendKeyword: trend.keyword, trendScore: trend.trafficScore, articleId: article.id, sourceCount: 0, itemCount: 0,
+        categoryName: parsed.category ?? null, reason: "Google Trends'ten yazıldı",
+      },
+    });
+    return { success: true as const, articleId: article.id, title: article.title, slug: article.slug };
+  } catch (error) {
+    const message = error instanceof AiError ? `${error.message}${error.raw ? ` Ayrıntı: ${error.raw}` : ""}` : error instanceof Error ? error.message : String(error);
+    console.error("[Trend Writer]", message);
+    return { success: false as const, error: message };
+  }
+}

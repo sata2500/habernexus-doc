@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { configuredProviders, getTaskModel } from "@/lib/ai/client";
 import { modelDisplayName } from "@/lib/ai/models";
 import { getMigrationStatus } from "@/lib/server/db-migrations";
+import { countQueue } from "@/lib/news/queries";
 
 const DAY = 86_400_000;
 
@@ -43,7 +44,7 @@ export async function getAdminDashboard() {
     settled(prisma.comment.count({ where: { createdAt: { gte: since7d } } }), 0),
     // Tepki tablosu henüz yoksa (güncelleme bekliyor) null döner
     settled(prisma.articleReaction.count({ where: { createdAt: { gte: since7d } } }) as Promise<number | null>, null),
-    settled(prisma.rssFeedItem.count({ where: { status: { in: ["ANALYZED", "APPROVED"] }, dismissed: false, usedForArticle: false } }), 0),
+    settled(countQueue(), 0),
     settled(prisma.supportTicket.count({ where: { status: { not: "CLOSED" } } }), 0),
     settled(prisma.article.findFirst({ where: { status: "PUBLISHED" }, orderBy: { publishedAt: "desc" }, select: { publishedAt: true } }), null),
     settled(prisma.article.findMany({
@@ -77,7 +78,7 @@ export async function getAdminDashboard() {
     tasks.push({ tone: "warning", title: `Son ${daysSincePublish} gündür yeni haber yayınlanmadı`, detail: settings?.aiWriterAutoEnabled ? "Otomasyon açık ama haber üretilmiyor; yapay zekâ modellerini test edin." : "AI Yazar otomasyonu kapalı.", href: settings?.aiWriterAutoEnabled ? "/admin/settings?tab=yapay-zeka" : "/admin/ai-writer", action: "Kontrol et" });
   }
   if (pendingSuggestions > 0) {
-    tasks.push({ tone: "info", title: `${pendingSuggestions} haber önerisi yazılmayı bekliyor`, detail: "Yapay zekânın seçtiği öneriler RSS Önerileri sayfasında.", href: "/admin/rss-feeds", action: "Göz at" });
+    tasks.push({ tone: "info", title: `${pendingSuggestions} konu yazım sırasında`, detail: "Puanı eşiği geçen konular Karar Merkezi'nde sırayla yazılmayı bekliyor.", href: "/admin/karar-merkezi", action: "Göz at" });
   }
   if (openTickets > 0) {
     tasks.push({ tone: "info", title: `${openTickets} açık destek talebi`, detail: "Okurlardan gelen mesajlar yanıt bekliyor.", href: "/admin/support", action: "Yanıtla" });

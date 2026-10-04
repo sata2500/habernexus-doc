@@ -6,7 +6,8 @@ import { prisma } from "@/lib/prisma";
 import { requireRole, getSafeActionError } from "@/lib/server/authz";
 import { configureJob, getAutomationStatus, getSettingsRow, isQStashConfigured, type AutomationJob } from "@/lib/server/automation";
 import { runAnalyzeJob, runScanJob } from "@/lib/server/jobs";
-import { triggerBatchAiWriter } from "@/app/admin/rss-feeds/actions";
+import { getWritingQueue, rescoreStories } from "@/lib/news/stories";
+import { describeDispatch, dispatchStories } from "@/lib/news/dispatch";
 import { CronExpressionSchema } from "@/lib/validation/schemas";
 
 const JobSchema = z.enum(["scan", "analyze", "writer", "newsletter"]);
@@ -17,8 +18,7 @@ const ContentRulesSchema = z.object({
   aiWriterAutoCount: z.number().int().min(1).max(10),
   googleTrendsEnabled: z.boolean(),
   googleTrendsGeo: z.string().trim().toUpperCase().regex(/^[A-Z]{2}$/, "Geçerli bir ülke kodu girin."),
-  trendAutoPublishThreshold: z.number().int().min(0).max(100),
-  trendSearchGenerateEnabled: z.boolean(),
+  storyMinScore: z.number().int().min(30).max(95),
 });
 
 export type ContentRules = z.infer<typeof ContentRulesSchema>;
@@ -32,8 +32,7 @@ export async function getAutomationOverview() {
     aiWriterAutoCount: s.aiWriterAutoCount,
     googleTrendsEnabled: s.googleTrendsEnabled,
     googleTrendsGeo: s.googleTrendsGeo,
-    trendAutoPublishThreshold: s.trendAutoPublishThreshold,
-    trendSearchGenerateEnabled: s.trendSearchGenerateEnabled,
+    storyMinScore: s.storyMinScore,
   };
   return { qstash: isQStashConfigured(), jobs, rules };
 }
@@ -73,30 +72,24 @@ export async function runJobNowAction(job: AutomationJob) {
   await requireRole("ADMIN");
   try {
     if (job === "scan") {
-      const { scan, trends } = await runScanJob();
-      const trendText = !trends ? "" : "error" in trends ? ` Trends hatası: ${trends.error}` : ` ${trends.synced} trend güncellendi, ${trends.boosted} öneri öne alındı.`;
-      return { success: true as const, message: `${scan.total} kaynak tarandı, ${scan.totalAdded} yeni haber eklendi${scan.errors?.length ? `, ${scan.errors.length} kaynakta hata` : ""}.${trendText}` };
+      const { scan, cluster, trends } = await runScanJob();
+      const trendText = !trends ? "" : "error" in trends ? ` Trends hatası: ${trends.error}` : ` ${trends.synced} trend güncellendi, ${trends.matched} konu trendle eşleşti.`;
+      return { success: true as const, message: `${scan.total} kaynak tarandı, ${scan.totalAdded} yeni haber${scan.errors?.length ? ` (${scan.errors.length} kaynakta hata)` : ""}. ${cluster.created} yeni konu açıldı, ${cluster.assigned} haber mevcut konulara eklendi.${trendText}` };
     }
     if (job === "analyze") {
       const { analysis, cleaned } = await runAnalyzeJob();
-      if (analysis.error && !analysis.aiUsed) {
-        return { success: false as const, error: `Yapay zekâ analizi yapılamadı: ${analysis.error}` };
-      }
-      return { success: true as const, message: `${analysis.analyzed} haber analiz edildi (${analysis.covered} tekrar, ${analysis.lowScore} düşük puan). ${cleaned} eski kayıt temizlendi.` };
+      const aiText = analysis.aiUsed ? "" : ` Yapay zekâ kullanılamadı${analysis.error ? ` (${analysis.error})` : ""}; kural tabanlı değerlendirildi.`;
+      return { success: true as const, message: `${analysis.analyzed} konu değerlendirildi: ${analysis.ready} yazılabilir, ${analysis.duplicates} tekrar, ${analysis.merged} birleştirildi. ${cleaned.items + cleaned.stories} eski kayıt temizlendi.${aiText}` };
     }
     if (job === "writer") {
       // Üretimde kuyruğa alınır (zaman aşımı olmaz), yerelde doğrudan yazılır
       const s = await getSettingsRow();
-      const res = await triggerBatchAiWriter(s.aiWriterAutoCount);
-      if (!res.success) return { success: false as const, error: res.error ?? "Haber yazılamadı." };
-      if (res.mode === "async") {
-        return { success: true as const, message: `${res.enqueued} haber kuyruğa alındı; birkaç dakika içinde yayınlanacak.` };
-      }
-      const results = (res.results ?? []) as { success: boolean; error?: string }[];
-      const ok = results.filter((r) => r.success).length;
-      return ok > 0
-        ? { success: true as const, message: `${ok}/${results.length} haber yazıldı.` }
-        : { success: false as const, error: results.find((r) => r.error)?.error ?? "Haber yazılamadı." };
+      await rescoreStories();
+      const queue = await getWritingQueue(s.aiWriterAutoCount);
+      const r = await dispatchStories(queue.map((q) => q.id));
+      return r.mode === "sync" && r.written === 0 && r.failed > 0
+        ? { success: false as const, error: describeDispatch(r) }
+        : { success: true as const, message: describeDispatch(r) };
     }
     return { success: false as const, error: "Bu iş elle çalıştırılamaz." };
   } catch (error) {

@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare,
-  Image, Home, PenTool, Mail, LayoutTemplate, Rss, Wand2, Settings2, Menu, X, TrendingUp, GalleryHorizontal
+  Image, Home, PenTool, Mail, LayoutTemplate, Brain, Wand2, Settings2, Menu, X, GalleryHorizontal
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "../../dashboard/components/SignOutButton";
@@ -29,8 +29,7 @@ const navGroups = [
   {
     title: "Haber Akışı ve Yapay Zekâ",
     items: [
-      { name: "RSS Önerileri", href: "/admin/rss-feeds", icon: Rss },
-      { name: "Google Trends", href: "/admin/google-trends", icon: TrendingUp },
+      { name: "Karar Merkezi", href: "/admin/karar-merkezi", icon: Brain },
       { name: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
     ],
   },

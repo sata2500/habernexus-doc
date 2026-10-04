@@ -5,7 +5,8 @@ import { prisma } from "@/lib/prisma";
 const parser = new Parser({
   timeout: 10000,
   headers: {
-    "User-Agent": "HaberNexus RSS Scanner/1.0",
+    // Bazı yayıncılar tanımadığı istemcileri engelliyor; tarayıcı uyumlu ve kendini tanıtan bir kimlik
+    "User-Agent": "Mozilla/5.0 (compatible; HaberNexusBot/1.0; +https://habernexus.com)",
     Accept: "application/rss+xml, application/xml, text/xml, */*",
   },
   customFields: {
@@ -43,10 +44,13 @@ function cleanText(html: string | undefined): string {
  */
 export async function scanRssSource(
   sourceId: string,
-  feedUrl: string
+  feedUrl: string,
+  maxAgeHours?: number,
 ): Promise<{ added: number; skipped: number; error?: string }> {
   let added = 0;
   let skipped = 0;
+  // Maksimum haber yaşı (Ayarlar > Otomasyon); 0 = sınırsız
+  const maxAge = maxAgeHours ?? (await prisma.systemSettings.findFirst({ select: { maxNewsAgeHours: true } }))?.maxNewsAgeHours ?? 24;
 
   try {
     const feed = await parser.parseURL(feedUrl);
@@ -109,17 +113,13 @@ export async function scanRssSource(
         imageUrl = item.enclosure.url;
       }
 
-      // Maksimum Haber Yaşı Kontrolü (Admin Panelinden Yönetilebilir)
-      const settings = await prisma.systemSettings.findFirst();
-      const maxAgeHours = settings?.maxNewsAgeHours ?? 24;
-      const pubDate = item.pubDate ? new Date(item.pubDate) : null;
-      let initialStatus: "PENDING" | "EXPIRED_STALE" = "PENDING";
-
-      if (maxAgeHours > 0 && pubDate) {
-        const ageInHours = (Date.now() - pubDate.getTime()) / (1000 * 60 * 60);
-        if (ageInHours > maxAgeHours) {
-          initialStatus = "EXPIRED_STALE";
-        }
+      const parsedDate = item.pubDate ? new Date(item.pubDate) : null;
+      // Geçersiz ya da ileri tarihli yayın zamanlarına güvenme
+      const pubDate = parsedDate && !Number.isNaN(parsedDate.getTime()) && parsedDate.getTime() <= Date.now() + 10 * 60_000 ? parsedDate : null;
+      if (maxAge > 0 && pubDate && Date.now() - pubDate.getTime() > maxAge * 3_600_000) {
+        // Çok eski haberleri hiç kaydetme
+        skipped++;
+        continue;
       }
 
       await prisma.rssFeedItem.create({
@@ -131,7 +131,6 @@ export async function scanRssSource(
           excerpt: cleanText(item.contentSnippet || item.content || item.summary || ""),
           imageUrl,
           publishedAt: pubDate,
-          status: initialStatus,
         },
       });
       added++;
@@ -167,13 +166,14 @@ export async function scanAllActiveSources(): Promise<{
     where: { isActive: true },
     select: { id: true, url: true, name: true },
   });
+  const settings = await prisma.systemSettings.findFirst({ select: { maxNewsAgeHours: true } });
 
   let totalAdded = 0;
   let totalSkipped = 0;
   const errors: string[] = [];
 
   for (const source of sources) {
-    const result = await scanRssSource(source.id, source.url);
+    const result = await scanRssSource(source.id, source.url, settings?.maxNewsAgeHours ?? 24);
     totalAdded += result.added;
     totalSkipped += result.skipped;
     if (result.error) {

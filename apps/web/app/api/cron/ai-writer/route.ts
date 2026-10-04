@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { Client, Receiver } from "@upstash/qstash";
 import { getAppUrl } from "@/lib/utils";
+import { getWritingQueue } from "@/lib/news/stories";
 
 export const dynamic = "force-dynamic";
 
@@ -34,28 +35,19 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: "AI Writer otomasyonu kapalı." });
     }
 
-    // Yazılacak haberleri seç
-    const suggestions = await prisma.rssFeedItem.findMany({
-      where: {
-        status: { in: ["ANALYZED", "APPROVED"] },
-        dismissed: false,
-        usedForArticle: false,
-      },
-      orderBy: { aiScore: "desc" },
-      take: settings.aiWriterAutoCount || 3,
-    });
-
-    if (suggestions.length === 0) {
-      return NextResponse.json({ success: true, message: "Yazılacak yeni haber önerisi bulunamadı." });
+    // Karar Merkezi'ndeki yazım sırasından en öncelikli konular
+    const queue = await getWritingQueue(settings.aiWriterAutoCount || 3);
+    if (queue.length === 0) {
+      return NextResponse.json({ success: true, message: "Yazım sırasında eşiği geçen konu yok." });
     }
 
-    // Her bir haberi QStash kuyruğuna (Worker'a) gönder
+    // Her konuyu ayrı bir işçiye gönder (biri hata verirse diğerleri etkilenmez)
     const results = [];
-    for (const item of suggestions) {
+    for (const item of queue) {
       try {
         await qstash.publishJSON({
           url: `${APP_URL}/api/ai-writer/worker`,
-          body: { suggestionId: item.id },
+          body: { storyId: item.id },
         });
         results.push({ id: item.id, status: "ENQUEUED" });
       } catch (err) {

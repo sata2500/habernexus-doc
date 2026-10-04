@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeArticleWithAI } from "@/lib/ai-writer";
+import { writeArticleWithAI, writeStory } from "@/lib/ai-writer";
 import { Receiver } from "@upstash/qstash";
 
 export const dynamic = "force-dynamic";
@@ -34,22 +34,23 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = JSON.parse(bodyText);
-    const { suggestionId } = body;
+    const storyId = typeof body.storyId === "string" ? body.storyId : null;
+    const suggestionId = typeof body.suggestionId === "string" ? body.suggestionId : null;
 
-    if (!suggestionId) {
-      return NextResponse.json({ success: false, error: "suggestionId eksik" }, { status: 400 });
+    if (!storyId && !suggestionId) {
+      return NextResponse.json({ success: false, error: "storyId eksik" }, { status: 400 });
     }
 
-    console.log(`[AI Worker] Haber yazımı başlatılıyor: ID=${suggestionId}`);
-    const result = await writeArticleWithAI(suggestionId);
+    console.log(`[AI Worker] Haber yazımı başlatılıyor: ${storyId ? `konu=${storyId}` : `öneri=${suggestionId}`}`);
+    const result = storyId ? await writeStory(storyId) : await writeArticleWithAI(suggestionId!);
 
     if (result.success) {
-      console.log(`[AI Worker] Başarılı: ${result.title}`);
-      return NextResponse.json({ success: true, articleId: result.articleId });
-    } else {
-      console.error(`[AI Worker] Yazım Hatası: ${result.error}`);
-      return NextResponse.json({ success: false, error: result.error }, { status: 500 });
+      console.log(`[AI Worker] ${result.skipped ? "Atlandı" : "Başarılı"}: ${result.title}`);
+      return NextResponse.json({ success: true, articleId: result.articleId, skipped: result.skipped ?? false });
     }
+    // Kalıcı hatalarda QStash'in tekrar denemesini önlemek için 200 dönülür; konu sıraya geri döner ya da FAILED olur
+    console.error(`[AI Worker] Yazım Hatası: ${result.error}`);
+    return NextResponse.json({ success: false, error: result.error });
   } catch (error) {
     console.error("[AI Worker] Beklenmedik Kritik Hata:", error);
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });

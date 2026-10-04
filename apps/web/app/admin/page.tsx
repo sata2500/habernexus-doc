@@ -1,7 +1,7 @@
 import Link from "next/link";
 import {
-  AlertTriangle, ArrowRight, CheckCircle2, Eye, FileText, Info, MessageSquare, PenSquare, Rss,
-  Settings2, Sparkles, Users, Wand2, XCircle, Heart,
+  AlertTriangle, ArrowRight, CheckCircle2, Eye, FileText, Info, MessageSquare, PenSquare,
+  Settings2, Sparkles, Users, Wand2, XCircle, Heart, Brain,
 } from "lucide-react";
 import { requireRole } from "@/lib/server/authz";
 import { getAdminDashboard, type TaskTone } from "@/lib/server/admin-dashboard";
@@ -17,7 +17,7 @@ const TONE: Record<TaskTone, { icon: typeof Info; box: string; iconClass: string
 
 const QUICK_ACTIONS = [
   { label: "Yeni haber yaz", href: "/author/articles/new", icon: PenSquare },
-  { label: "RSS önerileri", href: "/admin/rss-feeds", icon: Rss },
+  { label: "Karar Merkezi", href: "/admin/karar-merkezi", icon: Brain },
   { label: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
   { label: "Ayarlar", href: "/admin/settings", icon: Settings2 },
 ];

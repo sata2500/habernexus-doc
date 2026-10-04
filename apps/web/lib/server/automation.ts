@@ -14,17 +14,17 @@ export type AutomationJob = "scan" | "analyze" | "writer" | "newsletter";
 export const AUTOMATION_JOBS: Record<AutomationJob, { label: string; description: string; path: string; fixedCron?: string }> = {
   scan: {
     label: "RSS tarama ve Google Trends",
-    description: "Kaynaklardan yeni haberleri çeker, Google Trends'i günceller ve trend eşleşmelerini öne alır.",
+    description: "Kaynaklardan yeni haberleri çeker, aynı olayı anlatanları tek konuda toplar ve Google Trends ile eşleştirir.",
     path: "/api/cron/rss-scan",
   },
   analyze: {
     label: "Yapay zekâ ile haber analizi",
-    description: "Yeni haberleri puanlar, tekrar edenleri ayıklar ve eski kayıtları temizler.",
+    description: "Yeni konuları değerlendirir: tekrar ve devam haberlerini ayırır, aciliyeti belirler, puanlar.",
     path: "/api/cron/rss-analyze",
   },
   writer: {
     label: "AI Yazar",
-    description: "En iyi puanlı önerilerden haber yazar ve yayınlar.",
+    description: "Karar Merkezi'ndeki yazım sırasından en öncelikli konuları yazar ve yayınlar.",
     path: "/api/cron/ai-writer",
   },
   newsletter: {

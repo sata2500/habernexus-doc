@@ -7,9 +7,10 @@ import { slugify } from "./utils";
 import { AiError, cleanHtmlResponse, generateImage, generateText, toAiError } from "./ai/client";
 import { analyzeArticle } from "./article-analyzer";
 import { fetchPublicResource } from "./server/remote-fetch";
+import type { Prisma } from "./generated/client";
+import { findPublishedDuplicate } from "./news/stories";
+import { LIKELY_DUPLICATE, signature, storySimilarity } from "./news/text";
 
-// Yardımcı: Belirli bir süre bekle (ms)
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 /** Üretilen kapak görselini Vercel Blob'a kaydeder. */
 async function saveCoverImage(buffer: Buffer, mimeType: string) {
@@ -43,119 +44,127 @@ async function produceCoverImage(imagePromptBase: string, title: string, rssImag
   }
 }
 
-export async function writeArticleWithAI(suggestionId: string) {
-  const processingToken = randomUUID();
-  const staleBefore = new Date(Date.now() - 15 * 60 * 1000);
-  let claimed = false;
+const CLAIM_STALE_MS = 15 * 60 * 1000;
+const MAX_WRITE_ATTEMPTS = 3;
+
+type WriteResult =
+  | { success: true; articleId: string; title: string; slug?: string; skipped?: boolean; reason?: string }
+  | { success: false; error: string };
+
+/** Konunun kategorisine göre persona seçer (kategoriye atanmış personalar sırayla, yoksa genel persona). */
+async function pickPersona(categoryId: string | null) {
+  const personaLink = categoryId
+    ? await prisma.aiPersonaOnCategory.findFirst({
+        where: { categoryId, persona: { isActive: true } },
+        orderBy: { lastUsedAt: "asc" },
+        include: { persona: true },
+      })
+    : null;
+  let persona = personaLink?.persona ?? null;
+  if (!persona) {
+    const general = await prisma.aiPersona.findMany({ where: { isActive: true, categories: { none: {} } } });
+    persona = general.length ? general[Math.floor(Math.random() * general.length)] : null;
+  }
+  if (persona && personaLink) {
+    await prisma.aiPersonaOnCategory.update({
+      where: { personaId_categoryId: { personaId: persona.id, categoryId: personaLink.categoryId } },
+      data: { lastUsedAt: new Date() },
+    });
+  }
+  return persona;
+}
+
+async function findCategoryId(name: string | null | undefined) {
+  if (!name) return null;
+  const category = (await prisma.category.findUnique({ where: { name } }))
+    ?? (await prisma.category.findFirst({ where: { name: { contains: name, mode: "insensitive" } } }));
+  return category?.id ?? null;
+}
+
+function istanbul(d: Date) {
+  return d.toLocaleString("tr-TR", { timeZone: "Europe/Istanbul", dateStyle: "long", timeStyle: "short" });
+}
+
+/**
+ * Karar Merkezi'ndeki bir konuyu haberleştirir.
+ * - Konu atomik olarak kilitlenir (aynı konu iki kez yazılamaz).
+ * - Yazmadan hemen önce yayındaki haberlerle son kez karşılaştırılır.
+ * - Konudaki tüm kaynaklar birlikte kullanılır; devam haberlerinde önceki habere bağlantı verilir.
+ */
+export async function writeStory(storyId: string): Promise<WriteResult> {
+  const token = randomUUID();
+  const claim = await prisma.newsStory.updateMany({
+    where: {
+      id: storyId,
+      articleId: null,
+      OR: [
+        { status: "READY" },
+        { status: "WRITING", processingAt: { lt: new Date(Date.now() - CLAIM_STALE_MS) } },
+      ],
+    },
+    data: { status: "WRITING", processingAt: new Date(), processingToken: token, attempts: { increment: 1 } },
+  });
+  if (claim.count !== 1) {
+    return { success: false, error: "Bu konu başka bir işlem tarafından yazılıyor ya da artık yazılabilir durumda değil." };
+  }
+
+  const release = async (data: Prisma.NewsStoryUpdateManyMutationInput) =>
+    prisma.newsStory.updateMany({ where: { id: storyId, processingToken: token }, data: { processingAt: null, processingToken: null, ...data } });
 
   try {
-    const existingArticle = await prisma.article.findUnique({
-      where: { sourceRssItemId: suggestionId },
-      select: { id: true, title: true },
-    });
-
-    if (existingArticle) {
-      return {
-        success: true,
-        articleId: existingArticle.id,
-        title: existingArticle.title,
-        skipped: true,
-      };
-    }
-
-    const claim = await prisma.rssFeedItem.updateMany({
-      where: {
-        id: suggestionId,
-        usedForArticle: false,
-        OR: [
-          { processingAt: null },
-          { processingAt: { lt: staleBefore } },
-        ],
-        status: { in: ["ANALYZED", "APPROVED"] },
-      },
-      data: {
-        processingAt: new Date(),
-        processingToken,
+    const story = await prisma.newsStory.findUniqueOrThrow({
+      where: { id: storyId },
+      include: {
+        items: {
+          orderBy: { publishedAt: "asc" },
+          take: 6,
+          include: { source: { select: { name: true, language: true } }, article: { select: { id: true } } },
+        },
       },
     });
-
-    if (claim.count !== 1) {
-      throw new Error("Bu haber önerisi başka bir işlem tarafından işleniyor veya kullanıldı.");
+    if (story.items.length === 0) {
+      await release({ status: "FAILED", lastError: "Konunun kaynak haberi kalmadı." });
+      return { success: false, error: "Konunun kaynak haberi kalmadı." };
     }
-    claimed = true;
 
-    const suggestion = await prisma.rssFeedItem.findUnique({
-      where: { id: suggestionId },
-      include: { source: true },
-    });
-
-    if (!suggestion) throw new Error("Öneri bulunamadı.");
+    // 1) Son tekrar kontrolü: bu arada aynı haber yayınlandıysa yazma
+    const duplicate = await findPublishedDuplicate(story);
+    if (duplicate) {
+      await release({ status: "DUPLICATE", duplicateArticleId: duplicate.id, score: 0, reason: `Aynı haber zaten yayında: "${duplicate.title}"` });
+      return { success: true, articleId: duplicate.id, title: duplicate.title, slug: duplicate.slug, skipped: true, reason: "Aynı haber zaten yayında." };
+    }
+    // Aynı olayı anlatan başka bir konu şu an yazılıyorsa bekle
+    const others = await prisma.newsStory.findMany({ where: { status: "WRITING", id: { not: storyId } }, select: { tokens: true, entities: true } });
+    if (others.some((o) => storySimilarity({ tokens: story.tokens, entities: story.entities }, o) >= LIKELY_DUPLICATE)) {
+      await release({ status: "READY", attempts: { decrement: 1 } });
+      return { success: false, error: "Benzer bir konu şu an yazılıyor; sonra tekrar denenecek." };
+    }
 
     const settings = await prisma.systemSettings.findFirst();
     if (!settings) throw new Error("Sistem ayarları bulunamadı.");
 
-    // ── Persona & Kategori Zekası ──
-    const globalSystemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber yazarısın.";
-    let systemPrompt = globalSystemPrompt;
-    let imagePromptBase = settings?.aiWriterImagePrompt || "Professional news cover image.";
-    let categoryId: string | null = null;
-    let aiPersonaId: string | null = null;
+    const categoryId = await findCategoryId(story.categoryName);
+    const persona = await pickPersona(categoryId);
+    const globalSystemPrompt = settings.aiWriterPrompt || "Sen profesyonel bir haber yazarısın.";
+    const systemPrompt = persona?.prompt.trim() ? `${globalSystemPrompt}\n\nÖzel Yazım Talimatları:\n${persona.prompt}` : globalSystemPrompt;
+    const imagePromptBase = persona?.imagePrompt.trim() || settings.aiWriterImagePrompt || "Professional news cover image.";
+    const useGoogleSearch = settings.aiWriterSearchEnabled || false;
 
-    // Özellik bayrakları (Sadece global ayarlar)
-    const useGoogleSearch = settings?.aiWriterSearchEnabled || false;
-    const useRssImage = settings?.aiWriterUseRssImage !== false;
-
-    const aiAnalysisObj = suggestion.aiAnalysis as Record<string, unknown> | null;
-    if (aiAnalysisObj && typeof aiAnalysisObj.suggestedCategory === "string") {
-      const suggestedCatName = aiAnalysisObj.suggestedCategory;
-
-      // Önce tam eşleşme dene
-      let category = await prisma.category.findUnique({
-        where: { name: suggestedCatName },
-      });
-
-      // Bulunamazsa kısmi/insensitive dene
-      if (!category) {
-        category = await prisma.category.findFirst({
-          where: { name: { contains: suggestedCatName, mode: 'insensitive' } },
-        });
-      }
-
-      if (category) categoryId = category.id;
-    }
-
-    // Kategoriye atanmış personalar sırayla yazar; yoksa kategorisiz ("genel") personalardan biri seçilir
-    const personaLink = categoryId
-      ? await prisma.aiPersonaOnCategory.findFirst({
-          where: { categoryId, persona: { isActive: true } },
-          orderBy: { lastUsedAt: "asc" },
-          include: { persona: true },
-        })
+    const related = story.relatedArticleId
+      ? await prisma.article.findUnique({ where: { id: story.relatedArticleId }, select: { title: true, slug: true, excerpt: true, publishedAt: true, status: true } })
       : null;
-    let persona = personaLink?.persona ?? null;
-    if (!persona) {
-      const general = await prisma.aiPersona.findMany({ where: { isActive: true, categories: { none: {} } } });
-      persona = general.length ? general[Math.floor(Math.random() * general.length)] : null;
-    }
-    if (persona) {
-      aiPersonaId = persona.id;
-      if (persona.prompt.trim()) systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları:\n${persona.prompt}`;
-      if (persona.imagePrompt.trim()) imagePromptBase = persona.imagePrompt;
-      if (personaLink) {
-        await prisma.aiPersonaOnCategory.update({
-          where: { personaId_categoryId: { personaId: persona.id, categoryId: personaLink.categoryId } },
-          data: { lastUsedAt: new Date() },
-        });
-      }
-    }
 
-    // 2. Metin Üret (model, yedekler ve tekrar denemeler ortak AI katmanında)
-    const suggestedTitles = Array.isArray(aiAnalysisObj?.suggestedTitles)
-      ? (aiAnalysisObj.suggestedTitles as unknown[]).filter((t): t is string => typeof t === "string")
-      : [];
-    const textPrompt = `Konu: ${suggestion.title}
-${suggestedTitles.length ? `Önerilen başlıklar: ${suggestedTitles.join(" | ")}\n` : ""}Kaynak özet: ${suggestion.excerpt || "(yok)"}
-Kaynak: ${suggestion.source.name}${useGoogleSearch ? "\nKonuyu web/Google araması ile doğrula ve en güncel bilgileri kullan." : ""}`;
+    const sources = story.items
+      .map((i, n) => `Kaynak ${n + 1} — ${i.source.name}${i.publishedAt ? ` (${istanbul(i.publishedAt)})` : ""}\nBaşlık: ${i.title}\nÖzet: ${i.excerpt || "(yok)"}`)
+      .join("\n\n");
+    const textPrompt = `Bugün: ${istanbul(new Date())}
+Konu: ${story.headline || story.title}
+${story.summary ? `Olay özeti: ${story.summary}\n` : ""}${story.eventAt ? `Olay zamanı: ${istanbul(story.eventAt)} — zaman ifadelerini (geçmiş/gelecek) buna göre doğru kullan.\n` : ""}
+Aşağıdaki ${story.items.length} kaynağın bilgilerini birleştirerek tek, özgün ve kapsamlı bir haber yaz. Kaynaklar arasında çelişki varsa bunu belirt.
+
+${sources}
+${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "${related.title}"${related.publishedAt ? ` (${istanbul(related.publishedAt)})` : ""}. ${related.excerpt ?? ""}
+Önceki haberi tekrar etme; yeni gelişmeye odaklan, gerekirse tek cümlelik bağlam ver.` : ""}${useGoogleSearch ? "\nKonuyu web/Google araması ile doğrula ve en güncel bilgileri kullan." : ""}`;
 
     const { text: rawContent, model: usedModel } = await generateText("writer", {
       system: `${systemPrompt}\n\n${WRITER_FORMAT}`,
@@ -163,178 +172,143 @@ Kaynak: ${suggestion.source.name}${useGoogleSearch ? "\nKonuyu web/Google aramas
       search: useGoogleSearch,
       temperature: 0.7,
     });
-    const content = cleanHtmlResponse(rawContent);
-    if (!content) throw new Error("Yapay zeka metin üretemedi.");
+    let content = cleanHtmlResponse(rawContent);
+    if (!content) throw new Error("Yapay zekâ metin üretemedi.");
     console.log(`[AI Writer] Metin üretildi: ${usedModel}`);
+    if (related?.status === "PUBLISHED") {
+      content += `\n<p><strong>İlgili haber:</strong> <a href="/article/${related.slug}">${escapeHtml(related.title)}</a></p>`;
+    }
 
-    // 3. Kapak görseli
-    const imageUrl = await produceCoverImage(imagePromptBase, suggestion.title, suggestion.imageUrl, useRssImage);
+    const title = (story.headline || story.title).trim().slice(0, 140);
+    const rssImage = story.items.find((i) => i.imageUrl)?.imageUrl ?? null;
+    const imageUrl = await produceCoverImage(imagePromptBase, title, rssImage, settings.aiWriterUseRssImage !== false);
 
-    // 4. Kaydet
     const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
     if (!adminUser) throw new Error("Admin kullanıcı bulunamadı.");
+    await addToMediaLibrary(imageUrl, adminUser.id);
 
-    // Medya kütüphanesine ekle (AI üretimi veya aktarılan RSS görseli)
-    if (imageUrl && imageUrl.includes("public.blob.vercel-storage.com")) {
-      await prisma.media.create({
+    // Kaynak bağlantısı için henüz makaleye bağlanmamış ilk haber
+    const primaryItem = story.items.find((i) => !i.article) ?? null;
+    const article = await prisma.$transaction(async (tx) => {
+      const created = await tx.article.create({
         data: {
-          url: imageUrl,
-          filename: imageUrl.split('/').pop() || `Cover_${Date.now()}.png`,
-          size: 0,
-          mimeType: "image/png",
-          status: "RAW",
-          userId: adminUser.id,
-        }
-      }).catch(e => console.error("Media kütüphanesine eklenemedi:", e));
-    }
-
-    // Analizde önerilen özgün başlık varsa onu kullan (kaynak başlığı birebir kopyalamamak için)
-    const title = suggestedTitles[0]?.trim() || suggestion.title;
-    const slug = `${slugify(title)}-${Date.now().toString().slice(-4)}`;
-
-    const article = await prisma.article.create({
-      data: {
-        title,
-        slug,
-        content,
-        excerpt: suggestion.excerpt,
-        coverImage: imageUrl,
-        status: "PUBLISHED",
-        authorId: adminUser.id,
-        sourceRssItemId: suggestion.id,
-        aiPersonaId,
-        categoryId,
-        publishedAt: new Date(),
-        lang: suggestion.source.language || "tr",
-      },
+          title,
+          slug: `${slugify(title)}-${Date.now().toString().slice(-4)}`,
+          content,
+          excerpt: story.summary || story.items[0].excerpt,
+          coverImage: imageUrl,
+          status: "PUBLISHED",
+          authorId: adminUser.id,
+          sourceRssItemId: primaryItem?.id ?? null,
+          aiPersonaId: persona?.id ?? null,
+          categoryId,
+          publishedAt: new Date(),
+          lang: story.items[0].source.language || "tr",
+        },
+      });
+      const done = await tx.newsStory.updateMany({
+        where: { id: storyId, processingToken: token },
+        data: { status: "PUBLISHED", articleId: created.id, processingAt: null, processingToken: null, lastError: null, reason: null },
+      });
+      if (done.count !== 1) throw new Error("Konu kilidi kayboldu; haber kaydedilmedi.");
+      await tx.rssFeedItem.updateMany({ where: { storyId }, data: { usedForArticle: true } });
+      return created;
     });
 
-    // Google Indexing API bildirimi ve Sosyal Medya Paylaşımı
-    try {
-      const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
-      after(() => notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
-
-      const { publishToTelegram } = await import("./social-publisher");
-      after(() => publishToTelegram({ title: article.title, excerpt: article.excerpt, slug: article.slug, coverImage: article.coverImage }).catch(err => console.error("Telegram publish error:", err)));
-    } catch (e) {
-      console.error("Failed to load google-indexing or social-publisher helper in writeArticleWithAI:", e);
-    }
-
-    await prisma.rssFeedItem.updateMany({
-      where: { id: suggestionId, processingToken },
-      data: {
-        usedForArticle: true,
-        processingAt: null,
-        processingToken: null,
-      },
-    });
-
-    // Otomatik Analiz Tetikleme ve Yeniden Yazım (Rewrite) Kontrolü
-    try {
-      console.log(`[AI Writer] Yeni makale için otomatik analiz tetikleniyor...`);
-      const analysis = await analyzeArticle(article.id);
-
-      const PLAGIARISM_THRESHOLD = 30; // %30 intihal eşiği
-      let currentPlagiarismRate = analysis.success ? (analysis.plagiarismRate ?? 0) : 0;
-
-      if (analysis.success && currentPlagiarismRate > PLAGIARISM_THRESHOLD) {
-        console.log(`[AI Writer] Otomatik analiz sonucu yüksek intihal oranı tespit edildi: %${currentPlagiarismRate}. Yeniden yazım başlatılıyor...`);
-
-        let rewriteSuccess = false;
-        let rewriteAttempt = 1;
-        const maxRewriteAttempts = 2;
-
-        while (rewriteAttempt <= maxRewriteAttempts && currentPlagiarismRate > PLAGIARISM_THRESHOLD) {
-          console.log(`[AI Writer] Yeniden yazım denemesi ${rewriteAttempt}/${maxRewriteAttempts}...`);
-
-          const rewritePrompt = `Daha önce yazdığın haber makalesinde yüksek anlamsal benzerlik (%${currentPlagiarismRate}) tespit edildi.
-Aşağıdaki konuyu tamamen farklı cümle yapılarıyla, özgün ve tarafsız bir gazetecilik diliyle yeniden yaz. Klişe ve kopya ifadelerden kaçın.
-
-${textPrompt}`;
-
-          let newContent = "";
-          try {
-            const res = await generateText("writer", {
-              system: `${systemPrompt}\n\n${WRITER_FORMAT}`,
-              prompt: rewritePrompt,
-              search: useGoogleSearch,
-              temperature: 0.8,
-            });
-            newContent = cleanHtmlResponse(res.text);
-          } catch (rewriteErr) {
-            console.error(`[AI Writer] Yeniden yazım hatası:`, toAiError(rewriteErr).message);
-          }
-
-          if (newContent) {
-            await prisma.article.update({
-              where: { id: article.id },
-              data: { content: newContent }
-            });
-
-            // Yeniden analiz et
-            const reAnalysis = await analyzeArticle(article.id);
-            if (reAnalysis.success) {
-              currentPlagiarismRate = reAnalysis.plagiarismRate ?? 0;
-              if (currentPlagiarismRate <= PLAGIARISM_THRESHOLD) {
-                rewriteSuccess = true;
-                console.log(`[AI Writer] Yeniden yazım başarılı! Yeni intihal oranı: %${currentPlagiarismRate}`);
-                break;
-              }
-            }
-          }
-          rewriteAttempt++;
-        }
-
-        if (!rewriteSuccess) {
-          console.warn(`[AI Writer] ${maxRewriteAttempts} yeniden yazma denemesine rağmen intihal oranı %${PLAGIARISM_THRESHOLD} altına düşürülemedi. Son oran: %${currentPlagiarismRate}`);
-        }
-      }
-    } catch (analysisErr) {
-      console.error("[AI Writer] Otomatik analiz veya yeniden yazım hatası:", analysisErr);
-    }
-
-    return { success: true, articleId: article.id, title: article.title };
+    await afterPublish(article, { systemPrompt, textPrompt, useGoogleSearch });
+    return { success: true, articleId: article.id, title: article.title, slug: article.slug };
   } catch (error) {
     const aiError = error instanceof AiError ? error : null;
-    console.error("AI Writer Hatası:", aiError ? `${aiError.message} — ${aiError.raw}` : error);
-
-    if (claimed) {
-      await prisma.rssFeedItem.updateMany({
-        where: { id: suggestionId, processingToken },
-        data: { processingAt: null, processingToken: null },
-      }).catch((releaseError) => {
-        console.error("AI Writer claim release error:", releaseError);
-      });
-    }
-
-    return {
-      success: false,
-      error: aiError
-        ? `${aiError.message}${aiError.raw ? ` Ayrıntı: ${aiError.raw}` : ""}`
-        : error instanceof Error ? error.message : "AI ile haber üretimi tamamlanamadı.",
-    };
+    const message = aiError
+      ? `${aiError.message}${aiError.raw ? ` Ayrıntı: ${aiError.raw}` : ""}`
+      : error instanceof Error ? error.message : "AI ile haber üretimi tamamlanamadı.";
+    console.error("AI Writer Hatası:", message);
+    const current = await prisma.newsStory.findUnique({ where: { id: storyId }, select: { attempts: true } }).catch(() => null);
+    const failed = (current?.attempts ?? 0) >= MAX_WRITE_ATTEMPTS;
+    await release({
+      status: failed ? "FAILED" : "READY",
+      lastError: message.slice(0, 500),
+      ...(failed && { reason: `${MAX_WRITE_ATTEMPTS} denemede yazılamadı: ${message.slice(0, 200)}` }),
+    }).catch((e) => console.error("AI Writer kilit bırakma hatası:", e));
+    return { success: false, error: message };
   }
 }
 
-export async function writeBatchArticlesWithAI(count: number = 3) {
-  const safeCount = Number.isInteger(count) ? Math.min(Math.max(count, 1), 10) : 3;
-  const suggestions = await prisma.rssFeedItem.findMany({
-    where: {
-      status: { in: ["ANALYZED", "APPROVED"] },
-      dismissed: false,
-      usedForArticle: false,
-    },
-    orderBy: { aiScore: "desc" },
-    take: safeCount,
-  });
+function escapeHtml(s: string) {
+  return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
+}
 
-  const results = [];
-  for (let i = 0; i < suggestions.length; i++) {
-    const result = await writeArticleWithAI(suggestions[i].id);
-    results.push({ id: suggestions[i].id, ...result });
-    if (i < suggestions.length - 1) await sleep(15000);
+async function addToMediaLibrary(imageUrl: string | null, userId: string) {
+  if (!imageUrl || !imageUrl.includes("public.blob.vercel-storage.com")) return;
+  await prisma.media.create({
+    data: { url: imageUrl, filename: imageUrl.split("/").pop() || `Cover_${Date.now()}.png`, size: 0, mimeType: "image/png", status: "RAW", userId },
+  }).catch((e) => console.error("Media kütüphanesine eklenemedi:", e));
+}
+
+/** Yayın sonrası: Google bildirimi, Telegram, kalite analizi ve gerekirse özgünleştirme. */
+async function afterPublish(
+  article: { id: string; title: string; slug: string; excerpt: string | null; coverImage: string | null },
+  ctx: { systemPrompt: string; textPrompt: string; useGoogleSearch: boolean },
+) {
+  try {
+    const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
+    after(() => notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
+    const { publishToTelegram } = await import("./social-publisher");
+    after(() => publishToTelegram({ title: article.title, excerpt: article.excerpt, slug: article.slug, coverImage: article.coverImage }).catch(err => console.error("Telegram publish error:", err)));
+  } catch (e) {
+    console.error("Yayın sonrası bildirimler yüklenemedi:", e);
   }
-  return results;
+
+  try {
+    const analysis = await analyzeArticle(article.id);
+    const PLAGIARISM_THRESHOLD = 30;
+    let rate = analysis.success ? (analysis.plagiarismRate ?? 0) : 0;
+    for (let attempt = 1; attempt <= 2 && rate > PLAGIARISM_THRESHOLD; attempt++) {
+      console.log(`[AI Writer] Benzerlik %${rate}; özgünleştirme denemesi ${attempt}/2`);
+      let newContent = "";
+      try {
+        const res = await generateText("writer", {
+          system: `${ctx.systemPrompt}\n\n${WRITER_FORMAT}`,
+          prompt: `Daha önce yazdığın haberde yüksek benzerlik (%${rate}) tespit edildi. Aynı bilgileri tamamen farklı cümle yapılarıyla, özgün ve tarafsız bir dille yeniden yaz.\n\n${ctx.textPrompt}`,
+          search: ctx.useGoogleSearch,
+          temperature: 0.8,
+        });
+        newContent = cleanHtmlResponse(res.text);
+      } catch (e) {
+        console.error("[AI Writer] Yeniden yazım hatası:", toAiError(e).message);
+      }
+      if (!newContent) continue;
+      await prisma.article.update({ where: { id: article.id }, data: { content: newContent } });
+      const re = await analyzeArticle(article.id);
+      if (re.success) rate = re.plagiarismRate ?? 0;
+    }
+  } catch (e) {
+    console.error("[AI Writer] Otomatik analiz hatası:", e);
+  }
+}
+
+/** Bir RSS haberinden yazım (eski uç noktalar için): haberin konusu yoksa tek haberlik konu açılır. */
+export async function writeArticleWithAI(suggestionId: string): Promise<WriteResult> {
+  const item = await prisma.rssFeedItem.findUnique({
+    where: { id: suggestionId },
+    select: { id: true, title: true, storyId: true, publishedAt: true, createdAt: true, article: { select: { id: true, title: true } } },
+  });
+  if (!item) return { success: false, error: "Öneri bulunamadı." };
+  if (item.article) return { success: true, articleId: item.article.id, title: item.article.title, skipped: true };
+
+  let storyId = item.storyId;
+  if (!storyId) {
+    const sigs = signature(item.title);
+    const at = item.publishedAt ?? item.createdAt;
+    const story = await prisma.newsStory.create({
+      data: { title: item.title, tokens: sigs.tokens, entities: sigs.entities, firstSeenAt: at, lastSeenAt: at, status: "READY", items: { connect: { id: item.id } } },
+    });
+    storyId = story.id;
+  } else {
+    // Elle yazdırılan konu eşiğin altında olsa da yazılabilir
+    await prisma.newsStory.updateMany({ where: { id: storyId, status: { in: ["NEW", "LOW_SCORE", "EXPIRED", "DISMISSED", "FAILED"] } }, data: { status: "READY", attempts: 0 } });
+  }
+  return writeStory(storyId);
 }
 
 export async function rewriteArticleWithAI(articleId: string) {

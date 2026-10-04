@@ -333,6 +333,42 @@ exports.Prisma.RssFeedItemScalarFieldEnum = {
   usedForArticle: 'usedForArticle',
   processingAt: 'processingAt',
   processingToken: 'processingToken',
+  storyId: 'storyId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.NewsStoryScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  headline: 'headline',
+  summary: 'summary',
+  tokens: 'tokens',
+  entities: 'entities',
+  categoryName: 'categoryName',
+  status: 'status',
+  urgency: 'urgency',
+  score: 'score',
+  aiScore: 'aiScore',
+  trendScore: 'trendScore',
+  trendKeyword: 'trendKeyword',
+  sourceCount: 'sourceCount',
+  itemCount: 'itemCount',
+  firstSeenAt: 'firstSeenAt',
+  lastSeenAt: 'lastSeenAt',
+  eventAt: 'eventAt',
+  expiresAt: 'expiresAt',
+  pinned: 'pinned',
+  reason: 'reason',
+  analysis: 'analysis',
+  analyzedAt: 'analyzedAt',
+  relatedArticleId: 'relatedArticleId',
+  duplicateArticleId: 'duplicateArticleId',
+  articleId: 'articleId',
+  attempts: 'attempts',
+  lastError: 'lastError',
+  processingAt: 'processingAt',
+  processingToken: 'processingToken',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -364,6 +400,7 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   googleTrendsGeo: 'googleTrendsGeo',
   trendAutoPublishThreshold: 'trendAutoPublishThreshold',
   trendSearchGenerateEnabled: 'trendSearchGenerateEnabled',
+  storyMinScore: 'storyMinScore',
   updatedAt: 'updatedAt'
 };
 
@@ -528,6 +565,25 @@ exports.RssItemStatus = exports.$Enums.RssItemStatus = {
   DISMISSED: 'DISMISSED'
 };
 
+exports.StoryStatus = exports.$Enums.StoryStatus = {
+  NEW: 'NEW',
+  READY: 'READY',
+  WRITING: 'WRITING',
+  PUBLISHED: 'PUBLISHED',
+  DUPLICATE: 'DUPLICATE',
+  LOW_SCORE: 'LOW_SCORE',
+  EXPIRED: 'EXPIRED',
+  DISMISSED: 'DISMISSED',
+  FAILED: 'FAILED'
+};
+
+exports.StoryUrgency = exports.$Enums.StoryUrgency = {
+  BREAKING: 'BREAKING',
+  TIME_SENSITIVE: 'TIME_SENSITIVE',
+  NORMAL: 'NORMAL',
+  EVERGREEN: 'EVERGREEN'
+};
+
 exports.TrendAction = exports.$Enums.TrendAction = {
   PENDING: 'PENDING',
   AUTO_PUBLISHED: 'AUTO_PUBLISHED',
@@ -561,6 +617,7 @@ exports.Prisma.ModelName = {
   SupportMessage: 'SupportMessage',
   RssFeedSource: 'RssFeedSource',
   RssFeedItem: 'RssFeedItem',
+  NewsStory: 'NewsStory',
   SystemSettings: 'SystemSettings',
   GoogleTrend: 'GoogleTrend',
   GoogleTrendItem: 'GoogleTrendItem',

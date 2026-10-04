@@ -209,8 +209,8 @@ export function AutomationPanel({ qstash, jobs: initialJobs, rules: initialRules
         <div className="grid sm:grid-cols-2 gap-5">
           <NumberField label="Haber başına yazım" help="AI Yazar her çalıştığında en fazla kaç haber yazsın." value={rules.aiWriterAutoCount} onChange={(v) => set("aiWriterAutoCount", v)} min={1} max={10} suffix="haber" />
           <NumberField label="En eski haber yaşı" help="Bundan eski RSS haberleri alınmaz (0 = sınırsız)." value={rules.maxNewsAgeHours} onChange={(v) => set("maxNewsAgeHours", v)} min={0} max={720} suffix="saat" />
-          <NumberField label="Kayıt saklama süresi" help="Kullanılmayan RSS kayıtları bu süreden sonra silinir." value={rules.rssRetentionDays} onChange={(v) => set("rssRetentionDays", v)} min={1} max={365} suffix="gün" />
-          <NumberField label="Trend öncelik eşiği" help="Trendle bu oranın üzerinde eşleşen haberler öne alınır." value={rules.trendAutoPublishThreshold} onChange={(v) => set("trendAutoPublishThreshold", v)} min={0} max={100} suffix="%" />
+          <NumberField label="Kayıt saklama süresi" help="Yazılmayan RSS kayıtları ve konular bu süreden sonra silinir." value={rules.rssRetentionDays} onChange={(v) => set("rssRetentionDays", v)} min={1} max={365} suffix="gün" />
+          <NumberField label="Yazım eşiği" help="Karar Merkezi'nde bu puanın altındaki konular otomatik yazılmaz (önerilen 60)." value={rules.storyMinScore} onChange={(v) => set("storyMinScore", v)} min={30} max={95} suffix="puan" />
         </div>
 
         <div className="space-y-2">
@@ -218,7 +218,7 @@ export function AutomationPanel({ qstash, jobs: initialJobs, rules: initialRules
             <input type="checkbox" checked={rules.googleTrendsEnabled} onChange={(e) => set("googleTrendsEnabled", e.target.checked)} className="mt-1 h-4 w-4 accent-primary-500" />
             <span className="flex-1">
               <span className="block text-sm font-medium">Google Trends takibi</span>
-              <span className="block text-xs text-muted-foreground">RSS taramasıyla birlikte trendler güncellenir.</span>
+              <span className="block text-xs text-muted-foreground">RSS taramasıyla birlikte trendler güncellenir; trende uyan konuların puanı artar.</span>
             </span>
             <input
               value={rules.googleTrendsGeo}
@@ -226,13 +226,6 @@ export function AutomationPanel({ qstash, jobs: initialJobs, rules: initialRules
               aria-label="Ülke kodu"
               className="w-14 h-9 px-2 text-center rounded-lg border border-border bg-background text-sm font-semibold uppercase"
             />
-          </label>
-          <label className="flex items-start gap-3 rounded-xl border border-border p-3 cursor-pointer">
-            <input type="checkbox" checked={rules.trendSearchGenerateEnabled} onChange={(e) => set("trendSearchGenerateEnabled", e.target.checked)} className="mt-1 h-4 w-4 accent-primary-500" />
-            <span>
-              <span className="block text-sm font-medium">Haberi olmayan trendleri işaretle</span>
-              <span className="block text-xs text-muted-foreground">RSS&apos;te karşılığı olmayan popüler trendler Google Trends sayfasında yazılmak üzere önerilir.</span>
-            </span>
           </label>
         </div>
 

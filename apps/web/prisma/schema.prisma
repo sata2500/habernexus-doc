@@ -10,17 +10,17 @@ datasource db {
 }
 
 model User {
-  id                   String     @id @default(cuid())
+  id                   String            @id @default(cuid())
   name                 String
-  email                String     @unique
-  emailVerified        Boolean    @default(false)
+  email                String            @unique
+  emailVerified        Boolean           @default(false)
   image                String?
-  role                 String     @default("USER")
+  role                 String            @default("USER")
   bio                  String?
-  newsletterSubscribed Boolean    @default(true)
-  newsletterTime       String     @default("08:00")
-  createdAt            DateTime   @default(now())
-  updatedAt            DateTime   @updatedAt
+  newsletterSubscribed Boolean           @default(true)
+  newsletterTime       String            @default("08:00")
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
   accounts             Account[]
   articles             Article[]
   bookmarks            Bookmark[]
@@ -70,38 +70,39 @@ model Verification {
 }
 
 model Article {
-  id          String         @id @default(cuid())
-  title       String
-  slug        String         @unique
-  content     String
-  excerpt     String?
-  coverImage  String?
-  status      String         @default("DRAFT")
-  viewCount   Int            @default(0)
-  authorId    String
-  categoryId       String?
-  aiPersonaId      String?
-  sourceRssItemId  String?        @unique
-  publishedAt      DateTime?
-  lang        String         @default("tr")
+  id              String    @id @default(cuid())
+  title           String
+  slug            String    @unique
+  content         String
+  excerpt         String?
+  coverImage      String?
+  status          String    @default("DRAFT")
+  viewCount       Int       @default(0)
+  authorId        String
+  categoryId      String?
+  aiPersonaId     String?
+  sourceRssItemId String?   @unique
+  publishedAt     DateTime?
+  lang            String    @default("tr")
 
   // Analiz Sonuclari
-  plagiarismRate    Int?
-  seoScore          Int?
-  readabilityScore  Int?
-  qualityScore      Int?
-  analysisReport    Json?
+  plagiarismRate   Int?
+  seoScore         Int?
+  readabilityScore Int?
+  qualityScore     Int?
+  analysisReport   Json?
 
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-  author      User           @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  category    Category?      @relation(fields: [categoryId], references: [id])
-    aiPersona    AiPersona?    @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
-  sourceRssItem RssFeedItem? @relation(fields: [sourceRssItemId], references: [id], onDelete: SetNull)
-  bookmarks   Bookmark[]
-  comments    Comment[]
-  reactions   ArticleReaction[]
-  tags        TagOnArticle[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  author        User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category      Category?         @relation(fields: [categoryId], references: [id])
+  aiPersona     AiPersona?        @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
+  sourceRssItem RssFeedItem?      @relation(fields: [sourceRssItemId], references: [id], onDelete: SetNull)
+  story         NewsStory?        @relation("StoryArticle")
+  bookmarks     Bookmark[]
+  comments      Comment[]
+  reactions     ArticleReaction[]
+  tags          TagOnArticle[]
 
   @@index([authorId])
   @@index([categoryId])
@@ -113,16 +114,16 @@ model Article {
 }
 
 model Category {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  slug        String    @unique
+  id          String                @id @default(cuid())
+  name        String                @unique
+  slug        String                @unique
   description String?
   color       String?
   icon        String?
-  order       Int       @default(0)
-  lang        String    @default("tr")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  order       Int                   @default(0)
+  lang        String                @default("tr")
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
   articles    Article[]
   personas    AiPersonaOnCategory[]
 }
@@ -276,9 +277,9 @@ enum MediaStatus {
 /// Yönetici tarafından eklenen RSS kaynakları
 model RssFeedSource {
   id            String        @id @default(cuid())
-  name          String                              // Örn: "BBC News TR"
-  url           String        @unique               // RSS feed URL
-  categoryHint  String?                             // Öneri kategori eşleşmesi
+  name          String // Örn: "BBC News TR"
+  url           String        @unique // RSS feed URL
+  categoryHint  String? // Öneri kategori eşleşmesi
   language      String        @default("tr")
   isActive      Boolean       @default(true)
   lastFetchedAt DateTime?
@@ -292,26 +293,29 @@ model RssFeedSource {
 
 /// RSS'ten çekilen ham haberler
 model RssFeedItem {
-  id             String        @id @default(cuid())
-  sourceId       String
-  title          String
-  url            String        @unique
-  urlHash        String        @unique             // SHA-256 hash, hızlı dedup
-  excerpt        String?
-  imageUrl       String?
-  publishedAt    DateTime?
-  status         RssItemStatus @default(PENDING)
-  aiScore        Int?                              // 0-100 Gemini öneri puanı
-  aiAnalysis     Json?                             // Gemini'nin tam JSON çıktısı
-  dismissed      Boolean       @default(false)     // "İlginç değil" işareti
-  usedForArticle Boolean       @default(false)     // Bu öneriden haber yazıldıysa
-  processingAt   DateTime?
-  processingToken String?       @unique
-  source         RssFeedSource @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-    googleTrendItems GoogleTrendItem[]
+  id               String            @id @default(cuid())
+  sourceId         String
+  title            String
+  url              String            @unique
+  urlHash          String            @unique // SHA-256 hash, hızlı dedup
+  excerpt          String?
+  imageUrl         String?
+  publishedAt      DateTime?
+  status           RssItemStatus     @default(PENDING)
+  aiScore          Int? // 0-100 Gemini öneri puanı
+  aiAnalysis       Json? // Gemini'nin tam JSON çıktısı
+  dismissed        Boolean           @default(false) // "İlginç değil" işareti
+  usedForArticle   Boolean           @default(false) // Bu öneriden haber yazıldıysa
+  processingAt     DateTime?
+  processingToken  String?           @unique
+  /// Bu haberin ait olduğu konu (aynı olayı anlatan haberler tek konuda toplanır)
+  storyId          String?
+  story            NewsStory?        @relation(fields: [storyId], references: [id], onDelete: SetNull)
+  source           RssFeedSource     @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  googleTrendItems GoogleTrendItem[]
   article          Article?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
 
   @@index([sourceId])
   @@index([status])
@@ -319,60 +323,131 @@ model RssFeedItem {
   @@index([publishedAt])
   @@index([dismissed])
   @@index([usedForArticle])
+  @@index([storyId])
+}
+
+/// Karar Merkezi: aynı olayı anlatan RSS haberlerinin kümesi. Puanlanır, sıraya girer ve en fazla bir kez haberleştirilir.
+model NewsStory {
+  id                 String        @id @default(cuid())
+  /// Temsilci başlık (kaynaklardan)
+  title              String
+  /// Yapay zekânın önerdiği özgün başlık
+  headline           String?
+  summary            String?
+  /// Benzerlik için başlık kökleri ve özel isimler
+  tokens             String[]
+  entities           String[]
+  categoryName       String?
+  status             StoryStatus   @default(NEW)
+  urgency            StoryUrgency  @default(NORMAL)
+  /// Nihai öncelik puanı (0-100) ve bileşenleri
+  score              Int           @default(0)
+  aiScore            Int?
+  trendScore         Int           @default(0)
+  trendKeyword       String?
+  sourceCount        Int           @default(1)
+  itemCount          Int           @default(1)
+  firstSeenAt        DateTime      @default(now())
+  lastSeenAt         DateTime      @default(now())
+  /// Planlı olay zamanı (maç, toplantı) ve haberin geçerliliğini yitirdiği an
+  eventAt            DateTime?
+  expiresAt          DateTime?
+  pinned             Boolean       @default(false)
+  /// Durumun okunur açıklaması (ör. "Aynı haber zaten yayında")
+  reason             String?
+  analysis           Json?
+  analyzedAt         DateTime?
+  /// Devam haberi ise önceki makale; tekrar ise eşleştiği makale
+  relatedArticleId   String?
+  duplicateArticleId String?
+  articleId          String?       @unique
+  article            Article?      @relation("StoryArticle", fields: [articleId], references: [id], onDelete: SetNull)
+  attempts           Int           @default(0)
+  lastError          String?
+  processingAt       DateTime?
+  processingToken    String?       @unique
+  items              RssFeedItem[]
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+
+  @@index([status, score])
+  @@index([lastSeenAt])
+  @@index([expiresAt])
+}
+
+enum StoryStatus {
+  NEW // Analiz bekliyor
+  READY // Puanlandı; puanı eşiği geçerse yazım sırasında
+  WRITING // AI Yazar şu an yazıyor
+  PUBLISHED // Haberleştirildi
+  DUPLICATE // Aynı haber zaten yayında
+  LOW_SCORE // Haber değeri düşük
+  EXPIRED // Güncelliğini yitirdi
+  DISMISSED // Editör eledi
+  FAILED // Yazım tekrar tekrar başarısız oldu
+}
+
+enum StoryUrgency {
+  BREAKING // Son dakika
+  TIME_SENSITIVE // Belirli bir zamana bağlı (maç, toplantı, karar)
+  NORMAL
+  EVERGREEN // Güncelliğini uzun süre korur
 }
 
 enum RssItemStatus {
-  PENDING   // Henüz AI analizi yapılmadı
-  ANALYZED  // Gemini analiz etti, puan verildi
-  APPROVED  // Admin onayladı, yazar masasına düştü
+  PENDING // Henüz AI analizi yapılmadı
+  ANALYZED // Gemini analiz etti, puan verildi
+  APPROVED // Admin onayladı, yazar masasına düştü
   LOW_SCORE // Puan düşük (< 40), gösterilmeyecek
-  COVERED   // Zaten haberleştirilmiş konuyla örtüşüyor
+  COVERED // Zaten haberleştirilmiş konuyla örtüşüyor
   EXPIRED_STALE // Tarihi geçmiş / güncelliğini yitirmiş haber
   DISMISSED // Yazar/admin "gerek yok" dedi
 }
 
 /// Sistem genel ayarları ve aktif QStash Cron görev ID'leri
 model SystemSettings {
-  id                 String   @id @default("global") // Her zaman tek satır olacak
-  rssScanCron        String   @default("0 */2 * * *") // 2 saatte bir
-  rssAnalyzeCron     String   @default("0 */4 * * *") // 4 saatte bir
-  rssRetentionDays   Int      @default(14)            // Eski öğeler kaç gün saklansın
-  qStashScanId       String?  // QStash üzerindeki görev ID'si
+  id                 String  @id @default("global") // Her zaman tek satır olacak
+  rssScanCron        String  @default("0 */2 * * *") // 2 saatte bir
+  rssAnalyzeCron     String  @default("0 */4 * * *") // 4 saatte bir
+  rssRetentionDays   Int     @default(14) // Eski öğeler kaç gün saklansın
+  qStashScanId       String? // QStash üzerindeki görev ID'si
   qStashAnalyzeId    String?
-  qStashNewsletterId String?  // QStash Newsletter Task ID
-  
+  qStashNewsletterId String? // QStash Newsletter Task ID
+
   // AI Sağlayıcısı (OPENROUTER veya GOOGLE)
-  aiProvider          String   @default("OPENROUTER")
-  
+  aiProvider String @default("OPENROUTER")
+
   // AI Analiz ve Özet Modeli (RSS Puanlama & Özetleme). Biçim: "sağlayıcı:model"
-  aiAnalyzerModel     String   @default("google:gemini-3.5-flash-lite")
+  aiAnalyzerModel  String  @default("google:gemini-3.5-flash-lite")
   /// RSS haberlerini puanlarken uygulanacak editoryal kriterler (boşsa varsayılan)
-  aiAnalyzerPrompt    String?  @db.Text
+  aiAnalyzerPrompt String? @db.Text
   /// Haber seslendirme modeli (yalnızca Google)
-  aiTtsModel          String   @default("google:gemini-3.8-flash-tts")
-  
+  aiTtsModel       String  @default("google:gemini-3.8-flash-tts")
+
   // AI Writer Ayarları
-  aiWriterModel       String   @default("google:gemini-3.8-flash")
-  aiWriterImageModel  String   @default("google:gemini-3.1-flash-image")
-  aiWriterPrompt      String   @default("Sen profesyonel bir haber editörüsün. Verilen konuyu Google Arama kullanarak araştır ve en güncel, doğru bilgilerle son derece kaliteli, özgün ve tarafsız bir haber makalesi yaz. HTML formatında (h2, p, strong etiketlerini kullanarak) döndür. Başlık dahil etme.")
-  aiWriterImagePrompt String   @default("Profesyonel, gerçekçi bir haber fotoğrafı. Fotoğrafçılık kalitesinde, 16:9 oranında, haberin konusuyla ilgili.")
-  aiWriterUseRssImage Boolean  @default(true)
-  
+  aiWriterModel       String  @default("google:gemini-3.8-flash")
+  aiWriterImageModel  String  @default("google:gemini-3.1-flash-image")
+  aiWriterPrompt      String  @default("Sen profesyonel bir haber editörüsün. Verilen konuyu Google Arama kullanarak araştır ve en güncel, doğru bilgilerle son derece kaliteli, özgün ve tarafsız bir haber makalesi yaz. HTML formatında (h2, p, strong etiketlerini kullanarak) döndür. Başlık dahil etme.")
+  aiWriterImagePrompt String  @default("Profesyonel, gerçekçi bir haber fotoğrafı. Fotoğrafçılık kalitesinde, 16:9 oranında, haberin konusuyla ilgili.")
+  aiWriterUseRssImage Boolean @default(true)
+
   // AI Writer Otomasyonu
-  aiWriterAutoEnabled Boolean  @default(false)
-  aiWriterAutoCount   Int      @default(3)
-  aiWriterAutoCron    String   @default("0 */6 * * *") // 6 saatte bir
-  qStashAiWriterId    String?  // QStash üzerindeki görev ID'si
-  aiWriterSearchEnabled Boolean  @default(false)
+  aiWriterAutoEnabled   Boolean @default(false)
+  aiWriterAutoCount     Int     @default(3)
+  aiWriterAutoCron      String  @default("0 */6 * * *") // 6 saatte bir
+  qStashAiWriterId      String? // QStash üzerindeki görev ID'si
+  aiWriterSearchEnabled Boolean @default(false)
 
   // Maksimum Haber Yaşı ve Google Trends Ayarları
-  maxNewsAgeHours            Int      @default(24)           // Kaç saatten eski haberler elensin (0 = kapalı)
-  googleTrendsEnabled        Boolean  @default(true)         // Google Trends entegrasyonu aktif mi
-  googleTrendsGeo            String   @default("TR")         // Bölge kodu ("TR", "US" vb.)
-  trendAutoPublishThreshold Int      @default(70)           // Trend eşleşme skoru kaç üzerindeyse öncelikli otomatik yayın
-  trendSearchGenerateEnabled Boolean  @default(true)         // Trends'te olup RSS'te olmayan konu için aramayla haber üret
-  
-  updatedAt          DateTime @updatedAt
+  maxNewsAgeHours            Int     @default(24) // Kaç saatten eski haberler elensin (0 = kapalı)
+  googleTrendsEnabled        Boolean @default(true) // Google Trends entegrasyonu aktif mi
+  googleTrendsGeo            String  @default("TR") // Bölge kodu ("TR", "US" vb.)
+  trendAutoPublishThreshold  Int     @default(70) // Trend eşleşme skoru kaç üzerindeyse öncelikli otomatik yayın
+  trendSearchGenerateEnabled Boolean @default(true) // Trends'te olup RSS'te olmayan konu için aramayla haber üret
+  /// Karar Merkezi: bu puanın altındaki konular otomatik yazılmaz
+  storyMinScore              Int     @default(60)
+
+  updatedAt DateTime @updatedAt
 }
 
 enum TrendAction {
@@ -419,16 +494,16 @@ model GoogleTrendItem {
 
 /// AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)
 model AiPersona {
-  id          String     @id @default(cuid())
-  name        String     @unique // "Caner KÖSE" vb.
-  role        String?    @default("Haber Editörü")
-  image       String?    // Profil resmi URL
-  description String?    
-  prompt      String     @db.Text
-  imagePrompt String     @db.Text
-  isActive    Boolean    @default(true)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id          String                @id @default(cuid())
+  name        String                @unique // "Caner KÖSE" vb.
+  role        String?               @default("Haber Editörü")
+  image       String? // Profil resmi URL
+  description String?
+  prompt      String                @db.Text
+  imagePrompt String                @db.Text
+  isActive    Boolean               @default(true)
+  createdAt   DateTime              @default(now())
+  updatedAt   DateTime              @updatedAt
   categories  AiPersonaOnCategory[]
   articles    Article[]
 }
@@ -445,14 +520,14 @@ model AiPersonaOnCategory {
 
 /// Platform marka ve görünüm ayarları (Singleton - id her zaman "global")
 model SiteSettings {
-  id               String   @id @default("global")
-  siteName         String   @default("Haber Nexus")
-  siteTagline      String?  @default("Yeni Nesil Haber Platformu")
-  siteDescription  String?  @default("Gündemdeki en son haberleri, analizleri ve derinlemesine içerikleri keşfedin. Modern, hızlı ve kişiselleştirilmiş haber deneyimi.")
-  siteUrl          String?
-  logoText         String?  @default("N")
-  logoUrl          String?
-  faviconUrl       String?
+  id                String   @id @default("global")
+  siteName          String   @default("Haber Nexus")
+  siteTagline       String?  @default("Yeni Nesil Haber Platformu")
+  siteDescription   String?  @default("Gündemdeki en son haberleri, analizleri ve derinlemesine içerikleri keşfedin. Modern, hızlı ve kişiselleştirilmiş haber deneyimi.")
+  siteUrl           String?
+  logoText          String?  @default("N")
+  logoUrl           String?
+  faviconUrl        String?
   primaryColorLight String?
   primaryColorDark  String?
   bgLight           String?
@@ -469,14 +544,14 @@ model SiteSettings {
   sidebarBgDark     String?
   sidebarFgLight    String?
   sidebarFgDark     String?
-  keywords         String?  @default("haber,gündem,son dakika,analiz,Türkiye,dünya,teknoloji,spor")
-  socialTwitter    String?
-  socialInstagram  String?
-  socialYoutube    String?
-  socialGithub     String?
-  footerCopyright  String?
-  updatedAt        DateTime @updatedAt
-  createdAt        DateTime @default(now())
+  keywords          String?  @default("haber,gündem,son dakika,analiz,Türkiye,dünya,teknoloji,spor")
+  socialTwitter     String?
+  socialInstagram   String?
+  socialYoutube     String?
+  socialGithub      String?
+  footerCopyright   String?
+  updatedAt         DateTime @updatedAt
+  createdAt         DateTime @default(now())
 }
 
 enum AiModelType {
@@ -486,36 +561,36 @@ enum AiModelType {
 }
 
 model AiModel {
-  id                String      @id // OpenRouter model ID (örn: "openai/gpt-4")
-  name              String
-  description       String?     @db.Text
-  type              AiModelType @default(TEXT)
-  isFree            Boolean     @default(false)
-  isActive          Boolean     @default(true)
-  
+  id          String      @id // OpenRouter model ID (örn: "openai/gpt-4")
+  name        String
+  description String?     @db.Text
+  type        AiModelType @default(TEXT)
+  isFree      Boolean     @default(false)
+  isActive    Boolean     @default(true)
+
   // Yetenekler ve Modaliteler
-  inputModalities   Json?       // ["text", "image"]
-  outputModalities  Json?       // ["text", "image"]
-  supportsSearch    Boolean     @default(false)
-  supportsVision    Boolean     @default(false)
-  supportsT2I       Boolean     @default(false)
-  supportsI2I       Boolean     @default(false)
-  
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
+  inputModalities  Json? // ["text", "image"]
+  outputModalities Json? // ["text", "image"]
+  supportsSearch   Boolean @default(false)
+  supportsVision   Boolean @default(false)
+  supportsT2I      Boolean @default(false)
+  supportsI2I      Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Slider {
-  id        String   @id @default("homepage") // Use "homepage" as default ID for the main slider
-  name      String   @unique
-  autoPlay  Boolean  @default(true)
-  interval      Int      @default(5000)
-  height        String?  @default("500px")
-  mobileHeight  String?  @default("300px")
-  isActive      Boolean  @default(true)
-  slides    Slide[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default("homepage") // Use "homepage" as default ID for the main slider
+  name         String   @unique
+  autoPlay     Boolean  @default(true)
+  interval     Int      @default(5000)
+  height       String?  @default("500px")
+  mobileHeight String?  @default("300px")
+  isActive     Boolean  @default(true)
+  slides       Slide[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Slide {

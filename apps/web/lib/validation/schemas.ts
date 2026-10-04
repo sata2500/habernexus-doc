@@ -28,15 +28,6 @@ export const RssSourceUpdateSchema = z.object({
   categoryHint: z.string().trim().max(120).optional(),
 }).strict();
 
-export const RssSuggestionFiltersSchema = z.object({
-  status: z.enum(["PENDING", "ANALYZED", "APPROVED", "COVERED", "DISMISSED", "LOW_SCORE"]).optional(),
-  minScore: z.number().min(0).max(100).optional(),
-  search: z.string().trim().max(200).optional(),
-  category: z.string().trim().max(120).optional(),
-}).optional();
-
-export const AiBatchCountSchema = z.number().int().min(1).max(10);
-
 export const CronExpressionSchema = z.string()
   .trim()
   .min(9)
