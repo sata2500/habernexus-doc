@@ -6,15 +6,21 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-// Vercel build sürecinde veya DATABASE_URL eksikken çökmemek için 
-// her zaman bir adapter ile başlatıyoruz.
-let connectionString = process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/dummy";
-
-// PG driver SSL uyarılarını gidermek için sslmode parametresini açıkça ekle (Neon/Remote DB)
-if (connectionString.includes("aws.neon.tech") && !connectionString.includes("sslmode=")) {
-  const joiner = connectionString.includes("?") ? "&" : "?";
-  connectionString += `${joiner}sslmode=verify-full`;
+/**
+ * Uygulamanın kullandığı PostgreSQL bağlantı adresi.
+ * Vercel build sürecinde veya DATABASE_URL eksikken çökmemek için varsayılan bir adres döner.
+ */
+export function getDatabaseConnectionString() {
+  let url = process.env.DATABASE_URL || "postgresql://postgres:postgres@localhost:5432/dummy";
+  // PG driver SSL uyarılarını gidermek için sslmode parametresini açıkça ekle (Neon/Remote DB)
+  if (url.includes("aws.neon.tech") && !url.includes("sslmode=")) {
+    const joiner = url.includes("?") ? "&" : "?";
+    url += `${joiner}sslmode=verify-full`;
+  }
+  return url;
 }
+
+const connectionString = getDatabaseConnectionString();
 
 const createPrismaClient = () => {
   const pool = new Pool({ connectionString });

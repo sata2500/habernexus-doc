@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prisma:generate": "prisma generate",
-    "build": "prisma generate && next build",
+    "prisma:generate": "node scripts/gen-migrations-manifest.mjs && prisma generate",
+    "build": "node scripts/gen-migrations-manifest.mjs && prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",

@@ -26,6 +26,7 @@ model User {
   bookmarks            Bookmark[]
   comments             Comment[]
   media                Media[]
+  reactions            ArticleReaction[]
   sessions             Session[]
 }
 
@@ -99,6 +100,7 @@ model Article {
   sourceRssItem RssFeedItem? @relation(fields: [sourceRssItemId], references: [id], onDelete: SetNull)
   bookmarks   Bookmark[]
   comments    Comment[]
+  reactions   ArticleReaction[]
   tags        TagOnArticle[]
 
   @@index([authorId])
@@ -160,6 +162,25 @@ model Comment {
   @@index([articleId])
   @@index([userId])
   @@index([parentId])
+}
+
+/// Okur tepkileri: kişi başına (kullanıcı veya anonim ziyaretçi) haber başına tek tepki
+model ArticleReaction {
+  id        String   @id @default(cuid())
+  articleId String
+  /// like | insightful | surprised | applause | angry
+  type      String
+  userId    String?
+  /// Giriş yapmamış okurlar için çerezdeki rastgele kimlik
+  visitorId String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  article   Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([articleId, userId])
+  @@unique([articleId, visitorId])
+  @@index([articleId, type])
 }
 
 model Bookmark {

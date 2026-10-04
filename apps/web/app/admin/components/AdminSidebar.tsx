@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare,
-  Image, Home, PenTool, Mail, LayoutTemplate, Rss, Wand2, Settings2, Menu, X, TrendingUp
+  Image, Home, PenTool, Mail, LayoutTemplate, Rss, Wand2, Settings2, Menu, X, TrendingUp, ServerCog
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "../../dashboard/components/SignOutButton";
@@ -24,6 +24,7 @@ const navItems = [
   { name: "Yorum Yönetimi", href: "/admin/comments", icon: MessageSquare },
   { name: "Destek Merkezi", href: "/admin/support", icon: Mail },
   { name: "Site Ayarları", href: "/admin/settings", icon: Settings2 },
+  { name: "Sistem Durumu", href: "/admin/system", icon: ServerCog },
 ];
 
 interface SessionProps {

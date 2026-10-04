@@ -231,6 +231,16 @@ exports.Prisma.CommentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ArticleReactionScalarFieldEnum = {
+  id: 'id',
+  articleId: 'articleId',
+  type: 'type',
+  userId: 'userId',
+  visitorId: 'visitorId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.BookmarkScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -540,6 +550,7 @@ exports.Prisma.ModelName = {
   Tag: 'Tag',
   TagOnArticle: 'TagOnArticle',
   Comment: 'Comment',
+  ArticleReaction: 'ArticleReaction',
   Bookmark: 'Bookmark',
   Subscriber: 'Subscriber',
   Media: 'Media',

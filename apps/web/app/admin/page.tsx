@@ -1,11 +1,17 @@
 import { getAdminStats } from "./actions";
 import { redirect } from "next/navigation";
-import { Users, FileText, Eye, TrendingUp, Newspaper, ShieldCheck } from "lucide-react";
+import { Users, FileText, Eye, TrendingUp, Newspaper, ShieldCheck, AlertTriangle, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { getMigrationStatus } from "@/lib/server/db-migrations";
 
 export default async function AdminDashboardPage() {
   const stats = await getAdminStats();
   if (!stats) redirect("/");
+
+  // Bekleyen veritabanı güncellemesi varsa yöneticiyi uyar (hata olursa sessizce geç)
+  const pendingMigrations = await getMigrationStatus()
+    .then((s) => s.pendingCount)
+    .catch(() => 0);
 
   const statCards = [
     { icon: Users, label: "Toplam Kullanıcı", value: stats.totalUsers, sub: `+${stats.newUsers} bu hafta`, color: "text-primary-600 dark:text-primary-400 bg-primary-500/10 dark:bg-primary-500/15" },
@@ -26,6 +32,20 @@ export default async function AdminDashboardPage() {
           <span className="text-xs font-semibold text-error ">Admin Modu</span>
         </div>
       </div>
+
+      {pendingMigrations > 0 && (
+        <Link
+          href="/admin/system"
+          className="flex items-center gap-3 rounded-2xl border border-warning/40 bg-warning/10 p-4 hover:bg-warning/15 transition-colors"
+        >
+          <AlertTriangle className="h-5 w-5 text-warning shrink-0" />
+          <div className="flex-1 min-w-0 text-sm">
+            <p className="font-semibold text-foreground">{pendingMigrations} veritabanı güncellemesi bekliyor</p>
+            <p className="text-muted-foreground">Yeni özelliklerin çalışması için Sistem Durumu sayfasından uygulayın.</p>
+          </div>
+          <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+        </Link>
+      )}
 
       {/* İstatistik Kartları */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">

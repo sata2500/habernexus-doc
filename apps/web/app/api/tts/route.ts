@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimitAsync, getRequestIdentity } from "@/lib/server/rate-limit";
-import { getOrCreateArticleAudio, isTtsConfigured, TTS_VOICES, type TtsVoiceId } from "@/lib/tts";
+import { classifyTtsError, getOrCreateArticleAudio, isTtsConfigured, TTS_VOICES, type TtsVoiceId } from "@/lib/tts";
 
 export const maxDuration = 120;
 
@@ -50,7 +50,16 @@ export async function POST(req: Request) {
     });
     return NextResponse.json(audio, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    console.error("TTS generation error:", error);
-    return NextResponse.json({ error: "Ses şu anda oluşturulamadı." }, { status: 502 });
+    const ttsError = classifyTtsError(error);
+    console.error("TTS generation error:", ttsError.code, ttsError.model, error);
+    return NextResponse.json(
+      {
+        error: ttsError.code === "quota"
+          ? "Seslendirme servisi şu an yoğun. Lütfen birazdan tekrar deneyin."
+          : "Ses şu anda oluşturulamadı.",
+        code: ttsError.code,
+      },
+      { status: ttsError.code === "quota" ? 503 : 502 },
+    );
   }
 }

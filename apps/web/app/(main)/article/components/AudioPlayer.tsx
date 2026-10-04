@@ -72,7 +72,7 @@ export function AudioPlayer({ articleId, content, title }: Props) {
     };
   }, []);
 
-  const startBrowserFallback = () => {
+  const startBrowserFallback = (reason?: string) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       setStatus("error");
       setMessage("Seslendirme şu anda kullanılamıyor.");
@@ -90,7 +90,7 @@ export function AudioPlayer({ articleId, content, title }: Props) {
       window.speechSynthesis.speak(u);
     });
     setStatus("fallback");
-    setMessage("Gelişmiş ses şu an hazır değil, tarayıcı sesi kullanılıyor.");
+    setMessage(`${reason ? `${reason} ` : "Gelişmiş ses şu an hazır değil. "}Şimdilik tarayıcı sesi kullanılıyor.`);
   };
 
   const loadAndPlay = async (targetVoice: TtsVoiceId) => {
@@ -114,7 +114,7 @@ export function AudioPlayer({ articleId, content, title }: Props) {
             setMessage(data.error || "Çok fazla istek. Biraz sonra tekrar deneyin.");
             return;
           }
-          startBrowserFallback();
+          startBrowserFallback(data.error);
           return;
         }
         url = data.url;

@@ -59,6 +59,11 @@ export type TagOnArticle = $Result.DefaultSelection<Prisma.$TagOnArticlePayload>
  */
 export type Comment = $Result.DefaultSelection<Prisma.$CommentPayload>
 /**
+ * Model ArticleReaction
+ * Okur tepkileri: kişi başına (kullanıcı veya anonim ziyaretçi) haber başına tek tepki
+ */
+export type ArticleReaction = $Result.DefaultSelection<Prisma.$ArticleReactionPayload>
+/**
  * Model Bookmark
  * 
  */
@@ -418,6 +423,16 @@ export class PrismaClient<
     * ```
     */
   get comment(): Prisma.CommentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.articleReaction`: Exposes CRUD operations for the **ArticleReaction** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ArticleReactions
+    * const articleReactions = await prisma.articleReaction.findMany()
+    * ```
+    */
+  get articleReaction(): Prisma.ArticleReactionDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.bookmark`: Exposes CRUD operations for the **Bookmark** model.
@@ -1044,6 +1059,7 @@ export namespace Prisma {
     Tag: 'Tag',
     TagOnArticle: 'TagOnArticle',
     Comment: 'Comment',
+    ArticleReaction: 'ArticleReaction',
     Bookmark: 'Bookmark',
     Subscriber: 'Subscriber',
     Media: 'Media',
@@ -1076,7 +1092,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1743,6 +1759,80 @@ export namespace Prisma {
           count: {
             args: Prisma.CommentCountArgs<ExtArgs>
             result: $Utils.Optional<CommentCountAggregateOutputType> | number
+          }
+        }
+      }
+      ArticleReaction: {
+        payload: Prisma.$ArticleReactionPayload<ExtArgs>
+        fields: Prisma.ArticleReactionFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ArticleReactionFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ArticleReactionFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload>
+          }
+          findFirst: {
+            args: Prisma.ArticleReactionFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ArticleReactionFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload>
+          }
+          findMany: {
+            args: Prisma.ArticleReactionFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload>[]
+          }
+          create: {
+            args: Prisma.ArticleReactionCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload>
+          }
+          createMany: {
+            args: Prisma.ArticleReactionCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ArticleReactionCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload>[]
+          }
+          delete: {
+            args: Prisma.ArticleReactionDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload>
+          }
+          update: {
+            args: Prisma.ArticleReactionUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload>
+          }
+          deleteMany: {
+            args: Prisma.ArticleReactionDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ArticleReactionUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ArticleReactionUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload>[]
+          }
+          upsert: {
+            args: Prisma.ArticleReactionUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReactionPayload>
+          }
+          aggregate: {
+            args: Prisma.ArticleReactionAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateArticleReaction>
+          }
+          groupBy: {
+            args: Prisma.ArticleReactionGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ArticleReactionGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ArticleReactionCountArgs<ExtArgs>
+            result: $Utils.Optional<ArticleReactionCountAggregateOutputType> | number
           }
         }
       }
@@ -3136,6 +3226,7 @@ export namespace Prisma {
     tag?: TagOmit
     tagOnArticle?: TagOnArticleOmit
     comment?: CommentOmit
+    articleReaction?: ArticleReactionOmit
     bookmark?: BookmarkOmit
     subscriber?: SubscriberOmit
     media?: MediaOmit
@@ -3238,6 +3329,7 @@ export namespace Prisma {
     bookmarks: number
     comments: number
     media: number
+    reactions: number
     sessions: number
   }
 
@@ -3247,6 +3339,7 @@ export namespace Prisma {
     bookmarks?: boolean | UserCountOutputTypeCountBookmarksArgs
     comments?: boolean | UserCountOutputTypeCountCommentsArgs
     media?: boolean | UserCountOutputTypeCountMediaArgs
+    reactions?: boolean | UserCountOutputTypeCountReactionsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   }
 
@@ -3299,6 +3392,13 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountReactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArticleReactionWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SessionWhereInput
   }
@@ -3311,12 +3411,14 @@ export namespace Prisma {
   export type ArticleCountOutputType = {
     bookmarks: number
     comments: number
+    reactions: number
     tags: number
   }
 
   export type ArticleCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     bookmarks?: boolean | ArticleCountOutputTypeCountBookmarksArgs
     comments?: boolean | ArticleCountOutputTypeCountCommentsArgs
+    reactions?: boolean | ArticleCountOutputTypeCountReactionsArgs
     tags?: boolean | ArticleCountOutputTypeCountTagsArgs
   }
 
@@ -3343,6 +3445,13 @@ export namespace Prisma {
    */
   export type ArticleCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommentWhereInput
+  }
+
+  /**
+   * ArticleCountOutputType without action
+   */
+  export type ArticleCountOutputTypeCountReactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArticleReactionWhereInput
   }
 
   /**
@@ -3871,6 +3980,7 @@ export namespace Prisma {
     bookmarks?: boolean | User$bookmarksArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     media?: boolean | User$mediaArgs<ExtArgs>
+    reactions?: boolean | User$reactionsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -3924,6 +4034,7 @@ export namespace Prisma {
     bookmarks?: boolean | User$bookmarksArgs<ExtArgs>
     comments?: boolean | User$commentsArgs<ExtArgs>
     media?: boolean | User$mediaArgs<ExtArgs>
+    reactions?: boolean | User$reactionsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -3938,6 +4049,7 @@ export namespace Prisma {
       bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       media: Prisma.$MediaPayload<ExtArgs>[]
+      reactions: Prisma.$ArticleReactionPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -4351,6 +4463,7 @@ export namespace Prisma {
     bookmarks<T extends User$bookmarksArgs<ExtArgs> = {}>(args?: Subset<T, User$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     media<T extends User$mediaArgs<ExtArgs> = {}>(args?: Subset<T, User$mediaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MediaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reactions<T extends User$reactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -4902,6 +5015,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: MediaScalarFieldEnum | MediaScalarFieldEnum[]
+  }
+
+  /**
+   * User.reactions
+   */
+  export type User$reactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    where?: ArticleReactionWhereInput
+    orderBy?: ArticleReactionOrderByWithRelationInput | ArticleReactionOrderByWithRelationInput[]
+    cursor?: ArticleReactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ArticleReactionScalarFieldEnum | ArticleReactionScalarFieldEnum[]
   }
 
   /**
@@ -8586,6 +8723,7 @@ export namespace Prisma {
     sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
+    reactions?: boolean | Article$reactionsArgs<ExtArgs>
     tags?: boolean | Article$tagsArgs<ExtArgs>
     _count?: boolean | ArticleCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["article"]>
@@ -8678,6 +8816,7 @@ export namespace Prisma {
     sourceRssItem?: boolean | Article$sourceRssItemArgs<ExtArgs>
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
+    reactions?: boolean | Article$reactionsArgs<ExtArgs>
     tags?: boolean | Article$tagsArgs<ExtArgs>
     _count?: boolean | ArticleCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -8703,6 +8842,7 @@ export namespace Prisma {
       sourceRssItem: Prisma.$RssFeedItemPayload<ExtArgs> | null
       bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
+      reactions: Prisma.$ArticleReactionPayload<ExtArgs>[]
       tags: Prisma.$TagOnArticlePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -9127,6 +9267,7 @@ export namespace Prisma {
     sourceRssItem<T extends Article$sourceRssItemArgs<ExtArgs> = {}>(args?: Subset<T, Article$sourceRssItemArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     bookmarks<T extends Article$bookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Article$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends Article$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Article$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reactions<T extends Article$reactionsArgs<ExtArgs> = {}>(args?: Subset<T, Article$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tags<T extends Article$tagsArgs<ExtArgs> = {}>(args?: Subset<T, Article$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TagOnArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -9681,6 +9822,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
+  }
+
+  /**
+   * Article.reactions
+   */
+  export type Article$reactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    where?: ArticleReactionWhereInput
+    orderBy?: ArticleReactionOrderByWithRelationInput | ArticleReactionOrderByWithRelationInput[]
+    cursor?: ArticleReactionWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ArticleReactionScalarFieldEnum | ArticleReactionScalarFieldEnum[]
   }
 
   /**
@@ -14186,6 +14351,1128 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: CommentInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ArticleReaction
+   */
+
+  export type AggregateArticleReaction = {
+    _count: ArticleReactionCountAggregateOutputType | null
+    _min: ArticleReactionMinAggregateOutputType | null
+    _max: ArticleReactionMaxAggregateOutputType | null
+  }
+
+  export type ArticleReactionMinAggregateOutputType = {
+    id: string | null
+    articleId: string | null
+    type: string | null
+    userId: string | null
+    visitorId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ArticleReactionMaxAggregateOutputType = {
+    id: string | null
+    articleId: string | null
+    type: string | null
+    userId: string | null
+    visitorId: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ArticleReactionCountAggregateOutputType = {
+    id: number
+    articleId: number
+    type: number
+    userId: number
+    visitorId: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ArticleReactionMinAggregateInputType = {
+    id?: true
+    articleId?: true
+    type?: true
+    userId?: true
+    visitorId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ArticleReactionMaxAggregateInputType = {
+    id?: true
+    articleId?: true
+    type?: true
+    userId?: true
+    visitorId?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ArticleReactionCountAggregateInputType = {
+    id?: true
+    articleId?: true
+    type?: true
+    userId?: true
+    visitorId?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ArticleReactionAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArticleReaction to aggregate.
+     */
+    where?: ArticleReactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleReactions to fetch.
+     */
+    orderBy?: ArticleReactionOrderByWithRelationInput | ArticleReactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ArticleReactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleReactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleReactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ArticleReactions
+    **/
+    _count?: true | ArticleReactionCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ArticleReactionMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ArticleReactionMaxAggregateInputType
+  }
+
+  export type GetArticleReactionAggregateType<T extends ArticleReactionAggregateArgs> = {
+        [P in keyof T & keyof AggregateArticleReaction]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateArticleReaction[P]>
+      : GetScalarType<T[P], AggregateArticleReaction[P]>
+  }
+
+
+
+
+  export type ArticleReactionGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArticleReactionWhereInput
+    orderBy?: ArticleReactionOrderByWithAggregationInput | ArticleReactionOrderByWithAggregationInput[]
+    by: ArticleReactionScalarFieldEnum[] | ArticleReactionScalarFieldEnum
+    having?: ArticleReactionScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ArticleReactionCountAggregateInputType | true
+    _min?: ArticleReactionMinAggregateInputType
+    _max?: ArticleReactionMaxAggregateInputType
+  }
+
+  export type ArticleReactionGroupByOutputType = {
+    id: string
+    articleId: string
+    type: string
+    userId: string | null
+    visitorId: string | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ArticleReactionCountAggregateOutputType | null
+    _min: ArticleReactionMinAggregateOutputType | null
+    _max: ArticleReactionMaxAggregateOutputType | null
+  }
+
+  type GetArticleReactionGroupByPayload<T extends ArticleReactionGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ArticleReactionGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ArticleReactionGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ArticleReactionGroupByOutputType[P]>
+            : GetScalarType<T[P], ArticleReactionGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ArticleReactionSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    articleId?: boolean
+    type?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | ArticleReaction$userArgs<ExtArgs>
+  }, ExtArgs["result"]["articleReaction"]>
+
+  export type ArticleReactionSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    articleId?: boolean
+    type?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | ArticleReaction$userArgs<ExtArgs>
+  }, ExtArgs["result"]["articleReaction"]>
+
+  export type ArticleReactionSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    articleId?: boolean
+    type?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | ArticleReaction$userArgs<ExtArgs>
+  }, ExtArgs["result"]["articleReaction"]>
+
+  export type ArticleReactionSelectScalar = {
+    id?: boolean
+    articleId?: boolean
+    type?: boolean
+    userId?: boolean
+    visitorId?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ArticleReactionOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "articleId" | "type" | "userId" | "visitorId" | "createdAt" | "updatedAt", ExtArgs["result"]["articleReaction"]>
+  export type ArticleReactionInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | ArticleReaction$userArgs<ExtArgs>
+  }
+  export type ArticleReactionIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | ArticleReaction$userArgs<ExtArgs>
+  }
+  export type ArticleReactionIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | ArticleReaction$userArgs<ExtArgs>
+  }
+
+  export type $ArticleReactionPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ArticleReaction"
+    objects: {
+      article: Prisma.$ArticlePayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs> | null
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      articleId: string
+      /**
+       * like | insightful | surprised | applause | angry
+       */
+      type: string
+      userId: string | null
+      /**
+       * Giriş yapmamış okurlar için çerezdeki rastgele kimlik
+       */
+      visitorId: string | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["articleReaction"]>
+    composites: {}
+  }
+
+  type ArticleReactionGetPayload<S extends boolean | null | undefined | ArticleReactionDefaultArgs> = $Result.GetResult<Prisma.$ArticleReactionPayload, S>
+
+  type ArticleReactionCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ArticleReactionFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ArticleReactionCountAggregateInputType | true
+    }
+
+  export interface ArticleReactionDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ArticleReaction'], meta: { name: 'ArticleReaction' } }
+    /**
+     * Find zero or one ArticleReaction that matches the filter.
+     * @param {ArticleReactionFindUniqueArgs} args - Arguments to find a ArticleReaction
+     * @example
+     * // Get one ArticleReaction
+     * const articleReaction = await prisma.articleReaction.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ArticleReactionFindUniqueArgs>(args: SelectSubset<T, ArticleReactionFindUniqueArgs<ExtArgs>>): Prisma__ArticleReactionClient<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ArticleReaction that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ArticleReactionFindUniqueOrThrowArgs} args - Arguments to find a ArticleReaction
+     * @example
+     * // Get one ArticleReaction
+     * const articleReaction = await prisma.articleReaction.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ArticleReactionFindUniqueOrThrowArgs>(args: SelectSubset<T, ArticleReactionFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ArticleReactionClient<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArticleReaction that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReactionFindFirstArgs} args - Arguments to find a ArticleReaction
+     * @example
+     * // Get one ArticleReaction
+     * const articleReaction = await prisma.articleReaction.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ArticleReactionFindFirstArgs>(args?: SelectSubset<T, ArticleReactionFindFirstArgs<ExtArgs>>): Prisma__ArticleReactionClient<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArticleReaction that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReactionFindFirstOrThrowArgs} args - Arguments to find a ArticleReaction
+     * @example
+     * // Get one ArticleReaction
+     * const articleReaction = await prisma.articleReaction.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ArticleReactionFindFirstOrThrowArgs>(args?: SelectSubset<T, ArticleReactionFindFirstOrThrowArgs<ExtArgs>>): Prisma__ArticleReactionClient<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ArticleReactions that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReactionFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ArticleReactions
+     * const articleReactions = await prisma.articleReaction.findMany()
+     * 
+     * // Get first 10 ArticleReactions
+     * const articleReactions = await prisma.articleReaction.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const articleReactionWithIdOnly = await prisma.articleReaction.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ArticleReactionFindManyArgs>(args?: SelectSubset<T, ArticleReactionFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ArticleReaction.
+     * @param {ArticleReactionCreateArgs} args - Arguments to create a ArticleReaction.
+     * @example
+     * // Create one ArticleReaction
+     * const ArticleReaction = await prisma.articleReaction.create({
+     *   data: {
+     *     // ... data to create a ArticleReaction
+     *   }
+     * })
+     * 
+     */
+    create<T extends ArticleReactionCreateArgs>(args: SelectSubset<T, ArticleReactionCreateArgs<ExtArgs>>): Prisma__ArticleReactionClient<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ArticleReactions.
+     * @param {ArticleReactionCreateManyArgs} args - Arguments to create many ArticleReactions.
+     * @example
+     * // Create many ArticleReactions
+     * const articleReaction = await prisma.articleReaction.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ArticleReactionCreateManyArgs>(args?: SelectSubset<T, ArticleReactionCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ArticleReactions and returns the data saved in the database.
+     * @param {ArticleReactionCreateManyAndReturnArgs} args - Arguments to create many ArticleReactions.
+     * @example
+     * // Create many ArticleReactions
+     * const articleReaction = await prisma.articleReaction.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ArticleReactions and only return the `id`
+     * const articleReactionWithIdOnly = await prisma.articleReaction.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ArticleReactionCreateManyAndReturnArgs>(args?: SelectSubset<T, ArticleReactionCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ArticleReaction.
+     * @param {ArticleReactionDeleteArgs} args - Arguments to delete one ArticleReaction.
+     * @example
+     * // Delete one ArticleReaction
+     * const ArticleReaction = await prisma.articleReaction.delete({
+     *   where: {
+     *     // ... filter to delete one ArticleReaction
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ArticleReactionDeleteArgs>(args: SelectSubset<T, ArticleReactionDeleteArgs<ExtArgs>>): Prisma__ArticleReactionClient<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ArticleReaction.
+     * @param {ArticleReactionUpdateArgs} args - Arguments to update one ArticleReaction.
+     * @example
+     * // Update one ArticleReaction
+     * const articleReaction = await prisma.articleReaction.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ArticleReactionUpdateArgs>(args: SelectSubset<T, ArticleReactionUpdateArgs<ExtArgs>>): Prisma__ArticleReactionClient<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ArticleReactions.
+     * @param {ArticleReactionDeleteManyArgs} args - Arguments to filter ArticleReactions to delete.
+     * @example
+     * // Delete a few ArticleReactions
+     * const { count } = await prisma.articleReaction.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ArticleReactionDeleteManyArgs>(args?: SelectSubset<T, ArticleReactionDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArticleReactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReactionUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ArticleReactions
+     * const articleReaction = await prisma.articleReaction.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ArticleReactionUpdateManyArgs>(args: SelectSubset<T, ArticleReactionUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArticleReactions and returns the data updated in the database.
+     * @param {ArticleReactionUpdateManyAndReturnArgs} args - Arguments to update many ArticleReactions.
+     * @example
+     * // Update many ArticleReactions
+     * const articleReaction = await prisma.articleReaction.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ArticleReactions and only return the `id`
+     * const articleReactionWithIdOnly = await prisma.articleReaction.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ArticleReactionUpdateManyAndReturnArgs>(args: SelectSubset<T, ArticleReactionUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ArticleReaction.
+     * @param {ArticleReactionUpsertArgs} args - Arguments to update or create a ArticleReaction.
+     * @example
+     * // Update or create a ArticleReaction
+     * const articleReaction = await prisma.articleReaction.upsert({
+     *   create: {
+     *     // ... data to create a ArticleReaction
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ArticleReaction we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ArticleReactionUpsertArgs>(args: SelectSubset<T, ArticleReactionUpsertArgs<ExtArgs>>): Prisma__ArticleReactionClient<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ArticleReactions.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReactionCountArgs} args - Arguments to filter ArticleReactions to count.
+     * @example
+     * // Count the number of ArticleReactions
+     * const count = await prisma.articleReaction.count({
+     *   where: {
+     *     // ... the filter for the ArticleReactions we want to count
+     *   }
+     * })
+    **/
+    count<T extends ArticleReactionCountArgs>(
+      args?: Subset<T, ArticleReactionCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ArticleReactionCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ArticleReaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReactionAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ArticleReactionAggregateArgs>(args: Subset<T, ArticleReactionAggregateArgs>): Prisma.PrismaPromise<GetArticleReactionAggregateType<T>>
+
+    /**
+     * Group by ArticleReaction.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReactionGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ArticleReactionGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ArticleReactionGroupByArgs['orderBy'] }
+        : { orderBy?: ArticleReactionGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ArticleReactionGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetArticleReactionGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ArticleReaction model
+   */
+  readonly fields: ArticleReactionFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ArticleReaction.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ArticleReactionClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    article<T extends ArticleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ArticleDefaultArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends ArticleReaction$userArgs<ExtArgs> = {}>(args?: Subset<T, ArticleReaction$userArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ArticleReaction model
+   */
+  interface ArticleReactionFieldRefs {
+    readonly id: FieldRef<"ArticleReaction", 'String'>
+    readonly articleId: FieldRef<"ArticleReaction", 'String'>
+    readonly type: FieldRef<"ArticleReaction", 'String'>
+    readonly userId: FieldRef<"ArticleReaction", 'String'>
+    readonly visitorId: FieldRef<"ArticleReaction", 'String'>
+    readonly createdAt: FieldRef<"ArticleReaction", 'DateTime'>
+    readonly updatedAt: FieldRef<"ArticleReaction", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ArticleReaction findUnique
+   */
+  export type ArticleReactionFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleReaction to fetch.
+     */
+    where: ArticleReactionWhereUniqueInput
+  }
+
+  /**
+   * ArticleReaction findUniqueOrThrow
+   */
+  export type ArticleReactionFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleReaction to fetch.
+     */
+    where: ArticleReactionWhereUniqueInput
+  }
+
+  /**
+   * ArticleReaction findFirst
+   */
+  export type ArticleReactionFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleReaction to fetch.
+     */
+    where?: ArticleReactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleReactions to fetch.
+     */
+    orderBy?: ArticleReactionOrderByWithRelationInput | ArticleReactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArticleReactions.
+     */
+    cursor?: ArticleReactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleReactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleReactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArticleReactions.
+     */
+    distinct?: ArticleReactionScalarFieldEnum | ArticleReactionScalarFieldEnum[]
+  }
+
+  /**
+   * ArticleReaction findFirstOrThrow
+   */
+  export type ArticleReactionFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleReaction to fetch.
+     */
+    where?: ArticleReactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleReactions to fetch.
+     */
+    orderBy?: ArticleReactionOrderByWithRelationInput | ArticleReactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArticleReactions.
+     */
+    cursor?: ArticleReactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleReactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleReactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArticleReactions.
+     */
+    distinct?: ArticleReactionScalarFieldEnum | ArticleReactionScalarFieldEnum[]
+  }
+
+  /**
+   * ArticleReaction findMany
+   */
+  export type ArticleReactionFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleReactions to fetch.
+     */
+    where?: ArticleReactionWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleReactions to fetch.
+     */
+    orderBy?: ArticleReactionOrderByWithRelationInput | ArticleReactionOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ArticleReactions.
+     */
+    cursor?: ArticleReactionWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleReactions from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleReactions.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArticleReactions.
+     */
+    distinct?: ArticleReactionScalarFieldEnum | ArticleReactionScalarFieldEnum[]
+  }
+
+  /**
+   * ArticleReaction create
+   */
+  export type ArticleReactionCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ArticleReaction.
+     */
+    data: XOR<ArticleReactionCreateInput, ArticleReactionUncheckedCreateInput>
+  }
+
+  /**
+   * ArticleReaction createMany
+   */
+  export type ArticleReactionCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ArticleReactions.
+     */
+    data: ArticleReactionCreateManyInput | ArticleReactionCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ArticleReaction createManyAndReturn
+   */
+  export type ArticleReactionCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * The data used to create many ArticleReactions.
+     */
+    data: ArticleReactionCreateManyInput | ArticleReactionCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ArticleReaction update
+   */
+  export type ArticleReactionUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ArticleReaction.
+     */
+    data: XOR<ArticleReactionUpdateInput, ArticleReactionUncheckedUpdateInput>
+    /**
+     * Choose, which ArticleReaction to update.
+     */
+    where: ArticleReactionWhereUniqueInput
+  }
+
+  /**
+   * ArticleReaction updateMany
+   */
+  export type ArticleReactionUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ArticleReactions.
+     */
+    data: XOR<ArticleReactionUpdateManyMutationInput, ArticleReactionUncheckedUpdateManyInput>
+    /**
+     * Filter which ArticleReactions to update
+     */
+    where?: ArticleReactionWhereInput
+    /**
+     * Limit how many ArticleReactions to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArticleReaction updateManyAndReturn
+   */
+  export type ArticleReactionUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * The data used to update ArticleReactions.
+     */
+    data: XOR<ArticleReactionUpdateManyMutationInput, ArticleReactionUncheckedUpdateManyInput>
+    /**
+     * Filter which ArticleReactions to update
+     */
+    where?: ArticleReactionWhereInput
+    /**
+     * Limit how many ArticleReactions to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ArticleReaction upsert
+   */
+  export type ArticleReactionUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ArticleReaction to update in case it exists.
+     */
+    where: ArticleReactionWhereUniqueInput
+    /**
+     * In case the ArticleReaction found by the `where` argument doesn't exist, create a new ArticleReaction with this data.
+     */
+    create: XOR<ArticleReactionCreateInput, ArticleReactionUncheckedCreateInput>
+    /**
+     * In case the ArticleReaction was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ArticleReactionUpdateInput, ArticleReactionUncheckedUpdateInput>
+  }
+
+  /**
+   * ArticleReaction delete
+   */
+  export type ArticleReactionDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
+    /**
+     * Filter which ArticleReaction to delete.
+     */
+    where: ArticleReactionWhereUniqueInput
+  }
+
+  /**
+   * ArticleReaction deleteMany
+   */
+  export type ArticleReactionDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArticleReactions to delete
+     */
+    where?: ArticleReactionWhereInput
+    /**
+     * Limit how many ArticleReactions to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArticleReaction.user
+   */
+  export type ArticleReaction$userArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
+  }
+
+  /**
+   * ArticleReaction without action
+   */
+  export type ArticleReactionDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleReaction
+     */
+    select?: ArticleReactionSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleReaction
+     */
+    omit?: ArticleReactionOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReactionInclude<ExtArgs> | null
   }
 
 
@@ -33910,6 +35197,19 @@ export namespace Prisma {
   export type CommentScalarFieldEnum = (typeof CommentScalarFieldEnum)[keyof typeof CommentScalarFieldEnum]
 
 
+  export const ArticleReactionScalarFieldEnum: {
+    id: 'id',
+    articleId: 'articleId',
+    type: 'type',
+    userId: 'userId',
+    visitorId: 'visitorId',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ArticleReactionScalarFieldEnum = (typeof ArticleReactionScalarFieldEnum)[keyof typeof ArticleReactionScalarFieldEnum]
+
+
   export const BookmarkScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -34406,6 +35706,7 @@ export namespace Prisma {
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     media?: MediaListRelationFilter
+    reactions?: ArticleReactionListRelationFilter
     sessions?: SessionListRelationFilter
   }
 
@@ -34426,6 +35727,7 @@ export namespace Prisma {
     bookmarks?: BookmarkOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     media?: MediaOrderByRelationAggregateInput
+    reactions?: ArticleReactionOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
   }
 
@@ -34449,6 +35751,7 @@ export namespace Prisma {
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     media?: MediaListRelationFilter
+    reactions?: ArticleReactionListRelationFilter
     sessions?: SessionListRelationFilter
   }, "id" | "email">
 
@@ -34744,6 +36047,7 @@ export namespace Prisma {
     sourceRssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
+    reactions?: ArticleReactionListRelationFilter
     tags?: TagOnArticleListRelationFilter
   }
 
@@ -34775,6 +36079,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemOrderByWithRelationInput
     bookmarks?: BookmarkOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
+    reactions?: ArticleReactionOrderByRelationAggregateInput
     tags?: TagOnArticleOrderByRelationAggregateInput
   }
 
@@ -34809,6 +36114,7 @@ export namespace Prisma {
     sourceRssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
+    reactions?: ArticleReactionListRelationFilter
     tags?: TagOnArticleListRelationFilter
   }, "id" | "slug" | "sourceRssItemId">
 
@@ -35124,6 +36430,76 @@ export namespace Prisma {
     parentId?: StringNullableWithAggregatesFilter<"Comment"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Comment"> | Date | string
+  }
+
+  export type ArticleReactionWhereInput = {
+    AND?: ArticleReactionWhereInput | ArticleReactionWhereInput[]
+    OR?: ArticleReactionWhereInput[]
+    NOT?: ArticleReactionWhereInput | ArticleReactionWhereInput[]
+    id?: StringFilter<"ArticleReaction"> | string
+    articleId?: StringFilter<"ArticleReaction"> | string
+    type?: StringFilter<"ArticleReaction"> | string
+    userId?: StringNullableFilter<"ArticleReaction"> | string | null
+    visitorId?: StringNullableFilter<"ArticleReaction"> | string | null
+    createdAt?: DateTimeFilter<"ArticleReaction"> | Date | string
+    updatedAt?: DateTimeFilter<"ArticleReaction"> | Date | string
+    article?: XOR<ArticleScalarRelationFilter, ArticleWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }
+
+  export type ArticleReactionOrderByWithRelationInput = {
+    id?: SortOrder
+    articleId?: SortOrder
+    type?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    visitorId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    article?: ArticleOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type ArticleReactionWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    articleId_userId?: ArticleReactionArticleIdUserIdCompoundUniqueInput
+    articleId_visitorId?: ArticleReactionArticleIdVisitorIdCompoundUniqueInput
+    AND?: ArticleReactionWhereInput | ArticleReactionWhereInput[]
+    OR?: ArticleReactionWhereInput[]
+    NOT?: ArticleReactionWhereInput | ArticleReactionWhereInput[]
+    articleId?: StringFilter<"ArticleReaction"> | string
+    type?: StringFilter<"ArticleReaction"> | string
+    userId?: StringNullableFilter<"ArticleReaction"> | string | null
+    visitorId?: StringNullableFilter<"ArticleReaction"> | string | null
+    createdAt?: DateTimeFilter<"ArticleReaction"> | Date | string
+    updatedAt?: DateTimeFilter<"ArticleReaction"> | Date | string
+    article?: XOR<ArticleScalarRelationFilter, ArticleWhereInput>
+    user?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
+  }, "id" | "articleId_userId" | "articleId_visitorId">
+
+  export type ArticleReactionOrderByWithAggregationInput = {
+    id?: SortOrder
+    articleId?: SortOrder
+    type?: SortOrder
+    userId?: SortOrderInput | SortOrder
+    visitorId?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ArticleReactionCountOrderByAggregateInput
+    _max?: ArticleReactionMaxOrderByAggregateInput
+    _min?: ArticleReactionMinOrderByAggregateInput
+  }
+
+  export type ArticleReactionScalarWhereWithAggregatesInput = {
+    AND?: ArticleReactionScalarWhereWithAggregatesInput | ArticleReactionScalarWhereWithAggregatesInput[]
+    OR?: ArticleReactionScalarWhereWithAggregatesInput[]
+    NOT?: ArticleReactionScalarWhereWithAggregatesInput | ArticleReactionScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ArticleReaction"> | string
+    articleId?: StringWithAggregatesFilter<"ArticleReaction"> | string
+    type?: StringWithAggregatesFilter<"ArticleReaction"> | string
+    userId?: StringNullableWithAggregatesFilter<"ArticleReaction"> | string | null
+    visitorId?: StringNullableWithAggregatesFilter<"ArticleReaction"> | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ArticleReaction"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ArticleReaction"> | Date | string
   }
 
   export type BookmarkWhereInput = {
@@ -36632,6 +38008,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -36652,6 +38029,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -36672,6 +38050,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -36692,6 +38071,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -37018,6 +38398,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -37045,6 +38426,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -37072,6 +38454,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -37099,6 +38482,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -37430,6 +38814,74 @@ export namespace Prisma {
     userId?: StringFieldUpdateOperationsInput | string
     articleId?: StringFieldUpdateOperationsInput | string
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReactionCreateInput = {
+    id?: string
+    type: string
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    article: ArticleCreateNestedOneWithoutReactionsInput
+    user?: UserCreateNestedOneWithoutReactionsInput
+  }
+
+  export type ArticleReactionUncheckedCreateInput = {
+    id?: string
+    articleId: string
+    type: string
+    userId?: string | null
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReactionUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    article?: ArticleUpdateOneRequiredWithoutReactionsNestedInput
+    user?: UserUpdateOneWithoutReactionsNestedInput
+  }
+
+  export type ArticleReactionUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReactionCreateManyInput = {
+    id?: string
+    articleId: string
+    type: string
+    userId?: string | null
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReactionUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReactionUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -39233,6 +40685,12 @@ export namespace Prisma {
     none?: MediaWhereInput
   }
 
+  export type ArticleReactionListRelationFilter = {
+    every?: ArticleReactionWhereInput
+    some?: ArticleReactionWhereInput
+    none?: ArticleReactionWhereInput
+  }
+
   export type SessionListRelationFilter = {
     every?: SessionWhereInput
     some?: SessionWhereInput
@@ -39261,6 +40719,10 @@ export namespace Prisma {
   }
 
   export type MediaOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ArticleReactionOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -39865,6 +41327,51 @@ export namespace Prisma {
     userId?: SortOrder
     articleId?: SortOrder
     parentId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type UserNullableScalarRelationFilter = {
+    is?: UserWhereInput | null
+    isNot?: UserWhereInput | null
+  }
+
+  export type ArticleReactionArticleIdUserIdCompoundUniqueInput = {
+    articleId: string
+    userId: string
+  }
+
+  export type ArticleReactionArticleIdVisitorIdCompoundUniqueInput = {
+    articleId: string
+    visitorId: string
+  }
+
+  export type ArticleReactionCountOrderByAggregateInput = {
+    id?: SortOrder
+    articleId?: SortOrder
+    type?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ArticleReactionMaxOrderByAggregateInput = {
+    id?: SortOrder
+    articleId?: SortOrder
+    type?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ArticleReactionMinOrderByAggregateInput = {
+    id?: SortOrder
+    articleId?: SortOrder
+    type?: SortOrder
+    userId?: SortOrder
+    visitorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -40842,6 +42349,13 @@ export namespace Prisma {
     connect?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
   }
 
+  export type ArticleReactionCreateNestedManyWithoutUserInput = {
+    create?: XOR<ArticleReactionCreateWithoutUserInput, ArticleReactionUncheckedCreateWithoutUserInput> | ArticleReactionCreateWithoutUserInput[] | ArticleReactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ArticleReactionCreateOrConnectWithoutUserInput | ArticleReactionCreateOrConnectWithoutUserInput[]
+    createMany?: ArticleReactionCreateManyUserInputEnvelope
+    connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+  }
+
   export type SessionCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -40882,6 +42396,13 @@ export namespace Prisma {
     connectOrCreate?: MediaCreateOrConnectWithoutUserInput | MediaCreateOrConnectWithoutUserInput[]
     createMany?: MediaCreateManyUserInputEnvelope
     connect?: MediaWhereUniqueInput | MediaWhereUniqueInput[]
+  }
+
+  export type ArticleReactionUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ArticleReactionCreateWithoutUserInput, ArticleReactionUncheckedCreateWithoutUserInput> | ArticleReactionCreateWithoutUserInput[] | ArticleReactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ArticleReactionCreateOrConnectWithoutUserInput | ArticleReactionCreateOrConnectWithoutUserInput[]
+    createMany?: ArticleReactionCreateManyUserInputEnvelope
+    connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
   }
 
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
@@ -40977,6 +42498,20 @@ export namespace Prisma {
     deleteMany?: MediaScalarWhereInput | MediaScalarWhereInput[]
   }
 
+  export type ArticleReactionUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ArticleReactionCreateWithoutUserInput, ArticleReactionUncheckedCreateWithoutUserInput> | ArticleReactionCreateWithoutUserInput[] | ArticleReactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ArticleReactionCreateOrConnectWithoutUserInput | ArticleReactionCreateOrConnectWithoutUserInput[]
+    upsert?: ArticleReactionUpsertWithWhereUniqueWithoutUserInput | ArticleReactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ArticleReactionCreateManyUserInputEnvelope
+    set?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    disconnect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    delete?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    update?: ArticleReactionUpdateWithWhereUniqueWithoutUserInput | ArticleReactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ArticleReactionUpdateManyWithWhereWithoutUserInput | ArticleReactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
+  }
+
   export type SessionUpdateManyWithoutUserNestedInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -41059,6 +42594,20 @@ export namespace Prisma {
     update?: MediaUpdateWithWhereUniqueWithoutUserInput | MediaUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: MediaUpdateManyWithWhereWithoutUserInput | MediaUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: MediaScalarWhereInput | MediaScalarWhereInput[]
+  }
+
+  export type ArticleReactionUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ArticleReactionCreateWithoutUserInput, ArticleReactionUncheckedCreateWithoutUserInput> | ArticleReactionCreateWithoutUserInput[] | ArticleReactionUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ArticleReactionCreateOrConnectWithoutUserInput | ArticleReactionCreateOrConnectWithoutUserInput[]
+    upsert?: ArticleReactionUpsertWithWhereUniqueWithoutUserInput | ArticleReactionUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ArticleReactionCreateManyUserInputEnvelope
+    set?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    disconnect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    delete?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    update?: ArticleReactionUpdateWithWhereUniqueWithoutUserInput | ArticleReactionUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ArticleReactionUpdateManyWithWhereWithoutUserInput | ArticleReactionUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
   }
 
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
@@ -41145,6 +42694,13 @@ export namespace Prisma {
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
+  export type ArticleReactionCreateNestedManyWithoutArticleInput = {
+    create?: XOR<ArticleReactionCreateWithoutArticleInput, ArticleReactionUncheckedCreateWithoutArticleInput> | ArticleReactionCreateWithoutArticleInput[] | ArticleReactionUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: ArticleReactionCreateOrConnectWithoutArticleInput | ArticleReactionCreateOrConnectWithoutArticleInput[]
+    createMany?: ArticleReactionCreateManyArticleInputEnvelope
+    connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+  }
+
   export type TagOnArticleCreateNestedManyWithoutArticleInput = {
     create?: XOR<TagOnArticleCreateWithoutArticleInput, TagOnArticleUncheckedCreateWithoutArticleInput> | TagOnArticleCreateWithoutArticleInput[] | TagOnArticleUncheckedCreateWithoutArticleInput[]
     connectOrCreate?: TagOnArticleCreateOrConnectWithoutArticleInput | TagOnArticleCreateOrConnectWithoutArticleInput[]
@@ -41164,6 +42720,13 @@ export namespace Prisma {
     connectOrCreate?: CommentCreateOrConnectWithoutArticleInput | CommentCreateOrConnectWithoutArticleInput[]
     createMany?: CommentCreateManyArticleInputEnvelope
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
+  }
+
+  export type ArticleReactionUncheckedCreateNestedManyWithoutArticleInput = {
+    create?: XOR<ArticleReactionCreateWithoutArticleInput, ArticleReactionUncheckedCreateWithoutArticleInput> | ArticleReactionCreateWithoutArticleInput[] | ArticleReactionUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: ArticleReactionCreateOrConnectWithoutArticleInput | ArticleReactionCreateOrConnectWithoutArticleInput[]
+    createMany?: ArticleReactionCreateManyArticleInputEnvelope
+    connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
   }
 
   export type TagOnArticleUncheckedCreateNestedManyWithoutArticleInput = {
@@ -41255,6 +42818,20 @@ export namespace Prisma {
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
+  export type ArticleReactionUpdateManyWithoutArticleNestedInput = {
+    create?: XOR<ArticleReactionCreateWithoutArticleInput, ArticleReactionUncheckedCreateWithoutArticleInput> | ArticleReactionCreateWithoutArticleInput[] | ArticleReactionUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: ArticleReactionCreateOrConnectWithoutArticleInput | ArticleReactionCreateOrConnectWithoutArticleInput[]
+    upsert?: ArticleReactionUpsertWithWhereUniqueWithoutArticleInput | ArticleReactionUpsertWithWhereUniqueWithoutArticleInput[]
+    createMany?: ArticleReactionCreateManyArticleInputEnvelope
+    set?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    disconnect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    delete?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    update?: ArticleReactionUpdateWithWhereUniqueWithoutArticleInput | ArticleReactionUpdateWithWhereUniqueWithoutArticleInput[]
+    updateMany?: ArticleReactionUpdateManyWithWhereWithoutArticleInput | ArticleReactionUpdateManyWithWhereWithoutArticleInput[]
+    deleteMany?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
+  }
+
   export type TagOnArticleUpdateManyWithoutArticleNestedInput = {
     create?: XOR<TagOnArticleCreateWithoutArticleInput, TagOnArticleUncheckedCreateWithoutArticleInput> | TagOnArticleCreateWithoutArticleInput[] | TagOnArticleUncheckedCreateWithoutArticleInput[]
     connectOrCreate?: TagOnArticleCreateOrConnectWithoutArticleInput | TagOnArticleCreateOrConnectWithoutArticleInput[]
@@ -41295,6 +42872,20 @@ export namespace Prisma {
     update?: CommentUpdateWithWhereUniqueWithoutArticleInput | CommentUpdateWithWhereUniqueWithoutArticleInput[]
     updateMany?: CommentUpdateManyWithWhereWithoutArticleInput | CommentUpdateManyWithWhereWithoutArticleInput[]
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput = {
+    create?: XOR<ArticleReactionCreateWithoutArticleInput, ArticleReactionUncheckedCreateWithoutArticleInput> | ArticleReactionCreateWithoutArticleInput[] | ArticleReactionUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: ArticleReactionCreateOrConnectWithoutArticleInput | ArticleReactionCreateOrConnectWithoutArticleInput[]
+    upsert?: ArticleReactionUpsertWithWhereUniqueWithoutArticleInput | ArticleReactionUpsertWithWhereUniqueWithoutArticleInput[]
+    createMany?: ArticleReactionCreateManyArticleInputEnvelope
+    set?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    disconnect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    delete?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+    update?: ArticleReactionUpdateWithWhereUniqueWithoutArticleInput | ArticleReactionUpdateWithWhereUniqueWithoutArticleInput[]
+    updateMany?: ArticleReactionUpdateManyWithWhereWithoutArticleInput | ArticleReactionUpdateManyWithWhereWithoutArticleInput[]
+    deleteMany?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
   }
 
   export type TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput = {
@@ -41549,6 +43140,36 @@ export namespace Prisma {
     update?: CommentUpdateWithWhereUniqueWithoutParentInput | CommentUpdateWithWhereUniqueWithoutParentInput[]
     updateMany?: CommentUpdateManyWithWhereWithoutParentInput | CommentUpdateManyWithWhereWithoutParentInput[]
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
+  }
+
+  export type ArticleCreateNestedOneWithoutReactionsInput = {
+    create?: XOR<ArticleCreateWithoutReactionsInput, ArticleUncheckedCreateWithoutReactionsInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutReactionsInput
+    connect?: ArticleWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutReactionsInput = {
+    create?: XOR<UserCreateWithoutReactionsInput, UserUncheckedCreateWithoutReactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReactionsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ArticleUpdateOneRequiredWithoutReactionsNestedInput = {
+    create?: XOR<ArticleCreateWithoutReactionsInput, ArticleUncheckedCreateWithoutReactionsInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutReactionsInput
+    upsert?: ArticleUpsertWithoutReactionsInput
+    connect?: ArticleWhereUniqueInput
+    update?: XOR<XOR<ArticleUpdateToOneWithWhereWithoutReactionsInput, ArticleUpdateWithoutReactionsInput>, ArticleUncheckedUpdateWithoutReactionsInput>
+  }
+
+  export type UserUpdateOneWithoutReactionsNestedInput = {
+    create?: XOR<UserCreateWithoutReactionsInput, UserUncheckedCreateWithoutReactionsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReactionsInput
+    upsert?: UserUpsertWithoutReactionsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReactionsInput, UserUpdateWithoutReactionsInput>, UserUncheckedUpdateWithoutReactionsInput>
   }
 
   export type ArticleCreateNestedOneWithoutBookmarksInput = {
@@ -42392,6 +44013,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -42418,6 +44040,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -42516,6 +44139,34 @@ export namespace Prisma {
 
   export type MediaCreateManyUserInputEnvelope = {
     data: MediaCreateManyUserInput | MediaCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ArticleReactionCreateWithoutUserInput = {
+    id?: string
+    type: string
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    article: ArticleCreateNestedOneWithoutReactionsInput
+  }
+
+  export type ArticleReactionUncheckedCreateWithoutUserInput = {
+    id?: string
+    articleId: string
+    type: string
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReactionCreateOrConnectWithoutUserInput = {
+    where: ArticleReactionWhereUniqueInput
+    create: XOR<ArticleReactionCreateWithoutUserInput, ArticleReactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type ArticleReactionCreateManyUserInputEnvelope = {
+    data: ArticleReactionCreateManyUserInput | ArticleReactionCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -42716,6 +44367,35 @@ export namespace Prisma {
     userId?: StringFilter<"Media"> | string
   }
 
+  export type ArticleReactionUpsertWithWhereUniqueWithoutUserInput = {
+    where: ArticleReactionWhereUniqueInput
+    update: XOR<ArticleReactionUpdateWithoutUserInput, ArticleReactionUncheckedUpdateWithoutUserInput>
+    create: XOR<ArticleReactionCreateWithoutUserInput, ArticleReactionUncheckedCreateWithoutUserInput>
+  }
+
+  export type ArticleReactionUpdateWithWhereUniqueWithoutUserInput = {
+    where: ArticleReactionWhereUniqueInput
+    data: XOR<ArticleReactionUpdateWithoutUserInput, ArticleReactionUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ArticleReactionUpdateManyWithWhereWithoutUserInput = {
+    where: ArticleReactionScalarWhereInput
+    data: XOR<ArticleReactionUpdateManyMutationInput, ArticleReactionUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ArticleReactionScalarWhereInput = {
+    AND?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
+    OR?: ArticleReactionScalarWhereInput[]
+    NOT?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
+    id?: StringFilter<"ArticleReaction"> | string
+    articleId?: StringFilter<"ArticleReaction"> | string
+    type?: StringFilter<"ArticleReaction"> | string
+    userId?: StringNullableFilter<"ArticleReaction"> | string | null
+    visitorId?: StringNullableFilter<"ArticleReaction"> | string | null
+    createdAt?: DateTimeFilter<"ArticleReaction"> | Date | string
+    updatedAt?: DateTimeFilter<"ArticleReaction"> | Date | string
+  }
+
   export type SessionUpsertWithWhereUniqueWithoutUserInput = {
     where: SessionWhereUniqueInput
     update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
@@ -42763,6 +44443,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -42782,6 +44463,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -42817,6 +44499,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -42836,6 +44519,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -42854,6 +44538,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -42873,6 +44558,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -42908,6 +44594,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -42927,6 +44614,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -42946,6 +44634,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -42965,6 +44654,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -43138,6 +44828,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ArticleReactionCreateWithoutArticleInput = {
+    id?: string
+    type: string
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user?: UserCreateNestedOneWithoutReactionsInput
+  }
+
+  export type ArticleReactionUncheckedCreateWithoutArticleInput = {
+    id?: string
+    type: string
+    userId?: string | null
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReactionCreateOrConnectWithoutArticleInput = {
+    where: ArticleReactionWhereUniqueInput
+    create: XOR<ArticleReactionCreateWithoutArticleInput, ArticleReactionUncheckedCreateWithoutArticleInput>
+  }
+
+  export type ArticleReactionCreateManyArticleInputEnvelope = {
+    data: ArticleReactionCreateManyArticleInput | ArticleReactionCreateManyArticleInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TagOnArticleCreateWithoutArticleInput = {
     tag: TagCreateNestedOneWithoutArticlesInput
   }
@@ -43183,6 +44901,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -43202,6 +44921,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -43368,6 +45088,22 @@ export namespace Prisma {
     data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutArticleInput>
   }
 
+  export type ArticleReactionUpsertWithWhereUniqueWithoutArticleInput = {
+    where: ArticleReactionWhereUniqueInput
+    update: XOR<ArticleReactionUpdateWithoutArticleInput, ArticleReactionUncheckedUpdateWithoutArticleInput>
+    create: XOR<ArticleReactionCreateWithoutArticleInput, ArticleReactionUncheckedCreateWithoutArticleInput>
+  }
+
+  export type ArticleReactionUpdateWithWhereUniqueWithoutArticleInput = {
+    where: ArticleReactionWhereUniqueInput
+    data: XOR<ArticleReactionUpdateWithoutArticleInput, ArticleReactionUncheckedUpdateWithoutArticleInput>
+  }
+
+  export type ArticleReactionUpdateManyWithWhereWithoutArticleInput = {
+    where: ArticleReactionScalarWhereInput
+    data: XOR<ArticleReactionUpdateManyMutationInput, ArticleReactionUncheckedUpdateManyWithoutArticleInput>
+  }
+
   export type TagOnArticleUpsertWithWhereUniqueWithoutArticleInput = {
     where: TagOnArticleWhereUniqueInput
     update: XOR<TagOnArticleUpdateWithoutArticleInput, TagOnArticleUncheckedUpdateWithoutArticleInput>
@@ -43415,6 +45151,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -43441,6 +45178,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -43573,6 +45311,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
   }
 
   export type ArticleUncheckedCreateWithoutTagsInput = {
@@ -43599,6 +45338,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
   }
 
   export type ArticleCreateOrConnectWithoutTagsInput = {
@@ -43662,6 +45402,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
   }
 
   export type ArticleUncheckedUpdateWithoutTagsInput = {
@@ -43688,6 +45429,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
   }
 
   export type TagUpsertWithoutArticlesInput = {
@@ -43740,6 +45482,7 @@ export namespace Prisma {
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -43766,6 +45509,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -43845,6 +45589,7 @@ export namespace Prisma {
     articles?: ArticleCreateNestedManyWithoutAuthorInput
     bookmarks?: BookmarkCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -43864,6 +45609,7 @@ export namespace Prisma {
     articles?: ArticleUncheckedCreateNestedManyWithoutAuthorInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -43906,6 +45652,7 @@ export namespace Prisma {
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -43932,6 +45679,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -44009,6 +45757,7 @@ export namespace Prisma {
     articles?: ArticleUpdateManyWithoutAuthorNestedInput
     bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -44027,6 +45776,227 @@ export namespace Prisma {
     accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
     articles?: ArticleUncheckedUpdateManyWithoutAuthorNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
+    media?: MediaUncheckedUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ArticleCreateWithoutReactionsInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    publishedAt?: Date | string | null
+    lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutArticlesInput
+    category?: CategoryCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
+    comments?: CommentCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleUncheckedCreateWithoutReactionsInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    authorId: string
+    categoryId?: string | null
+    aiPersonaId?: string | null
+    sourceRssItemId?: string | null
+    publishedAt?: Date | string | null
+    lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
+    comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleCreateOrConnectWithoutReactionsInput = {
+    where: ArticleWhereUniqueInput
+    create: XOR<ArticleCreateWithoutReactionsInput, ArticleUncheckedCreateWithoutReactionsInput>
+  }
+
+  export type UserCreateWithoutReactionsInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    role?: string
+    bio?: string | null
+    newsletterSubscribed?: boolean
+    newsletterTime?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    articles?: ArticleCreateNestedManyWithoutAuthorInput
+    bookmarks?: BookmarkCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    media?: MediaCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutReactionsInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    role?: string
+    bio?: string | null
+    newsletterSubscribed?: boolean
+    newsletterTime?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    articles?: ArticleUncheckedCreateNestedManyWithoutAuthorInput
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    media?: MediaUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutReactionsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReactionsInput, UserUncheckedCreateWithoutReactionsInput>
+  }
+
+  export type ArticleUpsertWithoutReactionsInput = {
+    update: XOR<ArticleUpdateWithoutReactionsInput, ArticleUncheckedUpdateWithoutReactionsInput>
+    create: XOR<ArticleCreateWithoutReactionsInput, ArticleUncheckedCreateWithoutReactionsInput>
+    where?: ArticleWhereInput
+  }
+
+  export type ArticleUpdateToOneWithWhereWithoutReactionsInput = {
+    where?: ArticleWhereInput
+    data: XOR<ArticleUpdateWithoutReactionsInput, ArticleUncheckedUpdateWithoutReactionsInput>
+  }
+
+  export type ArticleUpdateWithoutReactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutArticlesNestedInput
+    category?: CategoryUpdateOneWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
+    comments?: CommentUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
+  }
+
+  export type ArticleUncheckedUpdateWithoutReactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
+  }
+
+  export type UserUpsertWithoutReactionsInput = {
+    update: XOR<UserUpdateWithoutReactionsInput, UserUncheckedUpdateWithoutReactionsInput>
+    create: XOR<UserCreateWithoutReactionsInput, UserUncheckedCreateWithoutReactionsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutReactionsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutReactionsInput, UserUncheckedUpdateWithoutReactionsInput>
+  }
+
+  export type UserUpdateWithoutReactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    articles?: ArticleUpdateManyWithoutAuthorNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    media?: MediaUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReactionsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    articles?: ArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -44054,6 +46024,7 @@ export namespace Prisma {
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -44080,6 +46051,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -44104,6 +46076,7 @@ export namespace Prisma {
     articles?: ArticleCreateNestedManyWithoutAuthorInput
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -44123,6 +46096,7 @@ export namespace Prisma {
     articles?: ArticleUncheckedCreateNestedManyWithoutAuthorInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -44165,6 +46139,7 @@ export namespace Prisma {
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -44191,6 +46166,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -44221,6 +46197,7 @@ export namespace Prisma {
     articles?: ArticleUpdateManyWithoutAuthorNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -44240,6 +46217,7 @@ export namespace Prisma {
     articles?: ArticleUncheckedUpdateManyWithoutAuthorNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -44259,6 +46237,7 @@ export namespace Prisma {
     articles?: ArticleCreateNestedManyWithoutAuthorInput
     bookmarks?: BookmarkCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -44278,6 +46257,7 @@ export namespace Prisma {
     articles?: ArticleUncheckedCreateNestedManyWithoutAuthorInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -44313,6 +46293,7 @@ export namespace Prisma {
     articles?: ArticleUpdateManyWithoutAuthorNestedInput
     bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -44332,6 +46313,7 @@ export namespace Prisma {
     articles?: ArticleUncheckedUpdateManyWithoutAuthorNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -44623,6 +46605,7 @@ export namespace Prisma {
     aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -44649,6 +46632,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -44756,6 +46740,7 @@ export namespace Prisma {
     aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -44782,6 +46767,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -45034,6 +47020,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -45060,6 +47047,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -45452,6 +47440,15 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ArticleReactionCreateManyUserInput = {
+    id?: string
+    articleId: string
+    type: string
+    visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type SessionCreateManyUserInput = {
     id?: string
     token: string
@@ -45533,6 +47530,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -45559,6 +47557,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -45671,6 +47670,33 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ArticleReactionUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    article?: ArticleUpdateOneRequiredWithoutReactionsNestedInput
+  }
+
+  export type ArticleReactionUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReactionUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
@@ -45712,6 +47738,15 @@ export namespace Prisma {
     content: string
     userId: string
     parentId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReactionCreateManyArticleInput = {
+    id?: string
+    type: string
+    userId?: string | null
+    visitorId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -45763,6 +47798,33 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     userId?: StringFieldUpdateOperationsInput | string
     parentId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReactionUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneWithoutReactionsNestedInput
+  }
+
+  export type ArticleReactionUncheckedUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReactionUncheckedUpdateManyWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    type?: StringFieldUpdateOperationsInput | string
+    userId?: NullableStringFieldUpdateOperationsInput | string | null
+    visitorId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -45830,6 +47892,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -45856,6 +47919,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -46197,6 +48261,7 @@ export namespace Prisma {
     sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -46223,6 +48288,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
