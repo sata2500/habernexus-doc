@@ -53,7 +53,9 @@ export async function POST(req: NextRequest) {
   let event: Record<string, unknown>;
 
   try {
-    event = wh.verify(payload, svixHeaders) as Record<string, unknown>;
+    // svix v2: verify() yalnızca imzayı doğrular, gövdeyi parse etmez
+    wh.verify(payload, svixHeaders);
+    event = JSON.parse(payload) as Record<string, unknown>;
   } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }

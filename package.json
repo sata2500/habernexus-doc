@@ -13,6 +13,6 @@
     "start": "npm run start --workspace=apps/web"
   },
   "engines": {
-    "node": ">=20.9.0"
+    "node": ">=22"
   }
 }
