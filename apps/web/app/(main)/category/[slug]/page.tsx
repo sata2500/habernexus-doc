@@ -8,7 +8,7 @@ import { Clock, Eye, Newspaper } from "lucide-react";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import Image from "next/image";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
-import { getCardGlowStyles } from "@/lib/utils";
+import { getCardGlowStyles, formatRelativeTime } from "@/lib/utils";
 
 // Async Params Arayüzü
 type Params = Promise<{ slug: string }>;
@@ -31,17 +31,6 @@ export async function generateMetadata({ params }: { params: Params }) {
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
   return n.toString();
-}
-
-function formatRelative(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMinutes = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMinutes / 60);
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffMinutes < 60) return `${Math.max(1, diffMinutes)} dk önce`;
-  if (diffHours < 24) return `${diffHours} saat önce`;
-  return `${diffDays} gün önce`;
 }
 
 export default async function CategoryPage({ params }: { params: Params }) {
@@ -89,7 +78,7 @@ export default async function CategoryPage({ params }: { params: Params }) {
                 className="overflow-hidden h-full flex flex-col shine rounded-2xl card-360-border bg-card/65 hover:bg-card transition-all duration-300 ease-out"
                 style={getCardGlowStyles(category.color)}
               >
-                <div className="h-48 relative overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                <div className="h-48 relative overflow-hidden bg-muted">
                   {article.coverImage ? (
                     <Image
                       src={article.coverImage}
@@ -153,7 +142,7 @@ export default async function CategoryPage({ params }: { params: Params }) {
                       </span>
                       {article.publishedAt && (
                         <span className="flex items-center gap-1 font-medium shrink-0 text-muted-foreground/80">
-                          • {formatRelative(article.publishedAt)}
+                          • {formatRelativeTime(article.publishedAt, { compact: true })}
                         </span>
                       )}
                     </div>

@@ -147,7 +147,7 @@ export function AuthorArticlesClient({ initialArticles }: AuthorArticlesClientPr
                         {article.title}
                       </p>
                       {article.aiPersonaId && (
-                        <span className="shrink-0 text-[9px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-primary-500/10 border border-primary-500/20 text-primary-500 flex items-center gap-0.5">
+                        <span className="shrink-0 text-[10px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-primary-500/10 border border-primary-500/20 text-primary-500 flex items-center gap-0.5">
                           <Sparkles className="h-2 w-2" /> AI
                         </span>
                       )}

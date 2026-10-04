@@ -22,17 +22,18 @@ export function formatDate(date: Date | string): string {
 /**
  * Format relative time (e.g., "5 dakika önce")
  */
-export function formatRelativeTime(date: Date | string): string {
+export function formatRelativeTime(date: Date | string, options: { compact?: boolean } = {}): string {
   const now = new Date();
   const target = new Date(date);
-  const diffMs = now.getTime() - target.getTime();
+  // Gelecek tarihler (saat farkı / önbellek) negatif süre göstermesin
+  const diffMs = Math.max(0, now.getTime() - target.getTime());
   const diffSeconds = Math.floor(diffMs / 1000);
   const diffMinutes = Math.floor(diffSeconds / 60);
   const diffHours = Math.floor(diffMinutes / 60);
   const diffDays = Math.floor(diffHours / 24);
 
   if (diffSeconds < 60) return "Az önce";
-  if (diffMinutes < 60) return `${diffMinutes} dakika önce`;
+  if (diffMinutes < 60) return `${diffMinutes} ${options.compact ? "dk" : "dakika"} önce`;
   if (diffHours < 24) return `${diffHours} saat önce`;
   if (diffDays < 7) return `${diffDays} gün önce`;
   return formatDate(date);

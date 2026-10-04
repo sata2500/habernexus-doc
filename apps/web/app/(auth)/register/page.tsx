@@ -42,17 +42,23 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-[calc(100vh-200px)] py-12 px-4">
-      <div className="w-full max-w-md p-8 rounded-2xl bg-white/70 dark:bg-neutral-900/70 backdrop-blur-xl border border-neutral-200 dark:border-neutral-800 shadow-2xl">
-        <h2 className="text-3xl font-bold text-center text-neutral-900 dark:text-white mb-2">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)] py-8 sm:py-12 px-4">
+      <Link
+        href="/"
+        className="mb-4 w-full max-w-md inline-flex items-center gap-1.5 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+      >
+        <span aria-hidden="true">←</span> Ana sayfaya dön
+      </Link>
+      <div className="w-full max-w-md p-6 sm:p-8 rounded-2xl bg-card/70 backdrop-blur-xl border border-border shadow-2xl">
+        <h2 className="text-3xl font-bold text-center text-foreground mb-2">
           Aramıza Katılın
         </h2>
-        <p className="text-center text-neutral-500 dark:text-neutral-400 mb-8">
+        <p className="text-center text-muted-foreground mb-8">
           Haber detaylarına ulaşmak ve yorum yapmak için kayıt olun.
         </p>
 
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 text-sm border border-primary-200 dark:border-primary-800">
+          <div className="mb-6 p-4 rounded-xl bg-error/10 text-error text-sm border border-error/30 ">
             {error}
           </div>
         )}
@@ -61,7 +67,7 @@ export default function RegisterPage() {
           onClick={handleGoogleLogin}
           disabled={loading}
           type="button"
-          className="w-full mb-6 py-3 px-4 flex justify-center items-center gap-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 text-neutral-700 dark:text-neutral-200 font-medium hover:bg-neutral-50 dark:hover:bg-neutral-700/50 focus:ring-4 focus:ring-neutral-200 dark:focus:ring-neutral-800 transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
+          className="w-full mb-6 py-3 px-4 flex justify-center items-center gap-3 rounded-xl bg-card border border-border text-foreground font-medium hover:bg-muted focus:ring-4 focus:ring-border transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-not-allowed"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24">
             <path
@@ -86,49 +92,49 @@ export default function RegisterPage() {
 
         <div className="relative mb-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-neutral-300 dark:border-neutral-700"></div>
+            <div className="w-full border-t border-border"></div>
           </div>
           <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-white/70 dark:bg-neutral-900/70 text-neutral-500 font-medium">veya e-posta ile</span>
+            <span className="px-2 bg-card/70 text-muted-foreground font-medium">veya e-posta ile</span>
           </div>
         </div>
 
         <form onSubmit={handleRegister} className="space-y-5">
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               Ad Soyad
             </label>
             <input
               type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white"
+              className="w-full px-4 py-3 rounded-xl bg-card border border-border focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
               placeholder="Adınız Soyadınız"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               E-posta Adresi
             </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white"
+              className="w-full px-4 py-3 rounded-xl bg-card border border-border focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
               placeholder="ornek@habernexus.com"
               required
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1.5">
+            <label className="block text-sm font-medium text-foreground mb-1.5">
               Şifre
             </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all dark:text-white"
+              className="w-full px-4 py-3 rounded-xl bg-card border border-border focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
               placeholder="••••••••"
               minLength={6}
               required
@@ -148,10 +154,10 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        <div className="mt-8 pt-6 border-t border-neutral-200 dark:border-neutral-800 text-center">
-          <p className="text-neutral-500 dark:text-neutral-400">
+        <div className="mt-8 pt-6 border-t border-border text-center">
+          <p className="text-muted-foreground">
             Zaten hesabınız var mı?{" "}
-            <Link href="/login" className="font-semibold text-neutral-900 dark:text-white hover:underline decoration-primary-500 decoration-2 underline-offset-2 transition-all">
+            <Link href="/login" className="font-semibold text-foreground hover:underline decoration-primary-500 decoration-2 underline-offset-2 transition-all">
               Giriş yapın
             </Link>
           </p>

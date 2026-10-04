@@ -286,12 +286,12 @@ export function ArticleModerator({ articles }: { articles: Article[] }) {
                         </p>
 
                         {article.aiPersonaId && (
-                          <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-primary-500/10 border border-primary-500/20 text-primary-500 flex items-center gap-0.5" title="Yapay Zeka Makalesi">
+                          <span className="shrink-0 text-[10px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-primary-500/10 border border-primary-500/20 text-primary-500 flex items-center gap-0.5" title="Yapay Zeka Makalesi">
                             <Sparkles className="h-2 w-2" /> AI
                           </span>
                         )}
                         {isAnalyzed && (article.plagiarismRate ?? 0) > 30 && (
-                          <span className="shrink-0 text-[8px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-warning/10 border border-warning/20 text-warning flex items-center gap-0.5 animate-pulse" title="Yüksek İntihal Riski">
+                          <span className="shrink-0 text-[10px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-warning/10 border border-warning/20 text-warning flex items-center gap-0.5 animate-pulse" title="Yüksek İntihal Riski">
                             <AlertTriangle className="h-2.5 w-2.5" /> Risk
                           </span>
                         )}

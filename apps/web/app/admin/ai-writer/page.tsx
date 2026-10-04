@@ -27,11 +27,11 @@ export default async function AdminAiWriterPage() {
   return (
     <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
       {/* ── Header ── */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold font-display flex items-center gap-3">
-            <div className="h-12 w-12 rounded-2xl bg-primary-/20 flex items-center justify-center">
-              < Wand2 className="h-6 w-6 text-primary-" />
+            <div className="h-12 w-12 rounded-2xl bg-primary-500/20 flex items-center justify-center">
+              < Wand2 className="h-6 w-6 text-primary-500" />
             </div>
             AI Yazar Merkezi
           </h1>
@@ -39,7 +39,7 @@ export default async function AdminAiWriterPage() {
             Gemini 3.1 ve 2.5 Flash modellerini kullanarak tam otomatik haber araştırma, yazım ve görsel üretim süreçlerini yönetin.
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <Link
             href="/admin/ai-writer/models"
             className="flex items-center gap-2 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white rounded-2xl font-bold text-sm transition-all active:scale-95 shadow-lg shadow-primary-500/20 cursor-pointer"
@@ -60,7 +60,7 @@ export default async function AdminAiWriterPage() {
       {/* ── İstatistikler / Bilgi ── */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4 hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300">
-          <div className="h-12 w-12 rounded-2xl bg-primary-/10 flex items-center justify-center text-primary-">
+          <div className="h-12 w-12 rounded-2xl bg-primary-500/10 flex items-center justify-center text-primary-500">
             <BrainCircuit className="h-6 w-6" />
           </div>
           <div>
@@ -69,7 +69,7 @@ export default async function AdminAiWriterPage() {
           </div>
         </div>
         <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4 hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300">
-          <div className="h-12 w-12 rounded-2xl bg-primary-/10 flex items-center justify-center text-primary-">
+          <div className="h-12 w-12 rounded-2xl bg-primary-500/10 flex items-center justify-center text-primary-500">
             <Sparkles className="h-6 w-6" />
           </div>
           <div>
@@ -78,7 +78,7 @@ export default async function AdminAiWriterPage() {
           </div>
         </div>
         <div className="glass-strong rounded-3xl p-6 border border-border shadow-soft flex items-center gap-4 hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300">
-          <div className="h-12 w-12 rounded-2xl bg-primary-/10 flex items-center justify-center text-primary-">
+          <div className="h-12 w-12 rounded-2xl bg-warning/10 flex items-center justify-center text-warning">
             <Rocket className="h-6 w-6" />
           </div>
           <div>

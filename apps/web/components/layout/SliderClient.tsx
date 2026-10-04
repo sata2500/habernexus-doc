@@ -149,7 +149,7 @@ export function SliderClient({
       <div className="absolute inset-y-0 left-2 md:left-4 flex items-center z-40">
         <button
           onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-          className="h-9 w-9 md:h-11 md:w-11 rounded-full bg-card/80 dark:bg-black/40 backdrop-blur-xl border border-border/40 dark:border-white/10 text-foreground dark:text-white flex items-center justify-center hover:bg-primary-500 hover:text-white hover:border-primary-400 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
+          className="h-9 w-9 md:h-11 md:w-11 rounded-full bg-card/80 backdrop-blur-xl border border-border/40 text-foreground flex items-center justify-center hover:bg-primary-500 hover:text-white hover:border-primary-400 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
         >
           <ChevronLeft className="h-5 w-5" />
         </button>
@@ -159,7 +159,7 @@ export function SliderClient({
       <div className="absolute inset-y-0 right-2 md:right-4 flex items-center z-40">
         <button
           onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-          className="h-9 w-9 md:h-11 md:w-11 rounded-full bg-card/80 dark:bg-black/40 backdrop-blur-xl border border-border/40 dark:border-white/10 text-foreground dark:text-white flex items-center justify-center hover:bg-primary-500 hover:text-white hover:border-primary-400 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
+          className="h-9 w-9 md:h-11 md:w-11 rounded-full bg-card/80 backdrop-blur-xl border border-border/40 text-foreground flex items-center justify-center hover:bg-primary-500 hover:text-white hover:border-primary-400 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
         >
           <ChevronRight className="h-5 w-5" />
         </button>
@@ -174,7 +174,7 @@ export function SliderClient({
               key={idx}
               onClick={() => setCurrent(initialSlides.length + idx)}
               className={`relative h-1 md:h-1.5 transition-all duration-300 rounded-full overflow-hidden ${
-                isActive ? "bg-primary-500" : "bg-foreground/20 dark:bg-white/20"
+                isActive ? "bg-primary-500" : "bg-foreground/20"
               }`}
               style={{ width: isActive ? "1.5rem" : "0.4rem" }}
             >

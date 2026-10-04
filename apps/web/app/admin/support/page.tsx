@@ -30,7 +30,7 @@ export default async function AdminSupportPage() {
   return (
     <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center gap-3">
-        <div className="bg-primary-/10 text-primary- p-2.5 rounded-xl border border-primary-/20">
+        <div className="bg-primary-500/10 text-primary-500 p-2.5 rounded-xl border border-primary-500/20">
             <Mail className="h-6 w-6" />
         </div>
         <div>
@@ -50,16 +50,16 @@ export default async function AdminSupportPage() {
           <div className="glass-strong p-6 rounded-3xl border border-border/50 flex items-center justify-between hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300 shadow-soft">
               <div>
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Bekleyen Yanıt</p>
-                  <p className="text-2xl font-bold text-primary- mt-1">{tickets.filter(t => t.status === "OPEN").length}</p>
+                  <p className="text-2xl font-bold text-warning mt-1">{tickets.filter(t => t.status === "OPEN").length}</p>
               </div>
-              <AlertCircle className="h-8 w-8 text-primary-/20" />
+              <AlertCircle className="h-8 w-8 text-warning/20" />
           </div>
           <div className="glass-strong p-6 rounded-3xl border border-border/50 flex items-center justify-between hover-lift hover:shadow-glow hover:border-primary-500/20 transition-all duration-300 shadow-soft">
               <div>
                   <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Çözülenler</p>
-                  <p className="text-2xl font-bold text-primary-500 mt-1">{tickets.filter(t => t.status === "CLOSED").length}</p>
+                  <p className="text-2xl font-bold text-success mt-1">{tickets.filter(t => t.status === "CLOSED").length}</p>
               </div>
-              <CheckCircle2 className="h-8 w-8 text-primary-500/20" />
+              <CheckCircle2 className="h-8 w-8 text-success/20" />
           </div>
       </div>
 
@@ -89,7 +89,7 @@ export default async function AdminSupportPage() {
 
               <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto shrink-0 border-t border-border/30 pt-2 sm:border-t-0 sm:pt-0">
                 <div className="flex flex-col items-start sm:items-end">
-                    <span className="text-[9px] text-muted-foreground uppercase tracking-widest font-bold">Son Etkinlik</span>
+                    <span className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Son Etkinlik</span>
                     <span className="text-xs font-semibold mt-0.5">
                         {formatDistanceToNow(new Date(ticket.updatedAt), { addSuffix: true, locale: tr })}
                     </span>

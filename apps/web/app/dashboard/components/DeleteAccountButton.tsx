@@ -31,7 +31,7 @@ export function DeleteAccountButton() {
     <button
       onClick={handleDeleteAccount}
       disabled={isDeleting}
-      className="px-4 py-2 rounded-xl text-primary-600 border border-primary-200 dark:border-primary-900/50 hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors text-sm font-medium cursor-pointer disabled:opacity-50 flex items-center gap-2"
+      className="px-4 py-2 rounded-xl text-error border border-error/30 hover:bg-error/10 transition-colors text-sm font-medium cursor-pointer disabled:opacity-50 flex items-center gap-2"
     >
       {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Hesabımı Kalıcı Olarak Sil"}
     </button>

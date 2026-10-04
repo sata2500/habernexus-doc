@@ -205,7 +205,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
       {/* ── Kapak Resmi Görüntüleyicisi ────────────────────────── */}
       {article.coverImage && (
-        <div className="w-full aspect-video md:aspect-21/9 bg-neutral-100 dark:bg-neutral-800 rounded-2xl overflow-hidden mb-12 relative shadow-lg">
+        <div className="w-full aspect-video md:aspect-21/9 bg-muted rounded-2xl overflow-hidden mb-12 relative shadow-lg">
           <Image
             src={article.coverImage}
             alt={article.title}

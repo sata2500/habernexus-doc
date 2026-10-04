@@ -16,17 +16,54 @@ function useHasMounted() {
 }
 
 const THEMES = [
-  { value: "light", icon: Sun, label: "Açık tema" },
-  { value: "dark", icon: Moon, label: "Koyu tema" },
-  { value: "system", icon: Monitor, label: "Sistem teması" },
+  { value: "light", icon: Sun, label: "Açık tema", shortLabel: "Açık" },
+  { value: "dark", icon: Moon, label: "Koyu tema", shortLabel: "Koyu" },
+  { value: "system", icon: Monitor, label: "Sistem teması", shortLabel: "Sistem" },
 ] as const;
 
-export function ThemeToggle() {
+interface ThemeToggleProps {
+  /** "icon": tek düğme (navbar), "segmented": üç seçenek yan yana (ayarlar sayfası) */
+  variant?: "icon" | "segmented";
+}
+
+export function ThemeToggle({ variant = "icon" }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
   const mounted = useHasMounted();
 
   if (!mounted) {
-    return <div className="h-10 w-10 rounded-xl bg-muted animate-shimmer" />;
+    return variant === "segmented"
+      ? <div className="h-11 w-full max-w-sm rounded-xl bg-muted animate-shimmer" />
+      : <div className="h-10 w-10 rounded-xl bg-muted animate-shimmer" />;
+  }
+
+  if (variant === "segmented") {
+    const active = theme ?? "system";
+    return (
+      <div role="radiogroup" aria-label="Tema seçimi" className="grid grid-cols-3 gap-1 p-1 w-full max-w-sm rounded-xl bg-muted border border-border">
+        {THEMES.map(({ value, icon: Icon, shortLabel, label }) => {
+          const isActive = active === value;
+          return (
+            <button
+              key={value}
+              type="button"
+              role="radio"
+              aria-checked={isActive}
+              aria-label={label}
+              onClick={() => setTheme(value)}
+              className={cn(
+                "h-9 flex items-center justify-center gap-1.5 rounded-lg text-sm font-medium transition-all cursor-pointer focus-ring",
+                isActive
+                  ? "bg-primary-500 text-white shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Icon className="h-4 w-4" />
+              {shortLabel}
+            </button>
+          );
+        })}
+      </div>
+    );
   }
 
   const currentIndex = THEMES.findIndex((t) => t.value === theme);

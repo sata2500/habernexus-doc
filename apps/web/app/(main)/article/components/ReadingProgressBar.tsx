@@ -35,7 +35,7 @@ export function ReadingProgressBar({ estimatedMinutes }: ReadingProgressBarProps
       {/* Üst İlerleme Çubuğu */}
       <div className="fixed top-0 left-0 right-0 h-1.5 z-50 bg-border/20 backdrop-blur-xs pointer-events-none">
         <div
-          className="h-full bg-gradient-to-r from-primary-500 via-primary-400 to-accent transition-all duration-150 ease-out shadow-[0_0_12px_rgba(var(--primary),0.6)]"
+          className="h-full bg-linear-to-r from-primary-500 via-primary-400 to-accent-500 transition-all duration-150 ease-out shadow-[0_0_12px_color-mix(in_srgb,var(--color-primary-500)_60%,transparent)]"
           style={{ width: `${scrollProgress}%` }}
         />
       </div>

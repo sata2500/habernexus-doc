@@ -82,22 +82,22 @@ export function GoogleTrendsClient({ trends }: GoogleTrendsClientProps) {
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary-/10 text-primary- flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-primary-500/10 text-primary-500 flex items-center justify-center">
               <Sparkles className="h-5 w-5" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-semibold">Yüksek Virallik</p>
-              <p className="text-lg font-bold text-primary- font-display">{highViralityCount}</p>
+              <p className="text-lg font-bold text-primary-500 font-display">{highViralityCount}</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary-/10 text-primary- flex items-center justify-center">
+            <div className="h-10 w-10 rounded-xl bg-primary-500/10 text-primary-500 flex items-center justify-center">
               <Layers className="h-5 w-5" />
             </div>
             <div>
               <p className="text-xs text-muted-foreground font-semibold">Content Gap</p>
-              <p className="text-lg font-bold text-primary- font-display">{contentGapCount}</p>
+              <p className="text-lg font-bold text-primary-500 font-display">{contentGapCount}</p>
             </div>
           </div>
         </div>
@@ -118,7 +118,7 @@ export function GoogleTrendsClient({ trends }: GoogleTrendsClientProps) {
           className={cn(
             "p-4 rounded-xl flex items-center gap-3 text-sm font-semibold border transition-all",
             message.type === "success"
-              ? "bg-primary-/10 text-primary- border-primary-/20"
+              ? "bg-primary-500/10 text-primary-500 border-primary-500/20"
               : "bg-primary-500/10 text-primary-500 border-primary-500/20"
           )}
         >
@@ -188,10 +188,10 @@ export function GoogleTrendsClient({ trends }: GoogleTrendsClientProps) {
                               className={cn(
                                 "h-full rounded-full transition-all",
                                 trend.trafficScore >= 80
-                                  ? "bg-primary-"
+                                  ? "bg-success"
                                   : trend.trafficScore >= 60
-                                  ? "bg-primary-"
-                                  : "bg-primary-"
+                                  ? "bg-warning"
+                                  : "bg-error"
                               )}
                               style={{ width: `${trend.trafficScore}%` }}
                             />
@@ -202,12 +202,12 @@ export function GoogleTrendsClient({ trends }: GoogleTrendsClientProps) {
 
                       <td className="px-6 py-4">
                         {matchedItem?.rssItem ? (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary- bg-primary-/10 px-2.5 py-1 rounded-lg border border-primary-/20">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-500 bg-primary-500/10 px-2.5 py-1 rounded-lg border border-primary-500/20">
                             <CheckCircle2 className="h-3.5 w-3.5" />
                             {matchedItem.rssItem.title.slice(0, 30)}...
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary- bg-primary-/10 px-2.5 py-1 rounded-lg border border-primary-/20">
+                          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary-500 bg-primary-500/10 px-2.5 py-1 rounded-lg border border-primary-500/20">
                             <Sparkles className="h-3.5 w-3.5" />
                             Content Gap (Arama Odaklı)
                           </span>

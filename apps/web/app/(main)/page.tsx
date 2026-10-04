@@ -22,26 +22,12 @@ import {
   getRecommendedArticles,
 } from "@/lib/data";
 import Image from "next/image";
-import { cn, getCardGlowStyles } from "@/lib/utils";
+import { cn, getCardGlowStyles, formatRelativeTime } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
 import { HomepageSlider } from "@/components/layout/HomepageSlider";
-
-/* ============================================
-   Helper
-   ============================================ */
-function formatRelative(date: Date): string {
-  const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
-  const diffMinutes = Math.floor(diffMs / 60000);
-  const diffHours = Math.floor(diffMinutes / 60);
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffMinutes < 60) return `${Math.max(1, diffMinutes)} dk önce`;
-  if (diffHours < 24) return `${diffHours} saat önce`;
-  return `${diffDays} gün önce`;
-}
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
@@ -187,7 +173,7 @@ export default async function HomePage() {
                             )}
                             {article.publishedAt && (
                               <span className="text-[10px] text-muted-foreground/80">
-                                {formatRelative(article.publishedAt)}
+                                {formatRelativeTime(article.publishedAt, { compact: true })}
                               </span>
                             )}
                           </div>
@@ -357,7 +343,7 @@ export default async function HomePage() {
                         </span>
                         {article.publishedAt && (
                           <span className="flex items-center gap-1 shrink-0 text-muted-foreground/80">
-                            • {formatRelative(article.publishedAt)}
+                            • {formatRelativeTime(article.publishedAt, { compact: true })}
                           </span>
                         )}
                       </div>

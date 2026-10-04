@@ -16,7 +16,7 @@ function getRoleBadge(role: string | null | undefined) {
       label: "Admin",
       variant: "error" as const,
       icon: ShieldCheck,
-      badgeClass: "bg-primary-500 text-white dark:bg-primary-500/15 dark:text-primary-400 border border-primary-500/20"
+      badgeClass: "bg-error text-white border border-error/20"
     };
   }
   if (role === "AUTHOR") {
@@ -199,7 +199,7 @@ export default function ProfilePage() {
           {/* Aksiyon Butonu */}
           <div className="flex items-center justify-end gap-4 pt-4">
             {successMsg && (
-              <span className="text-sm text-primary-500 font-medium flex items-center gap-1.5 animate-in fade-in zoom-in duration-200">
+              <span className="text-sm text-success font-medium flex items-center gap-1.5 animate-in fade-in zoom-in duration-200">
                 <CheckCircle2 className="h-4 w-4" /> {successMsg}
               </span>
             )}

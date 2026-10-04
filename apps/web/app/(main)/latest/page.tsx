@@ -6,7 +6,7 @@ import { Avatar } from "@/components/ui/Avatar";
 import { Clock, Newspaper, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
-import { getCardGlowStyles } from "@/lib/utils";
+import { getCardGlowStyles, formatRelativeTime } from "@/lib/utils";
 
 export const metadata = {
   title: "Son Haberler",
@@ -15,14 +15,6 @@ export const metadata = {
     canonical: "/latest",
   },
 };
-
-function formatRelative(date: Date): string {
-  const diffMs = new Date().getTime() - date.getTime();
-  const diffHours = Math.floor(diffMs / 3600000);
-  const diffDays = Math.floor(diffHours / 24);
-  if (diffHours < 24) return `${diffHours || 1} saat önce`;
-  return `${diffDays} gün önce`;
-}
 
 export default async function LatestArticlesPage() {
   const latestArticles = await getLatestArticles(24);
@@ -94,7 +86,7 @@ export default async function LatestArticlesPage() {
                 <div className="flex-1 flex flex-col">
                   <div className="flex items-center gap-2 text-xs text-[var(--art-color)] mb-3 font-semibold">
                     <Clock className="h-4 w-4" />
-                    {article.publishedAt ? formatRelative(article.publishedAt) : "Yeni"}
+                    {article.publishedAt ? formatRelativeTime(article.publishedAt, { compact: true }) : "Yeni"}
                   </div>
 
                   <h3 className="text-xl font-bold font-display leading-snug mb-3 group-hover:text-[var(--art-color)] transition-colors duration-300 line-clamp-2">

@@ -61,7 +61,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
           {articles.map((article) => (
             <Link key={article.id} href={`/article/${article.slug}`} className="group">
               <Card variant="interactive" noPadding className="overflow-hidden h-full flex flex-col">
-                <div className="h-48 relative overflow-hidden bg-neutral-100 dark:bg-neutral-800">
+                <div className="h-48 relative overflow-hidden bg-muted">
                   {article.coverImage ? (
                     <Image
                       src={article.coverImage}
@@ -87,7 +87,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
                     <div className="absolute top-3 left-3">
                       <Badge
                         variant="default"
-                        className="backdrop-blur-md bg-white/80 dark:bg-black/50 text-xs"
+                        className="backdrop-blur-md bg-card/80 text-xs"
                         style={{ color: article.category.color || "#fff" }}
                       >
                         {article.category.name}

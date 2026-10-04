@@ -62,7 +62,7 @@ export default async function BookmarksPage() {
                       <div className="absolute bottom-3 left-3">
                         <Badge
                           variant="default"
-                          className="backdrop-blur-md bg-white/80 dark:bg-black/50 text-[10px] px-1.5 py-0.5"
+                          className="backdrop-blur-md bg-card/80 text-[10px] px-1.5 py-0.5"
                           style={{ color: article.category.color || "#fff" }}
                         >
                           {article.category.name}

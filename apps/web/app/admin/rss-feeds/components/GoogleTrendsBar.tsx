@@ -75,7 +75,7 @@ export function GoogleTrendsBar({ trends }: GoogleTrendsBarProps) {
       </div>
 
       {message && (
-        <div className="p-3 rounded-xl bg-primary-/10 text-primary- border border-primary-/20 text-xs font-semibold flex items-center gap-2">
+        <div className="p-3 rounded-xl bg-primary-500/10 text-primary-500 border border-primary-500/20 text-xs font-semibold flex items-center gap-2">
           <CheckCircle2 className="h-4 w-4 shrink-0" />
           <span>{message}</span>
         </div>
@@ -107,11 +107,11 @@ export function GoogleTrendsBar({ trends }: GoogleTrendsBarProps) {
 
                   <p className="text-[11px] text-muted-foreground mt-1 flex items-center gap-1.5">
                     {hasMatchedRss ? (
-                      <span className="text-primary- font-semibold flex items-center gap-1">
+                      <span className="text-primary-500 font-semibold flex items-center gap-1">
                         <CheckCircle2 className="h-3 w-3" /> RSS ile Eşleşti
                       </span>
                     ) : (
-                      <span className="text-primary- font-semibold flex items-center gap-1">
+                      <span className="text-primary-500 font-semibold flex items-center gap-1">
                         <Sparkles className="h-3 w-3" /> Trend Fırsatı (Arama Odaklı)
                       </span>
                     )}

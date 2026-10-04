@@ -12,8 +12,8 @@ export default async function AdminSettingsPage() {
       {/* Header */}
       <div className="flex flex-col gap-2">
         <h1 className="text-3xl font-bold font-display flex items-center gap-3">
-          <div className="h-12 w-12 rounded-2xl bg-primary-/20 flex items-center justify-center">
-            <Settings2 className="h-6 w-6 text-primary-" />
+          <div className="h-12 w-12 rounded-2xl bg-primary-500/20 flex items-center justify-center">
+            <Settings2 className="h-6 w-6 text-primary-500" />
           </div>
           Site Ayarları
         </h1>
@@ -24,9 +24,9 @@ export default async function AdminSettingsPage() {
       </div>
 
       {/* Info Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-start gap-4">
-          <div className="h-10 w-10 rounded-xl bg-primary-/10 flex items-center justify-center text-primary- shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500 shrink-0">
             <Globe className="h-5 w-5" />
           </div>
           <div>
@@ -35,7 +35,7 @@ export default async function AdminSettingsPage() {
           </div>
         </div>
         <div className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-start gap-4">
-          <div className="h-10 w-10 rounded-xl bg-primary-/10 flex items-center justify-center text-primary- shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500 shrink-0">
             <Palette className="h-5 w-5" />
           </div>
           <div>
@@ -44,7 +44,7 @@ export default async function AdminSettingsPage() {
           </div>
         </div>
         <div className="glass-strong rounded-2xl p-5 border border-border shadow-soft flex items-start gap-4">
-          <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-success/10 flex items-center justify-center text-success shrink-0">
             <Settings2 className="h-5 w-5" />
           </div>
           <div>
@@ -55,7 +55,7 @@ export default async function AdminSettingsPage() {
       </div>
 
       {/* Form Card */}
-      <div className="bg-white dark:bg-neutral-950 rounded-3xl border border-border shadow-soft p-6 md:p-8">
+      <div className="bg-card rounded-3xl border border-border shadow-soft p-6 md:p-8">
         <SiteSettingsForm initialSettings={settings} />
       </div>
     </div>

@@ -67,7 +67,7 @@ export default async function AdminRssFeedsPage({
               <stat.icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             </div>
             <p className="text-xl sm:text-2xl font-black font-display text-foreground tracking-tight leading-none mt-0.5 sm:mt-1">{stat.value}</p>
-            <p className="text-[9px] sm:text-[10px] text-muted-foreground font-bold leading-tight uppercase tracking-wider break-words line-clamp-2 max-w-full">{stat.label}</p>
+            <p className="text-[10px] sm:text-[10px] text-muted-foreground font-bold leading-tight uppercase tracking-wider break-words line-clamp-2 max-w-full">{stat.label}</p>
           </div>
         ))}
       </div>

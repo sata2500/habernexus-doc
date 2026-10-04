@@ -188,14 +188,14 @@ export function AudioPlayer({ content, title }: Props) {
         </div>
 
         {/* Sağ Taraf: Hız Kontrolleri */}
-        <div className="flex items-center gap-1.5 self-end sm:self-auto">
+        <div className="flex flex-wrap items-center gap-1.5 self-end sm:self-auto">
           <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-wider mr-1">Hız:</span>
           {[0.75, 1, 1.25, 1.5, 2].map((r) => (
             <button
               key={r}
               onClick={() => handleRateChange(r)}
               className={cn(
-                "px-2 py-1 text-xs font-bold rounded-lg border border-border/40 transition-all cursor-pointer",
+                "min-h-8 min-w-9 px-2 py-1 text-xs font-bold rounded-lg border border-border/40 transition-all cursor-pointer",
                 rate === r
                   ? "bg-primary-600 border-primary-500 text-white shadow-sm"
                   : "bg-card/50 hover:bg-muted text-muted-foreground"

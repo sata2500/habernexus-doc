@@ -245,10 +245,10 @@ export function Navbar({ categories = [], settings }: { categories?: Category[],
       <div
         className={cn(
           "fixed top-16 right-0 bottom-0 w-80 max-w-[85vw] z-(--z-sticky)",
-          "bg-background border-l border-border shadow-2xl",
+          "bg-background border-l border-border",
           "lg:hidden",
-          "transition-transform duration-300 ease-out",
-          isMobileMenuOpen ? "translate-x-0" : "translate-x-full"
+          "transition-[transform,visibility] duration-300 ease-out",
+          isMobileMenuOpen ? "translate-x-0 shadow-2xl" : "translate-x-full invisible"
         )}
         id="navbar-mobile-menu"
       >

@@ -216,7 +216,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                   <h3 className="font-bold truncate text-xs sm:text-sm">{slide.title || "Başlıksız Slide"}</h3>
                   <p className="text-[10px] sm:text-xs text-muted-foreground line-clamp-2 break-words whitespace-normal">{slide.description || "Açıklama yok"}</p>
                   {slide.link && (
-                    <div className="flex items-center gap-1 mt-1 text-[9px] sm:text-[10px] text-primary-500 font-bold min-w-0 w-full">
+                    <div className="flex items-center gap-1 mt-1 text-[10px] sm:text-[10px] text-primary-500 font-bold min-w-0 w-full">
                       <ExternalLink className="h-2.5 w-2.5 sm:h-3 sm:w-3 shrink-0" />
                       <span className="truncate flex-1">{slide.link}</span>
                     </div>
@@ -236,7 +236,7 @@ export function SliderClient({ initialSlider }: { initialSlider: SliderWithSlide
                     variant="ghost"
                     size="icon"
                     onClick={() => handleDeleteSlide(slide.id)}
-                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-primary-500/10 hover:text-primary-500 cursor-pointer"
+                    className="h-8 w-8 sm:h-9 sm:w-9 rounded-full hover:bg-error/10 hover:text-error cursor-pointer"
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>

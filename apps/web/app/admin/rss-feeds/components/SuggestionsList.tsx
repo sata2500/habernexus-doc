@@ -94,7 +94,7 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
             className={cn(
               "relative glass-strong rounded-3xl border flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg",
               item.status === "APPROVED" ? "border-primary-500/30 bg-primary-500/5" :
-              item.status === "DISMISSED" ? "border-primary-500/20 bg-primary-500/5" :
+              item.status === "DISMISSED" ? "border-error/20 bg-error/5" :
               "border-border/60 hover:border-primary-500/30 hover:shadow-glow",
               loadingId === item.id && "opacity-50 pointer-events-none"
             )}
@@ -113,7 +113,7 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
               )}
 
               {analysis?.isFallback && (
-                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-500/10 text-primary-500 border border-primary-500/20" title="AI Analizi başarısız oldu, manuel bilgiler kullanılıyor.">
+                <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-error/10 text-error border border-error/20" title="AI Analizi başarısız oldu, manuel bilgiler kullanılıyor.">
                   <AlertTriangle className="h-3 w-3" />
                   <span className="text-[10px] font-bold">Fallback</span>
                 </div>
@@ -249,7 +249,7 @@ export function SuggestionsList({ suggestions: initialItems }: Props) {
                     onClick={() => handleDismiss(item.id)}
                     disabled={loadingId !== null}
                     title="İlginç Değil"
-                    className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted hover:bg-primary-500/10 dark:hover:bg-primary-500/15 text-muted-foreground hover:text-primary-500 dark:hover:text-primary-400 active:scale-95 transition-all cursor-pointer disabled:opacity-50 outline-none focus-ring"
+                    className="h-9 w-9 flex items-center justify-center rounded-xl bg-muted hover:bg-error/10 text-muted-foreground hover:text-error active:scale-95 transition-all cursor-pointer disabled:opacity-50 outline-none focus-ring"
                   >
                     <X className="h-4 w-4" />
                   </button>

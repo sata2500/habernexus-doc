@@ -75,7 +75,7 @@ function StylishSelect({
 
   return (
     <div className="relative space-y-2" ref={containerRef}>
-      <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest flex items-center gap-2">
+      <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
         <Icon className="h-3.5 w-3.5" />
         {label}
       </label>
@@ -86,23 +86,23 @@ function StylishSelect({
         className="w-full flex items-center justify-between px-4 py-3.5 bg-[var(--card)] text-[var(--card-fg)] border border-border rounded-2xl text-sm font-medium shadow-sm hover:border-[var(--color-primary-500)]/50 transition-all outline-none text-left"
       >
         <div className="flex items-center gap-3 overflow-hidden">
-          <div className="h-2 w-2 rounded-full bg-primary-500 shrink-0 shadow-[0_0_8px_rgba(var(--primary-rgb),0.5)]" />
+          <div className="h-2 w-2 rounded-full bg-primary-500 shrink-0 shadow-[0_0_8px_color-mix(in_srgb,var(--color-primary-500)_50%,transparent)]" />
           <span className="truncate">
             {selectedOption ? selectedOption.name : "Model Seçin..."}
           </span>
           <div className="flex items-center gap-1 shrink-0">
             {selectedOption?.isFree && (
-              <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-600 text-[9px] rounded-md font-bold border border-primary-500/10">FREE</span>
+              <span className="px-1.5 py-0.5 bg-success/10 text-success text-[10px] rounded-md font-bold border border-success/10">FREE</span>
             )}
             {selectedOption?.supportsSearch && (
-              <span className="px-1.5 py-0.5 bg-primary-/10 text-primary- text-[9px] rounded-md font-bold border border-primary-/10">SEARCH</span>
+              <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[10px] rounded-md font-bold border border-primary-500/10">SEARCH</span>
             )}
             {selectedOption?.supportsVision && (
-              <span className="px-1.5 py-0.5 bg-primary-/10 text-primary- text-[9px] rounded-md font-bold border border-primary-/10">VISION</span>
+              <span className="px-1.5 py-0.5 bg-primary-500/10 text-primary-500 text-[10px] rounded-md font-bold border border-primary-500/10">VISION</span>
             )}
           </div>
         </div>
-        <ChevronDown className={`h-4 w-4 text-neutral-400 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+        <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
       </button>
 
       <AnimatePresence>
@@ -133,17 +133,17 @@ function StylishSelect({
                       {value === opt.id && <Check className="h-4 w-4 text-primary-500" />}
                     </div>
                     <div className="flex flex-wrap items-center gap-1.5 mt-1.5">
-                      <span className="text-[9px] text-neutral-400 font-mono truncate max-w-[150px]">{opt.id}</span>
-                      {opt.isFree && <span className="px-1 py-0 bg-primary-500/10 text-primary-600 text-[8px] rounded font-bold border border-primary-500/10">FREE</span>}
-                      {opt.supportsSearch && <span className="px-1 py-0 bg-primary-/10 text-primary- text-[8px] rounded font-bold border border-primary-/10">SEARCH</span>}
-                      {opt.supportsVision && <span className="px-1 py-0 bg-primary-/10 text-primary- text-[8px] rounded font-bold border border-primary-/10">VISION</span>}
-                      {opt.supportsT2I && <span className="px-1 py-0 bg-primary-/10 text-primary- text-[8px] rounded font-bold border border-primary-/10">T2I</span>}
-                      {opt.supportsI2I && <span className="px-1 py-0 bg-primary-/10 text-primary- text-[8px] rounded font-bold border border-primary-/10">I2I</span>}
+                      <span className="text-[10px] text-muted-foreground font-mono truncate max-w-[150px]">{opt.id}</span>
+                      {opt.isFree && <span className="px-1 py-0 bg-success/10 text-success text-[10px] rounded font-bold border border-success/10">FREE</span>}
+                      {opt.supportsSearch && <span className="px-1 py-0 bg-primary-500/10 text-primary-500 text-[10px] rounded font-bold border border-primary-500/10">SEARCH</span>}
+                      {opt.supportsVision && <span className="px-1 py-0 bg-primary-500/10 text-primary-500 text-[10px] rounded font-bold border border-primary-500/10">VISION</span>}
+                      {opt.supportsT2I && <span className="px-1 py-0 bg-warning/10 text-warning text-[10px] rounded font-bold border border-warning/10">T2I</span>}
+                      {opt.supportsI2I && <span className="px-1 py-0 bg-primary-500/10 text-primary-500 text-[10px] rounded font-bold border border-primary-500/10">I2I</span>}
                     </div>
                   </button>
                 ))
               ) : (
-                <div className="p-8 text-center text-neutral-500">
+                <div className="p-8 text-center text-muted-foreground">
                   <Cpu className="h-8 w-8 mx-auto mb-2 opacity-20" />
                   <p className="text-xs">Aktif model bulunamadı.</p>
                 </div>
@@ -223,21 +223,21 @@ export function AiWriterSettingsCard({
             <Wand2 className="h-6 w-6 text-primary-500" />
           </div>
           <div>
-            <h3 className="font-bold text-lg font-display text-neutral-900 dark:text-white">AI Yazar Ayarları</h3>
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">Yapay zeka modellerini ve yazım parametrelerini yapılandırın.</p>
+            <h3 className="font-bold text-lg font-display text-foreground">AI Yazar Ayarları</h3>
+            <p className="text-xs text-muted-foreground">Yapay zeka modellerini ve yazım parametrelerini yapılandırın.</p>
           </div>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-4">
-          <div className="flex bg-neutral-100 dark:bg-neutral-800 p-1 rounded-2xl">
+          <div className="flex bg-muted p-1 rounded-2xl">
             <button 
               onClick={() => setAiProvider("OPENROUTER")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${aiProvider === "OPENROUTER" ? "bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-white" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${aiProvider === "OPENROUTER" ? "bg-card shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"}`}
             >
               OpenRouter
             </button>
             <button 
               onClick={() => setAiProvider("GOOGLE")}
-              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${aiProvider === "GOOGLE" ? "bg-[var(--color-primary-500)] text-white shadow-sm shadow-primary-500/30" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"}`}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${aiProvider === "GOOGLE" ? "bg-[var(--color-primary-500)] text-white shadow-sm shadow-primary-500/30" : "text-muted-foreground hover:text-foreground"}`}
             >
               Google Gemini
             </button>
@@ -282,7 +282,7 @@ export function AiWriterSettingsCard({
         {/* ── Prompt Ayarları ── */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div className="space-y-3">
-            <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest flex items-center gap-2">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
               <MessageSquare className="h-3.5 w-3.5" />
               Yazar Talimatı (Prompt)
             </label>
@@ -293,12 +293,12 @@ export function AiWriterSettingsCard({
                 className="w-full h-48 bg-[var(--card)] border border-border rounded-[1.5rem] px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/30 transition-all resize-none text-[var(--card-fg)] group-hover:border-[var(--color-primary-500)]/20"
               />
               <div className="absolute bottom-4 right-4 h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                <Info className="h-4 w-4 text-neutral-400" />
+                <Info className="h-4 w-4 text-muted-foreground" />
               </div>
             </div>
           </div>
           <div className="space-y-3">
-            <label className="text-xs font-bold text-neutral-500 dark:text-neutral-400 uppercase tracking-widest flex items-center gap-2">
+            <label className="text-xs font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-2">
               <ImageIcon className="h-3.5 w-3.5" />
               Görsel Talimatı (Prompt)
             </label>
@@ -309,7 +309,7 @@ export function AiWriterSettingsCard({
                 className="w-full h-48 bg-[var(--card)] border border-border rounded-[1.5rem] px-5 py-4 text-sm outline-none focus:ring-2 focus:ring-[var(--color-primary-500)]/30 transition-all resize-none text-[var(--card-fg)] group-hover:border-[var(--color-primary-500)]/20"
               />
               <div className="absolute bottom-4 right-4 h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
-                <Info className="h-4 w-4 text-neutral-400" />
+                <Info className="h-4 w-4 text-muted-foreground" />
               </div>
             </div>
           </div>
@@ -319,17 +319,17 @@ export function AiWriterSettingsCard({
         <div className="flex flex-col sm:flex-row items-center gap-4">
           <div className="flex-1 w-full flex items-center justify-between p-5 bg-[var(--card)] text-[var(--card-fg)] rounded-[1.5rem] border border-border transition-all hover:bg-black/5 dark:hover:bg-white/5">
             <div className="flex items-center gap-4">
-              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${useRssImage ? "bg-primary-500/10 text-primary-500" : "bg-primary-500/10 text-primary-500"}`}>
+              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${useRssImage ? "bg-success/10 text-success" : "bg-error/10 text-error"}`}>
                 <ImageIcon className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm font-bold dark:text-neutral-200 text-neutral-900">RSS Görselini Referans Al</p>
-                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">Orijinal görselden ilham alarak yeni içerik üretir.</p>
+                <p className="text-sm font-bold text-foreground">RSS Görselini Referans Al</p>
+                <p className="text-[10px] text-muted-foreground font-medium">Orijinal görselden ilham alarak yeni içerik üretir.</p>
               </div>
             </div>
             <button
               onClick={() => setUseRssImage(!useRssImage)}
-              className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${useRssImage ? "bg-primary-500" : "bg-neutral-300 dark:bg-neutral-800"}`}
+              className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${useRssImage ? "bg-primary-500" : "bg-muted"}`}
             >
               <div className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-all shadow-md ${useRssImage ? "translate-x-7" : ""}`} />
             </button>
@@ -337,17 +337,17 @@ export function AiWriterSettingsCard({
 
           <div className="flex-1 w-full flex items-center justify-between p-5 bg-[var(--card)] text-[var(--card-fg)] rounded-[1.5rem] border border-border transition-all hover:bg-black/5 dark:hover:bg-white/5">
              <div className="flex items-center gap-4">
-              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${searchEnabled ? "bg-primary-/10 text-primary-" : "bg-neutral-500/10 text-neutral-500"}`}>
+              <div className={`h-12 w-12 rounded-2xl flex items-center justify-center transition-all shadow-inner ${searchEnabled ? "bg-warning/10 text-warning" : "bg-neutral-500/10 text-muted-foreground"}`}>
                 <Sparkles className="h-6 w-6" />
               </div>
               <div>
-                <p className="text-sm font-bold dark:text-neutral-200 text-neutral-900">Google Arama Desteği</p>
-                <p className="text-[10px] text-neutral-500 dark:text-neutral-400 font-medium">Haberleri internetten araştırır ve doğrular.</p>
+                <p className="text-sm font-bold text-foreground">Google Arama Desteği</p>
+                <p className="text-[10px] text-muted-foreground font-medium">Haberleri internetten araştırır ve doğrular.</p>
               </div>
             </div>
             <button
               onClick={() => setSearchEnabled(!searchEnabled)}
-              className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${searchEnabled ? "bg-primary-500" : "bg-neutral-300 dark:bg-neutral-800"}`}
+              className={`w-14 h-7 rounded-full transition-all relative shadow-inner ${searchEnabled ? "bg-primary-500" : "bg-muted"}`}
             >
               <div className={`absolute top-1 left-1 w-5 h-5 bg-white rounded-full transition-all shadow-md ${searchEnabled ? "translate-x-7" : ""}`} />
             </button>

@@ -111,7 +111,7 @@ export function AuthorSidebar({ session }: SessionProps) {
           Profil Ayarlarına Dön
         </Link>
         <div className="pt-2 border-t border-border/40">
-          <SignOutButton className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-primary-500 hover:text-primary-600 hover:bg-primary-500/5 transition-all cursor-pointer" />
+          <SignOutButton className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-error hover:text-error hover:bg-error/5 transition-all cursor-pointer" />
         </div>
       </div>
     );
@@ -141,7 +141,7 @@ export function AuthorSidebar({ session }: SessionProps) {
         </div>
 
         {/* Hızlı Çıkış */}
-        <SignOutButton className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-primary-500 hover:text-primary-600 hover:bg-primary-500/5 transition-colors cursor-pointer" />
+        <SignOutButton className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-error hover:text-error hover:bg-error/5 transition-colors cursor-pointer" />
       </div>
 
       {/* ── Mobil Çekmece Menüsü (Mobile Drawer Menu) ────────────────────────── */}
@@ -154,8 +154,9 @@ export function AuthorSidebar({ session }: SessionProps) {
       />
       <div
         className={cn(
-          "fixed inset-y-0 left-0 w-72 max-w-xs bg-card border-r border-border p-5 z-50 flex flex-col justify-between shadow-2xl transition-transform duration-300 ease-in-out md:hidden",
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed inset-y-0 left-0 w-72 max-w-xs bg-card border-r border-border p-5 z-50 flex flex-col justify-between transition-[transform,visibility] duration-300 ease-in-out md:hidden",
+          // Kapalıyken gölge ekranın sol kenarına taşmasın, odak da gizli menüye gitmesin
+          isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full invisible"
         )}
       >
         <div className="flex flex-col gap-6 overflow-y-auto pr-1">

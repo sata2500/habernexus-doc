@@ -169,9 +169,9 @@ export function ModelManagerClient({ initialModels }: Props) {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div className={`h-10 w-10 rounded-xl flex items-center justify-center ${
-                    m.type === "IMAGE" ? "bg-primary-/10 text-primary-" :
-                    m.type === "MULTIMODAL" ? "bg-primary-/10 text-primary-" :
-                    "bg-primary-/10 text-primary-"
+                    m.type === "IMAGE" ? "bg-primary-500/10 text-primary-500" :
+                    m.type === "MULTIMODAL" ? "bg-primary-500/10 text-primary-500" :
+                    "bg-warning/10 text-warning"
                   }`}>
                     {m.type === "IMAGE" ? <ImageIcon className="h-5 w-5" /> :
                      m.type === "MULTIMODAL" ? <Sparkles className="h-5 w-5" /> :
@@ -197,19 +197,19 @@ export function ModelManagerClient({ initialModels }: Props) {
 
               <div className="flex flex-wrap items-center gap-2">
                 {m.isFree && (
-                  <span className="px-2 py-0.5 bg-primary-500/10 text-primary-600 rounded-md text-[9px] font-bold border border-primary-500/20">Ücretsiz</span>
+                  <span className="px-2 py-0.5 bg-success/10 text-success rounded-md text-[10px] font-bold border border-success/20">Ücretsiz</span>
                 )}
                 {m.supportsSearch && (
-                  <span className="px-2 py-0.5 bg-primary-/10 text-primary- rounded-md text-[9px] font-bold border border-primary-/20 flex items-center gap-1">
+                  <span className="px-2 py-0.5 bg-warning/10 text-warning rounded-md text-[10px] font-bold border border-warning/20 flex items-center gap-1">
                     <Search className="h-2.5 w-2.5" />
                     Google Search
                   </span>
                 )}
                 {m.supportsI2I && (
-                  <span className="px-2 py-0.5 bg-primary-/10 text-primary- rounded-md text-[9px] font-bold border border-primary-/20">i2i</span>
+                  <span className="px-2 py-0.5 bg-primary-500/10 text-primary-500 rounded-md text-[10px] font-bold border border-primary-500/20">i2i</span>
                 )}
                 {m.supportsVision && (
-                  <span className="px-2 py-0.5 bg-primary-/10 text-primary- rounded-md text-[9px] font-bold border border-primary-/20">Vision</span>
+                  <span className="px-2 py-0.5 bg-primary-500/10 text-primary-500 rounded-md text-[10px] font-bold border border-primary-500/20">Vision</span>
                 )}
               </div>
 
@@ -229,7 +229,7 @@ export function ModelManagerClient({ initialModels }: Props) {
                 <span className="text-[10px] text-muted-foreground">Durum: <strong className={m.isActive ? "text-primary-500" : ""}>{m.isActive ? "Aktif" : "Pasif"}</strong></span>
                 <button
                   onClick={() => handleDelete(m.id)}
-                  className="p-1.5 hover:bg-primary-500/10 text-primary-500 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-error/10 text-error rounded-lg transition-colors"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

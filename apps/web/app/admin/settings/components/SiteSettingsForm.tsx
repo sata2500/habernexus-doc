@@ -761,10 +761,10 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
         </div>
 
         {/* Hızlı Tema Şablonları & Akıllı Renk Jeneratörü */}
-        <div className="glass-strong rounded-3xl border border-border p-6 space-y-6 bg-slate-50/50 dark:bg-neutral-900/50 backdrop-blur-sm">
+        <div className="glass-strong rounded-3xl border border-border p-6 space-y-6 bg-muted/50 backdrop-blur-sm">
           <div>
             <h4 className="font-bold text-sm flex items-center gap-2 text-foreground mb-1">
-              <Sparkles className="h-4 w-4 text-primary- animate-pulse" />
+              <Sparkles className="h-4 w-4 text-warning animate-pulse" />
               Hızlı Tema Şablonları (Presets)
             </h4>
             <p className="text-xs text-muted-foreground">
@@ -789,13 +789,13 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
                   <span className="text-xs font-bold text-foreground leading-none">{preset.name}</span>
                   <div className="flex flex-col sm:flex-row gap-1.5 items-center w-full">
                     {/* Light Preview */}
-                    <div className="flex items-center gap-1 bg-neutral-100 dark:bg-neutral-800 p-1.5 rounded-xl w-full justify-center border border-border/50">
+                    <div className="flex items-center gap-1 bg-muted p-1.5 rounded-xl w-full justify-center border border-border/50">
                       <span className="text-[10px] font-bold text-muted-foreground">L</span>
                       <div className="h-4 w-4 rounded-full border border-white shrink-0 shadow-sm" style={{ backgroundColor: preset.primaryLight }} />
                       <div className="h-4 w-4 rounded-full border border-white shrink-0 shadow-sm" style={{ backgroundColor: preset.accentLight }} />
                     </div>
                     {/* Dark Preview */}
-                    <div className="flex items-center gap-1 bg-neutral-200 dark:bg-neutral-950 p-1.5 rounded-xl w-full justify-center border border-border/50">
+                    <div className="flex items-center gap-1 bg-muted p-1.5 rounded-xl w-full justify-center border border-border/50">
                       <span className="text-[10px] font-bold text-muted-foreground">D</span>
                       <div className="h-4 w-4 rounded-full border border-neutral-800 shrink-0 shadow-sm" style={{ backgroundColor: preset.primaryDark }} />
                       <div className="h-4 w-4 rounded-full border border-neutral-800 shrink-0 shadow-sm" style={{ backgroundColor: preset.accentDark }} />
@@ -857,8 +857,8 @@ export function SiteSettingsForm({ initialSettings }: SiteSettingsFormProps) {
         <div
           className={`flex items-center gap-3 p-4 rounded-2xl text-sm font-medium ${
             result.success
-              ? "bg-primary-500/10 border border-primary-500/20 text-primary-600 dark:text-primary-400"
-              : "bg-primary-500/10 border border-primary-500/20 text-primary-600 dark:text-primary-400"
+              ? "bg-success/10 border border-success/20 text-success "
+              : "bg-error/10 border border-error/20 text-error "
           }`}
         >
           {result.success ? (

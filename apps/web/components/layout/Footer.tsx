@@ -116,9 +116,9 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
     <footer className="bg-surface border-t border-border mt-auto">
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-8">
           {/* Brand */}
-          <div className="lg:col-span-1">
+          <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-4">
               {settings?.logoUrl ? (
                 <div className="h-9 w-9 relative rounded-xl overflow-hidden shrink-0 border border-border/50">
@@ -164,7 +164,7 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
                 </button>
               </div>
               {message && (
-                <div className={`flex items-center gap-1.5 text-xs font-medium ${message.type === 'success' ? 'text-primary-500' : 'text-primary-500'}`}>
+                <div className={`flex items-center gap-1.5 text-xs font-medium ${message.type === 'success' ? 'text-success' : 'text-error'}`}>
                   {message.type === 'success' ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
                   {message.text}
                 </div>
@@ -177,12 +177,12 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
             <h4 className="font-semibold font-(family-name:--font-outfit) text-foreground mb-4">
               Platform
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-0.5">
               {footerLinks.platform.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="inline-block py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -196,12 +196,12 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
             <h4 className="font-semibold font-(family-name:--font-outfit) text-foreground mb-4">
               Kategoriler
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-0.5">
               {categories.slice(0, 6).map((cat) => (
                 <li key={cat.id}>
                   <Link
                     href={`/category/${cat.slug}`}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="inline-block py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {cat.name}
                   </Link>
@@ -215,12 +215,12 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
             <h4 className="font-semibold font-(family-name:--font-outfit) text-foreground mb-4">
               Yasal
             </h4>
-            <ul className="space-y-2.5">
+            <ul className="space-y-0.5">
               {footerLinks.legal.map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                    className="inline-block py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   >
                     {link.label}
                   </Link>

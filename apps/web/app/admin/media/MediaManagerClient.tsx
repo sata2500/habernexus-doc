@@ -214,9 +214,9 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
           Tümünü Seç
         </button>
         <div className="h-4 w-[1px] bg-border mx-1" />
-        <button onClick={() => selectByStatus("RAW")} className="text-[10px] font-bold text-primary- hover:underline uppercase tracking-wider">Hamları Seç</button>
-        <button onClick={() => selectByStatus("OPTIMIZED")} className="text-[10px] font-bold text-primary-600 hover:underline uppercase tracking-wider">Optimize Edilenleri Seç</button>
-        <button onClick={() => selectByStatus("FAILED")} className="text-[10px] font-bold text-primary-600 hover:underline uppercase tracking-wider">Hatalıları Seç</button>
+        <button onClick={() => selectByStatus("RAW")} className="text-[10px] font-bold text-warning hover:underline uppercase tracking-wider">Hamları Seç</button>
+        <button onClick={() => selectByStatus("OPTIMIZED")} className="text-[10px] font-bold text-success hover:underline uppercase tracking-wider">Optimize Edilenleri Seç</button>
+        <button onClick={() => selectByStatus("FAILED")} className="text-[10px] font-bold text-error hover:underline uppercase tracking-wider">Hatalıları Seç</button>
       </div>
 
       {/* Izgara Görünümü */}
@@ -261,11 +261,11 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
                 {/* Durum Rozeti */}
                 <div className="absolute top-3 left-3">
                   {item.status === "OPTIMIZED" ? (
-                    <Badge className="bg-primary-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
+                    <Badge className="bg-success/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
                        <CheckCircle2 className="h-3 w-3" /> Optimize
                     </Badge>
                   ) : item.status === "RAW" ? (
-                    <Badge className="bg-primary-/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
+                    <Badge className="bg-warning/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
                        <Clock className="h-3 w-3" /> Ham (Raw)
                     </Badge>
                   ) : item.status === "PROCESSING" || isProcessing ? (
@@ -273,7 +273,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
                        <Loader2 className="h-3 w-3 animate-spin" /> İşleniyor
                     </Badge>
                   ) : (
-                    <Badge className="bg-primary-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
+                    <Badge className="bg-error/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
                        <AlertCircle className="h-3 w-3" /> Başarısız
                     </Badge>
                   )}
@@ -292,7 +292,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
                   {!isBulkProcessing && (
                     <button
                       onClick={() => handleDelete(item.id)}
-                      className="p-2 bg-primary-500/80 hover:bg-primary-500 rounded-xl text-white backdrop-blur-md transition-all"
+                      className="p-2 bg-error/80 hover:bg-error/90 rounded-xl text-white backdrop-blur-md transition-all"
                     >
                       <Trash2 className="h-5 w-5" />
                     </button>
@@ -367,7 +367,7 @@ export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[]
               <button
                 onClick={handleBulkDelete}
                 disabled={isBulkProcessing}
-                className="flex items-center gap-2 px-5 py-2.5 bg-primary-500/10 hover:bg-primary-500 text-primary-500 hover:text-white border border-primary-500/20 hover:border-primary-500 rounded-xl text-sm font-bold transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
+                className="flex items-center gap-2 px-5 py-2.5 bg-error/10 hover:bg-error/90 text-error hover:text-white border border-error/20 hover:border-error rounded-xl text-sm font-bold transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
               >
                 {isBulkProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
                 Sil

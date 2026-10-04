@@ -40,8 +40,8 @@ export default async function SettingsPage() {
               <h3 className="font-semibold text-foreground">Tema Seçimi</h3>
               <p className="text-sm text-muted-foreground mt-1">Uygulama arayüzünün karanlık veya aydınlık olmasını seçin.</p>
             </div>
-            <div className="p-2 border border-border rounded-xl bg-muted/50">
-               <ThemeToggle />
+            <div className="w-full sm:w-auto sm:min-w-72">
+              <ThemeToggle variant="segmented" />
             </div>
           </div>
 
@@ -51,7 +51,7 @@ export default async function SettingsPage() {
           {/* Danger Zone */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
              <div>
-              <h3 className="font-semibold text-primary-600 dark:text-primary-400">Hesabı Sil</h3>
+              <h3 className="font-semibold text-error ">Hesabı Sil</h3>
               <p className="text-sm text-muted-foreground mt-1">Tüm verilerinizi, yorumlarınızı ve kaydedilenlerinizi kalıcı olarak siler.</p>
             </div>
             <DeleteAccountButton />

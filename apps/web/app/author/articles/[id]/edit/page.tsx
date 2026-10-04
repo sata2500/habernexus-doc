@@ -210,7 +210,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
 
           {/* Hata Mesajı */}
           {error && (
-            <div className="px-4 py-3 rounded-xl bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 text-sm text-primary-600 dark:text-primary-400">
+            <div className="px-4 py-3 rounded-xl bg-error/10 border border-error/30 text-sm text-error ">
               {error}
             </div>
           )}

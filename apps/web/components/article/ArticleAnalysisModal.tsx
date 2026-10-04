@@ -88,25 +88,25 @@ function CircularProgress({
     bgClass = "stroke-muted/10";
   } else if (isPlagiarism) {
     if (val <= 30) {
-      colorClass = "stroke-primary-500 text-primary-500";
-      bgClass = "stroke-primary-500/10";
+      colorClass = "stroke-success text-success";
+      bgClass = "stroke-success/10";
     } else if (val <= 60) {
-      colorClass = "stroke-primary-500 text-primary-500";
-      bgClass = "stroke-primary-500/10";
+      colorClass = "stroke-warning text-warning";
+      bgClass = "stroke-warning/10";
     } else {
-      colorClass = "stroke-primary-500 text-primary-500";
-      bgClass = "stroke-primary-500/10";
+      colorClass = "stroke-error text-error";
+      bgClass = "stroke-error/10";
     }
   } else {
     if (val >= 70) {
-      colorClass = "stroke-primary-500 text-primary-500";
-      bgClass = "stroke-primary-500/10";
+      colorClass = "stroke-success text-success";
+      bgClass = "stroke-success/10";
     } else if (val >= 40) {
-      colorClass = "stroke-primary-500 text-primary-500";
-      bgClass = "stroke-primary-500/10";
+      colorClass = "stroke-warning text-warning";
+      bgClass = "stroke-warning/10";
     } else {
-      colorClass = "stroke-primary-500 text-primary-500";
-      bgClass = "stroke-primary-500/10";
+      colorClass = "stroke-error text-error";
+      bgClass = "stroke-error/10";
     }
   }
 
@@ -254,7 +254,7 @@ export function ArticleAnalysisModal({
 
         {/* Error Banner */}
         {error && (
-          <div className="px-6 py-3 bg-primary-500/10 border-b border-primary-500/20 text-primary-500 text-xs font-semibold flex items-center gap-2">
+          <div className="px-6 py-3 bg-error/10 border-b border-error/20 text-error text-xs font-semibold flex items-center gap-2">
             <AlertCircle className="h-4 w-4 shrink-0" />
             <span>{error}</span>
           </div>
@@ -365,7 +365,7 @@ export function ArticleAnalysisModal({
 
                       {/* Warnings / High Plagiarism Banner */}
                       {(articleData.plagiarismRate ?? 0) > 30 && (
-                        <div className="p-4 bg-primary-500/10 border border-primary-500/20 text-primary-600 dark:text-primary-400 rounded-xl flex gap-3 text-xs">
+                        <div className="p-4 bg-warning/10 border border-warning/20 text-warning rounded-xl flex gap-3 text-xs">
                           <AlertTriangle className="h-5 w-5 shrink-0" />
                           <div className="space-y-1">
                             <p className="font-bold">Yüksek Benzerlik / İntihal Uyarısı (%{articleData.plagiarismRate})</p>
@@ -419,7 +419,7 @@ export function ArticleAnalysisModal({
                                     </a>
                                   )}
                                 </div>
-                                <div className="shrink-0 px-2 py-1 bg-primary-500/10 text-primary-500 font-extrabold rounded-md text-[10px]">
+                                <div className="shrink-0 px-2 py-1 bg-error/10 text-error font-extrabold rounded-md text-[10px]">
                                   %{source.matchPercent || 0} Benzerlik
                                 </div>
                               </div>
@@ -452,12 +452,12 @@ export function ArticleAnalysisModal({
                           <p className="text-[10px] font-bold text-muted-foreground uppercase">Hiyerarşik Yapı</p>
                           <div className="flex items-center gap-2">
                             {report?.seo?.hasHeadingStructure ? (
-                              <div className="flex items-center gap-1.5 text-primary-500 text-xs font-bold">
+                              <div className="flex items-center gap-1.5 text-success text-xs font-bold">
                                 <CheckCircle2 className="h-4.5 w-4.5" />
                                 <span>Doğru Alt Başlık Yapısı (H2, H3)</span>
                               </div>
                             ) : (
-                              <div className="flex items-center gap-1.5 text-primary-500 text-xs font-bold">
+                              <div className="flex items-center gap-1.5 text-warning text-xs font-bold">
                                 <AlertTriangle className="h-4.5 w-4.5" />
                                 <span>Başlık Hiyerarşisi Eksik</span>
                               </div>

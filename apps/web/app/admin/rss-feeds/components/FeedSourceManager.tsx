@@ -156,12 +156,12 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
   return (
     <div className="space-y-6">
       {error && (
-        <div className="p-3 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-xl text-sm font-medium">
+        <div className="p-3 bg-error/10 text-error border border-error/30 rounded-xl text-sm font-medium">
           {error}
         </div>
       )}
       {success && (
-        <div className="p-3 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-primary-800 rounded-xl text-sm font-medium">
+        <div className="p-3 bg-success/10 text-success border border-success/30 rounded-xl text-sm font-medium">
           {success}
         </div>
       )}
@@ -245,18 +245,18 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
           <span className="text-sm font-medium mr-2">{selectedIds.size} seçili</span>
           <div className="h-4 w-px bg-background/20 mx-1"></div>
 
-          <button onClick={() => handleBulkAction("scan")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary- hover:text-primary- transition-colors" title="Seçilenleri Tara">
+          <button onClick={() => handleBulkAction("scan")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary-500 hover:text-primary-500 transition-colors" title="Seçilenleri Tara">
             <RefreshCw className="h-4 w-4" />
           </button>
-          <button onClick={() => handleBulkAction("enable")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary-400 hover:text-primary-300 transition-colors" title="Seçilenleri Etkinleştir">
+          <button onClick={() => handleBulkAction("enable")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-success hover:text-success transition-colors" title="Seçilenleri Etkinleştir">
             <Power className="h-4 w-4" />
           </button>
-          <button onClick={() => handleBulkAction("disable")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary-400 hover:text-primary-300 transition-colors" title="Seçilenleri Devre Dışı Bırak">
+          <button onClick={() => handleBulkAction("disable")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-warning hover:text-warning transition-colors" title="Seçilenleri Devre Dışı Bırak">
             <Power className="h-4 w-4 rotate-180" />
           </button>
 
           <div className="h-4 w-px bg-background/20 mx-1"></div>
-          <button onClick={() => handleBulkAction("delete")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-primary-400 hover:text-primary-300 transition-colors" title="Seçilenleri Sil">
+          <button onClick={() => handleBulkAction("delete")} disabled={isPending} className="p-2 rounded-xl hover:bg-background/20 text-error hover:text-error transition-colors" title="Seçilenleri Sil">
             <Trash2 className="h-4 w-4" />
           </button>
 
@@ -346,7 +346,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                     {source.url.slice(0, 50)}...
                   </a>
                   {source.fetchError && (
-                    <p className="text-[10px] text-primary-500 mt-0.5">⚠ {source.fetchError.slice(0, 60)}</p>
+                    <p className="text-[10px] text-error mt-0.5">⚠ {source.fetchError.slice(0, 60)}</p>
                   )}
                   {source.lastFetchedAt && !source.fetchError && (
                     <p className="text-[10px] text-muted-foreground mt-0.5">
@@ -382,7 +382,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                 <button
                   onClick={() => handleDelete(source.id, source.name)}
                   title="Kaynağı Sil"
-                  className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-primary-500/10 dark:hover:bg-primary-500/15 text-muted-foreground hover:text-primary-500 transition-colors cursor-pointer outline-none focus-ring"
+                  className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-error/10 text-muted-foreground hover:text-error transition-colors cursor-pointer outline-none focus-ring"
                 >
                   <Trash2 className="h-4 w-4" />
                 </button>

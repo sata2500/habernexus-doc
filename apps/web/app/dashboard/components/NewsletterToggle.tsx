@@ -96,7 +96,7 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
         )}
 
         {testStatus !== "idle" && (
-          <div className={`text-xs font-medium flex items-center gap-1.5 ${testStatus === "success" ? "text-primary-600" : "text-primary-500"}`}>
+          <div className={`text-xs font-medium flex items-center gap-1.5 ${testStatus === "success" ? "text-success" : "text-error"}`}>
             {testStatus === "success" ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
             {testMessage}
           </div>
@@ -112,14 +112,14 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
             onChange={handleToggle}
             disabled={isLoading}
           />
-          <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-500/30 rounded-full peer dark:bg-neutral-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary-600"></div>
+          <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-primary-500/30 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600"></div>
         </label>
 
         {isSubscribed && (
           <button
             onClick={handleTestEmail}
             disabled={testStatus === "loading"}
-            className="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors disabled:opacity-50"
+            className="text-xs flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted text-foreground hover:bg-muted/80 transition-colors disabled:opacity-50"
           >
             {testStatus === "loading" ? (
               <Loader2 className="h-3 w-3 animate-spin" />

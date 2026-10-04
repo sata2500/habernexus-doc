@@ -185,7 +185,7 @@ export const NewsletterTemplate = ({
               
               <Link
                 href={unsubscribeUrl}
-                className="text-primary-500 text-[12px] font-bold underline"
+                className="text-error text-[12px] font-bold underline"
               >
                 Abonelikten Ayrıl
               </Link>
