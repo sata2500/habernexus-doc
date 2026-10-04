@@ -1,100 +1,84 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { Loader2, Trash2 } from "lucide-react";
 import { updateUserRole, deleteUser } from "../actions";
 import { Avatar } from "@/components/ui/Avatar";
-import { Loader2, Trash2 } from "lucide-react";
+import { formatRelativeTime } from "@/lib/utils";
+import type { AdminUserRow } from "@/lib/server/admin-lists";
 
-type Role = "USER" | "AUTHOR" | "ADMIN";
+const ROLES = [
+  { value: "USER", label: "Okur" },
+  { value: "AUTHOR", label: "Yazar" },
+  { value: "ADMIN", label: "Admin" },
+] as const;
 
-const ROLES: { value: Role; label: string; variant: "default" | "primary" | "error" }[] = [
-  { value: "USER",   label: "Kullanıcı", variant: "default" },
-  { value: "AUTHOR", label: "Yazar",     variant: "primary" },
-  { value: "ADMIN",  label: "Admin",     variant: "error" },
-];
-
-import { UserWithInfo } from "@/lib/types";
-
-type User = UserWithInfo & {
-  _count: { articles: number; comments: number };
-};
-
-export function UserRoleManager({ users }: { users: User[] }) {
+export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[]; currentUserId: string }) {
+  const router = useRouter();
   const [, startTransition] = useTransition();
-  const [changingId, setChangingId] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
-  const handleRoleChange = (userId: string, newRole: string) => {
-    setChangingId(userId);
+  const run = (id: string, fn: () => Promise<{ success: boolean; error?: string }>) => {
+    setBusyId(id);
     startTransition(async () => {
-      const result = await updateUserRole(userId, newRole);
-      if (!result.success) alert(result.error);
-      setChangingId(null);
+      const res = await fn();
+      if (!res.success) alert(res.error ?? "İşlem başarısız.");
+      setBusyId(null);
+      router.refresh();
     });
   };
 
-  const handleDeleteUser = (userId: string, userName: string) => {
-    if (!confirm(`"${userName}" isimli kullanıcıyı silmek istediğinize emin misiniz? Bu işlem geri alınamaz ve tüm içerikleri (makaleler, yorumlar) silinir.`)) {
-      return;
-    }
-
-    setChangingId(userId);
-    startTransition(async () => {
-      const resp = await deleteUser(userId);
-      if (resp && !resp.success) {
-        alert(resp.error || "Silme işlemi başarısız.");
-      }
-      setChangingId(null);
-    });
-  };
+  if (users.length === 0) {
+    return <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">Kullanıcı bulunamadı.</div>;
+  }
 
   return (
-    <div className="glass-strong rounded-[2rem] border border-border/50 overflow-hidden divide-y divide-border/50 shadow-soft">
-      {users.map((user) => {
-        const currentRole = (user.role as Role) ?? "USER";
-        const isChanging = changingId === user.id;
-
+    <ul className="rounded-2xl border border-border bg-card shadow-card divide-y divide-border overflow-hidden">
+      {users.map((u) => {
+        const isMe = u.id === currentUserId;
         return (
-          <div key={user.id} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 bg-background/30 hover:bg-primary-500/5 transition-all duration-300 group">
-            <div className="flex items-center gap-4 min-w-0 flex-1 w-full">
-              <Avatar src={user.image ?? undefined} fallback={user.name ?? undefined} size="sm" />
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">{user.name}</p>
-                <p className="text-xs text-muted-foreground truncate mt-0.5">{user.email}</p>
-              </div>
+          <li key={u.id} className="flex flex-wrap items-center gap-3 p-3 sm:p-4">
+            <Avatar src={u.image ?? undefined} fallback={u.name ?? undefined} size="sm" />
+            <div className="flex-1 min-w-[10rem]">
+              <p className="text-sm font-semibold truncate">{u.name}{isMe && <span className="ml-1.5 text-xs font-normal text-muted-foreground">(siz)</span>}</p>
+              <p className="text-xs text-muted-foreground truncate">{u.email}</p>
+              <p className="text-[11px] text-muted-foreground">
+                {formatRelativeTime(u.createdAt, { compact: true })} katıldı · {u._count.articles} makale · {u._count.comments} yorum
+              </p>
             </div>
-
-            <div className="flex items-center justify-between sm:justify-end gap-3 shrink-0 w-full sm:w-auto">
-              <div className="hidden sm:block text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2.5 py-1">
-                {user._count.articles} makale
-              </div>
-              <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-                {isChanging ? (
-                  <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                ) : (
-                  <>
-                    <select
-                      value={currentRole}
-                      onChange={(e) => handleRoleChange(user.id, e.target.value)}
-                      className="text-xs px-3 py-2 rounded-xl border border-border/85 bg-background/50 text-foreground cursor-pointer focus:ring-2 focus:ring-primary-500 outline-none hover:border-primary-500/30 transition-colors font-bold"
-                    >
-                      {ROLES.map((r) => (
-                        <option key={r.value} value={r.value}>{r.label}</option>
-                      ))}
-                    </select>
+            <div className="flex items-center gap-1.5 ml-auto">
+              {busyId === u.id ? (
+                <Loader2 className="h-4 w-4 m-2 animate-spin text-muted-foreground" />
+              ) : (
+                <>
+                  <select
+                    value={u.role}
+                    disabled={isMe}
+                    onChange={(e) => run(u.id, () => updateUserRole(u.id, e.target.value))}
+                    aria-label={`${u.name} rolü`}
+                    className="h-9 rounded-xl border border-border bg-background px-2.5 text-xs font-semibold outline-none focus:border-primary-500 disabled:opacity-60"
+                  >
+                    {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
+                  </select>
+                  {!isMe && (
                     <button
-                      onClick={() => handleDeleteUser(user.id, user.name ?? "İsimsiz")}
-                      className="h-9 w-9 flex items-center justify-center rounded-xl hover:bg-error/10 text-muted-foreground hover:text-error transition-colors cursor-pointer border border-transparent hover:border-error/25"
-                      title="Kullanıcıyı Sil"
+                      onClick={() => {
+                        if (confirm(`"${u.name}" silinsin mi? Bu işlem geri alınamaz; kullanıcının makaleleri ve yorumları da silinir.`)) run(u.id, () => deleteUser(u.id));
+                      }}
+                      aria-label="Kullanıcıyı sil"
+                      title="Kullanıcıyı sil"
+                      className="h-9 w-9 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:bg-error/10 hover:text-error"
                     >
                       <Trash2 className="h-4 w-4" />
                     </button>
-                  </>
-                )}
-              </div>
+                  )}
+                </>
+              )}
             </div>
-          </div>
+          </li>
         );
       })}
-    </div>
+    </ul>
   );
 }

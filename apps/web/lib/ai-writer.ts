@@ -121,25 +121,31 @@ export async function writeArticleWithAI(suggestionId: string) {
         });
       }
 
-      if (category) {
-        categoryId = category.id;
-        const personaLink = await prisma.aiPersonaOnCategory.findFirst({
-          where: { categoryId: category.id, persona: { isActive: true } },
-          orderBy: { lastUsedAt: 'asc' },
-          include: { persona: true }
+      if (category) categoryId = category.id;
+    }
+
+    // Kategoriye atanmış personalar sırayla yazar; yoksa kategorisiz ("genel") personalardan biri seçilir
+    const personaLink = categoryId
+      ? await prisma.aiPersonaOnCategory.findFirst({
+          where: { categoryId, persona: { isActive: true } },
+          orderBy: { lastUsedAt: "asc" },
+          include: { persona: true },
+        })
+      : null;
+    let persona = personaLink?.persona ?? null;
+    if (!persona) {
+      const general = await prisma.aiPersona.findMany({ where: { isActive: true, categories: { none: {} } } });
+      persona = general.length ? general[Math.floor(Math.random() * general.length)] : null;
+    }
+    if (persona) {
+      aiPersonaId = persona.id;
+      if (persona.prompt.trim()) systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları:\n${persona.prompt}`;
+      if (persona.imagePrompt.trim()) imagePromptBase = persona.imagePrompt;
+      if (personaLink) {
+        await prisma.aiPersonaOnCategory.update({
+          where: { personaId_categoryId: { personaId: persona.id, categoryId: personaLink.categoryId } },
+          data: { lastUsedAt: new Date() },
         });
-
-        if (personaLink) {
-          const persona = personaLink.persona;
-          aiPersonaId = persona.id;
-          systemPrompt = `${globalSystemPrompt}\n\nÖzel Yazım Talimatları:\n${persona.prompt}`;
-          imagePromptBase = persona.imagePrompt;
-
-          await prisma.aiPersonaOnCategory.update({
-            where: { personaId_categoryId: { personaId: persona.id, categoryId: category.id } },
-            data: { lastUsedAt: new Date() }
-          });
-        }
       }
     }
 

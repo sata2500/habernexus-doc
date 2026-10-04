@@ -1,27 +1,18 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Users,
-  Plus,
-  Trash2,
-  Edit2,
-  X,
-  Wand2,
-  Image as ImageIcon,
-  ChevronRight,
-  Info,
-  AlertCircle
-} from "lucide-react";
-import { createPersona, updatePersona, deletePersona } from "../actions";
+import { useEffect, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { FileText, Info, Loader2, Pencil, Plus, Sparkles, Trash2, Users, X } from "lucide-react";
+import { createPersona, updatePersona, deletePersona, setPersonaActive, type PersonaInput } from "../actions";
 import { ImageUploader } from "@/components/ui/ImageUploader";
+import { cn } from "@/lib/utils";
 
 interface Category {
   id: string;
   name: string;
 }
 
-interface Persona {
+export interface PersonaView {
   id: string;
   name: string;
   role: string | null;
@@ -29,354 +20,332 @@ interface Persona {
   description: string | null;
   prompt: string;
   imagePrompt: string;
-  categories: { category: Category }[];
+  isActive: boolean;
+  articleCount: number;
+  categories: Category[];
 }
 
-interface Props {
-  initialPersonas: Persona[];
-  allCategories: Category[];
-}
+type FormState = Required<Omit<PersonaInput, "isActive">> & { isActive: boolean };
 
-export function PersonaManager({ initialPersonas, allCategories }: Props) {
-  const [isAdding, setIsAdding] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+const EMPTY: FormState = { name: "", role: "Haber Editörü", image: "", description: "", prompt: "", imagePrompt: "", categoryIds: [], isActive: true };
 
-  // Form State
-  const [formData, setFormData] = useState({
-    name: "",
-    role: "Haber Editörü",
-    image: "",
-    description: "",
-    prompt: "",
-    imagePrompt: "",
-    categoryIds: [] as string[],
-  });
-
-  const resetForm = () => {
-    setFormData({
-      name: "",
+/** Hızlı başlangıç şablonları; kategori adına göre eşleşen kategoriler otomatik seçilir. */
+const TEMPLATES: { label: string; match: string[]; data: Omit<FormState, "categoryIds" | "isActive" | "image"> }[] = [
+  {
+    label: "Genel haber editörü",
+    match: [],
+    data: {
+      name: "Deniz Arslan",
       role: "Haber Editörü",
-      image: "",
-      description: "",
-      prompt: "",
-      imagePrompt: "",
-      categoryIds: [],
-    });
-    setIsAdding(false);
+      description: "Gündemi tarafsız, açık ve anlaşılır bir dille aktarır.",
+      prompt: "Tarafsız ve nesnel yaz. Önce en önemli bilgiyi ver (ters piramit). Kısa paragraflar ve sade cümleler kullan. Tahmin ve yorumu haberden ayır; kaynakları belirt.",
+      imagePrompt: "Gerçekçi haber fotoğrafı tarzı, doğal ışık, yazı veya logo yok.",
+    },
+  },
+  {
+    label: "Ekonomi muhabiri",
+    match: ["ekonomi", "finans", "borsa"],
+    data: {
+      name: "Selin Kaya",
+      role: "Ekonomi Muhabiri",
+      description: "Rakamları okurun cebine etkisiyle birlikte anlatır.",
+      prompt: "Ekonomi haberlerini sade bir dille yaz. Önemli rakamları (oran, tutar, değişim) net ver ve okur için ne anlama geldiğini bir cümleyle açıkla. Yatırım tavsiyesi verme.",
+      imagePrompt: "Ekonomi temalı, sade ve profesyonel görsel; grafikler, şehir veya ilgili nesneler; yazı yok.",
+    },
+  },
+  {
+    label: "Spor yazarı",
+    match: ["spor", "futbol"],
+    data: {
+      name: "Emre Yıldız",
+      role: "Spor Yazarı",
+      description: "Maçları ve transferleri canlı, enerjik bir dille aktarır.",
+      prompt: "Enerjik ve akıcı yaz ama abartıdan kaçın. Skor, dakika ve oyuncu bilgilerini doğru ver. Taraftar diline kaçmadan, tüm takımlara eşit mesafede dur.",
+      imagePrompt: "Dinamik spor fotoğrafı tarzı, stadyum atmosferi; gerçek oyuncu yüzü, logo veya yazı yok.",
+    },
+  },
+  {
+    label: "Teknoloji editörü",
+    match: ["teknoloji", "bilim", "bilim-teknoloji"],
+    data: {
+      name: "Can Demir",
+      role: "Teknoloji Editörü",
+      description: "Yeni teknolojileri herkesin anlayacağı şekilde açıklar.",
+      prompt: "Teknik terimleri ilk kullanımda kısaca açıkla. Ürün ve gelişmelerin günlük hayata etkisini vurgula. Reklam dili kullanma; artı ve eksileri dengeli ver.",
+      imagePrompt: "Modern, temiz teknoloji görseli; soğuk tonlar, ürün veya devre detayları; marka logosu ve yazı yok.",
+    },
+  },
+];
+
+const inputClass = "w-full rounded-xl border border-border bg-background px-3.5 py-2.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20";
+
+export function PersonaManager({ personas, categories }: { personas: PersonaView[]; categories: Category[] }) {
+  const router = useRouter();
+  const [form, setForm] = useState<FormState | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [saving, startSave] = useTransition();
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  // Form açıkken arka plan kaymasın, Esc ile kapansın
+  useEffect(() => {
+    if (!form) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setForm(null); };
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => { document.body.style.overflow = ""; window.removeEventListener("keydown", onKey); };
+  }, [form]);
+
+  const openNew = (template?: (typeof TEMPLATES)[number]) => {
+    const categoryIds = template
+      ? categories.filter((c) => template.match.some((m) => c.name.toLocaleLowerCase("tr").includes(m))).map((c) => c.id)
+      : [];
+    setForm({ ...EMPTY, ...(template?.data ?? {}), categoryIds });
     setEditingId(null);
+    setError(null);
   };
 
-  const handleEdit = (persona: Persona) => {
-    setFormData({
-      name: persona.name,
-      role: persona.role || "Haber Editörü",
-      image: persona.image || "",
-      description: persona.description || "",
-      prompt: persona.prompt,
-      imagePrompt: persona.imagePrompt,
-      categoryIds: persona.categories.map(c => c.category.id),
+  const openEdit = (p: PersonaView) => {
+    setForm({
+      name: p.name, role: p.role ?? "", image: p.image ?? "", description: p.description ?? "",
+      prompt: p.prompt, imagePrompt: p.imagePrompt, categoryIds: p.categories.map((c) => c.id), isActive: p.isActive,
     });
-    setEditingId(persona.id);
-    setIsAdding(false);
+    setEditingId(p.id);
+    setError(null);
   };
 
-  const handleSubmit = async () => {
-    if (!formData.name || !formData.prompt) {
-      alert("İsim ve Prompt alanları zorunludur.");
-      return;
-    }
-
-    setLoading(true);
-    try {
-      if (editingId) {
-        const res = await updatePersona(editingId, formData);
-        if (res.success) {
-          alert("Persona güncellendi.");
-          window.location.reload();
-        } else {
-          alert(res.error || "Güncelleme başarısız.");
-        }
-      } else {
-        const res = await createPersona(formData);
-        if (res.success) {
-          alert("Persona oluşturuldu.");
-          window.location.reload();
-        } else {
-          alert(res.error || "Oluşturma başarısız.");
-        }
-      }
-    } catch {
-      alert("Bir hata oluştu.");
-    } finally {
-      setLoading(false);
-    }
+  const save = () => {
+    if (!form) return;
+    setError(null);
+    startSave(async () => {
+      const res = editingId ? await updatePersona(editingId, form) : await createPersona(form);
+      if (!res.success) { setError(res.error); return; }
+      setForm(null);
+      router.refresh();
+    });
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Bu personayı silmek istediğinize emin misiniz?")) return;
-
-    try {
-      const res = await deletePersona(id);
-      if (res.success) {
-        alert("Persona silindi.");
-        window.location.reload();
-      }
-    } catch {
-      alert("Silme işlemi başarısız.");
-    }
+  const toggleActive = async (p: PersonaView) => {
+    setBusyId(p.id);
+    const res = await setPersonaActive(p.id, !p.isActive);
+    if (!res.success) alert(res.error);
+    router.refresh();
+    setBusyId(null);
   };
 
-  const toggleCategory = (categoryId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      categoryIds: prev.categoryIds.includes(categoryId)
-        ? prev.categoryIds.filter(id => id !== categoryId)
-        : [...prev.categoryIds, categoryId]
-    }));
+  const remove = async (p: PersonaView) => {
+    const note = p.articleCount ? ` Yazdığı ${p.articleCount} haber silinmez; yazar olarak site hesabı görünür.` : "";
+    if (!confirm(`"${p.name}" silinsin mi?${note}`)) return;
+    setBusyId(p.id);
+    const res = await deletePersona(p.id);
+    if (!res.success) alert(res.error);
+    router.refresh();
+    setBusyId(null);
   };
+
+  const toggleCategory = (id: string) =>
+    setForm((f) => f && ({ ...f, categoryIds: f.categoryIds.includes(id) ? f.categoryIds.filter((c) => c !== id) : [...f.categoryIds, id] }));
+
+  const activeCount = personas.filter((p) => p.isActive).length;
+  const coveredCategories = new Set(personas.filter((p) => p.isActive).flatMap((p) => p.categories.map((c) => c.id)));
+  const hasGeneral = personas.some((p) => p.isActive && p.categories.length === 0);
+  const uncovered = hasGeneral ? [] : categories.filter((c) => !coveredCategories.has(c.id));
 
   return (
-    <div className="space-y-8">
-      {/* ── Header ── */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-2xl bg-primary-500/20 flex items-center justify-center">
-            <Users className="h-6 w-6 text-primary-500" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-bold font-display">AI Personaları</h2>
-            <p className="text-sm text-muted-foreground">Farklı kategoriler için farklı yazım stilleri ve görsel karakterler tanımlayın.</p>
-          </div>
+    <div className="space-y-6">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 space-y-1">
+          <h1 className="text-2xl md:text-3xl font-bold font-display flex items-center gap-3">
+            <span className="h-11 w-11 shrink-0 rounded-2xl bg-primary-500/20 flex items-center justify-center">
+              <Users className="h-5 w-5 text-primary-500" />
+            </span>
+            Yazar personaları
+          </h1>
+          <p className="text-sm text-muted-foreground">AI Yazar&apos;ın haberleri kimin ağzından, hangi üslupla yazacağını belirleyin.</p>
         </div>
-        {!isAdding && !editingId && (
-          <button
-            onClick={() => setIsAdding(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-2xl font-bold transition-all active:scale-95 shadow-lg shadow-primary-500/20 cursor-pointer"
-          >
-            <Plus className="h-5 w-5" />
-            Yeni Persona Ekle
-          </button>
-        )}
+        <button onClick={() => openNew()} className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold shrink-0">
+          <Plus className="h-4 w-4" /> Yeni persona
+        </button>
       </div>
 
-      {/* ── Form (Add/Edit) ── */}
-      {(isAdding || editingId) && (
-        <div className="glass-strong rounded-3xl border border-primary-500/30 p-8 shadow-2xl animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-xl font-bold flex items-center gap-2">
-              {editingId ? <Edit2 className="h-5 w-5 text-primary-500" /> : <Plus className="h-5 w-5 text-primary-500" />}
-              {editingId ? "Personayı Düzenle" : "Yeni Persona Tanımla"}
-            </h3>
-            <button onClick={resetForm} className="p-2 hover:bg-muted rounded-xl transition-colors">
-              <X className="h-5 w-5" />
-            </button>
-          </div>
+      {/* Nasıl çalışır */}
+      <div className="rounded-2xl border border-border bg-card p-4 text-sm space-y-1.5">
+        <p className="font-semibold flex items-center gap-2"><Info className="h-4 w-4 text-primary-500" /> Nasıl çalışır?</p>
+        <ul className="list-disc pl-5 text-muted-foreground space-y-1 text-[13px]">
+          <li>AI Yazar haberi yazarken o haberin kategorisine atanmış personayı seçer; birden fazlaysa sırayla kullanır.</li>
+          <li>Kategori seçilmeyen persona <strong className="text-foreground">genel</strong> sayılır ve personası olmayan tüm kategorilerde yazar.</li>
+          <li>Haberde yazar olarak personanın adı, fotoğrafı ve unvanı görünür. Persona yoksa site hesabınız görünür.</li>
+        </ul>
+      </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label className="text-sm font-bold">Persona Adı</label>
-                  <input
-                    type="text"
-                    value={formData.name}
-                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Örn: Caner KÖSE"
-                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-bold">Ünvan / Rol</label>
-                  <input
-                    type="text"
-                    value={formData.role}
-                    onChange={e => setFormData({ ...formData, role: e.target.value })}
-                    placeholder="Örn: Teknoloji Editörü"
-                    className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-bold flex items-center gap-2">
-                  <ImageIcon className="h-4 w-4 text-primary-500" />
-                  Profil Fotoğrafı
-                </label>
-                <ImageUploader
-                  value={formData.image}
-                  onChange={(url) => setFormData({ ...formData, image: url })}
-                  type="profile"
-                  aspectRatio="square"
-                  autoOptimize={true}
-                  className="w-full"
-                />
-                <p className="text-[10px] text-muted-foreground italic">
-                  Yüklenen görseller otomatik olarak WebP formatına çevrilir ve optimize edilir.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-bold">Kısa Açıklama</label>
-                <textarea
-                  value={formData.description}
-                  onChange={e => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Bu persona hangi tarzda yazar? (İsteğe bağlı)"
-                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all h-20 resize-none"
-                />
-              </div>
-
-              <div className="space-y-4">
-                <label className="text-sm font-bold block">Hizmet Edeceği Kategoriler</label>
-                <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto p-2 bg-muted/20 rounded-xl border border-border">
-                  {allCategories.map(cat => (
-                    <button
-                      key={cat.id}
-                      onClick={() => toggleCategory(cat.id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
-                        formData.categoryIds.includes(cat.id)
-                          ? "bg-primary-500 text-white border-primary-400 shadow-md shadow-primary-500/20"
-                          : "bg-background border-border hover:border-primary-500/50"
-                      }`}
-                    >
-                      {cat.name}
-                    </button>
-                  ))}
-                </div>
-                <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                  <Info className="h-3 w-3" />
-                  Bu kategoriye atanmış birden fazla persona varsa, sırayla (rotasyonla) yazarlar.
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-sm font-bold flex items-center gap-2">
-                  <Wand2 className="h-4 w-4 text-primary-500" />
-                  Yazım Komutu (System Prompt)
-                </label>
-                <textarea
-                  value={formData.prompt}
-                  onChange={e => setFormData({ ...formData, prompt: e.target.value })}
-                  placeholder="Yapay zekaya nasıl yazması gerektiğini anlatın..."
-                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all h-40 font-mono text-xs leading-relaxed"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-bold flex items-center gap-2">
-                  <ImageIcon className="h-4 w-4 text-primary-500" />
-                  Görsel Üretim Komutu (Image Prompt)
-                </label>
-                <textarea
-                  value={formData.imagePrompt}
-                  onChange={e => setFormData({ ...formData, imagePrompt: e.target.value })}
-                  placeholder="Kapak görselleri için stil talimatları..."
-                  className="w-full bg-muted/30 border border-border rounded-xl px-4 py-3 focus:ring-2 focus:ring-primary-500 outline-none transition-all h-32 font-mono text-xs leading-relaxed"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-10 pt-6 border-t border-border flex justify-end gap-4">
-            <button
-              onClick={resetForm}
-              className="px-6 py-2 rounded-xl hover:bg-muted transition-colors font-bold"
-            >
-              İptal
-            </button>
-            <button
-              onClick={handleSubmit}
-              disabled={loading}
-              className="px-8 py-2 bg-primary-500 hover:bg-primary-600 text-white rounded-xl font-bold shadow-lg shadow-primary-500/20 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
-            >
-              {loading ? "Kaydediliyor..." : editingId ? "Değişiklikleri Kaydet" : "Personayı Oluştur"}
-            </button>
-          </div>
-        </div>
+      {personas.length > 0 && uncovered.length > 0 && (
+        <p className="rounded-xl border border-warning/40 bg-warning/10 px-3.5 py-2.5 text-xs">
+          Personası olmayan kategoriler: <strong>{uncovered.map((c) => c.name).join(", ")}</strong>. Bunlar için bir persona atayın ya da kategorisiz bir genel persona ekleyin.
+        </p>
       )}
 
-      {/* ── Personas Grid ── */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-        {initialPersonas.map(persona => (
-          <div key={persona.id} className="glass-strong rounded-3xl border border-border p-6 hover:border-primary-500/30 hover:shadow-glow hover-lift transition-all duration-300 group flex flex-col h-full shadow-soft">
-            <div className="flex items-start justify-between mb-4">
-              <div className="flex items-center gap-3">
-                <div className="h-14 w-14 rounded-2xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center overflow-hidden">
-                  {persona.image ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={persona.image} alt={persona.name} className="h-full w-full object-cover" />
-                  ) : (
-                    <Users className="h-6 w-6 text-primary-500" />
-                  )}
+      {/* Şablonlar */}
+      {personas.length === 0 && (
+        <section className="rounded-2xl border border-dashed border-border p-5 space-y-4">
+          <div className="text-center space-y-1">
+            <Sparkles className="h-8 w-8 text-primary-500 mx-auto" />
+            <p className="font-semibold">Henüz persona yok</p>
+            <p className="text-sm text-muted-foreground">Hazır bir şablonla başlayın; her şeyi kaydetmeden önce değiştirebilirsiniz.</p>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-2">
+            {TEMPLATES.map((t) => (
+              <button key={t.label} onClick={() => openNew(t)} className="text-left rounded-xl border border-border bg-card p-3 hover:border-primary-500/50 transition-colors">
+                <span className="block text-sm font-semibold">{t.label}</span>
+                <span className="block text-xs text-muted-foreground">{t.data.description}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {personas.length > 0 && (
+        <>
+          <p className="text-xs text-muted-foreground">{personas.length} persona · {activeCount} aktif</p>
+          <ul className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {personas.map((p) => (
+              <li key={p.id} className={cn("rounded-2xl border border-border bg-card p-4 shadow-card min-w-0 flex flex-col gap-3", !p.isActive && "opacity-60")}>
+                <div className="flex items-start gap-3">
+                  <div className="h-12 w-12 shrink-0 rounded-full bg-primary-500/10 flex items-center justify-center overflow-hidden">
+                    {p.image
+                      // eslint-disable-next-line @next/next/no-img-element
+                      ? <img src={p.image} alt="" className="h-full w-full object-cover" />
+                      : <span className="text-lg font-bold text-primary-500">{p.name.charAt(0)}</span>}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold truncate">{p.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{p.role || "Haber Editörü"}</p>
+                  </div>
+                  <button
+                    role="switch"
+                    aria-checked={p.isActive}
+                    aria-label={p.isActive ? "Pasifleştir" : "Aktifleştir"}
+                    disabled={busyId === p.id}
+                    onClick={() => toggleActive(p)}
+                    className={cn("relative h-6 w-11 shrink-0 rounded-full transition-colors disabled:opacity-50", p.isActive ? "bg-success" : "bg-muted-foreground/30")}
+                  >
+                    <span className={cn("absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all", p.isActive ? "left-[22px]" : "left-0.5")} />
+                  </button>
                 </div>
-                <div>
-                  <h4 className="font-bold text-lg leading-tight">{persona.name}</h4>
-                  <p className="text-xs text-primary-500 font-bold">{persona.role || "Haber Editörü"}</p>
+
+                {p.description && <p className="text-xs text-muted-foreground line-clamp-2">{p.description}</p>}
+
+                <div className="flex flex-wrap gap-1">
+                  {p.categories.length > 0
+                    ? p.categories.map((c) => <span key={c.id} className="rounded-md bg-muted px-2 py-0.5 text-[11px] font-semibold">{c.name}</span>)
+                    : <span className="rounded-md bg-primary-500/10 text-primary-500 px-2 py-0.5 text-[11px] font-semibold">Genel · tüm kategoriler</span>}
                 </div>
-              </div>
-              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button
-                  onClick={() => handleEdit(persona)}
-                  className="p-2 hover:bg-primary-500/10 text-primary-500 rounded-lg transition-colors"
-                >
-                  <Edit2 className="h-4 w-4" />
-                </button>
-                <button
-                  onClick={() => handleDelete(persona.id)}
-                  className="p-2 hover:bg-error/10 text-error rounded-lg transition-colors"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
+
+                <div className="mt-auto flex items-center gap-2 pt-1">
+                  <span className="flex items-center gap-1 text-xs text-muted-foreground flex-1">
+                    <FileText className="h-3.5 w-3.5" /> {p.articleCount} haber
+                  </span>
+                  <button onClick={() => openEdit(p)} className="inline-flex items-center gap-1.5 h-9 px-3 rounded-lg border border-border text-xs font-semibold hover:bg-muted">
+                    <Pencil className="h-3.5 w-3.5" /> Düzenle
+                  </button>
+                  <button onClick={() => remove(p)} disabled={busyId === p.id} aria-label="Sil" className="h-9 w-9 inline-flex items-center justify-center rounded-lg border border-border text-error hover:bg-error/10 disabled:opacity-50">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+
+      {/* Form */}
+      {form && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4" onClick={() => setForm(null)}>
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="persona-form-title"
+            onClick={(e) => e.stopPropagation()}
+            className="w-full sm:max-w-2xl max-h-[92dvh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-card border border-border shadow-2xl"
+          >
+            <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-card px-5 py-4">
+              <h2 id="persona-form-title" className="font-bold font-display">{editingId ? "Personayı düzenle" : "Yeni persona"}</h2>
+              <button onClick={() => setForm(null)} aria-label="Kapat" className="h-9 w-9 inline-flex items-center justify-center rounded-lg hover:bg-muted">
+                <X className="h-5 w-5" />
+              </button>
             </div>
 
-            <p className="text-xs text-muted-foreground mb-4 line-clamp-2">{persona.description || "Açıklama yok."}</p>
-
-            <div className="mt-auto space-y-4">
-              <div className="space-y-2">
-                <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground">Aktif Kategoriler</p>
-                <div className="flex flex-wrap gap-1">
-                  {persona.categories.length > 0 ? (
-                    persona.categories.map(c => (
-                      <span key={c.category.id} className="px-2 py-0.5 bg-muted rounded-md text-[10px] font-bold">
-                        {c.category.name}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-[10px] italic text-muted-foreground flex items-center gap-1">
-                      <AlertCircle className="h-3 w-3" />
-                      Kategori atanmadı
-                    </span>
-                  )}
+            <div className="p-5 space-y-5">
+              <div className="flex items-start gap-4">
+                <div className="w-24 shrink-0">
+                  <ImageUploader value={form.image} onChange={(url) => setForm({ ...form, image: url })} type="profile" aspectRatio="square" autoOptimize />
+                </div>
+                <div className="flex-1 min-w-0 space-y-3">
+                  <label className="block space-y-1">
+                    <span className="text-xs font-semibold">Ad soyad</span>
+                    <input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Örn. Deniz Arslan" className={inputClass} />
+                  </label>
+                  <label className="block space-y-1">
+                    <span className="text-xs font-semibold">Unvan</span>
+                    <input value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })} placeholder="Örn. Ekonomi Muhabiri" className={inputClass} />
+                  </label>
                 </div>
               </div>
 
-              <button
-                onClick={() => handleEdit(persona)}
-                className="w-full flex items-center justify-between p-3 bg-muted/30 rounded-xl hover:bg-muted/50 transition-colors text-xs font-bold"
-              >
-                Detayları İncele
-                <ChevronRight className="h-4 w-4" />
+              <label className="block space-y-1">
+                <span className="text-xs font-semibold">Kısa tanıtım <span className="font-normal text-muted-foreground">(haberin altındaki yazar kutusunda görünür)</span></span>
+                <textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={2} className={cn(inputClass, "resize-none")} />
+              </label>
+
+              <div className="space-y-1.5">
+                <span className="text-xs font-semibold">Kategoriler <span className="font-normal text-muted-foreground">(boş bırakırsanız genel persona olur)</span></span>
+                <div className="flex flex-wrap gap-1.5">
+                  {categories.map((c) => {
+                    const on = form.categoryIds.includes(c.id);
+                    return (
+                      <button
+                        type="button"
+                        key={c.id}
+                        aria-pressed={on}
+                        onClick={() => toggleCategory(c.id)}
+                        className={cn("h-8 px-3 rounded-full border text-xs font-semibold transition-colors", on ? "bg-primary-500 border-primary-500 text-white" : "border-border hover:border-primary-500/50")}
+                      >
+                        {c.name}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <label className="block space-y-1">
+                <span className="text-xs font-semibold">Yazım üslubu</span>
+                <span className="block text-[11px] text-muted-foreground">Genel yazım talimatına eklenir. Tonu, dili ve nelere dikkat edileceğini anlatın.</span>
+                <textarea value={form.prompt} onChange={(e) => setForm({ ...form, prompt: e.target.value })} rows={5} placeholder="Örn. Sade ve tarafsız yaz; rakamları okurun hayatına etkisiyle açıkla…" className={inputClass} />
+              </label>
+
+              <label className="block space-y-1">
+                <span className="text-xs font-semibold">Kapak görseli tarzı <span className="font-normal text-muted-foreground">(isteğe bağlı)</span></span>
+                <span className="block text-[11px] text-muted-foreground">Boş bırakılırsa Ayarlar&apos;daki genel görsel talimatı kullanılır.</span>
+                <textarea value={form.imagePrompt} onChange={(e) => setForm({ ...form, imagePrompt: e.target.value })} rows={2} className={cn(inputClass, "resize-none")} />
+              </label>
+
+              <label className="flex items-center gap-2 text-sm">
+                <input type="checkbox" checked={form.isActive} onChange={(e) => setForm({ ...form, isActive: e.target.checked })} className="h-4 w-4 accent-primary-500" />
+                Aktif (AI Yazar bu personayı kullanabilir)
+              </label>
+
+            </div>
+
+            <div className="sticky bottom-0 flex flex-wrap items-center justify-end gap-2 border-t border-border bg-card px-5 py-3">
+              {error && <p role="alert" className="w-full text-sm text-error">{error}</p>}
+              <button onClick={() => setForm(null)} className="h-10 px-4 rounded-xl text-sm font-semibold hover:bg-muted">Vazgeç</button>
+              <button onClick={save} disabled={saving} className="inline-flex items-center gap-2 h-10 px-5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold disabled:opacity-60">
+                {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+                {editingId ? "Kaydet" : "Oluştur"}
               </button>
             </div>
           </div>
-        ))}
-
-        {initialPersonas.length === 0 && !isAdding && (
-          <div className="col-span-full py-20 text-center glass-strong rounded-3xl border border-dashed border-border">
-            <Users className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-            <p className="text-muted-foreground">Henüz bir AI Personası tanımlanmamış.</p>
-            <button
-              onClick={() => setIsAdding(true)}
-              className="mt-4 text-primary-500 font-bold hover:underline"
-            >
-              Hemen ilk personayı oluştur
-            </button>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

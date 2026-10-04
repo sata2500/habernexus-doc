@@ -1,417 +1,182 @@
 "use client";
 
-import { useState, useTransition, useMemo } from "react";
-import {
-  updateArticleStatus,
-  deleteArticle,
-  bulkUpdateArticleStatus,
-  bulkDeleteArticles
-} from "../actions";
-import {
-  Trash2,
-  Eye,
-  EyeOff,
-  Search,
-  CheckSquare,
-  Square,
-  MoreHorizontal,
-  ArrowUpDown,
-  CheckCircle2,
-  XCircle,
-  AlertCircle,
-  Sparkles,
-  AlertTriangle
-} from "lucide-react";
+import { useState, useTransition } from "react";
+import Link from "next/link";
 import dynamic from "next/dynamic";
-import { cn } from "@/lib/utils";
-import { ArticleWithRelations } from "@/lib/types";
+import { useRouter } from "next/navigation";
+import { BarChart3, CheckSquare, ExternalLink, Eye, EyeOff, Loader2, Pencil, Sparkles, Square, Trash2, X } from "lucide-react";
+import { updateArticleStatus, deleteArticle, bulkUpdateArticleStatus, bulkDeleteArticles } from "../actions";
+import { cn, formatRelativeTime, formatViewCount } from "@/lib/utils";
+import type { AdminArticleRow } from "@/lib/server/admin-lists";
 
 const ArticleAnalysisModal = dynamic(
   () => import("@/components/article/ArticleAnalysisModal").then((mod) => mod.ArticleAnalysisModal),
   { ssr: false }
 );
 
-type Article = ArticleWithRelations;
-
-function getStatusInfo(status: string) {
-  if (status === "PUBLISHED") return { label: "Yayında", variant: "success" as const, icon: <CheckCircle2 className="h-3 w-3" /> };
-  if (status === "DRAFT")     return { label: "Taslak",  variant: "warning" as const, icon: <AlertCircle className="h-3 w-3" /> };
-  return { label: status, variant: "default" as const, icon: <XCircle className="h-3 w-3" /> };
+function scoreClass(score: number) {
+  return score >= 80 ? "text-success bg-success/10" : score >= 50 ? "text-warning bg-warning/10" : "text-error bg-error/10";
 }
 
-
-export function ArticleModerator({ articles }: { articles: Article[] }) {
-  const [localArticles, setLocalArticles] = useState<Article[]>(articles);
-  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+export function ArticleModerator({ articles }: { articles: AdminArticleRow[] }) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [actionId, setActionId] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [analysis, setAnalysis] = useState<AdminArticleRow | null>(null);
 
-  // Arama ve Filtreleme State'leri
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [categoryFilter, setCategoryFilter] = useState<string>("all");
-
-  // Seçim State'i
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-
+  // Sayfa/filtre değişince seçim sıfırlansın
   const [prevArticles, setPrevArticles] = useState(articles);
   if (articles !== prevArticles) {
     setPrevArticles(articles);
-    setLocalArticles(articles);
+    setSelected(new Set());
   }
 
-  const handleAnalysisComplete = (updatedArticle: Partial<Article> & { id: string }) => {
-    setLocalArticles((prev) =>
-      prev.map((art) => (art.id === updatedArticle.id ? { ...art, ...updatedArticle } : art))
+  const run = (id: string | null, fn: () => Promise<{ success: boolean; error?: string }>) => {
+    setBusyId(id);
+    startTransition(async () => {
+      const res = await fn();
+      if (!res.success) alert(res.error ?? "İşlem başarısız.");
+      setBusyId(null);
+      router.refresh();
+    });
+  };
+
+  const toggle = (id: string) => setSelected((s) => {
+    const next = new Set(s);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
+  const allSelected = articles.length > 0 && selected.size === articles.length;
+  const ids = [...selected];
+
+  if (articles.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+        Bu filtrelere uygun makale yok.
+      </div>
     );
-    if (selectedArticle && selectedArticle.id === updatedArticle.id) {
-      setSelectedArticle({ ...selectedArticle, ...updatedArticle });
-    }
-  };
-
-  // Kategorileri çıkar (filtre için)
-  const categories = useMemo(() => {
-    const cats = new Map();
-    localArticles.forEach(a => {
-      if (a.category) cats.set(a.category.id, a.category.name);
-    });
-    return Array.from(cats.entries());
-  }, [localArticles]);
-
-  // Filtrelenmiş liste
-  const filteredArticles = useMemo(() => {
-    return localArticles.filter(article => {
-      const authorName = article.author.name || "İsimsiz Yazar";
-      const matchesSearch = article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                           authorName.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === "all" || article.status === statusFilter;
-      const matchesCategory = categoryFilter === "all" || article.category?.id === categoryFilter;
-
-      return matchesSearch && matchesStatus && matchesCategory;
-    });
-  }, [localArticles, searchQuery, statusFilter, categoryFilter]);
-
-  // Seçim işlemleri
-  const toggleSelectAll = () => {
-    if (selectedIds.size === filteredArticles.length && filteredArticles.length > 0) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(filteredArticles.map(a => a.id)));
-    }
-  };
-
-  const toggleSelect = (id: string) => {
-    const next = new Set(selectedIds);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setSelectedIds(next);
-  };
-
-  // Tekli İşlemler
-  const handleStatus = (id: string, newStatus: string) => {
-    setActionId(id + "-status");
-    startTransition(async () => {
-      await updateArticleStatus(id, newStatus);
-      setActionId(null);
-    });
-  };
-
-  const handleDelete = (id: string) => {
-    if (!confirm("Bu makaleyi kalıcı olarak silmek istediğinizden emin misiniz?")) return;
-    setActionId(id + "-delete");
-    startTransition(async () => {
-      await deleteArticle(id);
-      setActionId(null);
-    });
-  };
-
-  // Toplu İşlemler
-  const handleBulkStatus = (status: string) => {
-    const ids = Array.from(selectedIds);
-    if (ids.length === 0) return;
-
-    startTransition(async () => {
-      await bulkUpdateArticleStatus(ids, status);
-      setSelectedIds(new Set());
-    });
-  };
-
-  const handleBulkDelete = () => {
-    const ids = Array.from(selectedIds);
-    if (ids.length === 0) return;
-    if (!confirm(`${ids.length} makaleyi kalıcı olarak silmek istediğinizden emin misiniz?`)) return;
-
-    startTransition(async () => {
-      await bulkDeleteArticles(ids);
-      setSelectedIds(new Set());
-    });
-  };
+  }
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-300">
-      {/* Filtre Barı */}
-      <div className="flex flex-col md:flex-row gap-4 glass-strong border border-border/50 p-4 rounded-3xl shadow-soft">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Başlık veya yazar ara..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-background/50 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
-          />
-        </div>
-
-        <div className="flex gap-2 w-full md:w-auto">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="flex-1 md:flex-initial px-3 py-2 bg-background/50 border border-border rounded-xl text-sm focus:border-primary-500 outline-none cursor-pointer font-semibold min-w-0"
-          >
-            <option value="all">Tüm Durumlar</option>
-            <option value="PUBLISHED">Yayında</option>
-            <option value="DRAFT">Taslak</option>
-          </select>
-
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="flex-1 md:flex-initial px-3 py-2 bg-background/50 border border-border rounded-xl text-sm focus:border-primary-500 outline-none md:max-w-[150px] cursor-pointer font-semibold min-w-0"
-          >
-            <option value="all">Tüm Kategoriler</option>
-            {categories.map(([id, name]) => (
-              <option key={id} value={id}>{name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
-      {/* Toplu İşlem Barı (Sadece seçim varsa görünür) */}
-      {selectedIds.size > 0 && (
-        <div className="flex items-center justify-between glass-strong bg-primary-500/90 border border-primary-400/20 text-white p-3 rounded-2xl shadow-glow backdrop-blur-xl animate-in slide-in-from-top-2 duration-300">
-          <div className="flex items-center gap-3 px-2">
-            <span className="text-sm font-bold">{selectedIds.size} öğe seçildi</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => handleBulkStatus("PUBLISHED")}
-              disabled={isPending}
-              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer active:scale-95"
-            >
+    <div className="space-y-2">
+      {/* Seçim ve toplu işlemler */}
+      <div className={cn("flex flex-wrap items-center gap-2 rounded-xl px-2 py-1.5", selected.size > 0 && "bg-primary-500/10")}>
+        <button onClick={() => setSelected(allSelected ? new Set() : new Set(articles.map((a) => a.id)))} className="inline-flex items-center gap-2 h-8 px-2 rounded-lg text-xs font-semibold hover:bg-muted">
+          {allSelected ? <CheckSquare className="h-4 w-4 text-primary-500" /> : <Square className="h-4 w-4 text-muted-foreground" />}
+          {selected.size > 0 ? `${selected.size} seçili` : "Tümünü seç"}
+        </button>
+        {selected.size > 0 && (
+          <>
+            <button disabled={isPending} onClick={() => run(null, () => bulkUpdateArticleStatus(ids, "PUBLISHED"))} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-card border border-border text-xs font-semibold disabled:opacity-50">
               <Eye className="h-3.5 w-3.5" /> Yayınla
             </button>
-            <button
-              onClick={() => handleBulkStatus("DRAFT")}
-              disabled={isPending}
-              className="flex items-center gap-2 px-3 py-1.5 bg-white/10 hover:bg-white/20 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer active:scale-95"
-            >
-              <EyeOff className="h-3.5 w-3.5" /> Taslağa Al
+            <button disabled={isPending} onClick={() => run(null, () => bulkUpdateArticleStatus(ids, "DRAFT"))} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-card border border-border text-xs font-semibold disabled:opacity-50">
+              <EyeOff className="h-3.5 w-3.5" /> Taslağa al
             </button>
             <button
-              onClick={handleBulkDelete}
               disabled={isPending}
-              className="flex items-center gap-2 px-3 py-1.5 bg-error hover:opacity-90 rounded-lg text-xs font-bold transition-all disabled:opacity-50 cursor-pointer active:scale-95"
+              onClick={() => { if (confirm(`${ids.length} makale kalıcı olarak silinsin mi?`)) run(null, () => bulkDeleteArticles(ids)); }}
+              className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-error text-white text-xs font-semibold disabled:opacity-50"
             >
               <Trash2 className="h-3.5 w-3.5" /> Sil
             </button>
-
-            <button
-              onClick={() => setSelectedIds(new Set())}
-              className="p-1.5 hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-            >
-              <MoreHorizontal className="h-4 w-4" />
+            <button onClick={() => setSelected(new Set())} aria-label="Seçimi temizle" className="ml-auto h-8 w-8 inline-flex items-center justify-center rounded-lg hover:bg-muted">
+              <X className="h-4 w-4" />
             </button>
-          </div>
-        </div>
-      )}
-
-      {/* Liste */}
-      <div className="glass-strong border border-border/50 rounded-[2.5rem] overflow-hidden shadow-soft">
-        <div className="hidden sm:flex items-center gap-4 p-4 border-b border-border bg-muted/20 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-          <button
-            onClick={toggleSelectAll}
-            className="p-1 hover:bg-muted rounded transition-colors cursor-pointer"
-          >
-            {selectedIds.size === filteredArticles.length && filteredArticles.length > 0 ? (
-              <CheckSquare className="h-4 w-4 text-primary-500" />
-            ) : (
-              <Square className="h-4 w-4" />
-            )}
-          </button>
-          <div className="flex-1">Makale Bilgisi</div>
-          <div className="hidden lg:block w-24">İstatistik</div>
-          <div className="hidden lg:block w-40">Analiz & Kalite</div>
-          <div className="w-24">Durum</div>
-          <div className="w-20 text-right">İşlemler</div>
-        </div>
-
-        <div className="divide-y divide-border">
-          {filteredArticles.length === 0 ? (
-            <div className="p-12 text-center text-muted-foreground italic">
-              Arama kriterlerine uygun makale bulunamadı.
-            </div>
-          ) : (
-            filteredArticles.map((article) => {
-              const { label, variant, icon } = getStatusInfo(article.status);
-              const isLoading = actionId?.startsWith(article.id) || isPending;
-              const isSelected = selectedIds.has(article.id);
-              const authorName = article.author.name || "İsimsiz Yazar";
-              const isAnalyzed = article.qualityScore !== null;
-
-              return (
-                <div
-                  key={article.id}
-                  className={cn(
-                    "flex items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 transition-all duration-300 group",
-                    isSelected ? "bg-[var(--color-primary-500)]/5" : "bg-background/30 hover:bg-primary-500/5"
-                  )}
-                >
-                  <button
-                    onClick={() => toggleSelect(article.id)}
-                    className="p-1 hover:bg-muted rounded transition-colors cursor-pointer mt-1 sm:mt-0 shrink-0"
-                  >
-                    {isSelected ? (
-                      <CheckSquare className="h-4 w-4 text-primary-500" />
-                    ) : (
-                      <Square className="h-4 w-4 text-muted-foreground/50 group-hover:text-muted-foreground" />
-                    )}
-                  </button>
-
-                  <div className="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 w-full">
-                    {/* Title & info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 flex-wrap min-w-0">
-                        <p className="text-sm font-bold line-clamp-2 group-hover:text-[var(--color-primary-500)] transition-colors flex-1 min-w-0 break-words whitespace-normal">
-                          {article.title}
-                        </p>
-
-                        {article.aiPersonaId && (
-                          <span className="shrink-0 text-[10px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-primary-500/10 border border-primary-500/20 text-primary-500 flex items-center gap-0.5" title="Yapay Zeka Makalesi">
-                            <Sparkles className="h-2 w-2" /> AI
-                          </span>
-                        )}
-                        {isAnalyzed && (article.plagiarismRate ?? 0) > 30 && (
-                          <span className="shrink-0 text-[10px] font-bold uppercase tracking-tight px-1.5 py-0.5 rounded bg-warning/10 border border-warning/20 text-warning flex items-center gap-0.5 animate-pulse" title="Yüksek İntihal Riski">
-                            <AlertTriangle className="h-2.5 w-2.5" /> Risk
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 mt-1 text-[11px] text-muted-foreground flex-wrap">
-                        <span className="font-semibold">{authorName}</span>
-                        <span>•</span>
-                        {article.category && (
-                          <span
-                            className="px-1.5 py-0.5 rounded-md bg-muted/30 border border-border/50 font-bold"
-                            style={{ color: article.category.color || undefined }}
-                          >
-                            {article.category.name}
-                          </span>
-                        )}
-                        <span className="lg:hidden font-bold">• {article.viewCount.toLocaleString()} okunma</span>
-                        {isAnalyzed && (
-                          <span className="lg:hidden px-1.5 py-0.5 rounded-md bg-muted/30 border border-border/50 font-bold">
-                            QS: {article.qualityScore} • P: %{article.plagiarismRate}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-
-                    {/* Stats (Desktop only) */}
-                    <div className="hidden lg:flex items-center gap-1.5 w-24 text-xs font-bold text-muted-foreground bg-muted/30 border border-border/50 rounded-lg px-2 py-1 justify-center shrink-0">
-                      <ArrowUpDown className="h-3 w-3 text-primary-500" />
-                      {article.viewCount.toLocaleString()}
-                    </div>
-
-                    {/* Quality scores (Desktop only) */}
-                    <div className="hidden lg:flex items-center gap-2 w-40 text-xs shrink-0">
-                      {isAnalyzed ? (
-                        <div className="flex gap-1.5 flex-wrap">
-                          <span className={cn(
-                            "px-2 py-1 rounded font-bold border",
-                            (article.qualityScore ?? 0) >= 80 ? "bg-success/10 border-success/20 text-success" :
-                            (article.qualityScore ?? 0) >= 50 ? "bg-warning/10 border-warning/20 text-warning" :
-                            "bg-error/10 border-error/20 text-error"
-                          )}>
-                            QS: {article.qualityScore}
-                          </span>
-                          {(article.plagiarismRate ?? 0) > 0 && (
-                            <span className={cn(
-                              "px-2 py-1 rounded font-bold border",
-                              (article.plagiarismRate ?? 0) <= 20 ? "bg-success/10 border-success/20 text-success" :
-                              (article.plagiarismRate ?? 0) <= 40 ? "bg-warning/10 border-warning/20 text-warning" :
-                              "bg-error/10 border-error/20 text-error"
-                            )}>
-                              P: %{article.plagiarismRate}
-                            </span>
-                          )}
-                        </div>
-                      ) : (
-                        <span className="text-muted-foreground/60 italic">Analiz Yok</span>
-                      )}
-                    </div>
-
-                    {/* Actions & Status (Responsive wrap on mobile) */}
-                    <div className="flex items-center justify-between sm:justify-end gap-3 mt-2 sm:mt-0 w-full sm:w-auto shrink-0">
-                      <div className="w-24 sm:shrink-0">
-                        <span className={cn(
-                          "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border w-full sm:w-auto justify-center",
-                          variant === "success" ? "bg-success/10 border-success/25 text-success" :
-                          variant === "warning" ? "bg-warning/10 border-warning/25 text-warning" :
-                          "bg-muted border-border/50 text-muted-foreground"
-                        )}>
-                          {icon}
-                          {label}
-                        </span>
-
-                      </div>
-
-                      <div className="w-20 flex items-center justify-end gap-1 shrink-0">
-                        {isLoading ? (
-                          <span className="h-4 w-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-                        ) : (
-                          <>
-                            <button
-                              onClick={() => handleStatus(article.id, article.status === "PUBLISHED" ? "DRAFT" : "PUBLISHED")}
-                              className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
-                              title={article.status === "PUBLISHED" ? "Taslağa al" : "Yayınla"}
-                            >
-                              {article.status === "PUBLISHED" ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </button>
-                            <button
-                              onClick={() => handleDelete(article.id)}
-                              className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-error/10 text-muted-foreground hover:text-error border border-transparent hover:border-error/25 transition-colors cursor-pointer"
-                              title="Sil"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
-
-                          </>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })
-          )}
-        </div>
+          </>
+        )}
       </div>
 
-      {/* Article Quality/Plagiarism Report Modal */}
-      {selectedArticle && (
+      <ul className="rounded-2xl border border-border bg-card shadow-card divide-y divide-border overflow-hidden">
+        {articles.map((a) => {
+          const isSelected = selected.has(a.id);
+          const busy = busyId === a.id;
+          const published = a.status === "PUBLISHED";
+          return (
+            <li key={a.id} className={cn("flex items-start gap-3 p-3 sm:p-4", isSelected && "bg-primary-500/5")}>
+              <button onClick={() => toggle(a.id)} aria-label={isSelected ? "Seçimi kaldır" : "Seç"} aria-pressed={isSelected} className="mt-0.5 h-8 w-8 -m-1.5 inline-flex items-center justify-center rounded-lg hover:bg-muted shrink-0">
+                {isSelected ? <CheckSquare className="h-4 w-4 text-primary-500" /> : <Square className="h-4 w-4 text-muted-foreground" />}
+              </button>
+
+              <div className="flex-1 min-w-0 space-y-1.5">
+                <Link href={`/author/articles/${a.id}/edit`} className="block text-sm font-semibold leading-snug line-clamp-2 hover:text-primary-500">
+                  {a.title}
+                </Link>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px] text-muted-foreground">
+                  <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 font-bold", published ? "bg-success/10 text-success" : "bg-warning/10 text-warning")}>
+                    {published ? "Yayında" : "Taslak"}
+                  </span>
+                  {a.aiPersona && (
+                    <span className="inline-flex items-center gap-1 font-semibold text-primary-500"><Sparkles className="h-3 w-3" />{a.aiPersona.name}</span>
+                  )}
+                  {!a.aiPersona && <span>{a.author.name ?? "İsimsiz"}</span>}
+                  {a.category && <span style={{ color: a.category.color || undefined }} className="font-semibold">{a.category.name}</span>}
+                  <span>{formatRelativeTime(a.publishedAt ?? a.createdAt, { compact: true })}</span>
+                  <span>{formatViewCount(a.viewCount)} okunma</span>
+                  {a.qualityScore !== null && (
+                    <span className={cn("rounded px-1.5 py-0.5 font-bold", scoreClass(a.qualityScore))} title="Kalite puanı">Kalite {a.qualityScore}</span>
+                  )}
+                  {(a.plagiarismRate ?? 0) > 30 && (
+                    <span className="rounded px-1.5 py-0.5 font-bold text-error bg-error/10" title="Benzerlik oranı">Benzerlik %{a.plagiarismRate}</span>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex items-center gap-0.5 shrink-0">
+                {busy ? (
+                  <Loader2 className="h-4 w-4 m-2 animate-spin text-muted-foreground" />
+                ) : (
+                  <>
+                    {published && (
+                      <Link href={`/article/${a.slug}`} target="_blank" aria-label="Sitede gör" className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
+                        <ExternalLink className="h-4 w-4" />
+                      </Link>
+                    )}
+                    <button onClick={() => setAnalysis(a)} aria-label="Kalite analizi" className="hidden sm:inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
+                      <BarChart3 className="h-4 w-4" />
+                    </button>
+                    <Link href={`/author/articles/${a.id}/edit`} aria-label="Düzenle" className="sm:hidden inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted">
+                      <Pencil className="h-4 w-4" />
+                    </Link>
+                    <button
+                      onClick={() => run(a.id, () => updateArticleStatus(a.id, published ? "DRAFT" : "PUBLISHED"))}
+                      aria-label={published ? "Taslağa al" : "Yayınla"}
+                      title={published ? "Taslağa al" : "Yayınla"}
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+                    >
+                      {published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                    <button
+                      onClick={() => { if (confirm("Bu makale kalıcı olarak silinsin mi?")) run(a.id, () => deleteArticle(a.id)); }}
+                      aria-label="Sil"
+                      title="Sil"
+                      className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-error/10 hover:text-error"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      {analysis && (
         <ArticleAnalysisModal
-          articleId={selectedArticle.id}
-          articleTitle={selectedArticle.title}
+          articleId={analysis.id}
+          articleTitle={analysis.title}
           userRole="ADMIN"
           initialData={{
-            plagiarismRate: selectedArticle.plagiarismRate,
-            seoScore: selectedArticle.seoScore,
-            readabilityScore: selectedArticle.readabilityScore,
-            qualityScore: selectedArticle.qualityScore,
-            analysisReport: selectedArticle.analysisReport
+            plagiarismRate: analysis.plagiarismRate,
+            seoScore: analysis.seoScore,
+            readabilityScore: analysis.readabilityScore,
+            qualityScore: analysis.qualityScore,
+            analysisReport: analysis.analysisReport,
           }}
-          onClose={() => setSelectedArticle(null)}
-          onAnalysisComplete={handleAnalysisComplete}
+          onClose={() => setAnalysis(null)}
+          onAnalysisComplete={() => router.refresh()}
         />
       )}
     </div>

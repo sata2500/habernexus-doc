@@ -20,23 +20,6 @@ function isArticleStatus(value: string): value is (typeof ARTICLE_STATUSES)[numb
 // Ortak yetki kontrolü (lib/server/authz)
 const assertAdmin = () => requireRole("ADMIN");
 
-// Tüm kullanıcıları getir
-export async function getAllUsers() {
-  await assertAdmin();
-  return prisma.user.findMany({
-    orderBy: { createdAt: "desc" },
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      image: true,
-      role: true,
-      createdAt: true,
-      _count: { select: { articles: true, comments: true } },
-    },
-  });
-}
-
 // Kullanıcı rolü güncelle
 export async function updateUserRole(userId: string, role: string) {
   const session = await assertAdmin();
@@ -75,18 +58,6 @@ export async function deleteUser(userId: string) {
 
   revalidatePath("/admin/users");
   return { success: true };
-}
-
-// Tüm makaleleri getir (admin görünümü)
-export async function getAllArticles() {
-  await assertAdmin();
-  return prisma.article.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      author: { select: { name: true, email: true, image: true } },
-      category: { select: { name: true, color: true, id: true } },
-    },
-  });
 }
 
 // Makale durumunu güncelle
@@ -280,18 +251,6 @@ export async function deleteCategoryAdmin(id: string) {
   revalidatePath("/admin/categories");
   revalidatePath("/");
   return { success: true };
-}
-
-// Global yorum yönetimi için tüm yorumları getir
-export async function getAllCommentsAdmin() {
-  await assertAdmin();
-  return prisma.comment.findMany({
-    orderBy: { createdAt: "desc" },
-    include: {
-      user: { select: { name: true, image: true, email: true } },
-      article: { select: { title: true, slug: true } },
-    },
-  });
 }
 
 export async function deleteCommentAdmin(id: string) {
