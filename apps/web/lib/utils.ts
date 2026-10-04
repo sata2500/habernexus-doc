@@ -84,6 +84,14 @@ export function formatViewCount(count: number): string {
   return count.toString();
 }
 
+/** Dosya boyutunu okunur biçimde verir (ör. 1536 → "1,5 KB") */
+export function formatBytes(bytes: number): string {
+  if (!bytes) return "0 B";
+  const units = ["B", "KB", "MB", "GB"];
+  const i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
+  return `${(bytes / 1024 ** i).toLocaleString("tr-TR", { maximumFractionDigits: i ? 1 : 0 })} ${units[i]}`;
+}
+
 /**
  * Calculate estimated reading time in minutes
  */

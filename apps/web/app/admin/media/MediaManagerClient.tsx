@@ -1,389 +1,151 @@
 "use client";
 
-import { useState, useMemo, useTransition } from "react";
-import { Card } from "@/components/ui/Card";
-import { Badge } from "@/components/ui/Badge";
-import {
-  Zap,
-  Trash2,
-  CheckCircle2,
-  Clock,
-  AlertCircle,
-  Loader2,
-  Maximize2,
-  Search,
-  Image as ImageIcon,
-  CheckSquare,
-  Square,
-  X
-} from "lucide-react";
-import { deleteMedia, bulkDeleteMedia } from "@/app/actions/admin-media";
+import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { AlertCircle, CheckCircle2, CheckSquare, Clock, ExternalLink, ImageIcon, Loader2, Square, Trash2, X, Zap } from "lucide-react";
+import { deleteMediaItems } from "@/app/actions/admin-media";
+import { cn, formatBytes, formatRelativeTime } from "@/lib/utils";
+import type { AdminMediaRow } from "@/lib/server/admin-lists";
 
-export interface MediaItem {
-  id: string;
-  url: string;
-  filename: string;
-  size: number;
-  status: "RAW" | "PROCESSING" | "OPTIMIZED" | "FAILED";
-  width: number | null;
-  height: number | null;
-  createdAt: string;
-  user: { name: string };
-}
+const STATUS = {
+  OPTIMIZED: { label: "Optimize", icon: CheckCircle2, cls: "bg-success text-white" },
+  RAW: { label: "Ham", icon: Clock, cls: "bg-warning text-white" },
+  PROCESSING: { label: "İşleniyor", icon: Loader2, cls: "bg-primary-500 text-white" },
+  FAILED: { label: "Hatalı", icon: AlertCircle, cls: "bg-error text-white" },
+} as const;
 
-export function MediaManagerClient({ initialMedia }: { initialMedia: MediaItem[] }) {
+export function MediaManagerClient({ items }: { items: AdminMediaRow[] }) {
   const router = useRouter();
-  const [, startTransition] = useTransition();
-  const [processingIds, setProcessingIds] = useState<Set<string>>(new Set());
-  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
-  const [isBulkProcessing, setIsBulkProcessing] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [working, setWorking] = useState<Set<string>>(new Set());
 
-  // Arama ve Filtreleme
-  const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("ALL");
+  // Sayfa veya filtre değişince seçim sıfırlansın
+  const [prevItems, setPrevItems] = useState(items);
+  if (items !== prevItems) {
+    setPrevItems(items);
+    setSelected(new Set());
+  }
 
-  // Filtrelenmiş Medya
-  const filteredMedia = useMemo(() => {
-    return initialMedia.filter(m => {
-      const matchesSearch = m.filename.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesStatus = statusFilter === "ALL" || m.status === statusFilter;
-      return matchesSearch && matchesStatus;
-    });
-  }, [initialMedia, searchQuery, statusFilter]);
+  const toggle = (id: string) => setSelected((s) => {
+    const next = new Set(s);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
 
-  // Seçim İşlemleri
-  const toggleSelect = (id: string) => {
-    setSelectedIds(prev => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  };
-
-  const selectByStatus = (status: "RAW" | "OPTIMIZED" | "FAILED") => {
-    const ids = filteredMedia
-      .filter(m => m.status === status)
-      .map(m => m.id);
-    setSelectedIds(new Set(ids));
-  };
-
-  const toggleSelectAll = () => {
-    if (selectedIds.size === filteredMedia.length && filteredMedia.length > 0) {
-      setSelectedIds(new Set());
-    } else {
-      setSelectedIds(new Set(filteredMedia.map(m => m.id)));
-    }
-  };
-
-  const clearSelection = () => setSelectedIds(new Set());
-
-  // Tekli İşlemler
-  const handleOptimize = async (id: string) => {
-    setProcessingIds(prev => new Set(prev).add(id));
-    try {
-      const resp = await fetch(`/api/media/${id}/optimize`, { method: "POST" });
-      const result = await resp.json();
-      if (!result.success) console.error(result.error);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setProcessingIds(prev => {
-        const next = new Set(prev);
-        next.delete(id);
-        return next;
-      });
-    }
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Bu medyayı silmek istediğinize emin misiniz?")) return;
-    startTransition(async () => {
+  const optimize = async (ids: string[]) => {
+    setWorking((w) => new Set([...w, ...ids]));
+    let failed = 0;
+    for (const id of ids) {
       try {
-        await deleteMedia(id);
-        router.refresh();
-      } catch (err) {
-        alert(err instanceof Error ? err.message : "Silme işlemi başarısız.");
+        const res = await fetch(`/api/media/${id}/optimize`, { method: "POST" });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.success) failed++;
+      } catch {
+        failed++;
       }
-    });
-  };
-
-  // Toplu İşlemler
-  const handleBulkOptimize = async () => {
-    if (selectedIds.size === 0) return;
-    setIsBulkProcessing(true);
-
-    const targetIds = Array.from(selectedIds).filter(id => {
-      const item = initialMedia.find(m => m.id === id);
-      return item?.status === "RAW";
-    });
-
-    for (const id of targetIds) {
-      await handleOptimize(id);
+      setWorking((w) => { const next = new Set(w); next.delete(id); return next; });
     }
-
-    setIsBulkProcessing(false);
-    setSelectedIds(new Set());
+    if (failed) alert(`${failed} görsel optimize edilemedi.`);
+    setSelected(new Set());
     router.refresh();
   };
 
-  const handleBulkDelete = async () => {
-    const ids = Array.from(selectedIds);
-    if (ids.length === 0) return;
-    if (!confirm(`${ids.length} medyayı kalıcı olarak silmek istediğinize emin misiniz?`)) return;
-
-    setIsBulkProcessing(true);
-    try {
-      await bulkDeleteMedia(ids);
-      setSelectedIds(new Set());
+  const remove = (ids: string[]) => {
+    const used = items.filter((m) => ids.includes(m.id) && m.usedIn.length > 0);
+    const warning = used.length
+      ? `\n\nDikkat: ${used.length} görsel kullanımda (${[...new Set(used.flatMap((m) => m.usedIn))].join(", ")}). Silinirse bu yerlerden kaldırılır; görseli kullanan slaytlar da silinir.`
+      : "";
+    if (!confirm(`${ids.length} görsel kalıcı olarak silinsin mi?${warning}`)) return;
+    startTransition(async () => {
+      const res = await deleteMediaItems(ids);
+      if (!res.success) alert(res.error);
+      setSelected(new Set());
       router.refresh();
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Toplu silme başarısız.");
-    } finally {
-      setIsBulkProcessing(false);
-    }
+    });
   };
 
-  const formatSize = (bytes: number) => {
-    if (bytes === 0) return "Bilinmiyor";
-    const k = 1024;
-    const sizes = ["Bytes", "KB", "MB", "GB"];
-    const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
-  };
+  if (items.length === 0) {
+    return (
+      <div className="rounded-2xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+        <ImageIcon className="h-10 w-10 mx-auto mb-3 opacity-30" />
+        Bu filtrelere uygun görsel yok.
+      </div>
+    );
+  }
+
+  const ids = [...selected];
+  const rawSelected = items.filter((m) => selected.has(m.id) && (m.status === "RAW" || m.status === "FAILED")).map((m) => m.id);
+  const allSelected = selected.size === items.length;
+  const busy = isPending || working.size > 0;
 
   return (
-    <div className="relative pb-32">
-      {/* Filtre ve Arama Barı */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8 p-4 glass-strong border border-border/50 rounded-3xl shadow-soft">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            type="text"
-            placeholder="Dosya adıyla ara..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 bg-background/50 border border-border rounded-xl text-sm focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition-all"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
-            >
+    <div className="space-y-3">
+      <div className={cn("flex flex-wrap items-center gap-2 rounded-xl px-2 py-1.5", selected.size > 0 && "bg-primary-500/10")}>
+        <button onClick={() => setSelected(allSelected ? new Set() : new Set(items.map((m) => m.id)))} className="inline-flex items-center gap-2 h-8 px-2 rounded-lg text-xs font-semibold hover:bg-muted">
+          {allSelected ? <CheckSquare className="h-4 w-4 text-primary-500" /> : <Square className="h-4 w-4 text-muted-foreground" />}
+          {selected.size > 0 ? `${selected.size} seçili` : "Sayfadakileri seç"}
+        </button>
+        {selected.size > 0 && (
+          <>
+            {rawSelected.length > 0 && (
+              <button disabled={busy} onClick={() => optimize(rawSelected)} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-card border border-border text-xs font-semibold disabled:opacity-50">
+                <Zap className="h-3.5 w-3.5 text-primary-500" /> Optimize et ({rawSelected.length})
+              </button>
+            )}
+            <button disabled={busy} onClick={() => remove(ids)} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-error text-white text-xs font-semibold disabled:opacity-50">
+              <Trash2 className="h-3.5 w-3.5" /> Sil
+            </button>
+            <button onClick={() => setSelected(new Set())} aria-label="Seçimi temizle" className="ml-auto h-8 w-8 inline-flex items-center justify-center rounded-lg hover:bg-muted">
               <X className="h-4 w-4" />
             </button>
-          )}
-        </div>
-
-        <div className="flex gap-2 overflow-x-auto pb-1 md:pb-0 no-scrollbar">
-          {[
-            { label: "Tümü", value: "ALL" },
-            { label: "Ham", value: "RAW" },
-            { label: "Optimize", value: "OPTIMIZED" },
-            { label: "Hatalı", value: "FAILED" },
-          ].map(f => (
-            <button
-              key={f.value}
-              onClick={() => setStatusFilter(f.value)}
-              className={cn(
-                "px-4 py-2 rounded-xl text-xs font-bold transition-all border whitespace-nowrap cursor-pointer",
-                statusFilter === f.value
-                  ? "bg-primary-500 border-primary-500 text-white shadow-md shadow-primary-500/20"
-                  : "bg-background border-border text-muted-foreground hover:border-primary-500/30"
-              )}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
+          </>
+        )}
       </div>
 
-      {/* Seçim Yardımcıları */}
-      <div className="flex flex-wrap items-center gap-3 mb-6 px-1">
-        <button
-          onClick={toggleSelectAll}
-          className="flex items-center gap-2 text-xs font-bold px-3 py-1.5 bg-muted hover:bg-muted/80 rounded-lg transition-colors"
-        >
-          {selectedIds.size === filteredMedia.length && filteredMedia.length > 0 ? (
-            <CheckSquare className="h-4 w-4 text-primary-500" />
-          ) : (
-            <Square className="h-4 w-4" />
-          )}
-          Tümünü Seç
-        </button>
-        <div className="h-4 w-[1px] bg-border mx-1" />
-        <button onClick={() => selectByStatus("RAW")} className="text-[10px] font-bold text-warning hover:underline uppercase tracking-wider">Hamları Seç</button>
-        <button onClick={() => selectByStatus("OPTIMIZED")} className="text-[10px] font-bold text-success hover:underline uppercase tracking-wider">Optimize Edilenleri Seç</button>
-        <button onClick={() => selectByStatus("FAILED")} className="text-[10px] font-bold text-error hover:underline uppercase tracking-wider">Hatalıları Seç</button>
-      </div>
-
-      {/* Izgara Görünümü */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredMedia.map((item) => {
-          const isSelected = selectedIds.has(item.id);
-          const isProcessing = processingIds.has(item.id);
-
+      <ul className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+        {items.map((m) => {
+          const isSelected = selected.has(m.id);
+          const isWorking = working.has(m.id);
+          const st = STATUS[isWorking ? "PROCESSING" : m.status];
           return (
-            <Card
-              key={item.id}
-              className={cn(
-                "group overflow-hidden flex flex-col rounded-3xl border border-border/50 hover:border-primary-500/30 hover-lift hover:shadow-glow transition-all duration-300 relative bg-background/50",
-                isSelected && "border-primary-500 ring-2 ring-primary-500/20 shadow-lg shadow-primary-500/10"
-              )}
-            >
-              {/* Seçim Checkbox Overlay */}
-              <div
-                onClick={() => toggleSelect(item.id)}
-                className={cn(
-                  "absolute top-3 right-3 z-20 h-6 w-6 rounded-lg border-2 flex items-center justify-center cursor-pointer transition-all",
-                  isSelected
-                    ? "bg-primary-500 border-primary-500 text-white"
-                    : "bg-black/20 border-white/40 opacity-0 group-hover:opacity-100 backdrop-blur-md"
-                )}
-              >
-                {isSelected && <CheckCircle2 className="h-4 w-4" />}
-              </div>
-
-              {/* Görsel Önizleme */}
-              <div className="relative aspect-video bg-muted overflow-hidden">
+            <li key={m.id} className={cn("rounded-2xl border bg-card overflow-hidden shadow-card min-w-0 flex flex-col", isSelected ? "border-primary-500 ring-2 ring-primary-500/20" : "border-border")}>
+              <button type="button" onClick={() => toggle(m.id)} aria-pressed={isSelected} aria-label={`${m.filename} seç`} className="relative block aspect-video bg-muted">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={item.url}
-                  alt={item.filename}
-                  className={cn(
-                    "w-full h-full object-cover transition-transform duration-500 group-hover:scale-105",
-                    isSelected && "scale-105"
+                <img src={m.url} alt="" loading="lazy" className="h-full w-full object-cover" />
+                <span className={cn("absolute top-2 left-2 inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold", st.cls)}>
+                  <st.icon className={cn("h-3 w-3", isWorking && "animate-spin")} /> {st.label}
+                </span>
+                <span className={cn("absolute top-2 right-2 h-6 w-6 rounded-md border-2 flex items-center justify-center", isSelected ? "bg-primary-500 border-primary-500 text-white" : "bg-black/30 border-white/70")}>
+                  {isSelected && <CheckCircle2 className="h-4 w-4" />}
+                </span>
+              </button>
+              <div className="p-2.5 space-y-1 flex-1 flex flex-col">
+                <p className="text-xs font-semibold truncate" title={m.filename}>{m.filename.split("/").pop()}</p>
+                <p className="text-[10px] text-muted-foreground truncate">
+                  {formatBytes(m.size)}{m.width ? ` · ${m.width}×${m.height}` : ""} · {formatRelativeTime(m.createdAt, { compact: true })}
+                </p>
+                <p className={cn("text-[10px] font-semibold truncate", m.usedIn.length ? "text-primary-500" : "text-muted-foreground")}>
+                  {m.usedIn.length ? m.usedIn.join(", ") : "Kullanılmıyor"}
+                </p>
+                <div className="mt-auto flex items-center gap-1 pt-1">
+                  {(m.status === "RAW" || m.status === "FAILED") && (
+                    <button disabled={busy} onClick={() => optimize([m.id])} className="inline-flex items-center gap-1 h-8 px-2 rounded-lg bg-primary-500/10 text-primary-500 text-[11px] font-semibold disabled:opacity-50">
+                      <Zap className="h-3.5 w-3.5" /> Optimize
+                    </button>
                   )}
-                />
-
-                {/* Durum Rozeti */}
-                <div className="absolute top-3 left-3">
-                  {item.status === "OPTIMIZED" ? (
-                    <Badge className="bg-success/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
-                       <CheckCircle2 className="h-3 w-3" /> Optimize
-                    </Badge>
-                  ) : item.status === "RAW" ? (
-                    <Badge className="bg-warning/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
-                       <Clock className="h-3 w-3" /> Ham (Raw)
-                    </Badge>
-                  ) : item.status === "PROCESSING" || isProcessing ? (
-                    <Badge className="bg-primary-500/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
-                       <Loader2 className="h-3 w-3 animate-spin" /> İşleniyor
-                    </Badge>
-                  ) : (
-                    <Badge className="bg-error/90 text-white border-0 flex gap-1 items-center backdrop-blur-md text-[10px]">
-                       <AlertCircle className="h-3 w-3" /> Başarısız
-                    </Badge>
-                  )}
-                </div>
-
-                {/* Hover Actions */}
-                <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                  <a
-                    href={item.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="p-2 bg-white/20 hover:bg-white/30 rounded-xl text-white backdrop-blur-md transition-all"
-                  >
-                    <Maximize2 className="h-5 w-5" />
+                  <a href={m.url} target="_blank" rel="noreferrer" aria-label="Görseli aç" className="ml-auto h-8 w-8 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted">
+                    <ExternalLink className="h-4 w-4" />
                   </a>
-                  {!isBulkProcessing && (
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="p-2 bg-error/80 hover:bg-error/90 rounded-xl text-white backdrop-blur-md transition-all"
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </button>
-                  )}
+                  <button disabled={busy} onClick={() => remove([m.id])} aria-label="Sil" className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-error/10 hover:text-error disabled:opacity-50">
+                    <Trash2 className="h-4 w-4" />
+                  </button>
                 </div>
               </div>
-
-              {/* Bilgiler */}
-              <div className="p-4 flex-1 flex flex-col gap-2">
-                <div className="flex flex-col">
-                  <span className="text-xs font-bold truncate">
-                    {item.filename.split("/").pop()}
-                  </span>
-                  <span className="text-[10px] text-muted-foreground/60">
-                    {new Date(item.createdAt).toLocaleDateString("tr-TR")} • {item.user.name}
-                  </span>
-                </div>
-
-                <div className="flex items-center justify-between mt-auto pt-2 border-t border-border">
-                  <div className="flex flex-col">
-                    <span className="text-xs font-bold">{formatSize(item.size)}</span>
-                    {item.width && (
-                       <span className="text-[10px] text-muted-foreground">{item.width}x{item.height}px</span>
-                    )}
-                  </div>
-
-                  {item.status === "RAW" && !isProcessing && (
-                    <button
-                      onClick={() => handleOptimize(item.id)}
-                      disabled={isBulkProcessing}
-                      className="px-3 py-1.5 bg-primary-500 hover:bg-primary-600 text-white text-[10px] font-bold rounded-lg transition-colors flex items-center gap-1 shadow-lg shadow-primary-500/20 disabled:opacity-50"
-                    >
-                      <Zap className="h-3 w-3 fill-current" />
-                      OPTİMİZE ET
-                    </button>
-                  )}
-                </div>
-              </div>
-            </Card>
+            </li>
           );
         })}
-      </div>
-
-      {filteredMedia.length === 0 && (
-        <div className="col-span-full py-20 flex flex-col items-center justify-center text-muted-foreground border-2 border-dashed border-border rounded-3xl bg-muted/10">
-          <ImageIcon className="h-12 w-12 mb-4 opacity-20" />
-          <p className="font-medium text-sm">Arama kriterlerine uygun medya bulunamadı.</p>
-        </div>
-      )}
-
-      {/* Floating Bulk Action Bar */}
-      {selectedIds.size > 0 && (
-        <div className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-10 duration-300 w-[95%] max-w-lg sm:max-w-none sm:w-auto">
-          <div className="glass-strong bg-background/80 border border-border/50 text-foreground px-6 py-4 rounded-2xl shadow-glow flex flex-col sm:flex-row items-center gap-4 sm:gap-8 backdrop-blur-xl">
-            <div className="flex flex-col min-w-[120px] text-center sm:text-left">
-              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Toplu İşlem</span>
-              <span className="text-sm font-bold text-primary-500">{selectedIds.size} öğe seçildi</span>
-            </div>
-
-            <div className="hidden sm:block h-8 w-[1px] bg-border" />
-
-            <div className="flex items-center gap-3 w-full sm:w-auto justify-center">
-              <button
-                onClick={handleBulkOptimize}
-                disabled={isBulkProcessing}
-                className="flex items-center gap-2 px-5 py-2.5 bg-primary-500 hover:bg-primary-600 text-white text-sm font-bold rounded-xl transition-all shadow-lg shadow-primary-500/25 active:scale-95 disabled:opacity-50 cursor-pointer"
-              >
-                {isBulkProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Zap className="h-4 w-4 fill-current" />}
-                Optimize Et
-              </button>
-
-              <button
-                onClick={handleBulkDelete}
-                disabled={isBulkProcessing}
-                className="flex items-center gap-2 px-5 py-2.5 bg-error/10 hover:bg-error/90 text-error hover:text-white border border-error/20 hover:border-error rounded-xl text-sm font-bold transition-all active:scale-95 disabled:opacity-50 cursor-pointer"
-              >
-                {isBulkProcessing ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                Sil
-              </button>
-
-              <button
-                onClick={clearSelection}
-                className="p-2.5 hover:bg-muted rounded-xl transition-colors cursor-pointer"
-                title="Seçimi Temizle"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      </ul>
     </div>
   );
 }

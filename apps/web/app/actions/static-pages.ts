@@ -1,9 +1,9 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { requireRole } from "@/lib/server/authz";
 
 const REQUIRED_PAGES = [
   { slug: "about", title: "Hakkımızda" },
@@ -38,20 +38,18 @@ async function seedStaticPages() {
   }
 }
 
+/** Henüz yazılmamış (varsayılan metinli veya çok kısa) sayfaları ayırt eder. */
+function isPlaceholder(content: string) {
+  const text = content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  return text.includes("İçerik yakında eklenecektir") || text.length < 80;
+}
+
 export async function getStaticPages() {
+  await requireRole("ADMIN");
   try {
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session || session.user.role !== "ADMIN") {
-      throw new Error("Unauthorized");
-    }
-
     await seedStaticPages();
-
-    return await prisma.staticPage.findMany({
-      orderBy: { createdAt: "asc" },
-    });
+    const pages = await prisma.staticPage.findMany({ orderBy: { createdAt: "asc" } });
+    return pages.map((p) => ({ ...p, isPlaceholder: isPlaceholder(p.content) }));
   } catch (error) {
     console.error("Error fetching static pages:", error);
     return [];
@@ -69,32 +67,38 @@ export async function getStaticPageBySlug(slug: string) {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export async function updateStaticPage(id: string, data: { title: string; content: string; description?: string; extraData?: any }) {
+const ExtraDataSchema = z.object({
+  email: z.string().trim().max(200).optional(),
+  phone: z.string().trim().max(60).optional(),
+  address: z.string().trim().max(300).optional(),
+}).strict();
+
+const StaticPageSchema = z.object({
+  title: z.string().trim().min(2, "Başlık gerekli.").max(120),
+  description: z.string().trim().max(300).optional(),
+  content: z.string().max(200_000),
+  extraData: ExtraDataSchema.optional(),
+});
+
+export async function updateStaticPage(id: string, input: z.input<typeof StaticPageSchema>) {
+  await requireRole("ADMIN");
+  const parsed = StaticPageSchema.safeParse(input);
+  if (!parsed.success) return { success: false as const, error: parsed.error.issues[0]?.message ?? "Geçersiz bilgi." };
   try {
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session || session.user.role !== "ADMIN") {
-      throw new Error("Unauthorized");
-    }
-
     const page = await prisma.staticPage.update({
       where: { id },
       data: {
-        title: data.title,
-        content: data.content,
-        description: data.description,
-        extraData: data.extraData,
+        title: parsed.data.title,
+        content: parsed.data.content,
+        description: parsed.data.description || null,
+        ...(parsed.data.extraData && { extraData: parsed.data.extraData }),
       },
     });
-
-    revalidatePath(`/admin/pages`);
-    revalidatePath(`/(main)/${page.slug}`, "page");
-
-    return { success: true, page };
+    revalidatePath("/admin/pages");
+    revalidatePath(`/${page.slug}`);
+    return { success: true as const };
   } catch (error) {
     console.error("Error updating static page:", error);
-    return { success: false, error: "Sayfa güncellenirken bir hata oluştu." };
+    return { success: false as const, error: "Sayfa güncellenirken bir hata oluştu." };
   }
 }

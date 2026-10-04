@@ -34,11 +34,11 @@ export function FilterChips({ base, params, name, options }: {
   );
 }
 
-export function Pagination({ base, params, page, total }: { base: string; params: RawParams; page: number; total: number }) {
-  const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+export function Pagination({ base, params, page, total, pageSize = PAGE_SIZE }: { base: string; params: RawParams; page: number; total: number; pageSize?: number }) {
+  const pages = Math.max(1, Math.ceil(total / pageSize));
   if (pages <= 1) return null;
-  const from = (page - 1) * PAGE_SIZE + 1;
-  const to = Math.min(page * PAGE_SIZE, total);
+  const from = (page - 1) * pageSize + 1;
+  const to = Math.min(page * pageSize, total);
   const btn = "inline-flex items-center gap-1 h-9 px-3 rounded-xl border border-border bg-card text-sm font-semibold";
   return (
     <nav aria-label="Sayfalama" className="flex items-center justify-between gap-3">

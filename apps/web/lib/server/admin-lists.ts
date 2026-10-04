@@ -103,3 +103,60 @@ export async function listComments({ q, pageNo }: { q: string; pageNo: number })
   ]);
   return { items, total };
 }
+
+export const MEDIA_PAGE_SIZE = 24;
+export const MEDIA_STATUSES = ["RAW", "PROCESSING", "OPTIMIZED", "FAILED"] as const;
+
+/** Medya listesi; her öğenin nerede kullanıldığı (kapak, profil, persona, slayt) da hesaplanır. */
+export async function listMedia({ q, status, pageNo }: { q: string; status: string; pageNo: number }) {
+  const base: Prisma.MediaWhereInput = q ? { filename: { contains: q, mode: "insensitive" } } : {};
+  const where: Prisma.MediaWhereInput = {
+    ...base,
+    ...((MEDIA_STATUSES as readonly string[]).includes(status) && { status: status as (typeof MEDIA_STATUSES)[number] }),
+  };
+
+  const [items, total, byStatus, totalSize] = await Promise.all([
+    prisma.media.findMany({
+      where,
+      orderBy: { createdAt: "desc" },
+      skip: (pageNo - 1) * MEDIA_PAGE_SIZE,
+      take: MEDIA_PAGE_SIZE,
+      select: { id: true, url: true, filename: true, size: true, status: true, width: true, height: true, createdAt: true, user: { select: { name: true } } },
+    }),
+    prisma.media.count({ where }),
+    prisma.media.groupBy({ by: ["status"], where: base, _count: { _all: true } }),
+    prisma.media.aggregate({ _sum: { size: true } }).then((r) => r._sum.size ?? 0),
+  ]);
+
+  const urls = items.map((m) => m.url);
+  const [articles, users, personas, slides] = urls.length
+    ? await Promise.all([
+        prisma.article.findMany({ where: { coverImage: { in: urls } }, select: { coverImage: true } }),
+        prisma.user.findMany({ where: { image: { in: urls } }, select: { image: true } }),
+        prisma.aiPersona.findMany({ where: { image: { in: urls } }, select: { image: true } }),
+        prisma.slide.findMany({ where: { imageUrl: { in: urls } }, select: { imageUrl: true } }),
+      ])
+    : [[], [], [], []];
+
+  const usage = new Map<string, string[]>();
+  const add = (url: string | null, label: string) => {
+    if (!url) return;
+    const list = usage.get(url) ?? [];
+    if (!list.includes(label)) list.push(label);
+    usage.set(url, list);
+  };
+  articles.forEach((a) => add(a.coverImage, "Haber kapağı"));
+  users.forEach((u) => add(u.image, "Profil fotoğrafı"));
+  personas.forEach((p) => add(p.image, "Persona"));
+  slides.forEach((s) => add(s.imageUrl, "Slayt"));
+
+  const counts = Object.fromEntries(byStatus.map((r) => [r.status, r._count._all])) as Record<string, number>;
+  return {
+    items: items.map((m) => ({ ...m, usedIn: usage.get(m.url) ?? [] })),
+    total,
+    counts,
+    totalSize,
+  };
+}
+
+export type AdminMediaRow = Awaited<ReturnType<typeof listMedia>>["items"][number];

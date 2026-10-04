@@ -1,102 +1,46 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { requireRole } from "@/lib/server/authz";
 
-export async function getAdminMedia() {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
+const IdsSchema = z.array(z.string().min(1).max(100)).min(1).max(200);
 
-  if (!session || (session.user.role !== "ADMIN" && session.user.role !== "AUTHOR")) {
-    throw new Error("Unauthorized");
-  }
+/**
+ * Medyayı depodan ve veritabanından siler; kullanıldığı yerlerdeki bağlantıları temizler.
+ * Slaytlar görsel olmadan çalışamadığı için o görseli kullanan slaytlar da silinir.
+ */
+export async function deleteMediaItems(ids: string[]) {
+  await requireRole("ADMIN");
+  const parsed = IdsSchema.safeParse(ids);
+  if (!parsed.success) return { success: false as const, error: "Geçersiz seçim." };
 
-  return await prisma.media.findMany({
-    orderBy: { createdAt: "desc" },
-    include: { user: { select: { name: true, email: true } } },
-  });
-}
-
-export async function deleteMedia(id: string) {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-
-  if (!session || session.user.role !== "ADMIN") {
-    throw new Error("Sadece adminler medya silebilir.");
-  }
-
-  const media = await prisma.media.findUnique({ where: { id } });
-
-  if (media) {
-    const deletedUrl = media.url;
-    try {
-      await del(deletedUrl);
-    } catch (e) {
-      console.warn("Blob silinemedi:", e);
-    }
-
-    // İlişkili tabloları temizle
-    await prisma.article.updateMany({
-      where: { coverImage: deletedUrl },
-      data: { coverImage: null }
-    });
-
-    await prisma.user.updateMany({
-      where: { image: deletedUrl },
-      data: { image: null }
-    });
-
-    await prisma.media.delete({ where: { id } });
-  }
-
-  revalidatePath("/admin/media");
-  revalidatePath("/admin/articles");
-  revalidatePath("/");
-  return { success: true };
-}
-
-export async function bulkDeleteMedia(ids: string[]) {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-
-  if (!session || session.user.role !== "ADMIN") {
-    throw new Error("Sadece adminler medya silebilir.");
-  }
-
-  const mediaItems = await prisma.media.findMany({
-    where: { id: { in: ids } }
-  });
-
-  if (mediaItems.length > 0) {
-    const urls = mediaItems.map(m => m.url);
+  try {
+    const items = await prisma.media.findMany({ where: { id: { in: parsed.data } }, select: { id: true, url: true } });
+    if (items.length === 0) return { success: true as const, deleted: 0 };
+    const urls = items.map((m) => m.url);
 
     try {
       await del(urls);
     } catch (e) {
-      console.warn("Bazı bloblar silinemedi:", e);
+      console.warn("[Media] Bazı dosyalar depodan silinemedi:", e);
     }
 
-    // İlişkili tabloları temizle
-    await prisma.article.updateMany({
-      where: { coverImage: { in: urls } },
-      data: { coverImage: null }
-    });
+    await prisma.$transaction([
+      prisma.article.updateMany({ where: { coverImage: { in: urls } }, data: { coverImage: null } }),
+      prisma.user.updateMany({ where: { image: { in: urls } }, data: { image: null } }),
+      prisma.aiPersona.updateMany({ where: { image: { in: urls } }, data: { image: null } }),
+      prisma.slide.deleteMany({ where: { imageUrl: { in: urls } } }),
+      prisma.media.deleteMany({ where: { id: { in: items.map((m) => m.id) } } }),
+    ]);
 
-    await prisma.user.updateMany({
-      where: { image: { in: urls } },
-      data: { image: null }
-    });
-
-    await prisma.media.deleteMany({
-      where: { id: { in: ids } }
-    });
+    revalidatePath("/admin/media");
+    revalidatePath("/");
+    return { success: true as const, deleted: items.length };
+  } catch (error) {
+    console.error("[Media] Silme hatası:", error);
+    return { success: false as const, error: "Medya silinemedi." };
   }
-
-  revalidatePath("/admin/media");
-  revalidatePath("/admin/articles");
-  revalidatePath("/");
-  return { success: true };
 }
