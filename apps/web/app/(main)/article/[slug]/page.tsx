@@ -13,6 +13,11 @@ import { AudioPlayer } from "../components/AudioPlayer";
 import { TldrCard } from "../components/TldrCard";
 import { ReadingProgressBar } from "../components/ReadingProgressBar";
 import { ArticleReactions } from "../components/ArticleReactions";
+import { ReadingProgressTracker } from "../components/ReadingProgressTracker";
+import { NewsletterInline } from "@/components/article/NewsletterInline";
+import { FeedArticleCard } from "@/components/article/FeedArticleCard";
+import { getRelatedArticles } from "@/lib/feed";
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { sanitizeHtml } from "@/lib/server/sanitize-html";
 import { ARTICLE_COVER_BLUR_DATA_URL } from "@/lib/image-placeholder";
@@ -95,6 +100,11 @@ export default async function ArticlePage({ params }: { params: Params }) {
   }
 
   const readTime = estimateReadingTime(article.content);
+  const related = await getRelatedArticles({
+    id: article.id,
+    categoryId: article.categoryId,
+    tagIds: article.tags.map((t) => t.tag.id),
+  });
 
   // Kelime sayısını hesapla (JSON-LD wordCount için)
   const wordCount = article.content ? article.content.trim().split(/\s+/).length : 0;
@@ -221,7 +231,8 @@ export default async function ArticlePage({ params }: { params: Params }) {
       )}
 
       {/* ── Ana İçerik Gövdesi (Typography Plugin) ────────────────────────── */}
-      <article className="prose prose-lg dark:prose-invert prose-blue mx-auto w-full mb-12">
+      <ReadingProgressTracker slug={article.slug} title={article.title} coverImage={article.coverImage} category={article.category?.name ?? null} />
+      <article id="article-body" className="prose prose-lg dark:prose-invert prose-blue mx-auto w-full mb-12">
         <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }} />
       </article>
 
@@ -255,17 +266,15 @@ export default async function ArticlePage({ params }: { params: Params }) {
         </div>
       </section>
 
-      {/* ── Etiketler (Tags) Alanı ────────────────────────── */}
+      {/* ── Etiketler: aramaya bağlanır ────────────────────────── */}
       {article.tags.length > 0 && (
-        <div className="flex items-center gap-2 border-t border-border pt-6 mt-8 mb-8">
+        <div className="flex flex-wrap items-center gap-2 border-t border-border pt-6 mt-8 mb-8">
           <span className="font-semibold font-display">Etiketler:</span>
-          <div className="flex flex-wrap gap-2">
-            {article.tags.map((tagRel) => (
-              <Badge key={tagRel.tag.id} variant="default" className="hover:bg-primary-500 hover:text-white transition-colors cursor-pointer">
-                #{tagRel.tag.name}
-              </Badge>
-            ))}
-          </div>
+          {article.tags.map((tagRel) => (
+            <Link key={tagRel.tag.id} href={`/search?q=${encodeURIComponent(tagRel.tag.name)}`}>
+              <Badge variant="default" className="hover:bg-primary-500 hover:text-white transition-colors">#{tagRel.tag.name}</Badge>
+            </Link>
+          ))}
         </div>
       )}
 
@@ -295,6 +304,18 @@ export default async function ArticlePage({ params }: { params: Params }) {
           </div>
         );
       })()}
+
+      {/* ── İlgili haberler ────────────────────────── */}
+      {related.length > 0 && (
+        <section aria-labelledby="related-title" className="mb-12">
+          <h2 id="related-title" className="text-xl font-bold font-display mb-4">Bunlar da ilginizi çekebilir</h2>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {related.map((a) => <FeedArticleCard key={a.id} article={a} />)}
+          </div>
+        </section>
+      )}
+
+      <NewsletterInline />
 
       {/* ── Yorum Sistemi ────────────────────────── */}
       <CommentSection articleId={article.id} />

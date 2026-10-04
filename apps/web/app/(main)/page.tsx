@@ -30,6 +30,7 @@ import { FeedArticleCard } from "@/components/article/FeedArticleCard";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
 import { HomepageSlider } from "@/components/layout/HomepageSlider";
+import { ContinueReading } from "@/components/home/ContinueReading";
 
 /* ============================================
    Page Component (RSC - Server Component)
@@ -63,6 +64,9 @@ export default async function HomePage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-4 md:pt-6 space-y-12">
       {/* ── Slider Section ────────────────────────── */}
       <HomepageSlider />
+
+      {/* ── Kaldığın yerden devam et (yalnızca bu cihazda yarım kalan haber varsa) ── */}
+      <ContinueReading />
 
       {/* ── Hero Section ────────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6" id="hero-section" aria-label="Öne Çıkan Haberler">

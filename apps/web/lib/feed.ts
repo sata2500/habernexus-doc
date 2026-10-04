@@ -120,3 +120,35 @@ export async function getFeedPage({
 }
 
 export { feedSelect };
+
+/**
+ * Bir haberle ilgili haberler: önce ortak etiketler, sonra aynı kategorideki son haberler,
+ * yetmezse en yeni haberlerle tamamlanır. Son 30 günle sınırlıdır.
+ */
+export async function getRelatedArticles(
+  article: { id: string; categoryId: string | null; tagIds: string[] },
+  limit = 4,
+): Promise<FeedArticle[]> {
+  const since = new Date(Date.now() - 30 * 86_400_000);
+  const base = { status: "PUBLISHED" as const, publishedAt: { gte: since } };
+  const picked = new Map<string, FeedRow>();
+  const take = async (where: object) => {
+    if (picked.size >= limit) return;
+    const rows = await prisma.article.findMany({
+      where: { ...base, ...where, id: { notIn: [article.id, ...picked.keys()] } },
+      orderBy: { publishedAt: "desc" },
+      take: limit - picked.size,
+      select: feedSelect,
+    });
+    rows.forEach((r) => picked.set(r.id, r));
+  };
+
+  try {
+    if (article.tagIds.length) await take({ tags: { some: { tagId: { in: article.tagIds } } } });
+    if (article.categoryId) await take({ categoryId: article.categoryId });
+    await take({});
+  } catch (error) {
+    console.error("[Feed] İlgili haberler alınamadı:", error);
+  }
+  return [...picked.values()].map(toFeedArticle);
+}
