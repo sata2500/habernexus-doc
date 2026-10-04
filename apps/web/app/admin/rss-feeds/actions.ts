@@ -9,7 +9,6 @@ import { getAppUrl } from "@/lib/utils";
 import { requireRole, getSafeActionError } from "@/lib/server/authz";
 import {
   AiBatchCountSchema,
-  AiWriterAutomationSchema,
   RssSourceIdSchema,
   RssSourceSchema,
   RssSourceUpdateSchema,
@@ -220,23 +219,6 @@ export async function getRssSuggestions(filters?: {
   });
 }
 
-export async function getGoogleTrendOpportunities() {
-  await assertAdmin();
-  const activeTrends = await prisma.googleTrend.findMany({
-    orderBy: { trafficScore: "desc" },
-    take: 10,
-    include: {
-      items: {
-        include: {
-          rssItem: { select: { id: true, title: true } },
-        },
-      },
-    },
-  });
-
-  return activeTrends;
-}
-
 export async function revertToAnalyzed(id: string) {
   await assertAdmin();
   const parsedId = parseActionId(id);
@@ -350,73 +332,6 @@ export async function triggerBatchAiWriter(count: number) {
   } catch (err) {
     return { success: false, error: getSafeActionError(err, "RSS işlemi gerçekleştirilemedi.") };
   }
-}
-
-export async function updateAiWriterAutomation(data: {
-  enabled: boolean;
-  count: number;
-  cron: string;
-}) {
-  await assertAdmin();
-  const parsed = AiWriterAutomationSchema.safeParse(data);
-  if (!parsed.success) return { success: false, error: "Geçersiz AI Writer otomasyon ayarları." };
-
-  try {
-    await prisma.systemSettings.update({
-      where: { id: "global" },
-      data: {
-aiWriterAutoEnabled: parsed.data.enabled,
-        aiWriterAutoCount: parsed.data.count,
-        aiWriterAutoCron: parsed.data.cron,
-      },
-    });
-
-    if (data.enabled) {
-      await setupAiWriterCron(parsed.data.cron);
-    } else {
-      // Devre dışı bırakıldığında QStash görevini sil
-      const settings = await prisma.systemSettings.findUnique({ where: { id: "global" } });
-      if (settings?.qStashAiWriterId) {
-        const { Client } = await import("@upstash/qstash");
-        const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
-        try {
-          await qstash.schedules.delete(settings.qStashAiWriterId);
-        } catch (e) { console.error(e); }
-        await prisma.systemSettings.update({
-          where: { id: "global" },
-          data: { qStashAiWriterId: null },
-        });
-      }
-    }
-
-    revalidatePath("/admin/ai-writer");
-    return { success: true };
-  } catch (err) {
-    return { success: false, error: getSafeActionError(err, "RSS işlemi gerçekleştirilemedi.") };
-  }
-}
-
-async function setupAiWriterCron(cron: string) {
-  const { Client } = await import("@upstash/qstash");
-  const qstash = new Client({ token: process.env.QSTASH_TOKEN || "" });
-  const APP_URL = getAppUrl();
-
-  const settings = await prisma.systemSettings.findUnique({ where: { id: "global" } });
-  if (settings?.qStashAiWriterId) {
-    try {
-      await qstash.schedules.delete(settings.qStashAiWriterId);
-    } catch (e) { console.error(e); }
-  }
-
-  const schedule = await qstash.schedules.create({
-    destination: `${APP_URL}/api/cron/ai-writer`,
-    cron: cron,
-  });
-
-  await prisma.systemSettings.update({
-    where: { id: "global" },
-    data: { qStashAiWriterId: schedule.scheduleId },
-  });
 }
 
 export async function getRssStats() {

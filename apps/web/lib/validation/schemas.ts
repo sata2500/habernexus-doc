@@ -36,7 +36,6 @@ export const RssSuggestionFiltersSchema = z.object({
 }).optional();
 
 export const AiBatchCountSchema = z.number().int().min(1).max(10);
-export const RssRetentionDaysSchema = z.number().int().min(1).max(365);
 
 export const CronExpressionSchema = z.string()
   .trim()
@@ -84,9 +83,3 @@ export const SiteSettingsInputSchema = z.object({
   socialGithub: OptionalHttpUrlSchema.optional(),
   footerCopyright: z.string().trim().max(500).optional(),
 }).strict();
-
-export const AiWriterAutomationSchema = z.object({
-  enabled: z.boolean(),
-  count: AiBatchCountSchema,
-  cron: CronExpressionSchema,
-});

@@ -225,6 +225,13 @@ export async function matchTrendsWithRss(): Promise<{
 
       if (highestScore >= threshold) {
         autoPublishCount++;
+        // Trende güçlü uyan haberi AI Yazar sırasında öne al
+        if (bestMatchItem.status !== "PENDING") {
+          await prisma.rssFeedItem.update({
+            where: { id: bestMatchItem.id },
+            data: { aiScore: Math.min(100, (bestMatchItem.aiScore ?? 60) + 15), status: "APPROVED" },
+          }).catch((e) => console.warn("[Trends] Öneri önceliklendirilemedi:", e));
+        }
       }
     } else if (trend.trafficScore >= 75 && searchGenerateEnabled) {
       const existingArticle = await prisma.article.findFirst({

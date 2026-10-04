@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { analyzeRssBatch, cleanupOldItems } from "@/lib/ai-analyzer";
+import { runAnalyzeJob } from "@/lib/server/jobs";
 import { Receiver } from "@upstash/qstash";
+
+// Tarama/analiz çok sayıda kaynak ve yapay zekâ çağrısı içerebilir
+export const maxDuration = 300;
 
 const receiver = new Receiver({
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "",
@@ -24,11 +27,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // 1. AI analiz
-    const analysisResult = await analyzeRssBatch();
-
-    // 2. Eski öğeleri temizle
-    const cleanedCount = await cleanupOldItems();
+    const { analysis: analysisResult, cleaned: cleanedCount } = await runAnalyzeJob();
 
     return NextResponse.json({
       success: true,

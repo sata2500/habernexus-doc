@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { scanAllActiveSources } from "@/lib/rss-scanner";
+import { runScanJob } from "@/lib/server/jobs";
 import { Receiver } from "@upstash/qstash";
+
+// Tarama/analiz çok sayıda kaynak ve yapay zekâ çağrısı içerebilir
+export const maxDuration = 300;
 
 const receiver = new Receiver({
   currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "",
@@ -24,7 +27,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    const result = await scanAllActiveSources();
+    const result = await runScanJob();
 
     return NextResponse.json({
       success: true,

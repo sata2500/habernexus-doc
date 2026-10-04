@@ -1,11 +1,13 @@
 import Link from "next/link";
-import { Settings2, Sparkles, ServerCog, SlidersHorizontal } from "lucide-react";
+import { Settings2, Sparkles, ServerCog, SlidersHorizontal, Timer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAdminSiteSettings } from "./actions";
 import { getAiOverview } from "./ai-actions";
 import { SiteSettingsForm } from "./components/SiteSettingsForm";
 import { AiSettingsPanel } from "./components/AiSettingsPanel";
 import { SystemPanel } from "./components/SystemPanel";
+import { AutomationPanel } from "./components/AutomationPanel";
+import { getAutomationOverview } from "./automation-actions";
 import { getMigrationStatus, type MigrationStatus } from "@/lib/server/db-migrations";
 
 export const dynamic = "force-dynamic";
@@ -28,6 +30,7 @@ const SERVICES = [
 const TABS = [
   { id: "genel", label: "Genel", icon: SlidersHorizontal, description: "Site adı, logo, SEO, sosyal medya ve tema renkleri." },
   { id: "yapay-zeka", label: "Yapay Zekâ", icon: Sparkles, description: "Modeller, sağlayıcılar ve yapay zekâ talimatları." },
+  { id: "otomasyon", label: "Otomasyon", icon: Timer, description: "Zamanlanmış işler (tarama, analiz, AI Yazar, bülten) ve içerik kuralları." },
   { id: "sistem", label: "Sistem", icon: ServerCog, description: "Veritabanı güncellemeleri ve servis yapılandırması." },
 ] as const;
 
@@ -50,7 +53,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
         <p className="text-muted-foreground text-sm">{active.description}</p>
       </div>
 
-      <nav aria-label="Ayar bölümleri" className="grid grid-cols-3 gap-1 p-1 rounded-2xl bg-muted border border-border">
+      <nav aria-label="Ayar bölümleri" className="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 rounded-2xl bg-muted border border-border">
         {TABS.map((t) => (
           <Link
             key={t.id}
@@ -69,6 +72,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
 
       {tab === "genel" && <GeneralTab />}
       {tab === "yapay-zeka" && <AiTab />}
+      {tab === "otomasyon" && <AutomationTab />}
       {tab === "sistem" && <SystemTab />}
     </div>
   );
@@ -86,6 +90,11 @@ async function GeneralTab() {
 async function AiTab() {
   const overview = await getAiOverview();
   return <AiSettingsPanel {...overview} />;
+}
+
+async function AutomationTab() {
+  const overview = await getAutomationOverview();
+  return <AutomationPanel {...overview} />;
 }
 
 async function SystemTab() {

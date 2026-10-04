@@ -1,26 +1,34 @@
 import Link from "next/link";
-import { Wand2, Users, SlidersHorizontal, Rss, PenLine, ImageIcon, Send } from "lucide-react";
-import { getSystemSettings } from "../rss-feeds/cron-actions";
-import { AiWriterAutomationCard } from "./components/AiWriterAutomationCard";
+import { Wand2, Users, SlidersHorizontal, Rss, PenLine, ImageIcon, Send, Timer, ArrowRight } from "lucide-react";
 import { getTaskModel } from "@/lib/ai/client";
 import { modelDisplayName } from "@/lib/ai/models";
+import { getAutomationStatus, getSettingsRow } from "@/lib/server/automation";
+import { prisma } from "@/lib/prisma";
+import { formatRelativeTime } from "@/lib/utils";
+import { RunJobButton } from "../components/RunJobButton";
+
+export const dynamic = "force-dynamic";
 
 function cronFrequency(cron: string) {
+  if (cron === "0 9 * * *") return "Günde bir";
   const hours = Number(cron.split(" ")[1]?.split("/")[1]);
-  return Number.isFinite(hours) && hours > 0 ? `Günde ${Math.round(24 / hours)} kez` : cron;
+  return Number.isFinite(hours) && hours > 0 ? `${hours} saatte bir` : cron;
 }
 
 export default async function AdminAiWriterPage() {
-  const [settings, writer, image] = await Promise.all([
-    getSystemSettings(),
+  const [settings, writer, image, jobs, pending] = await Promise.all([
+    getSettingsRow(),
     getTaskModel("writer"),
     getTaskModel("image"),
+    getAutomationStatus(),
+    prisma.rssFeedItem.count({ where: { status: { in: ["ANALYZED", "APPROVED"] }, dismissed: false, usedForArticle: false } }),
   ]);
+  const job = jobs.find((j) => j.job === "writer")!;
 
   const stats = [
     { label: "Yazım modeli", value: modelDisplayName(writer) },
     { label: "Görsel modeli", value: modelDisplayName(image) },
-    { label: "Otomasyon", value: settings.aiWriterAutoEnabled ? `Açık · ${cronFrequency(settings.aiWriterAutoCron)}` : "Kapalı" },
+    { label: "Bekleyen öneri", value: pending.toLocaleString("tr-TR") },
   ];
 
   const steps = [
@@ -61,11 +69,31 @@ export default async function AdminAiWriterPage() {
         ))}
       </div>
 
-      <AiWriterAutomationCard
-        enabled={settings.aiWriterAutoEnabled}
-        count={settings.aiWriterAutoCount}
-        cron={settings.aiWriterAutoCron}
-      />
+      <section className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-card flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+        <div className="min-w-0 space-y-1">
+          <h2 className="font-bold font-display flex items-center gap-2"><Timer className="h-4 w-4 text-primary-500" /> Otomatik yazım</h2>
+          <p className="text-sm">
+            {job.enabled
+              ? <><span className="font-semibold text-success">Açık</span> · {cronFrequency(job.cron)} en iyi {settings.aiWriterAutoCount} öneri yazılır</>
+              : <span className="font-semibold text-muted-foreground">Kapalı</span>}
+          </p>
+          {job.enabled && (job.lastRunAt || job.nextRunAt) && (
+            <p className="text-xs text-muted-foreground">
+              {job.lastRunAt && <>Son çalışma {formatRelativeTime(job.lastRunAt)}</>}
+              {job.lastRunAt && job.nextRunAt && " · "}
+              {job.nextRunAt && <>Sonraki {new Date(job.nextRunAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Istanbul" })}</>}
+            </p>
+          )}
+          <Link href="/admin/settings?tab=otomasyon" className="inline-flex items-center gap-1 text-xs font-semibold text-primary-500">
+            Sıklık ve adet ayarları <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
+        <RunJobButton
+          job="writer"
+          label={`${settings.aiWriterAutoCount} haber yaz`}
+          confirmText={`En iyi ${settings.aiWriterAutoCount} öneri şimdi yazılıp yayınlansın mı?`}
+        />
+      </section>
 
       <section className="rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-card">
         <h2 className="font-bold font-display mb-4">Nasıl çalışır?</h2>

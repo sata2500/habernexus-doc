@@ -1,4 +1,3 @@
-"use me";
 "use server";
 
 import { AiError, cleanHtmlResponse, generateText, parseJsonResponse } from "@/lib/ai/client";
@@ -87,7 +86,7 @@ Yanıtı SADECE şu JSON biçiminde ver:
 
     revalidatePath("/admin/google-trends");
     revalidatePath("/admin/articles");
-    return { success: true, articleId: article.id, title: article.title };
+    return { success: true, articleId: article.id, title: article.title, slug: article.slug };
   } catch (error: unknown) {
     const errMsg = error instanceof Error ? error.message : String(error);
     console.error("Trend Haber Üretim Hatası:", error);

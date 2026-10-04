@@ -31,7 +31,9 @@ export function SuggestionsFilter({ categories }: Props) {
     if (category !== "all") params.set("category", category);
     else params.delete("category");
 
-    router.push(`?${params.toString()}`, { scroll: false });
+    // Yalnızca gerçekten değiştiyse gezin; aksi halde her searchParams değişimi yeni bir gezinme tetikler
+    const next = params.toString();
+    if (next !== searchParams.toString()) router.replace(`?${next}`, { scroll: false });
   }, [debouncedSearch, status, category, router, searchParams]);
 
   const clearFilters = () => {
