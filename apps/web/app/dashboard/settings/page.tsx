@@ -35,12 +35,12 @@ export default async function SettingsPage() {
         <div className="space-y-8">
 
           {/* Theme Selection */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-border">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-6 border-b border-border">
             <div>
               <h3 className="font-semibold text-foreground">Tema Seçimi</h3>
               <p className="text-sm text-muted-foreground mt-1">Uygulama arayüzünün karanlık veya aydınlık olmasını seçin.</p>
             </div>
-            <div className="w-full sm:w-auto sm:min-w-72">
+            <div className="w-full lg:w-auto lg:min-w-72">
               <ThemeToggle variant="segmented" />
             </div>
           </div>

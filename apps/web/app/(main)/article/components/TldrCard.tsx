@@ -72,7 +72,7 @@ export function TldrCard({ title, content }: TldrCardProps) {
           </div>
           <div>
             <h4 className="text-sm font-bold font-display text-foreground flex flex-wrap items-center gap-x-2 gap-y-1">
-              TL;DR Hızlı Yapay Zeka Özeti
+              Yapay Zekâ ile Hızlı Özet
               <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary-500/10 text-primary-500 font-semibold uppercase tracking-wider whitespace-nowrap">
                 3 Madde
               </span>

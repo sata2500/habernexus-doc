@@ -26,3 +26,25 @@ test("checkRateLimit blocks requests after the configured limit", () => {
   assert.equal(blocked.allowed, false);
   assert.ok(blocked.retryAfterSeconds > 0);
 });
+
+test("TTS text prep strips markup and splits into bounded chunks", async () => {
+  const { htmlToSpeechText, splitForTts } = await import("../lib/tts-audio");
+  const text = htmlToSpeechText("Başlık", "<p>Birinci cümle. **İkinci** cümle!</p><p>Üçüncü &amp; son</p>");
+  assert.doesNotMatch(text, /<|\*\*|&amp;/);
+  assert.match(text, /^Başlık\./);
+  const long = Array.from({ length: 200 }, (_, i) => `Cümle numarası ${i} burada bitiyor.`).join(" ");
+  const chunks = splitForTts(long, 500);
+  assert.ok(chunks.length > 1);
+  assert.ok(chunks.every((c) => c.length <= 500));
+  assert.equal(chunks.join(" "), long);
+});
+
+test("WAV helpers round-trip PCM data", async () => {
+  const { extractPcm, pcmToWav } = await import("../lib/tts-audio");
+  const pcm = Buffer.from([1, 2, 3, 4, 5, 6]);
+  const wav = pcmToWav(pcm);
+  assert.equal(wav.toString("ascii", 0, 4), "RIFF");
+  assert.equal(wav.readUInt32LE(40), pcm.length);
+  assert.deepEqual(extractPcm(wav), pcm);
+  assert.deepEqual(extractPcm(pcm), pcm);
+});

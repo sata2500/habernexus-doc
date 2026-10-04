@@ -1,5 +1,29 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Veritabanı (Prisma migration)
+
+Şema değişiklikleri **her zaman migration ile** yapılmalıdır (`npm run db:migrate`).
+`prisma db push` migration geçmişini atlar; sıfırdan kurulan bir veritabanında uygulamanın
+çökmesine neden olur.
+
+Canlı veritabanını migration geçmişiyle eşitlemek (tek seferlik):
+
+```bash
+cd apps/web
+DATABASE_URL="<canlı bağlantı>" npm run db:status   # durumu gösterir, değişiklik yapmaz
+DATABASE_URL="<canlı bağlantı>" npm run db:deploy   # bekleyen migration'ları uygular
+```
+
+`db:deploy` **P3005** hatası verirse veritabanı daha önce `db push` ile kurulmuştur.
+O durumda önce ilk migration'ı "uygulanmış" olarak işaretleyin, sonra tekrar deploy edin:
+
+```bash
+DATABASE_URL="<canlı bağlantı>" npm run db:baseline
+DATABASE_URL="<canlı bağlantı>" npm run db:deploy
+```
+
+Sonraki migration'lar idempotenttir (`IF NOT EXISTS`); var olan tablo ve verilere dokunmaz.
+
 ## Getting Started
 
 First, run the development server:

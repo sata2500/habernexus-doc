@@ -74,9 +74,11 @@ export function Navbar({ categories = [], settings }: { categories?: Category[],
         className={cn(
           "fixed top-0 left-0 right-0 z-(--z-sticky)",
           "transition-all duration-300",
+          // Opak arka plan: kaydırılan içerik başlığın arkasından görünmesin
+          "bg-background",
           isScrolled
-            ? "glass-premium shadow-lg border-b border-border/50"
-            : "bg-background/70 backdrop-blur-md border-b border-transparent"
+            ? "shadow-lg border-b border-border/60"
+            : "border-b border-transparent"
         )}
       >
         {/* Top Bar */}

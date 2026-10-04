@@ -11,6 +11,9 @@
     "typecheck": "tsc --noEmit",
     "test": "node ../../node_modules/tsx/dist/cli.mjs --test tests/*.test.ts",
     "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:status": "prisma migrate status",
+    "db:baseline": "prisma migrate resolve --applied 20260505060106_init_postgres_with_slider",
     "db:seed": "prisma db seed",
     "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio"

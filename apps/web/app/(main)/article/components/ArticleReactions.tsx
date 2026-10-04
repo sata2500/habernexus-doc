@@ -103,22 +103,18 @@ export function ArticleReactions({ articleId }: ArticleReactionsProps) {
   }
 
   return (
-    <div className="w-full my-10 p-6 rounded-3xl bg-muted/20 border border-border/50 backdrop-blur-xs space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <div className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-500">
-            <Sparkles className="h-4 w-4" />
-          </div>
-          <h3 className="text-base font-bold font-display text-foreground">
-            Bu haber hakkındaki düşünceniz nedir?
-          </h3>
-        </div>
-        <span className="text-xs text-muted-foreground font-medium">
-          Toplam {totalReactions} okur tepkisi
+    <section aria-label="Okur tepkileri" className="w-full my-8 p-4 sm:p-5 rounded-2xl bg-muted/20 border border-border/60">
+      <div className="flex items-center justify-between gap-3 mb-3">
+        <h3 className="flex items-center gap-2 text-sm sm:text-base font-bold font-display text-foreground">
+          <Sparkles className="h-4 w-4 text-primary-500 shrink-0" />
+          Bu habere tepkiniz?
+        </h3>
+        <span className="text-[11px] sm:text-xs text-muted-foreground font-medium shrink-0">
+          {totalReactions} tepki
         </span>
       </div>
 
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-1">
+      <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
         {DEFAULT_REACTIONS.map((r) => {
           const count = counts[r.id] ?? r.baseCount;
           const isSelected = selectedReaction === r.id;
@@ -126,30 +122,28 @@ export function ArticleReactions({ articleId }: ArticleReactionsProps) {
           return (
             <button
               key={r.id}
+              type="button"
               onClick={() => handleSelect(r.id)}
-              className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-200 cursor-pointer active:scale-95 group ${
+              aria-pressed={isSelected}
+              aria-label={`${r.label}: ${count}`}
+              title={r.label}
+              className={`flex flex-col items-center justify-center gap-0.5 py-2 px-1 rounded-xl border transition-all duration-200 cursor-pointer active:scale-95 group ${
                 isSelected
-                  ? "bg-primary-500/15 border-primary-500 text-foreground shadow-sm scale-102 ring-2 ring-primary-500/30"
+                  ? "bg-primary-500/15 border-primary-500 text-foreground ring-1 ring-primary-500/30"
                   : "bg-card/70 border-border/60 hover:border-primary-500/40 hover:bg-card text-muted-foreground hover:text-foreground"
               }`}
             >
-              <span className="text-2xl group-hover:scale-125 transition-transform duration-200 select-none">
+              <span className="text-xl sm:text-2xl leading-none group-hover:scale-110 transition-transform duration-200 select-none">
                 {r.emoji}
               </span>
-              <span className="text-xs font-semibold mt-1.5">{r.label}</span>
-              <span
-                className={`text-[11px] font-bold mt-0.5 px-2 py-0.2 rounded-full ${
-                  isSelected
-                    ? "bg-primary-500 text-white font-extrabold"
-                    : "bg-muted text-muted-foreground"
-                }`}
-              >
+              <span className={`text-xs font-bold tabular-nums ${isSelected ? "text-primary-500" : ""}`}>
                 {count}
               </span>
+              <span className="hidden sm:block text-[11px] font-medium truncate max-w-full">{r.label}</span>
             </button>
           );
         })}
       </div>
-    </div>
+    </section>
   );
 }

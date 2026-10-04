@@ -68,7 +68,7 @@ export function TldrModal({ title, content }: TldrModalProps) {
             <div className="flex items-center justify-between border-b border-border/40 pb-4">
               <div className="flex items-center gap-2 text-primary-500">
                 <Sparkles className="h-5 w-5" />
-                <h3 className="font-bold font-display text-lg text-foreground">Hızlı AI Özeti (TL;DR)</h3>
+                <h3 className="font-bold font-display text-lg text-foreground">Yapay Zekâ ile Hızlı Özet</h3>
               </div>
               <button
                 onClick={() => setIsOpen(false)}

@@ -178,29 +178,30 @@ export default async function ArticlePage({ params }: { params: Params }) {
           </p>
         )}
 
-        <div className="flex items-center justify-between border-t border-b border-border py-4">
-          <div className="flex items-center gap-3">
+        {/* Dar ekranda paylaşım düğmeleri alt satıra geçer, yazar adı bölünmez */}
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-b border-border py-4">
+          <div className="flex items-center gap-3 min-w-0">
             <Avatar
               src={(article.aiPersona?.image || article.author?.image) || undefined}
               fallback={article.aiPersona?.name || article.author?.name || "Yazar"}
               size="md"
             />
             <div className="text-left">
-              <p className="font-semibold">{article.aiPersona?.name || article.author?.name || "Bilinmeyen Yazar"}</p>
+              <p className="font-semibold whitespace-nowrap">{article.aiPersona?.name || article.author?.name || "Bilinmeyen Yazar"}</p>
               <p className="text-sm text-muted-foreground">{article.aiPersona?.role || "Yazar"}</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 ml-auto">
             <ShareButtons title={article.title} url={""} />
             <BookmarkButton articleId={article.id} />
           </div>
         </div>
       </header>
 
-      {/* ── Yapay Zeka Hızlı Özeti (TL;DR) & Sesli Dinleme ────────────────── */}
+      {/* ── Yapay Zekâ ile Hızlı Özet & Sesli Dinleme ────────────────── */}
       <div className="mb-10 space-y-4">
         <TldrCard title={article.title} content={article.content} />
-        <AudioPlayer content={article.content} title={article.title} />
+        <AudioPlayer articleId={article.id} content={article.content} title={article.title} />
       </div>
 
       {/* ── Kapak Resmi Görüntüleyicisi ────────────────────────── */}
