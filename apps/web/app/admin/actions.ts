@@ -1,5 +1,7 @@
 "use server";
 
+import { requireRole } from "@/lib/server/authz";
+
 import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -15,54 +17,8 @@ function isArticleStatus(value: string): value is (typeof ARTICLE_STATUSES)[numb
   return (ARTICLE_STATUSES as readonly string[]).includes(value);
 }
 
-async function assertAdmin() {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-  if (!session || session.user.role !== "ADMIN") {
-    throw new Error("Yetkisiz işlem. Sadece adminler bu aksiyonu gerçekleştirebilir.");
-  }
-  return session;
-}
-
-// Admin platform istatistikleri
-export async function getAdminStats() {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-  if (!session || session.user.role !== "ADMIN") return null;
-
-  const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
-  const [
-    totalUsers,
-    newUsers,
-    totalArticles,
-    publishedArticles,
-    draftArticles,
-    totalViews,
-    categories,
-  ] = await Promise.all([
-    prisma.user.count(),
-    prisma.user.count({ where: { createdAt: { gte: sevenDaysAgo } } }),
-    prisma.article.count(),
-    prisma.article.count({ where: { status: "PUBLISHED" } }),
-    prisma.article.count({ where: { status: "DRAFT" } }),
-    prisma.article.aggregate({ _sum: { viewCount: true } }),
-    prisma.category.findMany({
-      include: { _count: { select: { articles: { where: { status: "PUBLISHED" } } } } },
-      orderBy: { order: "asc" },
-    }),
-  ]);
-
-  return {
-    totalUsers,
-    newUsers,
-    totalArticles,
-    publishedArticles,
-    draftArticles,
-    totalViews: totalViews._sum.viewCount ?? 0,
-    categories,
-  };
-}
+// Ortak yetki kontrolü (lib/server/authz)
+const assertAdmin = () => requireRole("ADMIN");
 
 // Tüm kullanıcıları getir
 export async function getAllUsers() {

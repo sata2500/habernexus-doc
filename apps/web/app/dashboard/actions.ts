@@ -114,35 +114,6 @@ export async function checkIsBookmarked(articleId: string) {
 }
 
 /**
- * Fetches user stats (e.g. total bookmarks, days since join).
- * Güvenlik: userId session'dan alınıyor — IDOR kapatıldı.
- */
-export async function getUserStats() {
-  try {
-    const session = await getVerifiedSession();
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { createdAt: true, bio: true, _count: { select: { bookmarks: true } } },
-    });
-
-    if (!user) return null;
-
-    const daysSinceJoin = Math.max(
-      1,
-      Math.floor((Date.now() - user.createdAt.getTime()) / (1000 * 60 * 60 * 24))
-    );
-
-    return {
-      totalBookmarks: user._count.bookmarks,
-      daysSinceJoin,
-      bio: user.bio,
-    };
-  } catch {
-    return null;
-  }
-}
-
-/**
  * Permanently deletes the current user's own account.
  */
 export async function deleteAccount() {

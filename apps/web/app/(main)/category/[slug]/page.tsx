@@ -8,7 +8,7 @@ import { Clock, Eye, Newspaper } from "lucide-react";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import Image from "next/image";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
-import { getCardGlowStyles, formatRelativeTime } from "@/lib/utils";
+import { getCardGlowStyles, formatRelativeTime, formatViewCount } from "@/lib/utils";
 
 // Async Params Arayüzü
 type Params = Promise<{ slug: string }>;
@@ -26,11 +26,6 @@ export async function generateMetadata({ params }: { params: Params }) {
       canonical: `/category/${slug}`,
     },
   };
-}
-
-function formatCount(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
-  return n.toString();
 }
 
 export default async function CategoryPage({ params }: { params: Params }) {
@@ -138,7 +133,7 @@ export default async function CategoryPage({ params }: { params: Params }) {
                       </span>
                       <span className="flex items-center gap-1 font-medium shrink-0">
                         <Eye className="h-3.5 w-3.5" />
-                        {formatCount(article.viewCount)}
+                        {formatViewCount(article.viewCount)}
                       </span>
                       {article.publishedAt && (
                         <span className="flex items-center gap-1 font-medium shrink-0 text-muted-foreground/80">

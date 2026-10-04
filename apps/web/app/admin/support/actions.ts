@@ -1,9 +1,9 @@
 "use server";
 
+import { requireRole } from "@/lib/server/authz";
+
 import { del } from "@vercel/blob";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { sendEmail } from "@/lib/mail";
 import { AdminSupportReplyTemplate } from "@/components/mail/AdminSupportReplyTemplate";
@@ -19,14 +19,8 @@ interface StoredAttachment {
 /**
  * Admin yetkisini doğrular.
  */
-async function assertAdmin() {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-  if (!session || session.user.role !== "ADMIN") {
-    throw new Error("Unauthorized");
-  }
-  return session;
-}
+// Ortak yetki kontrolü (lib/server/authz)
+const assertAdmin = () => requireRole("ADMIN");
 
 /**
  * Destek biletlerini getirir

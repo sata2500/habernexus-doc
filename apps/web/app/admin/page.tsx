@@ -1,145 +1,172 @@
-import { getAdminStats } from "./actions";
-import { redirect } from "next/navigation";
-import { Users, FileText, Eye, TrendingUp, Newspaper, ShieldCheck, AlertTriangle, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { getMigrationStatus } from "@/lib/server/db-migrations";
+import {
+  AlertTriangle, ArrowRight, CheckCircle2, Eye, FileText, Info, MessageSquare, PenSquare, Rss,
+  Settings2, Sparkles, Users, Wand2, XCircle, Heart,
+} from "lucide-react";
+import { requireRole } from "@/lib/server/authz";
+import { getAdminDashboard, type TaskTone } from "@/lib/server/admin-dashboard";
+import { cn, formatRelativeTime, formatViewCount } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
+
+const TONE: Record<TaskTone, { icon: typeof Info; box: string; iconClass: string }> = {
+  error: { icon: XCircle, box: "border-error/30 bg-error/5", iconClass: "text-error" },
+  warning: { icon: AlertTriangle, box: "border-warning/40 bg-warning/10", iconClass: "text-warning" },
+  info: { icon: Info, box: "border-border bg-card", iconClass: "text-primary-500" },
+};
+
+const QUICK_ACTIONS = [
+  { label: "Yeni haber yaz", href: "/author/articles/new", icon: PenSquare },
+  { label: "RSS önerileri", href: "/admin/rss-feeds", icon: Rss },
+  { label: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
+  { label: "Ayarlar", href: "/admin/settings", icon: Settings2 },
+];
 
 export default async function AdminDashboardPage() {
-  const stats = await getAdminStats();
-  if (!stats) redirect("/");
+  const session = await requireRole("ADMIN");
+  const { metrics, tasks, recentArticles, topArticles, system } = await getAdminDashboard();
+  const firstName = session.user.name?.split(" ")[0] ?? "";
 
-  // Bekleyen veritabanı güncellemesi varsa yöneticiyi uyar (hata olursa sessizce geç)
-  const pendingMigrations = await getMigrationStatus()
-    .then((s) => s.pendingCount)
-    .catch(() => 0);
-
-  const statCards = [
-    { icon: Users, label: "Toplam Kullanıcı", value: stats.totalUsers, sub: `+${stats.newUsers} bu hafta`, color: "text-primary-600 dark:text-primary-400 bg-primary-500/10 dark:bg-primary-500/15" },
-    { icon: FileText, label: "Toplam Makale", value: stats.totalArticles, sub: `${stats.publishedArticles} yayında · ${stats.draftArticles} taslak`, color: "text-success bg-success/10 " },
-    { icon: Eye, label: "Toplam Görüntülenme", value: stats.totalViews.toLocaleString("tr-TR"), sub: "Tüm zamanlar", color: "text-primary-600 dark:text-primary-400 bg-primary-500/10 dark:bg-primary-500/15" },
-    { icon: Newspaper, label: "Aktif Kategori", value: stats.categories.length, sub: "Tüm kategoriler", color: "text-warning bg-warning/10" },
+  const kpis = [
+    { label: "Yayındaki haber", value: metrics.publishedTotal.toLocaleString("tr-TR"), sub: `Bugün +${metrics.publishedToday} · 7 günde ${metrics.published7d}`, icon: FileText },
+    { label: "Toplam okunma", value: formatViewCount(metrics.totalViews), sub: "Tüm haberler", icon: Eye },
+    { label: "Kullanıcı", value: metrics.users.toLocaleString("tr-TR"), sub: `7 günde +${metrics.newUsers7d}`, icon: Users },
+    {
+      label: "Etkileşim (7 gün)",
+      value: (metrics.comments7d + (metrics.reactions7d ?? 0)).toLocaleString("tr-TR"),
+      sub: `${metrics.comments7d} yorum${metrics.reactions7d !== null ? ` · ${metrics.reactions7d} tepki` : ""}`,
+      icon: Heart,
+    },
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold font-display text-foreground tracking-tight">Platform Özeti</h1>
-          <p className="text-muted-foreground text-sm">Haber Nexus yönetim merkezi.</p>
-        </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-error/10 border border-error/20 rounded-xl">
-          <ShieldCheck className="h-4.5 w-4.5 text-error animate-pulse" />
-          <span className="text-xs font-semibold text-error ">Admin Modu</span>
-        </div>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold font-display tracking-tight">Merhaba{firstName ? `, ${firstName}` : ""} 👋</h1>
+        <p className="text-sm text-muted-foreground">Haber Nexus&apos;ta bugün neler oluyor?</p>
       </div>
 
-      {pendingMigrations > 0 && (
-        <Link
-          href="/admin/settings?tab=sistem"
-          className="flex items-center gap-3 rounded-2xl border border-warning/40 bg-warning/10 p-4 hover:bg-warning/15 transition-colors"
-        >
-          <AlertTriangle className="h-5 w-5 text-warning shrink-0" />
-          <div className="flex-1 min-w-0 text-sm">
-            <p className="font-semibold text-foreground">{pendingMigrations} veritabanı güncellemesi bekliyor</p>
-            <p className="text-muted-foreground">Yeni özelliklerin çalışması için Ayarlar › Sistem sekmesinden uygulayın.</p>
-          </div>
-          <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-        </Link>
-      )}
-
-      {/* İstatistik Kartları */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {statCards.map((card) => (
-          <div
-            key={card.label}
-            className="glass-strong hover-lift rounded-3xl p-5 border border-border shadow-soft flex items-start gap-4 hover:shadow-glow hover:border-primary-500/30 transition-all duration-300"
-          >
-            <div className={`h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 shadow-xs ${card.color}`}>
-              <card.icon className="h-6 w-6" />
+      {/* Metrikler */}
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        {kpis.map((k) => (
+          <div key={k.label} className="rounded-2xl border border-border bg-card p-4 shadow-card min-w-0">
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <k.icon className="h-4 w-4 shrink-0" />
+              <span className="text-xs font-semibold truncate">{k.label}</span>
             </div>
-            <div className="min-w-0">
-              <p className="text-2xl md:text-3xl font-black font-display text-foreground tracking-tight truncate leading-none mb-1.5">{card.value}</p>
-              <p className="text-xs font-bold text-foreground/80 tracking-wide uppercase">{card.label}</p>
-              <p className="text-xs text-muted-foreground mt-1 font-medium">{card.sub}</p>
-            </div>
+            <p className="mt-2 text-2xl font-bold font-display tabular-nums">{k.value}</p>
+            <p className="text-[11px] text-muted-foreground truncate">{k.sub}</p>
           </div>
         ))}
       </div>
 
-      {/* Kategori Dağılımı */}
-      <div className="glass-strong rounded-3xl border border-border/50 shadow-soft overflow-hidden">
-        <div className="p-5 border-b border-border/50 flex items-center justify-between bg-muted/20">
-          <div>
-            <h2 className="font-bold font-display text-lg text-foreground flex items-center gap-2">
-              Kategori Dağılımı
-            </h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Kategorilere göre yayınlanmış makale oranları.</p>
+      {/* Yapılacaklar */}
+      <section className="space-y-2" aria-labelledby="todo-title">
+        <h2 id="todo-title" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">İlgilenmeniz gerekenler</h2>
+        {tasks.length === 0 ? (
+          <div className="flex items-center gap-3 rounded-2xl border border-success/30 bg-success/10 p-4 text-sm">
+            <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
+            Her şey yolunda; bekleyen bir iş yok.
           </div>
-          <TrendingUp className="h-5 w-5 text-primary-500" />
-        </div>
-        <div className="divide-y divide-border/40">
-          {stats.categories.map((cat) => {
-            const count = cat._count.articles;
-            const pct = stats.publishedArticles > 0 ? Math.round((count / stats.publishedArticles) * 100) : 0;
-            return (
-              <div
-                key={cat.id}
-                className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 px-6 py-4.5 hover:bg-muted/30 transition-colors duration-200"
-              >
-                <div className="flex items-center gap-3 min-w-[150px] shrink-0">
-                  <div
-                    className="h-3.5 w-3.5 rounded-full shrink-0 border border-black/10 dark:border-white/10 shadow-xs"
-                    style={{ background: cat.color || "#888" }}
-                  />
-                  <span className="text-sm font-semibold text-foreground">{cat.name}</span>
-                </div>
+        ) : (
+          <ul className="space-y-2">
+            {tasks.map((t) => {
+              const tone = TONE[t.tone];
+              return (
+                <li key={t.title}>
+                  <Link href={t.href} className={cn("flex items-center gap-3 rounded-2xl border p-3.5 hover:shadow-card transition-shadow", tone.box)}>
+                    <tone.icon className={cn("h-5 w-5 shrink-0", tone.iconClass)} />
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm font-semibold text-foreground">{t.title}</span>
+                      <span className="block text-xs text-muted-foreground">{t.detail}</span>
+                    </span>
+                    <span className="hidden sm:inline text-xs font-semibold text-primary-500 shrink-0">{t.action}</span>
+                    <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </section>
 
-                <div className="flex items-center gap-4 w-full sm:w-auto sm:flex-1 sm:max-w-md">
-                  <div className="flex-1 h-2 bg-muted/60 dark:bg-muted/30 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary-500 dark:bg-primary-400 rounded-full transition-all duration-500"
-                      style={{ width: `${pct}%` }}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between sm:justify-end gap-3 w-20 shrink-0">
-                    <span className="text-xs font-semibold text-muted-foreground w-10 text-right">{pct}%</span>
-                    <span className="text-sm font-bold text-foreground text-right w-10">{count}</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+      {/* Hızlı işlemler */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {QUICK_ACTIONS.map((a) => (
+          <Link key={a.href} href={a.href} className="flex items-center gap-2.5 rounded-xl border border-border bg-card px-3 py-3 text-sm font-semibold hover:border-primary-500/40 hover:bg-muted/50 transition-colors">
+            <a.icon className="h-4 w-4 text-primary-500 shrink-0" />
+            <span className="truncate">{a.label}</span>
+          </Link>
+        ))}
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-4">
+        {/* Son güncellenen makaleler */}
+        <section className="lg:col-span-2 min-w-0 rounded-2xl border border-border bg-card shadow-card">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h2 className="font-bold font-display">Son makaleler</h2>
+            <Link href="/admin/articles" className="text-xs font-semibold text-primary-500">Tümü</Link>
+          </div>
+          <ul className="divide-y divide-border">
+            {recentArticles.length === 0 && <li className="p-4 text-sm text-muted-foreground">Henüz makale yok.</li>}
+            {recentArticles.map((a) => (
+              <li key={a.id} className="flex items-center gap-3 px-4 py-3">
+                <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: a.category?.color || "#888" }} />
+                <span className="flex-1 min-w-0">
+                  <Link href={`/author/articles/${a.id}/edit`} className="block text-sm font-medium truncate hover:text-primary-500">{a.title}</Link>
+                  <span className="block text-[11px] text-muted-foreground">
+                    {a.category?.name ?? "Kategorisiz"} · {formatRelativeTime(a.updatedAt, { compact: true })}
+                  </span>
+                </span>
+                <span className={cn(
+                  "text-[11px] font-bold px-2 py-0.5 rounded-full shrink-0",
+                  a.status === "PUBLISHED" ? "bg-success/10 text-success" : "bg-warning/10 text-warning"
+                )}>
+                  {a.status === "PUBLISHED" ? "Yayında" : "Taslak"}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        <div className="space-y-4 min-w-0">
+          {/* Bu hafta en çok okunan */}
+          <section className="rounded-2xl border border-border bg-card shadow-card">
+            <h2 className="font-bold font-display p-4 border-b border-border">Bu hafta en çok okunan</h2>
+            <ol className="divide-y divide-border">
+              {topArticles.length === 0 && <li className="p-4 text-sm text-muted-foreground">Son 7 günde yayınlanan haber yok.</li>}
+              {topArticles.map((a, i) => (
+                <li key={a.id} className="flex items-center gap-3 px-4 py-2.5">
+                  <span className="w-5 text-sm font-bold text-muted-foreground tabular-nums">{i + 1}</span>
+                  <Link href={`/article/${a.slug}`} className="flex-1 min-w-0 text-sm truncate hover:text-primary-500">{a.title}</Link>
+                  <span className="text-xs text-muted-foreground tabular-nums shrink-0">{formatViewCount(a.viewCount)}</span>
+                </li>
+              ))}
+            </ol>
+          </section>
+
+          {/* Sistem durumu */}
+          <section className="rounded-2xl border border-border bg-card shadow-card p-4 space-y-2.5 text-sm">
+            <h2 className="font-bold font-display flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary-500" /> Sistem</h2>
+            <p className="flex justify-between gap-3"><span className="text-muted-foreground">Yazım modeli</span><span className="font-medium truncate text-right">{system.writerModel}</span></p>
+            <p className="flex justify-between gap-3"><span className="text-muted-foreground">AI otomasyonu</span><span className={cn("font-medium", system.automation ? "text-success" : "text-muted-foreground")}>{system.automation ? "Açık" : "Kapalı"}</span></p>
+            <p className="flex justify-between gap-3">
+              <span className="text-muted-foreground">Sağlayıcılar</span>
+              <span className="font-medium">
+                {[system.providers.google && "Google", system.providers.openrouter && "OpenRouter"].filter(Boolean).join(" · ") || <span className="text-error">Yok</span>}
+              </span>
+            </p>
+            <p className="flex justify-between gap-3"><span className="text-muted-foreground">Son yayın</span><span className="font-medium">{system.lastPublishedAt ? formatRelativeTime(system.lastPublishedAt) : "—"}</span></p>
+            <Link href="/admin/settings?tab=sistem" className="inline-flex items-center gap-1 pt-1 text-xs font-semibold text-primary-500">
+              Sistem ayrıntıları <ArrowRight className="h-3 w-3" />
+            </Link>
+          </section>
         </div>
       </div>
 
-      {/* Hızlı Erişim */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Link
-          href="/admin/users"
-          className="flex items-center gap-4 p-5 glass-strong hover-lift rounded-3xl border border-border/50 hover:border-primary-500/40 hover:shadow-glow transition-all duration-300 group"
-        >
-          <div className="h-12 w-12 rounded-2xl bg-primary-500/10 dark:bg-primary-500/15 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
-            <Users className="h-6 w-6 text-primary-600 dark:text-primary-400" />
-          </div>
-          <div>
-            <p className="font-bold font-display text-foreground group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors duration-200">Kullanıcı Yönetimi</p>
-            <p className="text-xs text-muted-foreground mt-0.5 font-medium">Rolleri düzenle, listele ve yönet</p>
-          </div>
-        </Link>
-
-        <Link
-          href="/admin/articles"
-          className="flex items-center gap-4 p-5 glass-strong hover-lift rounded-3xl border border-border/50 hover:border-primary-500/40 hover:shadow-glow transition-all duration-300 group"
-        >
-          <div className="h-12 w-12 rounded-2xl bg-success/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300 shrink-0">
-            <FileText className="h-6 w-6 text-success " />
-          </div>
-          <div>
-            <p className="font-bold font-display text-foreground group-hover:text-primary-500 dark:group-hover:text-primary-400 transition-colors duration-200">İçerik Moderasyonu</p>
-            <p className="text-xs text-muted-foreground mt-0.5 font-medium">Tüm makaleleri incele ve yönet</p>
-          </div>
-        </Link>
-      </div>
+      <p className="text-xs text-muted-foreground flex items-center gap-1.5">
+        <MessageSquare className="h-3.5 w-3.5" /> Yorumları <Link href="/admin/comments" className="text-primary-500 font-semibold">Yorumlar</Link> sayfasından yönetebilirsiniz.
+      </p>
     </div>
   );
 }

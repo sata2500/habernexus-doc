@@ -276,19 +276,6 @@ export async function dismissSuggestion(id: string) {
   return { success: true };
 }
 
-export async function markAsUsed(id: string) {
-  await assertAdmin();
-  const parsedId = parseActionId(id);
-  if (!parsedId) return { success: false, error: "Geçersiz haber önerisi." };
-  await prisma.rssFeedItem.update({
-    where: { id: parsedId },
-    data: { usedForArticle: true },
-  });
-  revalidatePath("/admin/rss-feeds");
-  revalidatePath("/author/suggestions");
-  return { success: true };
-}
-
 export async function triggerAiWriter(suggestionId: string) {
   await assertAdmin();
 

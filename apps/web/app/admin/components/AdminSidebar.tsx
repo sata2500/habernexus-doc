@@ -5,26 +5,52 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   ShieldCheck, Users, FileText, LayoutDashboard, Bookmark, MessageSquare,
-  Image, Home, PenTool, Mail, LayoutTemplate, Rss, Wand2, Settings2, Menu, X, TrendingUp
+  Image, Home, PenTool, Mail, LayoutTemplate, Rss, Wand2, Settings2, Menu, X, TrendingUp, GalleryHorizontal
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "../../dashboard/components/SignOutButton";
 
-const navItems = [
-  { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-  { name: "Google Trends", href: "/admin/google-trends", icon: TrendingUp },
-  { name: "RSS Önerileri", href: "/admin/rss-feeds", icon: Rss },
-  { name: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
-  { name: "Medya Kütüphanesi", href: "/admin/media", icon: Image },
-  { name: "Kategoriler", href: "/admin/categories", icon: Bookmark },
-  { name: "Kullanıcılar", href: "/admin/users", icon: Users },
-  { name: "Makaleler", href: "/admin/articles", icon: FileText },
-  { name: "Sayfa Yönetimi", href: "/admin/pages", icon: LayoutTemplate },
-  { name: "Slider Yönetimi", href: "/admin/slider", icon: Image },
-  { name: "Yorum Yönetimi", href: "/admin/comments", icon: MessageSquare },
-  { name: "Destek Merkezi", href: "/admin/support", icon: Mail },
-  { name: "Ayarlar", href: "/admin/settings", icon: Settings2 },
+// Menü, işin türüne göre gruplanır: içerik, yapay zekâ ile haber akışı, topluluk, site
+const navGroups = [
+  {
+    title: null,
+    items: [{ name: "Genel Bakış", href: "/admin", icon: LayoutDashboard }],
+  },
+  {
+    title: "İçerik",
+    items: [
+      { name: "Makaleler", href: "/admin/articles", icon: FileText },
+      { name: "Kategoriler", href: "/admin/categories", icon: Bookmark },
+      { name: "Medya", href: "/admin/media", icon: Image },
+      { name: "Ana Sayfa Slider", href: "/admin/slider", icon: GalleryHorizontal },
+      { name: "Sabit Sayfalar", href: "/admin/pages", icon: LayoutTemplate },
+    ],
+  },
+  {
+    title: "Haber Akışı ve Yapay Zekâ",
+    items: [
+      { name: "RSS Önerileri", href: "/admin/rss-feeds", icon: Rss },
+      { name: "Google Trends", href: "/admin/google-trends", icon: TrendingUp },
+      { name: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
+    ],
+  },
+  {
+    title: "Topluluk",
+    items: [
+      { name: "Kullanıcılar", href: "/admin/users", icon: Users },
+      { name: "Yorumlar", href: "/admin/comments", icon: MessageSquare },
+      { name: "Destek", href: "/admin/support", icon: Mail },
+    ],
+  },
+  {
+    title: "Site",
+    items: [{ name: "Ayarlar", href: "/admin/settings", icon: Settings2 }],
+  },
 ];
+
+function isActivePath(pathname: string, href: string) {
+  return href === "/admin" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+}
 
 interface SessionProps {
   session: {
@@ -64,27 +90,34 @@ export function AdminSidebar({ session }: SessionProps) {
 
   const renderNavLinks = (isMobile = false) => {
     return (
-      <nav className="flex flex-col gap-1">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = pathname === item.href;
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => isMobile && setIsOpen(false)}
-              className={cn(
-                "flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 outline-none cursor-pointer focus-ring",
-                isActive
-                  ? "bg-primary-500 text-white dark:bg-primary-500/15 dark:text-primary-400 border border-primary-500/10 shadow-sm"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
-              )}
-            >
-              <Icon className={cn("h-4 w-4 transition-transform duration-200 shrink-0", isActive && "scale-110")} />
-              {item.name}
-            </Link>
-          );
-        })}
+      <nav aria-label="Admin menüsü" className="flex flex-col gap-4">
+        {navGroups.map((group) => (
+          <div key={group.title ?? "root"} className="flex flex-col gap-0.5">
+            {group.title && (
+              <p className="px-4 pb-1 text-[11px] font-bold uppercase tracking-wider text-muted-foreground/80">{group.title}</p>
+            )}
+            {group.items.map((item) => {
+              const Icon = item.icon;
+              const isActive = isActivePath(pathname, item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => isMobile && setIsOpen(false)}
+                  className={cn(
+                    "flex items-center gap-3 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 outline-none cursor-pointer focus-ring",
+                    isActive
+                      ? "bg-primary-500 text-white dark:bg-primary-500/15 dark:text-primary-400 border border-primary-500/10 shadow-sm"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
+                  )}
+                >
+                  <Icon className={cn("h-4 w-4 transition-transform duration-200 shrink-0", isActive && "scale-110")} />
+                  {item.name}
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
     );
   };

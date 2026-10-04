@@ -1,19 +1,13 @@
 "use server";
 
+import { requireRole } from "@/lib/server/authz";
+
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { SiteSettingsInputSchema, SystemSettingsInputSchema } from "@/lib/validation/schemas";
+import { SiteSettingsInputSchema } from "@/lib/validation/schemas";
 
-async function assertAdmin() {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-  if (!session || session.user.role !== "ADMIN") {
-    throw new Error("Yetkisiz işlem. Sadece adminler bu aksiyonu gerçekleştirebilir.");
-  }
-  return session;
-}
+// Ortak yetki kontrolü (lib/server/authz)
+const assertAdmin = () => requireRole("ADMIN");
 
 export interface SiteSettingsInput {
   siteName: string;
@@ -109,34 +103,6 @@ export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
   // Tüm public sayfaları yeniden validate et
   revalidatePath("/", "layout");
   revalidatePath("/admin/settings");
-
-  return { success: true };
-}
-
-export async function updateSystemSettings(data: {
-
-  maxNewsAgeHours?: number;
-  googleTrendsEnabled?: boolean;
-  googleTrendsGeo?: string;
-  trendAutoPublishThreshold?: number;
-  trendSearchGenerateEnabled?: boolean;
-}) {
-  await assertAdmin();
-
-  const parsed = SystemSettingsInputSchema.safeParse(data);
-  if (!parsed.success) throw new Error("Geçersiz sistem ayarı.");
-
-  await prisma.systemSettings.upsert({
-    where: { id: "global" },
-    create: {
-      id: "global",
-      ...parsed.data,
-    },
-    update: parsed.data,
-  });
-
-  revalidatePath("/admin/settings");
-  revalidatePath("/admin/google-trends");
 
   return { success: true };
 }

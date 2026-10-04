@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { formatViewCount } from "@/lib/utils";
 import { headers } from "next/headers";
 import { getUserBookmarks } from "../actions";
 import Link from "next/link";
@@ -6,11 +7,6 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Clock, Eye, Bookmark, Newspaper } from "lucide-react";
 import { estimateReadingTime } from "@/lib/data";
-
-function formatCount(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
-  return n.toString();
-}
 
 export default async function BookmarksPage() {
   const reqHeaders = await headers();
@@ -85,7 +81,7 @@ export default async function BookmarksPage() {
                         </span>
                         <span className="flex items-center gap-1">
                           <Eye className="h-3 w-3" />
-                          {formatCount(article.viewCount)}
+                          {formatViewCount(article.viewCount)}
                         </span>
                       </div>
                       <div>
@@ -107,11 +103,9 @@ export default async function BookmarksPage() {
           <p className="text-muted-foreground max-w-sm mb-6">
             Henüz hiçbir haberi kaydetmemişsiniz. Makaleleri okurken yer imi butonuna tıklayarak ilk kaydınızı oluşturabilirsiniz.
           </p>
-          <Link href="/">
-            <button className="px-6 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-medium transition-all focus:ring-4 focus:ring-primary-500/30">
-              Haberleri Keşfet
-            </button>
-          </Link>
+          <Link href="/" className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 text-white font-medium transition-all focus:ring-4 focus:ring-primary-500/30">
+                  Haberleri Keşfet
+                </Link>
         </Card>
       )}
     </div>

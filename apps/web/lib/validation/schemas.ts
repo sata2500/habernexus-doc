@@ -85,17 +85,8 @@ export const SiteSettingsInputSchema = z.object({
   footerCopyright: z.string().trim().max(500).optional(),
 }).strict();
 
-export const SystemSettingsInputSchema = z.object({
-  maxNewsAgeHours: z.number().int().min(0).max(720).optional(),
-  googleTrendsEnabled: z.boolean().optional(),
-  googleTrendsGeo: z.string().trim().toUpperCase().regex(/^[A-Z]{2}$/, "Geçerli bir ülke kodu girin.").optional(),
-  trendAutoPublishThreshold: z.number().int().min(0).max(100).optional(),
-  trendSearchGenerateEnabled: z.boolean().optional(),
-}).strict();
-
 export const AiWriterAutomationSchema = z.object({
   enabled: z.boolean(),
   count: AiBatchCountSchema,
   cron: CronExpressionSchema,
 });
-

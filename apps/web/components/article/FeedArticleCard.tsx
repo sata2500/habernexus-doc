@@ -2,13 +2,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Clock, Eye, Newspaper } from "lucide-react";
 import { Avatar } from "@/components/ui/Avatar";
-import { cn, formatRelativeTime, getCardGlowStyles } from "@/lib/utils";
+import { cn, formatRelativeTime, getCardGlowStyles, formatViewCount } from "@/lib/utils";
 import type { FeedArticle } from "@/lib/feed-types";
-
-function formatCount(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
-  return n.toString();
-}
 
 interface FeedArticleCardProps {
   article: FeedArticle;
@@ -107,7 +102,7 @@ export function FeedArticleCard({ article, priority, badge, layout = "responsive
               </span>
               <span className="flex items-center gap-1">
                 <Eye className="h-3.5 w-3.5" />
-                {formatCount(article.viewCount)}
+                {formatViewCount(article.viewCount)}
               </span>
             </div>
           </div>

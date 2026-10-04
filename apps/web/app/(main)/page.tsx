@@ -20,7 +20,7 @@ import {
   estimateReadingTime,
 } from "@/lib/data";
 import Image from "next/image";
-import { getCardGlowStyles, formatRelativeTime } from "@/lib/utils";
+import { getCardGlowStyles, formatRelativeTime, formatViewCount } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
 import { getFeedPage } from "@/lib/feed";
@@ -30,11 +30,6 @@ import { FeedArticleCard } from "@/components/article/FeedArticleCard";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
 import { HomepageSlider } from "@/components/layout/HomepageSlider";
-
-function formatCount(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
-  return n.toString();
-}
 
 /* ============================================
    Page Component (RSC - Server Component)
@@ -134,7 +129,7 @@ export default async function HomePage() {
                       </span>
                       <span className="flex items-center gap-1">
                         <Eye className="h-3.5 w-3.5" />
-                        {formatCount(heroArticle.viewCount)} okuma
+                        {formatViewCount(heroArticle.viewCount)} okuma
                       </span>
                     </div>
                   </div>
@@ -197,7 +192,7 @@ export default async function HomePage() {
                           <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
                             <span className="flex items-center gap-0.5">
                               <Eye className="h-3 w-3" />
-                              {formatCount(article.viewCount)} okuma
+                              {formatViewCount(article.viewCount)} okuma
                             </span>
                           </div>
                         </div>
@@ -324,23 +319,17 @@ export default async function HomePage() {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               {userId ? (
-                <Link href="/dashboard/settings">
-                  <button className="h-12 px-8 rounded-xl bg-gradient-primary text-white font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow cursor-pointer">
-                    Bülten & Tercihlerimi Yönet
-                  </button>
+                <Link href="/dashboard/settings" className="inline-flex items-center justify-center h-12 px-8 rounded-xl bg-gradient-primary text-white font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow">
+                  Bülten & Tercihlerimi Yönet
                 </Link>
               ) : (
-                <Link href="/register">
-                  <button className="h-12 px-8 rounded-xl bg-gradient-primary text-white font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow cursor-pointer">
-                    Ücretsiz Kaydol
-                  </button>
+                <Link href="/register" className="inline-flex items-center justify-center h-12 px-8 rounded-xl bg-gradient-primary text-white font-semibold hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all shadow-glow">
+                  Ücretsiz Kaydol
                 </Link>
               )}
-              <Link href="/about">
-                <button className="h-12 px-8 rounded-xl border border-border text-foreground font-semibold hover:bg-muted hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer">
+              <Link href="/about" className="inline-flex items-center justify-center h-12 px-8 rounded-xl border border-border text-foreground font-semibold hover:bg-muted hover:scale-[1.02] active:scale-[0.98] transition-all">
                   Daha Fazla Bilgi
-                </button>
-              </Link>
+                </Link>
             </div>
           </div>
         </Card>

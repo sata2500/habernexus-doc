@@ -1,4 +1,5 @@
 import { searchArticles, estimateReadingTime } from "@/lib/data";
+import { formatViewCount } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
@@ -23,11 +24,6 @@ export async function generateMetadata({ searchParams }: { searchParams: SearchP
       follow: true,
     },
   };
-}
-
-function formatCount(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}K`;
-  return n.toString();
 }
 
 export default async function SearchPage({ searchParams }: { searchParams: SearchParams }) {
@@ -120,7 +116,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
                       </span>
                       <span className="flex items-center gap-1">
                         <Eye className="h-3 w-3" />
-                        {formatCount(article.viewCount)}
+                        {formatViewCount(article.viewCount)}
                       </span>
                     </div>
                   </div>

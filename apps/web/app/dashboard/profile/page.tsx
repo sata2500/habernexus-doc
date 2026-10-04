@@ -95,7 +95,7 @@ export default function ProfilePage() {
 
       {/* ── Yazar / Admin Panel Erişim Butonu ─────────────────────── */}
       {isPrivileged && (
-        <Link href={role === "ADMIN" ? "/admin" : "/author"}>
+        <Link href={role === "ADMIN" ? "/admin" : "/author"} className="block">
           <div className="flex items-center justify-between p-4 rounded-2xl bg-linear-to-r from-primary-600/10 to-primary-500/5 border border-primary-500/20 hover:border-primary-500/40 hover:shadow-glow transition-all duration-300 cursor-pointer group">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-xl bg-primary-500/10 border border-primary-500/20 flex items-center justify-center">
