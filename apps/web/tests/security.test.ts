@@ -48,3 +48,40 @@ test("WAV helpers round-trip PCM data", async () => {
   assert.deepEqual(extractPcm(wav), pcm);
   assert.deepEqual(extractPcm(pcm), pcm);
 });
+
+// ── Yetki ayrımı: admin/yazar sunucu işlemleri rol kontrolü olmadan dışa açılamaz ──
+import { readdirSync as _readdir, readFileSync as _read, statSync as _stat } from "node:fs";
+import { join as _join } from "node:path";
+
+const PUBLIC_ACTIONS = new Set([
+  "app/actions/newsletter.ts:unsubscribeByToken",
+  "app/actions/slider.ts:getSlider",
+  "app/actions/static-pages.ts:getStaticPageBySlug",
+  "app/author/actions.ts:incrementViewCount",
+]);
+
+function walk(dir: string): string[] {
+  return _readdir(dir).flatMap((name) => {
+    const p = _join(dir, name);
+    return _stat(p).isDirectory() ? walk(p) : p.endsWith(".ts") || p.endsWith(".tsx") ? [p] : [];
+  });
+}
+
+test("privileged server actions always check the caller's role", () => {
+  const root = _join(__dirname, "..");
+  const roleCheck = /requireRole\(|assertAdmin\(|checkAdmin\(|requireAuthor\(|assertAuthorOrAdmin\(/;
+  const missing: string[] = [];
+  for (const dir of ["app/admin", "app/author", "app/actions"]) {
+    for (const file of walk(_join(root, dir))) {
+      const src = _read(file, "utf8");
+      if (!/^"use server";/m.test(src)) continue;
+      const rel = file.slice(root.length + 1);
+      const fns = [...src.matchAll(/export async function (\w+)\s*\(/g)];
+      fns.forEach((m, i) => {
+        const body = src.slice(m.index! + m[0].length, fns[i + 1]?.index ?? src.length).slice(0, 2500);
+        if (!roleCheck.test(body) && !PUBLIC_ACTIONS.has(`${rel}:${m[1]}`)) missing.push(`${rel}:${m[1]}`);
+      });
+    }
+  }
+  assert.deepEqual(missing, [], `Rol kontrolü olmayan işlemler: ${missing.join(", ")}`);
+});

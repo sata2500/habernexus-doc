@@ -5,8 +5,7 @@ import { requireRole } from "@/lib/server/authz";
 import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { deleteAccountSafely } from "@/lib/server/account-deletion";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { rewriteArticleWithAI } from "@/lib/ai-writer";
 import { ROLES, type Role } from "@/lib/server/authz";
@@ -33,28 +32,31 @@ export async function updateUserRole(userId: string, role: string) {
     return { success: false, error: "Kendi admin yetkinizi kaldıramazsınız." };
   }
 
+  const target = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+  if (!target) return { success: false, error: "Kullanıcı bulunamadı." };
+
   await prisma.user.update({
     where: { id: userId },
     data: { role },
   });
+  console.warn(`[Admin] ${session.user.id} kullanıcısı ${userId} rolünü ${target.role} → ${role} yaptı.`);
   revalidatePath("/admin/users");
   return { success: true };
 }
 
 // Kullanıcıyı tamamen sil (Cascade delete devreye girer)
 export async function deleteUser(userId: string) {
-  await assertAdmin();
+  const session = await assertAdmin();
+  if (typeof userId !== "string" || !userId) return { success: false, error: "Geçersiz kullanıcı." };
 
-  // Kendini silmeye çalışmasın?
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-  if (session?.user.id === userId) {
+  if (session.user.id === userId) {
     return { success: false, error: "Kendi hesabınızı bu panelden silemezsiniz. Lütfen tercihler sayfasını kullanın." };
   }
 
-  await prisma.user.delete({
-    where: { id: userId },
-  });
+  // Son yönetici korunur; kullanıcının haberleri silinmez, yöneticiye devredilir
+  const result = await deleteAccountSafely(userId);
+  if (!result.success) return result;
+  console.warn(`[Admin] ${session.user.id} kullanıcısı ${userId} hesabını sildi (${result.reassigned} haber devredildi).`);
 
   revalidatePath("/admin/users");
   return { success: true };

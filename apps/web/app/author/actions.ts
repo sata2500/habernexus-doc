@@ -3,8 +3,6 @@
 import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { z } from "zod";
 import { requireRole } from "@/lib/server/authz";
 import { slugify } from "@/lib/utils";
@@ -117,12 +115,8 @@ export async function saveArticle(id: string | null, input: ArticleInput): Promi
 
 export async function deleteArticle(id: string) {
   try {
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session || (session.user.role !== "AUTHOR" && session.user.role !== "ADMIN")) {
-      return { success: false, error: "Yetkisiz işlem." };
-    }
+    const session = await requireRole("AUTHOR", "ADMIN").catch(() => null);
+    if (!session) return { success: false, error: "Yetkisiz işlem." };
 
     const article = await prisma.article.findUnique({
       where: { id },
@@ -176,12 +170,8 @@ export async function incrementViewCount(id: string) {
 // Yazarın kendi makalelerine gelen yorumları getir
 export async function getAuthorComments() {
   try {
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session || (session.user.role !== "AUTHOR" && session.user.role !== "ADMIN")) {
-      return [];
-    }
+    const session = await requireRole("AUTHOR", "ADMIN").catch(() => null);
+    if (!session) return [];
 
     return await prisma.comment.findMany({
       where: {
@@ -204,12 +194,8 @@ export async function getAuthorComments() {
 // Yazarın makalesine ait bir yorumu yazarın kendisinin silmesi
 export async function deleteCommentByAuthor(id: string) {
   try {
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session || (session.user.role !== "AUTHOR" && session.user.role !== "ADMIN")) {
-      return { success: false, error: "Yetkisiz işlem." };
-    }
+    const session = await requireRole("AUTHOR", "ADMIN").catch(() => null);
+    if (!session) return { success: false, error: "Yetkisiz işlem." };
 
     const comment = await prisma.comment.findUnique({
       where: { id },
@@ -238,11 +224,7 @@ export async function deleteCommentByAuthor(id: string) {
 
 // Yazar veya Admin yetki doğrulama yardımcısı
 async function assertAuthorOrAdmin(articleId: string) {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-  if (!session || (session.user.role !== "AUTHOR" && session.user.role !== "ADMIN")) {
-    throw new Error("Yetkisiz işlem.");
-  }
+  const session = await requireRole("AUTHOR", "ADMIN");
   const article = await prisma.article.findUnique({
     where: { id: articleId },
     select: { authorId: true }

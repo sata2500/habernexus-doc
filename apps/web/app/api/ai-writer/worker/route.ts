@@ -1,14 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeArticleWithAI, writeStory } from "@/lib/ai-writer";
-import { Receiver } from "@upstash/qstash";
+import { verifyQStashRequest } from "@/lib/server/qstash-verify";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 300; // 5 dakika (Vercel Pro için)
-
-const receiver = new Receiver({
-  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "",
-  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "",
-});
 
 /**
  * AI Writer Worker
@@ -16,21 +11,12 @@ const receiver = new Receiver({
  */
 export async function POST(req: NextRequest) {
   // 1. İmza Doğrulaması (Manuel)
-  const signature = req.headers.get("upstash-signature");
-  if (!signature) {
-    return NextResponse.json({ error: "Missing signature" }, { status: 401 });
+  // İmza anahtarı yoksa ya da imza geçersizse istek reddedilir
+  const verified = await verifyQStashRequest(req);
+  if (!verified.ok) {
+    return NextResponse.json({ error: verified.error }, { status: verified.status });
   }
-
-  const bodyText = await req.text();
-  const isValid = await receiver.verify({
-    signature,
-    body: bodyText,
-  }).catch(() => false);
-
-  if (!isValid) {
-    console.error("[AI Worker] Geçersiz QStash imzası!");
-    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
-  }
+  const bodyText = verified.body;
 
   try {
     const body = JSON.parse(bodyText);

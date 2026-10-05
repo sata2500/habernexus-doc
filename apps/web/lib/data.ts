@@ -2,6 +2,9 @@ import { cache } from "react";
 import { prisma } from "./prisma";
 import { appCache } from "./cache";
 
+/** Herkese açık sayfalarda yazar için yalnızca bu alanlar çekilir (e-posta, rol vb. asla) */
+const PUBLIC_AUTHOR = { id: true, name: true, image: true, bio: true } as const;
+
 // Vercel build sürecinde veritabanı bağlantısı olmayabilir.
 const isMissingDb = !process.env.DATABASE_URL;
 
@@ -15,7 +18,7 @@ export const getHeroArticle = cache(async () => {
         orderBy: { publishedAt: "desc" },
         include: {
           category: true,
-          author: true,
+          author: { select: PUBLIC_AUTHOR },
           aiPersona: true,
         },
       });
@@ -37,7 +40,7 @@ export const getTrendingArticles = cache(async (limit: number = 4) => {
         take: limit,
         include: {
           category: true,
-          author: true,
+          author: { select: PUBLIC_AUTHOR },
           aiPersona: true,
         },
       });
@@ -78,7 +81,7 @@ export const getArticleBySlug = cache(async (slug: string) => {
       return await prisma.article.findUnique({
         where: { slug, status: "PUBLISHED" },
         include: {
-          author: true,
+          author: { select: PUBLIC_AUTHOR },
           category: true,
           aiPersona: true,
           tags: { include: { tag: true } },
@@ -102,7 +105,7 @@ export const getCategoryWithArticles = cache(async (slug: string) => {
           articles: {
             where: { status: "PUBLISHED" },
             orderBy: { publishedAt: "desc" },
-            include: { author: true, category: true, aiPersona: true },
+            include: { author: { select: PUBLIC_AUTHOR }, category: true, aiPersona: true },
           },
         },
       });
@@ -127,7 +130,7 @@ export const searchArticles = cache(async (query: string) => {
         ],
       },
       orderBy: { publishedAt: "desc" },
-      include: { author: true, category: true, aiPersona: true },
+      include: { author: { select: PUBLIC_AUTHOR }, category: true, aiPersona: true },
     });
   } catch (e) {
     console.error("searchArticles error:", e);

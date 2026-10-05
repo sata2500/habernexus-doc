@@ -2,27 +2,17 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { sendEmail } from "@/lib/mail";
 import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
-import { Receiver } from "@upstash/qstash";
-
-const receiver = new Receiver({
-  currentSigningKey: process.env.QSTASH_CURRENT_SIGNING_KEY || "",
-  nextSigningKey: process.env.QSTASH_NEXT_SIGNING_KEY || "",
-});
+import { verifyQStashRequest } from "@/lib/server/qstash-verify";
 
 /**
  * Dinamik Saatli Haber Bülteni Otomasyonu (QStash Webhook)
  */
 export async function POST(req: NextRequest) {
   // İmza Doğrulaması
-  const signature = req.headers.get("upstash-signature");
-  const bodyText = await req.text();
-  const isValid = await receiver.verify({
-    signature: signature || "",
-    body: bodyText,
-  }).catch(() => false);
-
-  if (!isValid) {
-    return NextResponse.json({ error: "Invalid signature" }, { status: 401 });
+  // İmza anahtarı yoksa ya da imza geçersizse istek reddedilir
+  const verified = await verifyQStashRequest(req);
+  if (!verified.ok) {
+    return NextResponse.json({ error: verified.error }, { status: verified.status });
   }
 
   try {

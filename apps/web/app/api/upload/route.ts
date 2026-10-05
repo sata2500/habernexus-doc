@@ -8,7 +8,9 @@ import { checkRateLimitAsync, getRequestIdentity } from "@/lib/server/rate-limit
 
 const ALLOWED_CONTENT_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"] as const;
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024;
+const MAX_PROFILE_BYTES = 2 * 1024 * 1024;
 const UploadTokenPayloadSchema = z.object({ userId: z.string().min(1).max(100) });
+const ClientPayloadSchema = z.object({ type: z.enum(["profile", "article"]) });
 
 const UPLOAD_RATE_LIMIT = 20;
 const UPLOAD_WINDOW_MS = 60 * 1000;
@@ -34,12 +36,15 @@ export async function POST(request: Request): Promise<NextResponse> {
     const jsonResponse = await handleUpload({
       body,
       request,
-      onBeforeGenerateToken: async () => {
-        const session = await requireRole("AUTHOR", "ADMIN");
+      onBeforeGenerateToken: async (_pathname, clientPayload) => {
+        const payload = ClientPayloadSchema.safeParse(clientPayload ? JSON.parse(clientPayload) : null);
+        // Okurlar yalnızca kendi profil fotoğrafını yükleyebilir; haber görselleri yazar ve admine açık
+        const isProfile = payload.success && payload.data.type === "profile";
+        const session = isProfile ? await requireRole("USER", "AUTHOR", "ADMIN") : await requireRole("AUTHOR", "ADMIN");
 
         return {
           allowedContentTypes: [...ALLOWED_CONTENT_TYPES],
-          maximumSizeInBytes: MAX_UPLOAD_BYTES,
+          maximumSizeInBytes: isProfile && session.user.role === "USER" ? MAX_PROFILE_BYTES : MAX_UPLOAD_BYTES,
           addRandomSuffix: true,
           tokenPayload: JSON.stringify({ userId: session.user.id }),
         };

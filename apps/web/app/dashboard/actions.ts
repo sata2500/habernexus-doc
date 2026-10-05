@@ -6,6 +6,7 @@ import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { checkRateLimitAsync } from "@/lib/server/rate-limit";
 import { NewsletterTimeSchema } from "@/lib/validation/schemas";
+import { deleteAccountSafely } from "@/lib/server/account-deletion";
 
 const MAX_BIO_LENGTH = 1000;
 
@@ -39,9 +40,8 @@ export async function updateUserBio(bio: string) {
     revalidatePath("/dashboard/profile");
     return { success: true };
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Biyografi güncellenemedi.";
     console.error("Error updating bio:", err);
-    return { success: false, error: message };
+    return { success: false, error: err instanceof Error && err.message.startsWith("Yetkisiz") ? err.message : "Biyografi güncellenemedi." };
   }
 }
 
@@ -53,6 +53,7 @@ export async function toggleBookmark(articleId: string) {
   try {
     const session = await getVerifiedSession();
     const userId = session.user.id;
+    if (typeof articleId !== "string" || articleId.length > 100) return { success: false, error: "Geçersiz haber." };
 
     const existing = await prisma.bookmark.findUnique({
       where: { userId_articleId: { userId, articleId } },
@@ -61,15 +62,17 @@ export async function toggleBookmark(articleId: string) {
     if (existing) {
       await prisma.bookmark.delete({ where: { id: existing.id } });
     } else {
+      // Yalnızca yayındaki haberler kaydedilebilir (taslak haberlerin varlığı sızdırılmaz)
+      const article = await prisma.article.findFirst({ where: { id: articleId, status: "PUBLISHED" }, select: { id: true } });
+      if (!article) return { success: false, error: "Haber bulunamadı." };
       await prisma.bookmark.create({ data: { userId, articleId } });
     }
 
     revalidatePath("/dashboard/bookmarks");
     return { success: true, isBookmarked: !existing };
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Kaydedilenler güncellenemedi.";
     console.error("Error toggling bookmark:", err);
-    return { success: false, error: message };
+    return { success: false, error: err instanceof Error && err.message.startsWith("Yetkisiz") ? err.message : "Kaydedilenler güncellenemedi." };
   }
 }
 
@@ -119,10 +122,9 @@ export async function checkIsBookmarked(articleId: string) {
 export async function deleteAccount() {
   try {
     const session = await getVerifiedSession();
-    // Kullanıcıyı veritabanından sil (Cascade delete diğer tabloları temizler)
-    await prisma.user.delete({ where: { id: session.user.id } });
-    // Not: Better-Auth session cookie'si veritabanından silindiği için
-    // bir sonraki istekte kullanıcı zaten çıkış yapmış sayılacaktır.
+    // Son yönetici silinemez; yazılan haberler yöneticiye devredilir. Oturumlar ilişkiyle birlikte silinir.
+    const result = await deleteAccountSafely(session.user.id);
+    if (!result.success) return result;
     return { success: true };
   } catch (err) {
     console.error("Account deletion error:", err);
