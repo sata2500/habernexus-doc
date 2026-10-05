@@ -10,11 +10,18 @@ import {
 import { cn } from "@/lib/utils";
 import { SignOutButton } from "../../dashboard/components/SignOutButton";
 
-// Menü, işin türüne göre gruplanır: içerik, yapay zekâ ile haber akışı, topluluk, site
+// Menü, işin türüne göre gruplanır: haber akışı ve yapay zekâ (günlük iş), içerik, topluluk, site
 const navGroups = [
   {
     title: null,
     items: [{ name: "Genel Bakış", href: "/admin", icon: LayoutDashboard }],
+  },
+  {
+    title: "Haber Akışı ve Yapay Zekâ",
+    items: [
+      { name: "Karar Merkezi", href: "/admin/karar-merkezi", icon: Brain },
+      { name: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
+    ],
   },
   {
     title: "İçerik",
@@ -24,13 +31,6 @@ const navGroups = [
       { name: "Medya", href: "/admin/media", icon: Image },
       { name: "Ana Sayfa Slider", href: "/admin/slider", icon: GalleryHorizontal },
       { name: "Sabit Sayfalar", href: "/admin/pages", icon: LayoutTemplate },
-    ],
-  },
-  {
-    title: "Haber Akışı ve Yapay Zekâ",
-    items: [
-      { name: "Karar Merkezi", href: "/admin/karar-merkezi", icon: Brain },
-      { name: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
     ],
   },
   {
@@ -104,10 +104,10 @@ export function AdminSidebar({ session }: SessionProps) {
                   href={item.href}
                   onClick={() => isMobile && setIsOpen(false)}
                   className={cn(
-                    "flex items-center gap-3 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200 outline-none cursor-pointer focus-ring",
+                    "flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors duration-200 outline-none cursor-pointer focus-ring",
                     isActive
-                      ? "bg-primary-500 text-white dark:bg-primary-500/15 dark:text-primary-400 border border-primary-500/10 shadow-sm"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground border border-transparent"
+                      ? "bg-primary-500 text-white dark:bg-primary-500/15 dark:text-primary-400 shadow-sm"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground"
                   )}
                 >
                   <Icon className={cn("h-4 w-4 transition-transform duration-200 shrink-0", isActive && "scale-110")} />
@@ -121,28 +121,31 @@ export function AdminSidebar({ session }: SessionProps) {
     );
   };
 
+  // Alt kısım: siteye ve yazar masasına geçiş için yan yana iki buton, altında çıkış
   const renderFooterLinks = (isMobile = false) => {
+    const quick = [
+      { href: "/", label: "Siteye git", icon: Home },
+      { href: "/author", label: "Yazar masası", icon: PenTool },
+    ];
     return (
-      <div className="space-y-1">
-        <Link
-          href="/"
-          onClick={() => isMobile && setIsOpen(false)}
-          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all cursor-pointer group"
-        >
-          <Home className="h-4 w-4 group-hover:scale-110 transition-transform shrink-0" />
-          Ana Sayfaya Dön
-        </Link>
-        <Link
-          href="/author"
-          onClick={() => isMobile && setIsOpen(false)}
-          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground transition-all cursor-pointer group"
-        >
-          <PenTool className="h-4 w-4 group-hover:scale-110 transition-transform shrink-0" />
-          Yazar Masasına Geç
-        </Link>
-        <div className="pt-2 border-t border-border/40">
-          <SignOutButton className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-semibold text-error hover:text-error hover:bg-error/5 transition-all cursor-pointer" />
+      <div className="space-y-2">
+        <div className="grid grid-cols-2 gap-2">
+          {quick.map((q) => (
+            <Link
+              key={q.href}
+              href={q.href}
+              onClick={() => isMobile && setIsOpen(false)}
+              className="flex flex-col items-center justify-center gap-1 rounded-xl border border-border bg-muted/40 px-2 py-2.5 text-xs font-semibold text-foreground hover:border-primary-500/40 hover:bg-primary-500/10 hover:text-primary-500 transition-colors focus-ring"
+            >
+              <q.icon className="h-4 w-4" />
+              {q.label}
+            </Link>
+          ))}
         </div>
+        <SignOutButton
+          label="Çıkış yap"
+          className="flex items-center justify-center gap-2 w-full h-9 rounded-xl text-xs font-semibold text-error hover:bg-error/10 transition-colors cursor-pointer focus-ring"
+        />
       </div>
     );
   };
@@ -184,12 +187,12 @@ export function AdminSidebar({ session }: SessionProps) {
       />
       <div
         className={cn(
-          "fixed inset-y-0 left-0 w-72 max-w-xs bg-card border-r border-border p-5 z-50 flex flex-col justify-between transition-[transform,visibility] duration-300 ease-in-out md:hidden",
+          "fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-card border-r border-border p-4 z-50 flex flex-col transition-[transform,visibility] duration-300 ease-in-out md:hidden",
           // Kapalıyken gölge ekranın sol kenarına taşmasın, odak da gizli menüye gitmesin
           isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full invisible"
         )}
       >
-        <div className="flex flex-col gap-6 overflow-y-auto pr-1">
+        <div className="flex flex-col gap-5 overflow-y-auto pr-1 min-h-0 flex-1">
           {/* Header */}
           <div className="flex items-center justify-between pb-4 border-b border-border/40">
             <div className="flex items-center gap-2">
@@ -215,7 +218,7 @@ export function AdminSidebar({ session }: SessionProps) {
         </div>
 
         {/* Footer */}
-        <div className="pt-4 border-t border-border/40 mt-auto">
+        <div className="pt-3 border-t border-border/40 mt-3 shrink-0">
           {renderFooterLinks(true)}
         </div>
       </div>
