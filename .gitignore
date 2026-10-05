@@ -56,4 +56,6 @@ research_notes.md
 analysis_results.md
 experiment_results.md
 *.png
+# Görsel üreten rota klasörü (dosya değil): yayıncı logosu
+!apps/web/app/logo.png/
 *.webp
