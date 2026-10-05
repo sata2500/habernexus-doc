@@ -1,162 +1,126 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
-import { getAuthorArticles } from "./actions";
 import Link from "next/link";
-import { Badge } from "@/components/ui/Badge";
-import { Button } from "@/components/ui/Button";
-import { PlusCircle, Eye, FileText, Newspaper, Pencil, TrendingUp, Sparkles } from "lucide-react";
+import { ArrowRight, Eye, FileClock, FileText, MessageSquare, PenSquare, Sparkles } from "lucide-react";
+import { getAuthorOverview } from "@/lib/server/author-desk";
+import { getAuthorSuggestions } from "./suggestions/actions";
+import { formatRelativeTime, formatViewCount } from "@/lib/utils";
 
-function getStatusLabel(status: string) {
-  if (status === "PUBLISHED") return { label: "Yayında", variant: "success" as const };
-  if (status === "DRAFT") return { label: "Taslak", variant: "warning" as const };
-  return { label: status, variant: "default" as const };
-}
-
-function formatDate(date: Date | null) {
-  if (!date) return "—";
-  return new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short", year: "numeric" }).format(date);
-}
+export const dynamic = "force-dynamic";
 
 export default async function AuthorDashboardPage() {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
-  const articles = await getAuthorArticles();
-  const { getAuthorSuggestions } = await import("./suggestions/actions");
-  const topSuggestions = (await getAuthorSuggestions()).slice(0, 3);
-  type AuthorArticle = Awaited<ReturnType<typeof getAuthorArticles>>[number];
+  const [{ name, counts, recent, draftList, latestComments }, suggestions] = await Promise.all([
+    getAuthorOverview(),
+    getAuthorSuggestions().then((s) => s.slice(0, 3)),
+  ]);
 
-  const published = (articles as AuthorArticle[]).filter((a) => a.status === "PUBLISHED");
-  const drafts = (articles as AuthorArticle[]).filter((a) => a.status === "DRAFT");
-  const totalViews = published.reduce((sum, a) => sum + a.viewCount, 0);
+  const kpis = [
+    { label: "Yayındaki haber", value: counts.published.toLocaleString("tr-TR"), icon: FileText, href: "/author/articles?durum=PUBLISHED" },
+    { label: "Taslak", value: counts.drafts.toLocaleString("tr-TR"), icon: FileClock, href: "/author/articles?durum=DRAFT" },
+    { label: "Toplam okunma", value: formatViewCount(counts.views), icon: Eye, href: "/author/stats" },
+    { label: "Yorum (30 gün)", value: counts.comments30.toLocaleString("tr-TR"), icon: MessageSquare, href: "/author/comments" },
+  ];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      {/* ── Başlık ────────────────────────────── */}
-      <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold font-display">
-            Hoş Geldin, {session?.user.name.split(" ")[0]} 👋
-          </h1>
-          <p className="text-muted-foreground text-sm">Şu anki durum özetin ve hızlı erişim alanın.</p>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl md:text-3xl font-bold font-display">Merhaba{name ? `, ${name.split(" ")[0]}` : ""} 👋</h1>
+          <p className="text-sm text-muted-foreground">Yazar masana hoş geldin.</p>
         </div>
-        <Link href="/author/articles/new" className="w-full lg:w-auto">
-          <Button className="w-full lg:w-auto gap-2">
-            <PlusCircle className="h-4 w-4" />
-            Yeni Haber Yaz
-          </Button>
+        <Link href="/author/articles/new" className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold">
+          <PenSquare className="h-4 w-4" /> Yeni haber
         </Link>
       </div>
 
-      {/* ── İstatistik Kartları ───────────────── */}
-      <div className="flex flex-wrap gap-4">
-        {[
-          { icon: Newspaper, label: "Toplam Makale", value: articles.length, color: "text-primary-500 bg-primary-500/10 border border-primary-500/5" },
-          { icon: TrendingUp, label: "Toplam Görüntülenme", value: totalViews.toLocaleString("tr-TR"), color: "text-success bg-success/10 border border-success/5" },
-          { icon: FileText, label: "Taslak", value: drafts.length, color: "text-warning bg-warning/10 border border-warning/5" },
-        ].map((stat) => (
-          <div key={stat.label} className="flex-1 min-w-[200px] glass-strong rounded-2xl p-4 sm:p-5 border border-border shadow-soft flex items-center gap-4">
-            <div className={`h-12 w-12 rounded-xl flex items-center justify-center shrink-0 ${stat.color}`}>
-              <stat.icon className="h-6 w-6" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold font-display">{stat.value}</p>
-              <p className="text-xs text-muted-foreground">{stat.label}</p>
-            </div>
-          </div>
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        {kpis.map((k) => (
+          <Link key={k.label} href={k.href} className="rounded-2xl border border-border bg-card p-4 shadow-card min-w-0 hover:border-primary-500/40 transition-colors">
+            <span className="flex items-center gap-2 text-muted-foreground">
+              <k.icon className="h-4 w-4 shrink-0" />
+              <span className="text-xs font-semibold truncate">{k.label}</span>
+            </span>
+            <span className="mt-2 block text-2xl font-bold font-display tabular-nums">{k.value}</span>
+          </Link>
         ))}
       </div>
 
-      {/* ── Makaleler Listesi ─────────────────── */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold font-display">Son Makalelerim</h2>
-          <Link href="/author/articles" className="text-sm text-primary-600 hover:underline">Tümünü Gör</Link>
-        </div>
+      {draftList.length > 0 && (
+        <section className="space-y-2" aria-labelledby="drafts-title">
+          <h2 id="drafts-title" className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Yarım kalan taslaklar</h2>
+          <ul className="grid gap-2 sm:grid-cols-3">
+            {draftList.map((d) => (
+              <li key={d.id}>
+                <Link href={`/author/articles/${d.id}/edit`} className="flex items-center gap-3 rounded-2xl border border-warning/30 bg-warning/5 p-3 hover:border-warning/60 transition-colors">
+                  <FileClock className="h-5 w-5 text-warning shrink-0" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-semibold truncate">{d.title || "Başlıksız taslak"}</span>
+                    <span className="block text-[11px] text-muted-foreground">{formatRelativeTime(d.updatedAt, { compact: true })} düzenlendi</span>
+                  </span>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
-        {articles.length === 0 ? (
-          <div className="text-center py-16 bg-muted/30 rounded-2xl border border-dashed border-border">
-            <Newspaper className="h-10 w-10 mx-auto text-muted-foreground/50 mb-3" />
-            <p className="font-medium text-foreground">Henüz hiç makale yok</p>
-            <p className="text-sm text-muted-foreground mt-1">İlk haberinizi eklemek için &quot;Yeni Haber Yaz&quot; butonunu kullanın.</p>
+      <div className="grid lg:grid-cols-2 gap-4">
+        <section className="rounded-2xl border border-border bg-card shadow-card min-w-0">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h2 className="font-bold font-display flex items-center gap-2"><Sparkles className="h-4 w-4 text-primary-500" /> Yazılmayı bekleyen konular</h2>
+            <Link href="/author/suggestions" className="text-xs font-semibold text-primary-500">Tümü</Link>
           </div>
-        ) : (
-          <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden">
-            {(articles as AuthorArticle[]).slice(0, 5).map((article) => {
-              const { label, variant } = getStatusLabel(article.status);
-              return (
-                <div key={article.id} className="flex items-center justify-between gap-4 p-3.5 sm:p-4 bg-background hover:bg-muted/40 transition-colors w-full min-w-0">
-                  <div className="flex items-center gap-3 min-w-0 flex-1">
-                    <div className="h-10 w-10 shrink-0 rounded-xl bg-muted flex items-center justify-center">
-                      <FileText className="h-5 w-5 text-muted-foreground" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium truncate">{article.title}</p>
-                      <p className="text-xs text-muted-foreground">{article.category?.name} · {formatDate(article.publishedAt)}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 shrink-0">
-                    <Badge variant={variant}>{label}</Badge>
-                    <span className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
-                      <Eye className="h-3 w-3" /> {article.viewCount}
-                    </span>
-                    <Link href={`/author/articles/${article.id}/edit`} className="h-8 w-8 flex items-center justify-center rounded-lg hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
-                      <Pencil className="h-4 w-4" />
-                    </Link>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-      {/* ── Haber Önerileri Widget ──────────────────── */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold font-display flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary-500" />
-            Güncel Haber Önerileri
-          </h2>
-          <Link href="/author/suggestions" className="text-sm text-primary-600 hover:underline">
-            Tümünü Gör
-          </Link>
-        </div>
+          <ul className="divide-y divide-border">
+            {suggestions.length === 0 && <li className="p-4 text-sm text-muted-foreground">Şu an önerilen konu yok.</li>}
+            {suggestions.map((s) => (
+              <li key={s.id} className="flex items-center gap-3 px-4 py-3">
+                <span className="h-9 w-9 shrink-0 rounded-xl bg-primary-500/10 text-primary-500 flex items-center justify-center text-xs font-bold tabular-nums">{s.aiScore ?? "–"}</span>
+                <span className="flex-1 min-w-0">
+                  <span className="block text-sm font-semibold line-clamp-2">{s.aiAnalysis.suggestedTitles[0] ?? s.title}</span>
+                  <span className="block text-[11px] text-muted-foreground truncate">{s.source.name}</span>
+                </span>
+                <Link href={`/author/articles/new?oneri=${s.id}`} className="shrink-0 h-8 px-3 inline-flex items-center rounded-lg bg-primary-500/10 text-primary-500 text-xs font-semibold hover:bg-primary-500/20">Yaz</Link>
+              </li>
+            ))}
+          </ul>
+        </section>
 
-        {topSuggestions.length === 0 ? (
-          <div className="text-center py-10 bg-muted/30 rounded-2xl border border-dashed border-border">
-            <Sparkles className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
-            <p className="text-sm text-muted-foreground">Henüz öneri bulunmuyor. RSS kaynakları yakında taranacak.</p>
+        <section className="rounded-2xl border border-border bg-card shadow-card min-w-0">
+          <div className="flex items-center justify-between p-4 border-b border-border">
+            <h2 className="font-bold font-display">Son yayınlarım</h2>
+            <Link href="/author/articles" className="text-xs font-semibold text-primary-500">Tümü</Link>
           </div>
-        ) : (
-          <div className="divide-y divide-border rounded-2xl border border-border overflow-hidden bg-background">
-            {topSuggestions.map((item) => {
-              const analysis = item.aiAnalysis as { suggestedTitles?: string[]; suggestedCategory?: string } | null;
-              const score = item.aiScore ?? 50;
-              const scoreColor = score >= 75 ? "text-success bg-success/10" : score >= 55 ? "text-warning bg-warning/10" : "text-muted-foreground bg-muted";
-              return (
-                <div key={item.id} className="flex items-center gap-4 p-4 hover:bg-muted/40 transition-colors w-full min-w-0">
-                  <div className={`h-9 w-9 shrink-0 rounded-xl flex items-center justify-center text-xs font-bold ${scoreColor}`}>
-                    {score}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold truncate">
-                      {analysis?.suggestedTitles?.[0] || item.title}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {item.source.name} · {analysis?.suggestedCategory || "Genel"}
-                    </p>
-                  </div>
-                  <Link
-                    href="/author/suggestions"
-                    className="shrink-0 px-3 py-1.5 rounded-lg bg-primary-500/10 hover:bg-primary-500/20 text-primary-500 text-xs font-semibold transition-colors"
-                  >
-                    Gör
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-        )}
+          <ul className="divide-y divide-border">
+            {recent.length === 0 && <li className="p-4 text-sm text-muted-foreground">Henüz yayınlanmış haberin yok.</li>}
+            {recent.map((a) => (
+              <li key={a.id} className="flex items-center gap-3 px-4 py-3">
+                <span className="flex-1 min-w-0">
+                  <Link href={`/author/articles/${a.id}/edit`} className="block text-sm font-semibold truncate hover:text-primary-500">{a.title}</Link>
+                  <span className="block text-[11px] text-muted-foreground">{a.category?.name ?? "Kategorisiz"} · {a.publishedAt ? formatRelativeTime(a.publishedAt, { compact: true }) : ""}</span>
+                </span>
+                <span className="shrink-0 inline-flex items-center gap-1 text-xs text-muted-foreground tabular-nums"><Eye className="h-3.5 w-3.5" /> {formatViewCount(a.viewCount)}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
       </div>
+
+      <section className="rounded-2xl border border-border bg-card shadow-card">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 className="font-bold font-display">Son yorumlar</h2>
+          <Link href="/author/comments" className="text-xs font-semibold text-primary-500">Tümü</Link>
+        </div>
+        <ul className="divide-y divide-border">
+          {latestComments.length === 0 && <li className="p-4 text-sm text-muted-foreground">Haberlerine henüz yorum yapılmadı.</li>}
+          {latestComments.map((c) => (
+            <li key={c.id} className="px-4 py-3 min-w-0">
+              <p className="text-sm line-clamp-2">{c.content}</p>
+              <p className="mt-0.5 text-[11px] text-muted-foreground truncate">
+                <strong>{c.user.name}</strong> · <Link href={`/article/${c.article.slug}`} className="hover:text-primary-500">{c.article.title}</Link> · {formatRelativeTime(c.createdAt, { compact: true })}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

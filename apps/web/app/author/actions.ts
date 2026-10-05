@@ -5,182 +5,113 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { ActionResponse } from "@/lib/types";
+import { z } from "zod";
+import { requireRole } from "@/lib/server/authz";
 import { slugify } from "@/lib/utils";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { rewriteArticleWithAI } from "@/lib/ai-writer";
 import { checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
 
 
-export async function createArticle(data: {
-  title: string;
-  excerpt?: string;
-  content: string;
-  coverImage?: string;
-  categoryId: string;
-  status: "DRAFT" | "PUBLISHED";
-}): Promise<ActionResponse> {
-  try {
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
+const ArticleInputSchema = z.object({
+  title: z.string().trim().min(5, "Başlık en az 5 karakter olmalı.").max(200, "Başlık en fazla 200 karakter olabilir."),
+  excerpt: z.string().trim().max(300, "Özet en fazla 300 karakter olabilir.").optional().default(""),
+  content: z.string().max(200_000, "İçerik çok uzun."),
+  coverImage: z.string().trim().max(2000).optional().default("")
+    .refine((v) => !v || /^https?:\/\//i.test(v) || v.startsWith("/"), "Kapak görseli adresi geçersiz."),
+  categoryId: z.string().trim().max(100).optional().default(""),
+  status: z.enum(["DRAFT", "PUBLISHED"]),
+  /** Karar Merkezi önerisinden yazılıyorsa konu kimliği */
+  storyId: z.string().trim().max(100).optional(),
+});
 
-    if (!session || (session.user.role !== "AUTHOR" && session.user.role !== "ADMIN")) {
-      return { success: false, error: "Yetkisiz işlem." };
-    }
+export type ArticleInput = z.input<typeof ArticleInputSchema>;
+type SaveResult = { success: true; id: string; slug: string; status: "DRAFT" | "PUBLISHED" } | { success: false; error: string };
 
-    const baseSlug = slugify(data.title);
-    const uniqueHash = Math.random().toString(36).substring(2, 6);
-    const slug = `${baseSlug}-${uniqueHash}`;
-
-    const createdArticle = await prisma.article.create({
-      data: {
-        title: data.title,
-        slug,
-        excerpt: data.excerpt || "",
-        content: data.content,
-        coverImage: data.coverImage || null,
-        categoryId: data.categoryId,
-        authorId: session.user.id,
-        status: data.status,
-        publishedAt: data.status === "PUBLISHED" ? new Date() : null,
-      },
-    });
-
-    if (createdArticle.status === "PUBLISHED") {
-      const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-      after(() => notifyGoogle(getArticleUrl(createdArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
-    }
-
-    revalidatePath("/author/articles");
-    revalidatePath("/");
-
-    return { success: true };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Veritabanına kaydedilirken hata oluştu.";
-    console.error("Haber oluşturma hatası:", err);
-    return { success: false, error: message };
-  }
+function plainTextLength(html: string) {
+  return html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim().length;
 }
 
-export async function getAuthorArticles() {
+/**
+ * Haberi oluşturur ya da günceller. Yayınlamak için kategori ve en az 50 karakterlik metin gerekir;
+ * taslakta bu alanlar boş kalabilir. Yazar yalnızca kendi haberini değiştirebilir.
+ */
+export async function saveArticle(id: string | null, input: ArticleInput): Promise<SaveResult> {
+  let session;
   try {
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session || (session.user.role !== "AUTHOR" && session.user.role !== "ADMIN")) {
-      return [];
-    }
-
-    return await prisma.article.findMany({
-      where: { authorId: session.user.id },
-      orderBy: { createdAt: "desc" },
-      include: { category: true },
-    });
+    session = await requireRole("AUTHOR", "ADMIN");
   } catch {
-    return [];
+    return { success: false, error: "Bu işlem için yetkiniz yok." };
   }
-}
+  const parsed = ArticleInputSchema.safeParse(input);
+  if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Geçersiz bilgi." };
+  const data = parsed.data;
 
-export async function getArticleToEdit(id: string) {
-  try {
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session || (session.user.role !== "AUTHOR" && session.user.role !== "ADMIN")) {
-      return { success: false, error: "Yetkisiz işlem." };
-    }
-
-    const article = await prisma.article.findUnique({
-      where: { id },
-      include: { category: true },
-    });
-
-    if (!article) {
-      return { success: false, error: "Makale bulunamadı." };
-    }
-
-    // Bir yazar sadece kendi makalesini düzenleyebilir (Admin her şeyi düzenleyebilir)
-    if (session.user.role !== "ADMIN" && article.authorId !== session.user.id) {
-      return { success: false, error: "Bu makaleyi düzenleme yetkiniz yok." };
-    }
-
-    return { success: true, article };
-  } catch (err) {
-    console.error("Makale yükleme hatası:", err);
-    return { success: false, error: "Makale yüklenirken hata oluştu." };
+  const textLength = plainTextLength(data.content);
+  if (data.status === "PUBLISHED") {
+    if (!data.categoryId) return { success: false, error: "Yayınlamak için bir kategori seçin." };
+    if (textLength < 50) return { success: false, error: "Yayınlamak için haber metni en az 50 karakter olmalı." };
+  } else if (textLength === 0 && !data.title) {
+    return { success: false, error: "Boş taslak kaydedilemez." };
   }
-}
+  if (data.categoryId && !(await prisma.category.findUnique({ where: { id: data.categoryId }, select: { id: true } }))) {
+    return { success: false, error: "Seçilen kategori bulunamadı." };
+  }
 
-export async function updateArticle(id: string, data: {
-  title: string;
-  excerpt?: string;
-  content: string;
-  coverImage?: string;
-  categoryId: string;
-  status: "DRAFT" | "PUBLISHED";
-}): Promise<ActionResponse> {
   try {
-    const reqHeaders = await headers();
-    const session = await auth.api.getSession({ headers: reqHeaders });
-
-    if (!session || (session.user.role !== "AUTHOR" && session.user.role !== "ADMIN")) {
-      return { success: false, error: "Yetkisiz işlem." };
+    const existing = id ? await prisma.article.findUnique({ where: { id }, select: { id: true, authorId: true, slug: true, status: true, publishedAt: true } }) : null;
+    if (id && !existing) return { success: false, error: "Haber bulunamadı." };
+    if (existing && session.user.role !== "ADMIN" && existing.authorId !== session.user.id) {
+      return { success: false, error: "Bu haberi düzenleme yetkiniz yok." };
     }
 
-    const article = await prisma.article.findUnique({
-      where: { id },
-    });
+    const fields = {
+      title: data.title,
+      excerpt: data.excerpt,
+      content: data.content,
+      coverImage: data.coverImage || null,
+      categoryId: data.categoryId || null,
+      status: data.status,
+    };
 
-    if (!article) {
-      return { success: false, error: "Makale bulunamadı." };
+    const article = existing
+      ? await prisma.article.update({
+          where: { id: existing.id },
+          data: { ...fields, ...(data.status === "PUBLISHED" && !existing.publishedAt ? { publishedAt: new Date() } : {}) },
+          select: { id: true, slug: true, status: true },
+        })
+      : await prisma.article.create({
+          data: {
+            ...fields,
+            slug: `${slugify(data.title)}-${Math.random().toString(36).slice(2, 6)}`,
+            authorId: session.user.id,
+            publishedAt: data.status === "PUBLISHED" ? new Date() : null,
+          },
+          select: { id: true, slug: true, status: true },
+        });
+
+    // Öneriden yazıldıysa Karar Merkezi'ndeki konu bu habere bağlanır (AI Yazar tekrar yazmaz)
+    if (data.storyId && data.status === "PUBLISHED") {
+      await prisma.newsStory.updateMany({
+        where: { id: data.storyId, articleId: null, status: { notIn: ["WRITING", "PUBLISHED"] } },
+        data: { status: "PUBLISHED", articleId: article.id, reason: `${session.user.name ?? "Bir yazar"} tarafından yazıldı`, pinned: false },
+      });
     }
 
-    if (session.user.role !== "ADMIN" && article.authorId !== session.user.id) {
-      return { success: false, error: "Bu makaleyi düzenleme yetkiniz yok." };
+    const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+    if (article.status === "PUBLISHED") {
+      after(() => notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch((err) => console.error("Google Indexing Error:", err)));
+    } else if (existing?.status === "PUBLISHED") {
+      after(() => notifyGoogle(getArticleUrl(existing.slug), "URL_DELETED").catch((err) => console.error("Google Indexing Error:", err)));
     }
 
-    const updatedArticle = await prisma.article.update({
-      where: { id },
-      data: {
-        title: data.title,
-        excerpt: data.excerpt || "",
-        content: data.content,
-        coverImage: data.coverImage || null,
-        categoryId: data.categoryId,
-        status: data.status,
-        updatedAt: new Date(),
-        // Eğer taslağı yayınlıyorsa publishedAt güncelle
-        ...(data.status === "PUBLISHED" && !article.publishedAt ? { publishedAt: new Date() } : {}),
-      },
-    });
-
-    if (updatedArticle.status === "PUBLISHED") {
-      const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-      after(() => notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
-    } else if (article.status === "PUBLISHED" && updatedArticle.status !== "PUBLISHED") {
-      const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-      after(() => notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
-    }
-
-    revalidatePath("/author/articles");
+    revalidatePath("/author", "layout");
     revalidatePath(`/article/${article.slug}`);
     revalidatePath("/");
-
-    return { success: true };
+    return { success: true, id: article.id, slug: article.slug, status: article.status as "DRAFT" | "PUBLISHED" };
   } catch (err) {
-    console.error("Haber güncelleme hatası:", err);
-    return { success: false, error: "Güncelleme sırasında hata oluştu." };
-  }
-}
-
-export async function getCategories() {
-  try {
-    return await prisma.category.findMany({
-      orderBy: { order: "asc" },
-      select: { id: true, name: true },
-    });
-  } catch {
-    return [];
+    console.error("Haber kaydetme hatası:", err);
+    return { success: false, error: "Haber kaydedilemedi. Lütfen tekrar deneyin." };
   }
 }
 
@@ -214,7 +145,7 @@ export async function deleteArticle(id: string) {
       after(() => notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
     }
 
-    revalidatePath("/author/articles");
+    revalidatePath("/author", "layout");
     revalidatePath("/");
 
     return { success: true };
@@ -259,6 +190,7 @@ export async function getAuthorComments() {
         },
       },
       orderBy: { createdAt: "desc" },
+      take: 200,
       include: {
         user: { select: { name: true, image: true } },
         article: { select: { title: true, slug: true } },
@@ -297,7 +229,7 @@ export async function deleteCommentByAuthor(id: string) {
       where: { id },
     });
 
-    revalidatePath("/author/comments");
+    revalidatePath("/author", "layout");
     return { success: true };
   } catch {
     return { success: false, error: "Yorum silinirken bir hata oluştu." };

@@ -1,151 +1,86 @@
-import { getAuthorArticles } from "../actions";
-import { Card } from "@/components/ui/Card";
-import {
-  BarChart3,
-  TrendingUp,
-  Eye,
-  CheckCircle2,
-  Clock,
-  ArrowUpRight,
-} from "lucide-react";
+import Link from "next/link";
+import { BarChart3, Eye, FileText, Heart, MessageSquare, TrendingUp } from "lucide-react";
+import { getAuthorStats } from "@/lib/server/author-desk";
+import { formatViewCount } from "@/lib/utils";
+
+export const dynamic = "force-dynamic";
 
 export default async function AuthorStatsPage() {
-  const articles = await getAuthorArticles();
-  type AuthorArticle = Awaited<ReturnType<typeof getAuthorArticles>>[number];
+  const s = await getAuthorStats();
+  const maxTop = s.top[0]?.viewCount || 1;
+  const maxCat = s.categories[0]?.views || 1;
 
-  // Hesaplamalar
-  const totalArticles = articles.length;
-  const publishedArticles = (articles as AuthorArticle[]).filter((a) => a.status === "PUBLISHED").length;
-  const draftArticles = (articles as AuthorArticle[]).filter((a) => a.status === "DRAFT").length;
-  const totalViews = (articles as AuthorArticle[]).reduce((acc, curr) => acc + (curr.viewCount || 0), 0);
-  const avgViews = totalArticles > 0 ? Math.round(totalViews / totalArticles) : 0;
-
-  const topArticles = [...(articles as AuthorArticle[])]
-    .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
-    .slice(0, 5);
-
-  const stats = [
-    { label: "Toplam Görüntülenme", value: totalViews.toLocaleString(), icon: Eye, bg: "bg-primary-500", trend: "+12%" },
-    { label: "Yayınlanan Haber", value: publishedArticles, icon: CheckCircle2, bg: "bg-success", trend: null },
-    { label: "Ortalama Okunma", value: avgViews, icon: TrendingUp, bg: "bg-accent-500", trend: "+5%" },
-    { label: "Taslaklar", value: draftArticles, icon: Clock, bg: "bg-warning", trend: null },
+  const cards = [
+    { label: "Toplam okunma", value: formatViewCount(s.views), sub: `Haber başına ort. ${formatViewCount(s.avgViews)}`, icon: Eye },
+    { label: "Yayındaki haber", value: s.published.toLocaleString("tr-TR"), sub: `Son 30 günde ${s.published30}`, icon: FileText },
+    { label: "Yorum", value: s.comments.toLocaleString("tr-TR"), sub: "Tüm haberlerinde", icon: MessageSquare },
+    { label: "Okur tepkisi", value: s.reactions.toLocaleString("tr-TR"), sub: "Tüm haberlerinde", icon: Heart },
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div>
-        <h1 className="text-2xl font-bold font-display">İstatistikler</h1>
-        <p className="text-muted-foreground text-sm">Haberlerinizin performansı ve etkileşim oranları.</p>
+        <h1 className="text-2xl md:text-3xl font-bold font-display flex items-center gap-2.5">
+          <BarChart3 className="h-6 w-6 text-primary-500" /> İstatistikler
+        </h1>
+        <p className="text-sm text-muted-foreground">Yayındaki haberlerinin okunma ve etkileşim özeti.</p>
       </div>
 
-      {/* ── Özet Kartları ────────────────────────── */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((item) => {
-          const Icon = item.icon;
-          return (
-            <Card key={item.label} className="p-5 border-none shadow-sm relative overflow-hidden group">
-               <div className={`absolute top-0 right-0 w-24 h-24 -mr-8 -mt-8 rounded-full opacity-5 transition-transform group-hover:scale-110 ${item.bg}`} />
-               <div className="relative">
-                 <div className="flex items-center justify-between mb-3">
-                   <div className={`h-10 w-10 rounded-xl flex items-center justify-center text-white ${item.bg}`}>
-                     <Icon className="h-5 w-5" />
-                   </div>
-                   {item.trend && (
-                     <span className="text-[10px] font-bold bg-success/10 text-success px-1.5 py-0.5 rounded-full flex items-center gap-0.5">
-                       <ArrowUpRight className="h-2.5 w-2.5" /> {item.trend}
-                     </span>
-                   )}
-                 </div>
-                 <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">{item.label}</p>
-                 <h3 className="text-2xl font-bold mt-1 font-display">{item.value}</h3>
-               </div>
-            </Card>
-          );
-        })}
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-3">
+        {cards.map((c) => (
+          <div key={c.label} className="rounded-2xl border border-border bg-card p-4 shadow-card min-w-0">
+            <span className="flex items-center gap-2 text-muted-foreground"><c.icon className="h-4 w-4 shrink-0" /><span className="text-xs font-semibold truncate">{c.label}</span></span>
+            <span className="mt-2 block text-2xl font-bold font-display tabular-nums">{c.value}</span>
+            <span className="block text-[11px] text-muted-foreground truncate">{c.sub}</span>
+          </div>
+        ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* ── En Çok Okunanlar ────────────────────────── */}
-        <Card className="lg:col-span-2 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold font-display flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-primary-500" />
-              En Popüler Haberler
-            </h3>
-          </div>
+      <div className="grid lg:grid-cols-5 gap-4">
+        <section className="lg:col-span-3 rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-card min-w-0">
+          <h2 className="font-bold font-display flex items-center gap-2 mb-4"><TrendingUp className="h-4 w-4 text-primary-500" /> En çok okunanlar</h2>
+          {s.top.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Henüz yayınlanmış haberin yok.</p>
+          ) : (
+            <ol className="space-y-3">
+              {s.top.map((a, i) => (
+                <li key={a.id} className="flex items-center gap-3 min-w-0">
+                  <span className="w-5 text-sm font-bold text-muted-foreground tabular-nums">{i + 1}</span>
+                  <span className="flex-1 min-w-0">
+                    <Link href={`/article/${a.slug}`} target="_blank" className="block text-sm font-semibold truncate hover:text-primary-500">{a.title}</Link>
+                    <span className="mt-1 block h-1.5 rounded-full bg-muted overflow-hidden"><span className="block h-full rounded-full bg-primary-500" style={{ width: `${(a.viewCount / maxTop) * 100}%` }} /></span>
+                  </span>
+                  <span className="shrink-0 text-right text-xs text-muted-foreground tabular-nums">
+                    <span className="block font-semibold text-foreground">{formatViewCount(a.viewCount)}</span>
+                    {a._count.comments > 0 && <span>{a._count.comments} yorum</span>}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          )}
+        </section>
 
-          <div className="space-y-4">
-            {topArticles.map((article, index) => (
-              <div key={article.id} className="flex items-center gap-4 group">
-                <div className="h-10 w-10 shrink-0 font-black text-xl text-muted-foreground/20 italic flex items-center justify-center group-hover:text-primary-500/30 transition-colors">
-                  {index + 1}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-semibold truncate group-hover:text-primary-600 transition-colors">{article.title}</h4>
-                  <p className="text-xs text-muted-foreground mt-0.5">{article.category?.name} · {article.status === 'PUBLISHED' ? 'Yayında' : 'Taslak'}</p>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className="flex items-center gap-1.5 text-sm font-bold font-display">
-                    <Eye className="h-3.5 w-3.5 text-muted-foreground" />
-                    {article.viewCount}
-                  </div>
-                  <div className="w-16 h-1 bg-muted rounded-full mt-1.5 overflow-hidden">
-                    <div
-                      className="h-full bg-primary-500"
-                      style={{ width: `${(article.viewCount / (topArticles[0]?.viewCount || 1)) * 100}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-
-            {topArticles.length === 0 && (
-              <div className="text-center py-10 opacity-50">
-                <p className="text-sm">Henüz veri bulunmuyor.</p>
-              </div>
-            )}
-          </div>
-        </Card>
-
-        {/* ── Durum Dağılımı ────────────────────────── */}
-        <Card className="p-6">
-          <h3 className="font-bold font-display mb-6">İçerik Dağılımı</h3>
-          <div className="space-y-6">
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-success" /> Yayında
-                </span>
-                <span className="font-bold">{publishedArticles}</span>
-              </div>
-              <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                 <div className="h-full bg-success" style={{ width: `${(publishedArticles / (totalArticles || 1)) * 100}%` }} />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-muted-foreground flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-warning" /> Taslak
-                </span>
-                <span className="font-bold">{draftArticles}</span>
-              </div>
-              <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
-                 <div className="h-full bg-warning" style={{ width: `${(draftArticles / (totalArticles || 1)) * 100}%` }} />
-              </div>
-            </div>
-
-            <div className="mt-8 p-4 rounded-xl bg-primary-500/5 border border-primary-500/10">
-              <div className="flex items-center gap-3 text-primary-600 mb-2">
-                <BarChart3 className="h-4 w-4" />
-                <span className="text-xs font-bold uppercase tracking-wider">Verimlilik</span>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Bu ay toplam {totalViews} kez görüntülendiniz. En verimli kategoriniz {topArticles[0]?.category?.name || "henüz belli değil"}.
-              </p>
-            </div>
-          </div>
-        </Card>
+        <section className="lg:col-span-2 rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-card min-w-0">
+          <h2 className="font-bold font-display mb-4">Kategorilere göre</h2>
+          {s.categories.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Veri yok.</p>
+          ) : (
+            <ul className="space-y-3">
+              {s.categories.map((c) => (
+                <li key={c.name} className="space-y-1">
+                  <p className="flex justify-between gap-2 text-sm">
+                    <span className="font-semibold truncate">{c.name} <span className="font-normal text-muted-foreground">· {c.count} haber</span></span>
+                    <span className="tabular-nums text-muted-foreground">{formatViewCount(c.views)}</span>
+                  </p>
+                  <span className="block h-1.5 rounded-full bg-muted overflow-hidden">
+                    <span className="block h-full rounded-full" style={{ width: `${(c.views / maxCat) * 100}%`, backgroundColor: c.color || "var(--color-primary-500)" }} />
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <p className="mt-4 text-[11px] text-muted-foreground">Okunma sayıları haber yayına girdiğinden bu yana toplamdır.</p>
+        </section>
       </div>
     </div>
   );
