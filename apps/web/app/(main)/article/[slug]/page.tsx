@@ -11,6 +11,7 @@ import { ShareButtons } from "../components/ShareButtons";
 import { CommentSection } from "../components/comments/CommentSection";
 import { AudioPlayer } from "../components/AudioPlayer";
 import { TldrCard } from "../components/TldrCard";
+import { getStoredSummary } from "@/lib/tldr";
 import { ReadingProgressBar } from "../components/ReadingProgressBar";
 import { ArticleReactions } from "../components/ArticleReactions";
 import { ReadingProgressTracker } from "../components/ReadingProgressTracker";
@@ -100,11 +101,15 @@ export default async function ArticlePage({ params }: { params: Params }) {
   }
 
   const readTime = estimateReadingTime(article.content);
-  const related = await getRelatedArticles({
-    id: article.id,
-    categoryId: article.categoryId,
-    tagIds: article.tags.map((t) => t.tag.id),
-  });
+  const [related, storedSummary] = await Promise.all([
+    getRelatedArticles({
+      id: article.id,
+      categoryId: article.categoryId,
+      tagIds: article.tags.map((t) => t.tag.id),
+    }),
+    // Daha önce üretilmiş özet varsa sayfayla birlikte gelir, tıklayınca beklemeden açılır
+    getStoredSummary(article),
+  ]);
 
   // Kelime sayısını hesapla (JSON-LD wordCount için)
   const wordCount = article.content ? article.content.trim().split(/\s+/).length : 0;
@@ -210,7 +215,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
       {/* ── Yapay Zekâ ile Hızlı Özet & Sesli Dinleme ────────────────── */}
       <div className="mb-10 space-y-4">
-        <TldrCard title={article.title} content={article.content} />
+        <TldrCard articleId={article.id} content={article.content} initialBullets={storedSummary} />
         <AudioPlayer articleId={article.id} content={article.content} title={article.title} />
       </div>
 

@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Pause, Play, RotateCcw, RotateCw, Volume2, Loader2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { Pause, Play, Volume2, Loader2 } from "lucide-react";
 import { DEFAULT_TTS_VOICE, isTtsVoiceId, TTS_VOICES, type TtsVoiceId } from "@/lib/tts-voices";
 
 interface Props {
@@ -79,7 +78,10 @@ export function AudioPlayer({ articleId, content, title }: Props) {
       return;
     }
     window.speechSynthesis.cancel();
-    const sentences = `${title}. ${stripHtml(content)}`.split(/(?<=[.?!])\s+/).filter(Boolean);
+    const body = stripHtml(content);
+    // Gövde başlıkla başlıyorsa başlık ikinci kez okunmasın
+    const text = body.toLocaleLowerCase("tr").startsWith(title.trim().toLocaleLowerCase("tr")) ? body : `${title}. ${body}`;
+    const sentences = text.split(/(?<=[.?!])\s+/).filter(Boolean);
     const trVoice = window.speechSynthesis.getVoices().find((v) => v.lang.toLowerCase().startsWith("tr"));
     sentences.forEach((sentence, i) => {
       const u = new SpeechSynthesisUtterance(sentence);
@@ -171,18 +173,18 @@ export function AudioPlayer({ articleId, content, title }: Props) {
     if (audioRef.current) audioRef.current.playbackRate = next;
   };
 
-  const seekBy = (delta: number) => {
-    const audio = audioRef.current;
-    if (!audio || !duration) return;
-    audio.currentTime = Math.min(Math.max(0, audio.currentTime + delta), duration);
+  const cycleRate = () => {
+    const next = RATES[(RATES.indexOf(rate as (typeof RATES)[number]) + 1) % RATES.length];
+    changeRate(next);
   };
 
   const isBusy = status === "preparing";
   const isPlaying = status === "playing" || status === "fallback";
   const progress = duration ? (current / duration) * 100 : 0;
+  const statusText = message || (status === "idle" && !duration ? "Yapay zekâ ile gerçekçi insan sesi" : "");
 
   return (
-    <div className="w-full bg-card/70 border border-border rounded-2xl p-4 flex flex-col gap-3 shadow-soft">
+    <div className="w-full bg-card/70 border border-border rounded-2xl px-3 py-2.5 sm:px-4 flex items-center gap-3 shadow-soft">
       <audio
         ref={audioRef}
         preload="none"
@@ -196,77 +198,30 @@ export function AudioPlayer({ articleId, content, title }: Props) {
         onError={() => { if (status !== "idle") startBrowserFallback(); }}
       />
 
-      {/* Başlık + ses seçimi */}
-      <div className="flex items-start gap-3">
-        <div className={cn(
-          "h-10 w-10 shrink-0 rounded-xl flex items-center justify-center",
-          isPlaying ? "bg-primary-500/10 text-primary-500" : "bg-muted text-muted-foreground"
-        )}>
-          <Volume2 className="h-5 w-5" />
+      <button
+        type="button"
+        onClick={togglePlay}
+        disabled={isBusy}
+        className="h-10 w-10 shrink-0 rounded-full bg-primary-600 hover:bg-primary-500 text-white flex items-center justify-center shadow-md shadow-primary-500/20 active:scale-95 transition-all disabled:opacity-70 cursor-pointer"
+        aria-label={isPlaying ? "Duraklat" : "Haberi sesli dinle"}
+      >
+        {isBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : isPlaying ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4 fill-current translate-x-px" />}
+      </button>
+
+      <div className="flex-1 min-w-0">
+        <div className="flex items-baseline justify-between gap-2">
+          <span className="text-sm font-semibold font-display truncate flex items-center gap-1.5">
+            <Volume2 className="h-3.5 w-3.5 shrink-0 text-primary-500" /> Sesli dinle
+          </span>
+          {duration > 0 && (
+            <span className="text-[11px] font-medium text-muted-foreground tabular-nums shrink-0">
+              {formatTime(current)} / {formatTime(duration)}
+            </span>
+          )}
         </div>
-        <div className="min-w-0 flex-1">
-          <h4 className="text-sm font-semibold font-display">Haberi Sesli Dinle</h4>
-          <p className="text-xs text-muted-foreground" aria-live="polite">
-            {message || "Yapay zekâ ile gerçekçi insan sesi. Bir ses seçin."}
-          </p>
-        </div>
-      </div>
-
-      <div role="radiogroup" aria-label="Okuyucu sesi" className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
-        {(Object.keys(TTS_VOICES) as TtsVoiceId[]).map((id) => {
-          const v = TTS_VOICES[id];
-          const active = id === voice;
-          return (
-            <button
-              key={id}
-              type="button"
-              role="radio"
-              aria-checked={active}
-              onClick={() => changeVoice(id)}
-              className={cn(
-                "h-10 px-2 rounded-xl border text-xs font-semibold transition-all cursor-pointer flex items-center justify-center gap-1",
-                active
-                  ? "bg-primary-500 border-primary-500 text-white shadow-sm"
-                  : "bg-card border-border text-muted-foreground hover:text-foreground hover:bg-muted"
-              )}
-            >
-              {v.gender} <span className={cn("font-medium", active ? "text-white/80" : "text-muted-foreground/80")}>· {v.label}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Oynatma kontrolleri */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <button
-          type="button"
-          onClick={() => seekBy(-15)}
-          disabled={!duration}
-          className="h-10 w-10 shrink-0 rounded-xl border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-40 cursor-pointer"
-          aria-label="15 saniye geri"
-        >
-          <RotateCcw className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          onClick={togglePlay}
-          disabled={isBusy}
-          className="h-12 w-12 shrink-0 rounded-2xl bg-primary-600 hover:bg-primary-500 text-white flex items-center justify-center shadow-md shadow-primary-500/20 active:scale-95 transition-all disabled:opacity-70 cursor-pointer"
-          aria-label={isPlaying ? "Duraklat" : "Dinle"}
-        >
-          {isBusy ? <Loader2 className="h-5 w-5 animate-spin" /> : isPlaying ? <Pause className="h-5 w-5" /> : <Play className="h-5 w-5 fill-current" />}
-        </button>
-        <button
-          type="button"
-          onClick={() => seekBy(15)}
-          disabled={!duration}
-          className="h-10 w-10 shrink-0 rounded-xl border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-foreground disabled:opacity-40 cursor-pointer"
-          aria-label="15 saniye ileri"
-        >
-          <RotateCw className="h-4 w-4" />
-        </button>
-
-        <div className="flex-1 min-w-0 flex flex-col gap-1">
+        {statusText ? (
+          <p className="text-[11px] leading-4 text-muted-foreground truncate mt-0.5" aria-live="polite" title={statusText}>{statusText}</p>
+        ) : (
           <input
             type="range"
             min={0}
@@ -275,36 +230,36 @@ export function AudioPlayer({ articleId, content, title }: Props) {
             value={current}
             disabled={!duration}
             onChange={(e) => { if (audioRef.current) audioRef.current.currentTime = Number(e.target.value); }}
-            className="w-full h-2 accent-primary-500 cursor-pointer disabled:cursor-default"
+            className="block w-full h-1.5 mt-1.5 accent-primary-500 cursor-pointer disabled:cursor-default"
             style={{ background: `linear-gradient(to right, var(--color-primary-500) ${progress}%, var(--muted) ${progress}%)`, borderRadius: 9999 }}
             aria-label="Konum"
           />
-          <div className="flex justify-between text-[11px] font-medium text-muted-foreground tabular-nums">
-            <span>{formatTime(current)}</span>
-            <span>{duration ? formatTime(duration) : "--:--"}</span>
-          </div>
-        </div>
+        )}
       </div>
 
-      {/* Hız */}
-      <div className="flex items-center gap-1.5 flex-wrap">
-        <span className="text-[11px] text-muted-foreground font-bold uppercase tracking-wider mr-1">Hız</span>
-        {RATES.map((r) => (
-          <button
-            key={r}
-            type="button"
-            onClick={() => changeRate(r)}
-            className={cn(
-              "min-h-8 min-w-10 px-2 text-xs font-bold rounded-lg border transition-all cursor-pointer",
-              rate === r
-                ? "bg-primary-600 border-primary-500 text-white"
-                : "bg-card border-border text-muted-foreground hover:bg-muted"
-            )}
-          >
-            {r}x
-          </button>
-        ))}
-      </div>
+      <button
+        type="button"
+        onClick={cycleRate}
+        className="h-8 min-w-10 shrink-0 px-1.5 rounded-lg border border-border bg-card text-xs font-bold tabular-nums text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer"
+        aria-label={`Okuma hızı ${rate}x, değiştirmek için dokunun`}
+        title="Okuma hızı"
+      >
+        {rate}x
+      </button>
+
+      <label className="shrink-0">
+        <span className="sr-only">Okuyucu sesi</span>
+        <select
+          value={voice}
+          onChange={(e) => { if (isTtsVoiceId(e.target.value)) changeVoice(e.target.value); }}
+          className="h-8 w-[6.75rem] sm:w-auto rounded-lg border border-border bg-card px-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer"
+          title="Okuyucu sesi"
+        >
+          {(Object.keys(TTS_VOICES) as TtsVoiceId[]).map((id) => (
+            <option key={id} value={id}>{TTS_VOICES[id].gender} · {TTS_VOICES[id].label}</option>
+          ))}
+        </select>
+      </label>
     </div>
   );
 }

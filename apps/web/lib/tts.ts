@@ -13,7 +13,11 @@ export { TTS_VOICES, type TtsVoiceId };
  * Üretilen ses Vercel Blob'da saklanır: her haber + ses + içerik sürümü için yalnızca bir kez üretilir.
  */
 
-const STYLE_PROMPT = "Bir haber spikeri gibi doğal, net ve tarafsız bir tonla, Türkçe oku:";
+/**
+ * Ses dosyası sürümü. Seslendirme metni ya da yöntemi değiştiğinde artırılır ki eski kayıtlar
+ * (ör. talimat cümlesinin de okunduğu ilk sürüm) yeniden üretilsin.
+ */
+const AUDIO_VERSION = "v2";
 const MAX_RETRY_WAIT_MS = 20_000;
 
 export function isTtsConfigured() {
@@ -43,7 +47,8 @@ async function synthesizeWithModel(model: string, text: string, voiceName: strin
   const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
   const response = await ai.models.generateContent({
     model,
-    contents: [{ role: "user", parts: [{ text: `${STYLE_PROMPT}\n\n${text}` }] }],
+    // Yalnızca okunacak metin gönderilir: metne eklenen üslup talimatı model tarafından sesli okunabiliyordu
+    contents: [{ role: "user", parts: [{ text }] }],
     config: {
       responseModalities: ["AUDIO"],
       speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } },
@@ -100,7 +105,7 @@ export async function getOrCreateArticleAudio({
   const { voiceName } = TTS_VOICES[voice];
   const text = htmlToSpeechText(title, content);
   // İçerik değişirse yeni ses üretilsin diye özet hash dosya adına eklenir
-  const version = createHash("sha256").update(`${voiceName}\n${text}`).digest("hex").slice(0, 16);
+  const version = createHash("sha256").update(`${AUDIO_VERSION}\n${voiceName}\n${text}`).digest("hex").slice(0, 16);
   const pathname = `tts/${articleId}/${voice}-${version}.wav`;
 
   try {

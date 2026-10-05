@@ -3,8 +3,18 @@
 export const SAMPLE_RATE = 24_000;
 const CHUNK_CHARS = 3_500; // ~8K token giriş sınırının güvenle altında
 
+/** Karşılaştırma için sadeleştirir: küçük harf, yalnızca harf ve rakamlar */
+function normalizeForCompare(value: string) {
+  return value.toLocaleLowerCase("tr").replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+/**
+ * Başlık + gövdeyi seslendirilecek düz metne çevirir. Gövde zaten başlıkla
+ * başlıyorsa (ör. içerikte H1 olarak tekrar edilmişse) başlık ikinci kez okunmaz.
+ */
 export function htmlToSpeechText(title: string, html: string) {
-  const body = html
+  let body = html
+    .replace(/^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$/gm, "$1.") // Markdown başlıkları ayrı cümle olsun
     .replace(/<\/(p|h[1-6]|li|blockquote)>/gi, ".\n")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<[^>]*>/g, " ")
@@ -17,7 +27,15 @@ export function htmlToSpeechText(title: string, html: string) {
     .replace(/[ \t]+/g, " ")
     .replace(/\n\s*/g, "\n")
     .trim();
-  return `${title.trim()}.\n${body}`;
+  const cleanTitle = title.trim();
+  const normTitle = normalizeForCompare(cleanTitle);
+  if (!normTitle) return body;
+  // Gövdenin ilk satırı başlığın kendisiyse at; başlığı içeren uzun bir paragrafla başlıyorsa başlığı ekleme
+  const [firstLine = "", ...rest] = body.split("\n");
+  const normFirst = normalizeForCompare(firstLine);
+  if (normFirst === normTitle) body = rest.join("\n").trim();
+  else if (normTitle.split(" ").length >= 4 && normFirst.startsWith(`${normTitle} `)) return body;
+  return `${cleanTitle.replace(/[.!?…:]*$/, "")}.\n${body}`;
 }
 
 /** Metni paragraf/cümle sınırlarından, sınırı aşmayan parçalara böler. */
