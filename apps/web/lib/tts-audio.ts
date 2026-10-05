@@ -1,5 +1,7 @@
 /** Seslendirme için saf yardımcılar (metin hazırlama, parçalama, WAV birleştirme). */
 
+import { stripLeadingTitleHeading } from "./article-content";
+
 export const SAMPLE_RATE = 24_000;
 const CHUNK_CHARS = 3_500; // ~8K token giriş sınırının güvenle altında
 
@@ -13,7 +15,7 @@ function normalizeForCompare(value: string) {
  * başlıyorsa (ör. içerikte H1 olarak tekrar edilmişse) başlık ikinci kez okunmaz.
  */
 export function htmlToSpeechText(title: string, html: string) {
-  let body = html
+  let body = stripLeadingTitleHeading(title, html)
     .replace(/^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$/gm, "$1.") // Markdown başlıkları ayrı cümle olsun
     .replace(/<\/(p|h[1-6]|li|blockquote)>/gi, ".\n")
     .replace(/<br\s*\/?>/gi, "\n")

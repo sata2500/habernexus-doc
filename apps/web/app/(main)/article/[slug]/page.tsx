@@ -12,6 +12,7 @@ import { CommentSection } from "../components/comments/CommentSection";
 import { AudioPlayer } from "../components/AudioPlayer";
 import { TldrCard } from "../components/TldrCard";
 import { getStoredSummary } from "@/lib/tldr";
+import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { ReadingProgressBar } from "../components/ReadingProgressBar";
 import { ArticleReactions } from "../components/ArticleReactions";
 import { ReadingProgressTracker } from "../components/ReadingProgressTracker";
@@ -100,6 +101,8 @@ export default async function ArticlePage({ params }: { params: Params }) {
     notFound();
   }
 
+  // Gövdenin başında başlığın tekrarı varsa gösterme (eski yapay zekâ haberleri)
+  const body = stripLeadingTitleHeading(article.title, article.content);
   const readTime = estimateReadingTime(article.content);
   const [related, storedSummary] = await Promise.all([
     getRelatedArticles({
@@ -215,8 +218,8 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
       {/* ── Yapay Zekâ ile Hızlı Özet & Sesli Dinleme ────────────────── */}
       <div className="mb-10 space-y-4">
-        <TldrCard articleId={article.id} content={article.content} initialBullets={storedSummary} />
-        <AudioPlayer articleId={article.id} content={article.content} title={article.title} />
+        <TldrCard articleId={article.id} content={body} initialBullets={storedSummary} />
+        <AudioPlayer articleId={article.id} content={body} title={article.title} />
       </div>
 
       {/* ── Kapak Resmi Görüntüleyicisi ────────────────────────── */}
@@ -238,7 +241,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
       {/* ── Ana İçerik Gövdesi (Typography Plugin) ────────────────────────── */}
       <ReadingProgressTracker slug={article.slug} title={article.title} coverImage={article.coverImage} category={article.category?.name ?? null} />
       <article id="article-body" className="prose prose-lg dark:prose-invert prose-blue mx-auto w-full mb-12">
-        <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(article.content) }} />
+        <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(body) }} />
       </article>
 
       {/* ── Okuyucu Reaksiyon & Düşünce Modülü ────────────────── */}

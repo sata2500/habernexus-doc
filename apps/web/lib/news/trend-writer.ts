@@ -1,5 +1,6 @@
 import "server-only";
 
+import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { prisma } from "@/lib/prisma";
 import { AiError, cleanHtmlResponse, generateText, parseJsonResponse } from "@/lib/ai/client";
 import { slugify } from "@/lib/utils";
@@ -59,12 +60,13 @@ Yanıtı SADECE şu JSON biçiminde ver:
       temperature: 0.6,
     });
     const parsed = parseJsonResponse<{ title?: string; excerpt?: string; content?: string; category?: string }>(text);
-    const content = cleanHtmlResponse(parsed.content || "");
-    if (!content) return { success: false as const, error: "İçerik üretilemedi." };
+    const rawContent = cleanHtmlResponse(parsed.content || "");
+    if (!rawContent) return { success: false as const, error: "İçerik üretilemedi." };
 
     const title = parsed.title?.trim().slice(0, 140) || `${trend.keyword}: Son gelişmeler`;
     const categoryId = categories.find((c) => c.name.toLocaleLowerCase("tr") === parsed.category?.trim().toLocaleLowerCase("tr"))?.id ?? null;
     const sig = signature(title);
+    const content = stripLeadingTitleHeading(title, rawContent);
 
     const article = await prisma.article.create({
       data: {

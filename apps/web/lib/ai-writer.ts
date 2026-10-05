@@ -10,6 +10,7 @@ import { fetchPublicResource } from "./server/remote-fetch";
 import type { Prisma } from "./generated/client";
 import { findPublishedDuplicate } from "./news/stories";
 import { LIKELY_DUPLICATE, signature, storySimilarity } from "./news/text";
+import { stripLeadingTitleHeading } from "./article-content";
 
 
 /** Üretilen kapak görselini Vercel Blob'a kaydeder. */
@@ -22,6 +23,7 @@ async function saveCoverImage(buffer: Buffer, mimeType: string) {
 /** Haber metni için ortak yazım çerçevesi */
 const WRITER_FORMAT = `Çıktı kuralları:
 - Yalnızca makale gövdesini HTML olarak döndür (h2, h3, p, strong, ul, li, blockquote). Başlık (h1), markdown veya kod bloğu kullanma.
+- Haber başlığını gövdede tekrar etme; metin doğrudan giriş paragrafıyla başlasın.
 - En az 500 kelime, kısa ve okunur paragraflar.
 - Kaynak metni kopyalama; bilgiyi kendi cümlelerinle, tarafsız gazetecilik diliyle yaz.
 - Doğrulanamayan bilgi uydurma.`;
@@ -172,14 +174,14 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
       search: useGoogleSearch,
       temperature: 0.7,
     });
-    let content = cleanHtmlResponse(rawContent);
+    const title = (story.headline || story.title).trim().slice(0, 140);
+    let content = stripLeadingTitleHeading(title, cleanHtmlResponse(rawContent));
     if (!content) throw new Error("Yapay zekâ metin üretemedi.");
     console.log(`[AI Writer] Metin üretildi: ${usedModel}`);
     if (related?.status === "PUBLISHED") {
       content += `\n<p><strong>İlgili haber:</strong> <a href="/article/${related.slug}">${escapeHtml(related.title)}</a></p>`;
     }
 
-    const title = (story.headline || story.title).trim().slice(0, 140);
     const rssImage = story.items.find((i) => i.imageUrl)?.imageUrl ?? null;
     const imageUrl = await produceCoverImage(imagePromptBase, title, rssImage, settings.aiWriterUseRssImage !== false);
 
@@ -341,7 +343,7 @@ ${article.content.slice(0, 20000)}`,
       search: settings?.aiWriterSearchEnabled ?? false,
       temperature: 0.7,
     });
-    const content = cleanHtmlResponse(text);
+    const content = stripLeadingTitleHeading(article.title, cleanHtmlResponse(text));
 
     if (!content) throw new Error("Yeniden yazım başarısız oldu, içerik üretilemedi.");
 
