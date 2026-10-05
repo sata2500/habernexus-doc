@@ -3,12 +3,13 @@ import "server-only";
 import { prisma } from "./prisma";
 import { feedSelect, toFeedArticle } from "./feed";
 import type { FeedArticle } from "./feed-types";
+import { getReadSignals } from "./server/reading-history";
 
 /** Okuma geçmişi çerezi: en yeni okunan başta, virgülle ayrılmış haber id'leri */
 export const READ_HISTORY_COOKIE = "hn_reads";
 export const READ_HISTORY_MAX = 30;
 
-const SIGNAL_WEIGHT = { bookmark: 3, comment: 2, read: 1.5 } as const;
+const SIGNAL_WEIGHT = { bookmark: 3, comment: 2, finished: 2, read: 1.5, partial: 0.75 } as const;
 const FRESHNESS_HALF_LIFE_HOURS = 36;
 const CANDIDATE_WINDOW_DAYS = 14;
 const CANDIDATE_POOL = 150;
@@ -44,7 +45,7 @@ async function buildProfile(userId: string | undefined, readIds: string[]): Prom
     seenIds: new Set(readIds),
   };
 
-  const [bookmarks, comments] = userId
+  const [bookmarks, comments, reads] = userId
     ? await Promise.all([
         prisma.bookmark.findMany({
           where: { userId },
@@ -58,8 +59,9 @@ async function buildProfile(userId: string | undefined, readIds: string[]): Prom
           take: 50,
           select: { articleId: true },
         }),
+        getReadSignals(userId),
       ])
-    : [[], []];
+    : [[], [], []];
 
   // Her sinyal için ağırlık; okuma geçmişinde yeni okunanlar daha etkili
   const weights = new Map<string, number>();
@@ -67,6 +69,8 @@ async function buildProfile(userId: string | undefined, readIds: string[]): Prom
   bookmarks.forEach((b) => add(b.articleId, SIGNAL_WEIGHT.bookmark));
   comments.forEach((c) => add(c.articleId, SIGNAL_WEIGHT.comment));
   readIds.forEach((id, i) => add(id, SIGNAL_WEIGHT.read * (1 - i / (READ_HISTORY_MAX * 2))));
+  // Hesaptaki okuma geçmişi: sonuna kadar okunanlar, yarıda bırakılanlardan daha güçlü sinyal
+  reads.forEach((r, i) => add(r.articleId, (r.completedAt ? SIGNAL_WEIGHT.finished : SIGNAL_WEIGHT.partial) * (1 - i / 120)));
 
   if (weights.size === 0) return profile;
   for (const id of weights.keys()) profile.seenIds.add(id);
@@ -96,7 +100,8 @@ async function buildProfile(userId: string | undefined, readIds: string[]): Prom
 /**
  * "Sizin İçin" önerileri.
  *
- * Sinyaller: kaydedilenler (×3), yorum yapılanlar (×2), okuma geçmişi (×1.5, yeniler daha ağır).
+ * Sinyaller: kaydedilenler (×3), yorum yapılanlar (×2), sonuna kadar okunanlar (×2), açılan haberler (×1.5),
+ * yarıda bırakılanlar (×0.75); yeniler daha ağır.
  * Puan = 0.45·kategori ilgisi + 0.25·etiket benzerliği + 0.20·güncellik + 0.10·popülerlik.
  * Sinyal yoksa güncellik ve popülerliğe göre sıralanır.
  * Aynı kategoriden art arda seçimler cezalandırılarak liste çeşitli tutulur.

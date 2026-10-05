@@ -1,9 +1,11 @@
 /**
  * "Kaldığın yerden devam et" için tarayıcıda tutulan okuma ilerlemesi.
- * Yalnızca bu cihazda saklanır; sunucuya gönderilmez.
+ * Bu cihazda saklanır; giriş yapmış okurlarda ayrıca hesaba da kaydedilir (/api/reading).
  */
 
 export interface ReadingEntry {
+  /** Yalnızca hesaptan gelen kayıtlarda: haber kimliği */
+  id?: string;
   slug: string;
   title: string;
   coverImage: string | null;
@@ -50,10 +52,32 @@ export function removeProgress(slug: string) {
   write(read().filter((e) => e.slug !== slug));
 }
 
+/** Bu orana ulaşan haber "okundu" sayılır (sunucudaki READ_COMPLETE_AT ile aynı) */
+export const READ_COMPLETE_AT = 97;
+
 /** Yarım kalmış (okunmaya başlanmış ama bitmemiş) ve yakın zamanda açılmış haberler */
 export function unfinished(entries: ReadingEntry[], now: number, limit = 3) {
-  return entries.filter((e) => e.progress >= 10 && e.progress < 90 && now - e.at < MAX_AGE_MS).slice(0, limit);
+  return entries.filter((e) => e.progress >= 10 && e.progress < READ_COMPLETE_AT && now - e.at < MAX_AGE_MS).slice(0, limit);
 }
+
+/**
+ * Haberin ne kadarının okunduğu (0-100). Haber metninin başından "Bu habere tepkiniz"
+ * bölümüne kadar olan kısım esas alınır; footer'a inmek gerekmez.
+ */
+export function measureArticleProgress(): number | null {
+  const body = document.getElementById("article-body");
+  if (!body) return null;
+  const end = document.getElementById("article-end");
+  const start = body.getBoundingClientRect().top;
+  // Tepkiler bölümünün başlığı göründüğünde haber bitmiş sayılır
+  const finish = end ? end.getBoundingClientRect().top + 80 : body.getBoundingClientRect().bottom;
+  const span = finish - start;
+  if (span <= 0) return 100;
+  return Math.min(100, Math.max(0, ((window.innerHeight - start) / span) * 100));
+}
+
+/** Haber okundu olarak işaretlendiğinde yayılan olay (detail: { saved: hesaba kaydedildi mi }) */
+export const ARTICLE_READ_EVENT = "hn:article-read";
 
 export function subscribe(callback: () => void) {
   const onStorage = (e: StorageEvent) => { if (e.key === KEY) callback(); };

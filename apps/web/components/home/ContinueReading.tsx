@@ -4,12 +4,23 @@ import { useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { BookOpen, X } from "lucide-react";
-import { getServerSnapshot, getSnapshot, removeProgress, subscribe, unfinished } from "@/lib/reading-progress";
+import { removeReadingHistoryItem } from "@/app/dashboard/actions";
+import { getServerSnapshot, getSnapshot, removeProgress, subscribe, unfinished, type ReadingEntry } from "@/lib/reading-progress";
 
-/** Bu cihazda yarım bırakılan haberler. Hiç yoksa hiçbir şey göstermez. */
-export function ContinueReading() {
-  const entries = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+/**
+ * Yarım bırakılan haberler: bu cihazdakiler + (giriş yapılmışsa) hesaptakiler, yani diğer cihazlarda
+ * yarım kalanlar da. Hiç yoksa hiçbir şey göstermez.
+ */
+export function ContinueReading({ accountEntries = [] }: { accountEntries?: ReadingEntry[] }) {
+  const local = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
   const [now] = useState(() => Date.now());
+  const [hidden, setHidden] = useState<string[]>([]);
+  const merged = new Map<string, ReadingEntry>();
+  for (const e of [...local, ...accountEntries]) {
+    const prev = merged.get(e.slug);
+    if (!prev || e.at > prev.at) merged.set(e.slug, e);
+  }
+  const entries = [...merged.values()].filter((e) => !hidden.includes(e.slug)).sort((a, b) => b.at - a.at);
   const items = unfinished(entries, now);
   if (items.length === 0) return null;
 
@@ -37,7 +48,12 @@ export function ContinueReading() {
             </Link>
             <button
               type="button"
-              onClick={() => removeProgress(e.slug)}
+              onClick={() => {
+                removeProgress(e.slug);
+                setHidden((h) => [...h, e.slug]);
+                const accountId = accountEntries.find((a) => a.slug === e.slug)?.id;
+                if (accountId) void removeReadingHistoryItem(accountId).catch(() => {});
+              }}
               aria-label={`${e.title} listeden kaldır`}
               className="absolute top-1.5 right-1.5 h-7 w-7 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted"
             >

@@ -31,6 +31,7 @@ import { DynamicIcon } from "@/components/ui/DynamicIcon";
 
 import { HomepageSlider } from "@/components/layout/HomepageSlider";
 import { ContinueReading } from "@/components/home/ContinueReading";
+import { getUnfinishedReads } from "@/lib/server/reading-history";
 
 /* ============================================
    Page Component (RSC - Server Component)
@@ -45,6 +46,19 @@ export default async function HomePage() {
     cookies(),
   ]);
   const userId = session?.user?.id;
+
+  // Hesapta yarım kalan haberler (diğer cihazlarda başlananlar dahil)
+  const accountUnfinished = userId
+    ? (await getUnfinishedReads(userId, 3)).map((r) => ({
+        id: r.article.id,
+        slug: r.article.slug,
+        title: r.article.title,
+        coverImage: r.article.coverImage,
+        category: r.article.category?.name ?? null,
+        progress: r.progress,
+        at: r.updatedAt.getTime(),
+      }))
+    : [];
 
   // Giriş yapmış kullanıcılara her zaman, ziyaretçilere okuma geçmişi varsa göster
   const readIds = parseReadHistory(cookieStore.get(READ_HISTORY_COOKIE)?.value);
@@ -66,7 +80,7 @@ export default async function HomePage() {
       <HomepageSlider />
 
       {/* ── Kaldığın yerden devam et (yalnızca bu cihazda yarım kalan haber varsa) ── */}
-      <ContinueReading />
+      <ContinueReading accountEntries={accountUnfinished} />
 
       {/* ── Hero Section ────────────────────────── */}
       <section className="grid grid-cols-1 lg:grid-cols-3 gap-6" id="hero-section" aria-label="Öne Çıkan Haberler">

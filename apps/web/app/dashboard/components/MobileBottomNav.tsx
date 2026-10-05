@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Home, User, Bookmark, Settings, MessageSquare } from "lucide-react";
+import { Home, User, Bookmark, Settings, MessageSquare, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-// Kısa, tek satırlık etiketler: 5 sekme 320px ekrana da sığar
+// Kısa, tek satırlık etiketler: 6 sekme 320px ekrana da sığar
 const bottomNavItems = [
   { name: "Ana sayfa", href: "/", icon: Home },
   { name: "Profil", href: "/dashboard/profile", icon: User },
+  { name: "Okunan", href: "/dashboard/history", icon: History },
   { name: "Yorumlar", href: "/dashboard/comments", icon: MessageSquare },
   { name: "Kayıtlı", href: "/dashboard/bookmarks", icon: Bookmark },
   { name: "Ayarlar", href: "/dashboard/settings", icon: Settings },
@@ -19,7 +20,7 @@ export function MobileBottomNav() {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-card border-t border-border shadow-[0_-4px_20px_rgba(0,0,0,0.05)] px-1 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
-      <nav aria-label="Panel menüsü" className="grid grid-cols-5 max-w-lg mx-auto">
+      <nav aria-label="Panel menüsü" className="grid grid-cols-6 max-w-lg mx-auto">
         {bottomNavItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href;
@@ -35,10 +36,10 @@ export function MobileBottomNav() {
                   : "text-muted-foreground hover:text-foreground"
               )}
             >
-              <span className={cn("flex items-center justify-center h-7 w-12 rounded-full transition-colors", isActive && "bg-primary-500/12")}>
+              <span className={cn("flex items-center justify-center h-7 w-11 rounded-full transition-colors", isActive && "bg-primary-500/12")}>
                 <Icon className="h-5 w-5" />
               </span>
-              <span className="text-[11px] font-semibold leading-none whitespace-nowrap">{item.name}</span>
+              <span className="text-[10px] font-semibold leading-none whitespace-nowrap">{item.name}</span>
             </Link>
           );
         })}

@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, Bookmark, Settings, MessageSquare } from "lucide-react";
+import { User, Bookmark, Settings, MessageSquare, History } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navItems = [
   { name: "Profilim", href: "/dashboard/profile", icon: User },
+  { name: "Okuduklarım", href: "/dashboard/history", icon: History },
   { name: "Yorumlarım", href: "/dashboard/comments", icon: MessageSquare },
   { name: "Kaydedilenler", href: "/dashboard/bookmarks", icon: Bookmark },
   { name: "Tercihler", href: "/dashboard/settings", icon: Settings },

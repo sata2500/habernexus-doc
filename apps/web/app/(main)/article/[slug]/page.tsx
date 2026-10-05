@@ -239,13 +239,16 @@ export default async function ArticlePage({ params }: { params: Params }) {
       )}
 
       {/* ── Ana İçerik Gövdesi (Typography Plugin) ────────────────────────── */}
-      <ReadingProgressTracker slug={article.slug} title={article.title} coverImage={article.coverImage} category={article.category?.name ?? null} />
+      <ReadingProgressTracker articleId={article.id} slug={article.slug} title={article.title} coverImage={article.coverImage} category={article.category?.name ?? null} />
       <article id="article-body" className="prose prose-lg dark:prose-invert prose-blue mx-auto w-full mb-12">
         <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(body) }} />
       </article>
 
       {/* ── Okuyucu Reaksiyon & Düşünce Modülü ────────────────── */}
-      <ArticleReactions articleId={article.id} />
+      {/* Okuma ölçümünde haberin sonu: tepkiler bölümü görününce haber "okundu" sayılır */}
+      <div id="article-end">
+        <ArticleReactions articleId={article.id} />
+      </div>
 
       {/* ── Yazar Bilgi Kartı ────────────────────────── */}
       <section className="bg-muted/30 rounded-2xl p-6 md:p-8 mb-12 border border-border">

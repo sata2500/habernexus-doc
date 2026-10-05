@@ -64,6 +64,11 @@ export type Comment = $Result.DefaultSelection<Prisma.$CommentPayload>
  */
 export type ArticleReaction = $Result.DefaultSelection<Prisma.$ArticleReactionPayload>
 /**
+ * Model ArticleRead
+ * Giriş yapmış okurun okuma geçmişi: ne kadarını okuduğu ve sonuna kadar okuyup okumadığı
+ */
+export type ArticleRead = $Result.DefaultSelection<Prisma.$ArticleReadPayload>
+/**
  * Model Bookmark
  * 
  */
@@ -471,6 +476,16 @@ export class PrismaClient<
     * ```
     */
   get articleReaction(): Prisma.ArticleReactionDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.articleRead`: Exposes CRUD operations for the **ArticleRead** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ArticleReads
+    * const articleReads = await prisma.articleRead.findMany()
+    * ```
+    */
+  get articleRead(): Prisma.ArticleReadDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.bookmark`: Exposes CRUD operations for the **Bookmark** model.
@@ -1108,6 +1123,7 @@ export namespace Prisma {
     TagOnArticle: 'TagOnArticle',
     Comment: 'Comment',
     ArticleReaction: 'ArticleReaction',
+    ArticleRead: 'ArticleRead',
     Bookmark: 'Bookmark',
     Subscriber: 'Subscriber',
     Media: 'Media',
@@ -1141,7 +1157,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "newsStory" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "articleRead" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "newsStory" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1882,6 +1898,80 @@ export namespace Prisma {
           count: {
             args: Prisma.ArticleReactionCountArgs<ExtArgs>
             result: $Utils.Optional<ArticleReactionCountAggregateOutputType> | number
+          }
+        }
+      }
+      ArticleRead: {
+        payload: Prisma.$ArticleReadPayload<ExtArgs>
+        fields: Prisma.ArticleReadFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ArticleReadFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ArticleReadFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload>
+          }
+          findFirst: {
+            args: Prisma.ArticleReadFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ArticleReadFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload>
+          }
+          findMany: {
+            args: Prisma.ArticleReadFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload>[]
+          }
+          create: {
+            args: Prisma.ArticleReadCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload>
+          }
+          createMany: {
+            args: Prisma.ArticleReadCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ArticleReadCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload>[]
+          }
+          delete: {
+            args: Prisma.ArticleReadDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload>
+          }
+          update: {
+            args: Prisma.ArticleReadUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload>
+          }
+          deleteMany: {
+            args: Prisma.ArticleReadDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ArticleReadUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ArticleReadUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload>[]
+          }
+          upsert: {
+            args: Prisma.ArticleReadUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleReadPayload>
+          }
+          aggregate: {
+            args: Prisma.ArticleReadAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateArticleRead>
+          }
+          groupBy: {
+            args: Prisma.ArticleReadGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ArticleReadGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ArticleReadCountArgs<ExtArgs>
+            result: $Utils.Optional<ArticleReadCountAggregateOutputType> | number
           }
         }
       }
@@ -3350,6 +3440,7 @@ export namespace Prisma {
     tagOnArticle?: TagOnArticleOmit
     comment?: CommentOmit
     articleReaction?: ArticleReactionOmit
+    articleRead?: ArticleReadOmit
     bookmark?: BookmarkOmit
     subscriber?: SubscriberOmit
     media?: MediaOmit
@@ -3454,6 +3545,7 @@ export namespace Prisma {
     comments: number
     media: number
     reactions: number
+    reads: number
     sessions: number
   }
 
@@ -3464,6 +3556,7 @@ export namespace Prisma {
     comments?: boolean | UserCountOutputTypeCountCommentsArgs
     media?: boolean | UserCountOutputTypeCountMediaArgs
     reactions?: boolean | UserCountOutputTypeCountReactionsArgs
+    reads?: boolean | UserCountOutputTypeCountReadsArgs
     sessions?: boolean | UserCountOutputTypeCountSessionsArgs
   }
 
@@ -3523,6 +3616,13 @@ export namespace Prisma {
   /**
    * UserCountOutputType without action
    */
+  export type UserCountOutputTypeCountReadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArticleReadWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
   export type UserCountOutputTypeCountSessionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: SessionWhereInput
   }
@@ -3536,6 +3636,7 @@ export namespace Prisma {
     bookmarks: number
     comments: number
     reactions: number
+    reads: number
     tags: number
   }
 
@@ -3543,6 +3644,7 @@ export namespace Prisma {
     bookmarks?: boolean | ArticleCountOutputTypeCountBookmarksArgs
     comments?: boolean | ArticleCountOutputTypeCountCommentsArgs
     reactions?: boolean | ArticleCountOutputTypeCountReactionsArgs
+    reads?: boolean | ArticleCountOutputTypeCountReadsArgs
     tags?: boolean | ArticleCountOutputTypeCountTagsArgs
   }
 
@@ -3576,6 +3678,13 @@ export namespace Prisma {
    */
   export type ArticleCountOutputTypeCountReactionsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ArticleReactionWhereInput
+  }
+
+  /**
+   * ArticleCountOutputType without action
+   */
+  export type ArticleCountOutputTypeCountReadsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArticleReadWhereInput
   }
 
   /**
@@ -4136,6 +4245,7 @@ export namespace Prisma {
     comments?: boolean | User$commentsArgs<ExtArgs>
     media?: boolean | User$mediaArgs<ExtArgs>
     reactions?: boolean | User$reactionsArgs<ExtArgs>
+    reads?: boolean | User$readsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
@@ -4190,6 +4300,7 @@ export namespace Prisma {
     comments?: boolean | User$commentsArgs<ExtArgs>
     media?: boolean | User$mediaArgs<ExtArgs>
     reactions?: boolean | User$reactionsArgs<ExtArgs>
+    reads?: boolean | User$readsArgs<ExtArgs>
     sessions?: boolean | User$sessionsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -4205,6 +4316,7 @@ export namespace Prisma {
       comments: Prisma.$CommentPayload<ExtArgs>[]
       media: Prisma.$MediaPayload<ExtArgs>[]
       reactions: Prisma.$ArticleReactionPayload<ExtArgs>[]
+      reads: Prisma.$ArticleReadPayload<ExtArgs>[]
       sessions: Prisma.$SessionPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -4619,6 +4731,7 @@ export namespace Prisma {
     comments<T extends User$commentsArgs<ExtArgs> = {}>(args?: Subset<T, User$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     media<T extends User$mediaArgs<ExtArgs> = {}>(args?: Subset<T, User$mediaArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MediaPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reactions<T extends User$reactionsArgs<ExtArgs> = {}>(args?: Subset<T, User$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reads<T extends User$readsArgs<ExtArgs> = {}>(args?: Subset<T, User$readsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sessions<T extends User$sessionsArgs<ExtArgs> = {}>(args?: Subset<T, User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -5194,6 +5307,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ArticleReactionScalarFieldEnum | ArticleReactionScalarFieldEnum[]
+  }
+
+  /**
+   * User.reads
+   */
+  export type User$readsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    where?: ArticleReadWhereInput
+    orderBy?: ArticleReadOrderByWithRelationInput | ArticleReadOrderByWithRelationInput[]
+    cursor?: ArticleReadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ArticleReadScalarFieldEnum | ArticleReadScalarFieldEnum[]
   }
 
   /**
@@ -8880,6 +9017,7 @@ export namespace Prisma {
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
     reactions?: boolean | Article$reactionsArgs<ExtArgs>
+    reads?: boolean | Article$readsArgs<ExtArgs>
     tags?: boolean | Article$tagsArgs<ExtArgs>
     _count?: boolean | ArticleCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["article"]>
@@ -8974,6 +9112,7 @@ export namespace Prisma {
     bookmarks?: boolean | Article$bookmarksArgs<ExtArgs>
     comments?: boolean | Article$commentsArgs<ExtArgs>
     reactions?: boolean | Article$reactionsArgs<ExtArgs>
+    reads?: boolean | Article$readsArgs<ExtArgs>
     tags?: boolean | Article$tagsArgs<ExtArgs>
     _count?: boolean | ArticleCountOutputTypeDefaultArgs<ExtArgs>
   }
@@ -9001,6 +9140,7 @@ export namespace Prisma {
       bookmarks: Prisma.$BookmarkPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
       reactions: Prisma.$ArticleReactionPayload<ExtArgs>[]
+      reads: Prisma.$ArticleReadPayload<ExtArgs>[]
       tags: Prisma.$TagOnArticlePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -9427,6 +9567,7 @@ export namespace Prisma {
     bookmarks<T extends Article$bookmarksArgs<ExtArgs> = {}>(args?: Subset<T, Article$bookmarksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$BookmarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends Article$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Article$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reactions<T extends Article$reactionsArgs<ExtArgs> = {}>(args?: Subset<T, Article$reactionsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reads<T extends Article$readsArgs<ExtArgs> = {}>(args?: Subset<T, Article$readsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     tags<T extends Article$tagsArgs<ExtArgs> = {}>(args?: Subset<T, Article$tagsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TagOnArticlePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -10024,6 +10165,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ArticleReactionScalarFieldEnum | ArticleReactionScalarFieldEnum[]
+  }
+
+  /**
+   * Article.reads
+   */
+  export type Article$readsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    where?: ArticleReadWhereInput
+    orderBy?: ArticleReadOrderByWithRelationInput | ArticleReadOrderByWithRelationInput[]
+    cursor?: ArticleReadWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: ArticleReadScalarFieldEnum | ArticleReadScalarFieldEnum[]
   }
 
   /**
@@ -15651,6 +15816,1143 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: ArticleReactionInclude<ExtArgs> | null
+  }
+
+
+  /**
+   * Model ArticleRead
+   */
+
+  export type AggregateArticleRead = {
+    _count: ArticleReadCountAggregateOutputType | null
+    _avg: ArticleReadAvgAggregateOutputType | null
+    _sum: ArticleReadSumAggregateOutputType | null
+    _min: ArticleReadMinAggregateOutputType | null
+    _max: ArticleReadMaxAggregateOutputType | null
+  }
+
+  export type ArticleReadAvgAggregateOutputType = {
+    progress: number | null
+  }
+
+  export type ArticleReadSumAggregateOutputType = {
+    progress: number | null
+  }
+
+  export type ArticleReadMinAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    articleId: string | null
+    progress: number | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ArticleReadMaxAggregateOutputType = {
+    id: string | null
+    userId: string | null
+    articleId: string | null
+    progress: number | null
+    completedAt: Date | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type ArticleReadCountAggregateOutputType = {
+    id: number
+    userId: number
+    articleId: number
+    progress: number
+    completedAt: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type ArticleReadAvgAggregateInputType = {
+    progress?: true
+  }
+
+  export type ArticleReadSumAggregateInputType = {
+    progress?: true
+  }
+
+  export type ArticleReadMinAggregateInputType = {
+    id?: true
+    userId?: true
+    articleId?: true
+    progress?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ArticleReadMaxAggregateInputType = {
+    id?: true
+    userId?: true
+    articleId?: true
+    progress?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type ArticleReadCountAggregateInputType = {
+    id?: true
+    userId?: true
+    articleId?: true
+    progress?: true
+    completedAt?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type ArticleReadAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArticleRead to aggregate.
+     */
+    where?: ArticleReadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleReads to fetch.
+     */
+    orderBy?: ArticleReadOrderByWithRelationInput | ArticleReadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ArticleReadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleReads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleReads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ArticleReads
+    **/
+    _count?: true | ArticleReadCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: ArticleReadAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: ArticleReadSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ArticleReadMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ArticleReadMaxAggregateInputType
+  }
+
+  export type GetArticleReadAggregateType<T extends ArticleReadAggregateArgs> = {
+        [P in keyof T & keyof AggregateArticleRead]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateArticleRead[P]>
+      : GetScalarType<T[P], AggregateArticleRead[P]>
+  }
+
+
+
+
+  export type ArticleReadGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArticleReadWhereInput
+    orderBy?: ArticleReadOrderByWithAggregationInput | ArticleReadOrderByWithAggregationInput[]
+    by: ArticleReadScalarFieldEnum[] | ArticleReadScalarFieldEnum
+    having?: ArticleReadScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ArticleReadCountAggregateInputType | true
+    _avg?: ArticleReadAvgAggregateInputType
+    _sum?: ArticleReadSumAggregateInputType
+    _min?: ArticleReadMinAggregateInputType
+    _max?: ArticleReadMaxAggregateInputType
+  }
+
+  export type ArticleReadGroupByOutputType = {
+    id: string
+    userId: string
+    articleId: string
+    progress: number
+    completedAt: Date | null
+    createdAt: Date
+    updatedAt: Date
+    _count: ArticleReadCountAggregateOutputType | null
+    _avg: ArticleReadAvgAggregateOutputType | null
+    _sum: ArticleReadSumAggregateOutputType | null
+    _min: ArticleReadMinAggregateOutputType | null
+    _max: ArticleReadMaxAggregateOutputType | null
+  }
+
+  type GetArticleReadGroupByPayload<T extends ArticleReadGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ArticleReadGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ArticleReadGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ArticleReadGroupByOutputType[P]>
+            : GetScalarType<T[P], ArticleReadGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ArticleReadSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    articleId?: boolean
+    progress?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["articleRead"]>
+
+  export type ArticleReadSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    articleId?: boolean
+    progress?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["articleRead"]>
+
+  export type ArticleReadSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    userId?: boolean
+    articleId?: boolean
+    progress?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["articleRead"]>
+
+  export type ArticleReadSelectScalar = {
+    id?: boolean
+    userId?: boolean
+    articleId?: boolean
+    progress?: boolean
+    completedAt?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type ArticleReadOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "articleId" | "progress" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["articleRead"]>
+  export type ArticleReadInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ArticleReadIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type ArticleReadIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    article?: boolean | ArticleDefaultArgs<ExtArgs>
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $ArticleReadPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ArticleRead"
+    objects: {
+      article: Prisma.$ArticlePayload<ExtArgs>
+      user: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      userId: string
+      articleId: string
+      /**
+       * 0-100, hiç geriye düşmez
+       */
+      progress: number
+      /**
+       * Haberin sonuna (tepkiler bölümüne) ulaşıldığı an
+       */
+      completedAt: Date | null
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["articleRead"]>
+    composites: {}
+  }
+
+  type ArticleReadGetPayload<S extends boolean | null | undefined | ArticleReadDefaultArgs> = $Result.GetResult<Prisma.$ArticleReadPayload, S>
+
+  type ArticleReadCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ArticleReadFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ArticleReadCountAggregateInputType | true
+    }
+
+  export interface ArticleReadDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ArticleRead'], meta: { name: 'ArticleRead' } }
+    /**
+     * Find zero or one ArticleRead that matches the filter.
+     * @param {ArticleReadFindUniqueArgs} args - Arguments to find a ArticleRead
+     * @example
+     * // Get one ArticleRead
+     * const articleRead = await prisma.articleRead.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ArticleReadFindUniqueArgs>(args: SelectSubset<T, ArticleReadFindUniqueArgs<ExtArgs>>): Prisma__ArticleReadClient<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ArticleRead that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ArticleReadFindUniqueOrThrowArgs} args - Arguments to find a ArticleRead
+     * @example
+     * // Get one ArticleRead
+     * const articleRead = await prisma.articleRead.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ArticleReadFindUniqueOrThrowArgs>(args: SelectSubset<T, ArticleReadFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ArticleReadClient<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArticleRead that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReadFindFirstArgs} args - Arguments to find a ArticleRead
+     * @example
+     * // Get one ArticleRead
+     * const articleRead = await prisma.articleRead.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ArticleReadFindFirstArgs>(args?: SelectSubset<T, ArticleReadFindFirstArgs<ExtArgs>>): Prisma__ArticleReadClient<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArticleRead that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReadFindFirstOrThrowArgs} args - Arguments to find a ArticleRead
+     * @example
+     * // Get one ArticleRead
+     * const articleRead = await prisma.articleRead.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ArticleReadFindFirstOrThrowArgs>(args?: SelectSubset<T, ArticleReadFindFirstOrThrowArgs<ExtArgs>>): Prisma__ArticleReadClient<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ArticleReads that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReadFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ArticleReads
+     * const articleReads = await prisma.articleRead.findMany()
+     * 
+     * // Get first 10 ArticleReads
+     * const articleReads = await prisma.articleRead.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const articleReadWithIdOnly = await prisma.articleRead.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ArticleReadFindManyArgs>(args?: SelectSubset<T, ArticleReadFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ArticleRead.
+     * @param {ArticleReadCreateArgs} args - Arguments to create a ArticleRead.
+     * @example
+     * // Create one ArticleRead
+     * const ArticleRead = await prisma.articleRead.create({
+     *   data: {
+     *     // ... data to create a ArticleRead
+     *   }
+     * })
+     * 
+     */
+    create<T extends ArticleReadCreateArgs>(args: SelectSubset<T, ArticleReadCreateArgs<ExtArgs>>): Prisma__ArticleReadClient<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ArticleReads.
+     * @param {ArticleReadCreateManyArgs} args - Arguments to create many ArticleReads.
+     * @example
+     * // Create many ArticleReads
+     * const articleRead = await prisma.articleRead.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ArticleReadCreateManyArgs>(args?: SelectSubset<T, ArticleReadCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ArticleReads and returns the data saved in the database.
+     * @param {ArticleReadCreateManyAndReturnArgs} args - Arguments to create many ArticleReads.
+     * @example
+     * // Create many ArticleReads
+     * const articleRead = await prisma.articleRead.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ArticleReads and only return the `id`
+     * const articleReadWithIdOnly = await prisma.articleRead.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ArticleReadCreateManyAndReturnArgs>(args?: SelectSubset<T, ArticleReadCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ArticleRead.
+     * @param {ArticleReadDeleteArgs} args - Arguments to delete one ArticleRead.
+     * @example
+     * // Delete one ArticleRead
+     * const ArticleRead = await prisma.articleRead.delete({
+     *   where: {
+     *     // ... filter to delete one ArticleRead
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ArticleReadDeleteArgs>(args: SelectSubset<T, ArticleReadDeleteArgs<ExtArgs>>): Prisma__ArticleReadClient<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ArticleRead.
+     * @param {ArticleReadUpdateArgs} args - Arguments to update one ArticleRead.
+     * @example
+     * // Update one ArticleRead
+     * const articleRead = await prisma.articleRead.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ArticleReadUpdateArgs>(args: SelectSubset<T, ArticleReadUpdateArgs<ExtArgs>>): Prisma__ArticleReadClient<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ArticleReads.
+     * @param {ArticleReadDeleteManyArgs} args - Arguments to filter ArticleReads to delete.
+     * @example
+     * // Delete a few ArticleReads
+     * const { count } = await prisma.articleRead.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ArticleReadDeleteManyArgs>(args?: SelectSubset<T, ArticleReadDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArticleReads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReadUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ArticleReads
+     * const articleRead = await prisma.articleRead.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ArticleReadUpdateManyArgs>(args: SelectSubset<T, ArticleReadUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArticleReads and returns the data updated in the database.
+     * @param {ArticleReadUpdateManyAndReturnArgs} args - Arguments to update many ArticleReads.
+     * @example
+     * // Update many ArticleReads
+     * const articleRead = await prisma.articleRead.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ArticleReads and only return the `id`
+     * const articleReadWithIdOnly = await prisma.articleRead.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ArticleReadUpdateManyAndReturnArgs>(args: SelectSubset<T, ArticleReadUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ArticleRead.
+     * @param {ArticleReadUpsertArgs} args - Arguments to update or create a ArticleRead.
+     * @example
+     * // Update or create a ArticleRead
+     * const articleRead = await prisma.articleRead.upsert({
+     *   create: {
+     *     // ... data to create a ArticleRead
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ArticleRead we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ArticleReadUpsertArgs>(args: SelectSubset<T, ArticleReadUpsertArgs<ExtArgs>>): Prisma__ArticleReadClient<$Result.GetResult<Prisma.$ArticleReadPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ArticleReads.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReadCountArgs} args - Arguments to filter ArticleReads to count.
+     * @example
+     * // Count the number of ArticleReads
+     * const count = await prisma.articleRead.count({
+     *   where: {
+     *     // ... the filter for the ArticleReads we want to count
+     *   }
+     * })
+    **/
+    count<T extends ArticleReadCountArgs>(
+      args?: Subset<T, ArticleReadCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ArticleReadCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ArticleRead.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReadAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ArticleReadAggregateArgs>(args: Subset<T, ArticleReadAggregateArgs>): Prisma.PrismaPromise<GetArticleReadAggregateType<T>>
+
+    /**
+     * Group by ArticleRead.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleReadGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ArticleReadGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ArticleReadGroupByArgs['orderBy'] }
+        : { orderBy?: ArticleReadGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ArticleReadGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetArticleReadGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ArticleRead model
+   */
+  readonly fields: ArticleReadFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ArticleRead.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ArticleReadClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    article<T extends ArticleDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ArticleDefaultArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ArticleRead model
+   */
+  interface ArticleReadFieldRefs {
+    readonly id: FieldRef<"ArticleRead", 'String'>
+    readonly userId: FieldRef<"ArticleRead", 'String'>
+    readonly articleId: FieldRef<"ArticleRead", 'String'>
+    readonly progress: FieldRef<"ArticleRead", 'Int'>
+    readonly completedAt: FieldRef<"ArticleRead", 'DateTime'>
+    readonly createdAt: FieldRef<"ArticleRead", 'DateTime'>
+    readonly updatedAt: FieldRef<"ArticleRead", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ArticleRead findUnique
+   */
+  export type ArticleReadFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleRead to fetch.
+     */
+    where: ArticleReadWhereUniqueInput
+  }
+
+  /**
+   * ArticleRead findUniqueOrThrow
+   */
+  export type ArticleReadFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleRead to fetch.
+     */
+    where: ArticleReadWhereUniqueInput
+  }
+
+  /**
+   * ArticleRead findFirst
+   */
+  export type ArticleReadFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleRead to fetch.
+     */
+    where?: ArticleReadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleReads to fetch.
+     */
+    orderBy?: ArticleReadOrderByWithRelationInput | ArticleReadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArticleReads.
+     */
+    cursor?: ArticleReadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleReads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleReads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArticleReads.
+     */
+    distinct?: ArticleReadScalarFieldEnum | ArticleReadScalarFieldEnum[]
+  }
+
+  /**
+   * ArticleRead findFirstOrThrow
+   */
+  export type ArticleReadFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleRead to fetch.
+     */
+    where?: ArticleReadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleReads to fetch.
+     */
+    orderBy?: ArticleReadOrderByWithRelationInput | ArticleReadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArticleReads.
+     */
+    cursor?: ArticleReadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleReads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleReads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArticleReads.
+     */
+    distinct?: ArticleReadScalarFieldEnum | ArticleReadScalarFieldEnum[]
+  }
+
+  /**
+   * ArticleRead findMany
+   */
+  export type ArticleReadFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    /**
+     * Filter, which ArticleReads to fetch.
+     */
+    where?: ArticleReadWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleReads to fetch.
+     */
+    orderBy?: ArticleReadOrderByWithRelationInput | ArticleReadOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ArticleReads.
+     */
+    cursor?: ArticleReadWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleReads from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleReads.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArticleReads.
+     */
+    distinct?: ArticleReadScalarFieldEnum | ArticleReadScalarFieldEnum[]
+  }
+
+  /**
+   * ArticleRead create
+   */
+  export type ArticleReadCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    /**
+     * The data needed to create a ArticleRead.
+     */
+    data: XOR<ArticleReadCreateInput, ArticleReadUncheckedCreateInput>
+  }
+
+  /**
+   * ArticleRead createMany
+   */
+  export type ArticleReadCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ArticleReads.
+     */
+    data: ArticleReadCreateManyInput | ArticleReadCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ArticleRead createManyAndReturn
+   */
+  export type ArticleReadCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * The data used to create many ArticleReads.
+     */
+    data: ArticleReadCreateManyInput | ArticleReadCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ArticleRead update
+   */
+  export type ArticleReadUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    /**
+     * The data needed to update a ArticleRead.
+     */
+    data: XOR<ArticleReadUpdateInput, ArticleReadUncheckedUpdateInput>
+    /**
+     * Choose, which ArticleRead to update.
+     */
+    where: ArticleReadWhereUniqueInput
+  }
+
+  /**
+   * ArticleRead updateMany
+   */
+  export type ArticleReadUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ArticleReads.
+     */
+    data: XOR<ArticleReadUpdateManyMutationInput, ArticleReadUncheckedUpdateManyInput>
+    /**
+     * Filter which ArticleReads to update
+     */
+    where?: ArticleReadWhereInput
+    /**
+     * Limit how many ArticleReads to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArticleRead updateManyAndReturn
+   */
+  export type ArticleReadUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * The data used to update ArticleReads.
+     */
+    data: XOR<ArticleReadUpdateManyMutationInput, ArticleReadUncheckedUpdateManyInput>
+    /**
+     * Filter which ArticleReads to update
+     */
+    where?: ArticleReadWhereInput
+    /**
+     * Limit how many ArticleReads to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * ArticleRead upsert
+   */
+  export type ArticleReadUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    /**
+     * The filter to search for the ArticleRead to update in case it exists.
+     */
+    where: ArticleReadWhereUniqueInput
+    /**
+     * In case the ArticleRead found by the `where` argument doesn't exist, create a new ArticleRead with this data.
+     */
+    create: XOR<ArticleReadCreateInput, ArticleReadUncheckedCreateInput>
+    /**
+     * In case the ArticleRead was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ArticleReadUpdateInput, ArticleReadUncheckedUpdateInput>
+  }
+
+  /**
+   * ArticleRead delete
+   */
+  export type ArticleReadDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
+    /**
+     * Filter which ArticleRead to delete.
+     */
+    where: ArticleReadWhereUniqueInput
+  }
+
+  /**
+   * ArticleRead deleteMany
+   */
+  export type ArticleReadDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArticleReads to delete
+     */
+    where?: ArticleReadWhereInput
+    /**
+     * Limit how many ArticleReads to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArticleRead without action
+   */
+  export type ArticleReadDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleRead
+     */
+    select?: ArticleReadSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleRead
+     */
+    omit?: ArticleReadOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: ArticleReadInclude<ExtArgs> | null
   }
 
 
@@ -37009,6 +38311,19 @@ export namespace Prisma {
   export type ArticleReactionScalarFieldEnum = (typeof ArticleReactionScalarFieldEnum)[keyof typeof ArticleReactionScalarFieldEnum]
 
 
+  export const ArticleReadScalarFieldEnum: {
+    id: 'id',
+    userId: 'userId',
+    articleId: 'articleId',
+    progress: 'progress',
+    completedAt: 'completedAt',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type ArticleReadScalarFieldEnum = (typeof ArticleReadScalarFieldEnum)[keyof typeof ArticleReadScalarFieldEnum]
+
+
   export const BookmarkScalarFieldEnum: {
     id: 'id',
     userId: 'userId',
@@ -37576,6 +38891,7 @@ export namespace Prisma {
     comments?: CommentListRelationFilter
     media?: MediaListRelationFilter
     reactions?: ArticleReactionListRelationFilter
+    reads?: ArticleReadListRelationFilter
     sessions?: SessionListRelationFilter
   }
 
@@ -37597,6 +38913,7 @@ export namespace Prisma {
     comments?: CommentOrderByRelationAggregateInput
     media?: MediaOrderByRelationAggregateInput
     reactions?: ArticleReactionOrderByRelationAggregateInput
+    reads?: ArticleReadOrderByRelationAggregateInput
     sessions?: SessionOrderByRelationAggregateInput
   }
 
@@ -37621,6 +38938,7 @@ export namespace Prisma {
     comments?: CommentListRelationFilter
     media?: MediaListRelationFilter
     reactions?: ArticleReactionListRelationFilter
+    reads?: ArticleReadListRelationFilter
     sessions?: SessionListRelationFilter
   }, "id" | "email">
 
@@ -37919,6 +39237,7 @@ export namespace Prisma {
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     reactions?: ArticleReactionListRelationFilter
+    reads?: ArticleReadListRelationFilter
     tags?: TagOnArticleListRelationFilter
   }
 
@@ -37952,6 +39271,7 @@ export namespace Prisma {
     bookmarks?: BookmarkOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
     reactions?: ArticleReactionOrderByRelationAggregateInput
+    reads?: ArticleReadOrderByRelationAggregateInput
     tags?: TagOnArticleOrderByRelationAggregateInput
   }
 
@@ -37988,6 +39308,7 @@ export namespace Prisma {
     bookmarks?: BookmarkListRelationFilter
     comments?: CommentListRelationFilter
     reactions?: ArticleReactionListRelationFilter
+    reads?: ArticleReadListRelationFilter
     tags?: TagOnArticleListRelationFilter
   }, "id" | "slug" | "sourceRssItemId">
 
@@ -38373,6 +39694,77 @@ export namespace Prisma {
     visitorId?: StringNullableWithAggregatesFilter<"ArticleReaction"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"ArticleReaction"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"ArticleReaction"> | Date | string
+  }
+
+  export type ArticleReadWhereInput = {
+    AND?: ArticleReadWhereInput | ArticleReadWhereInput[]
+    OR?: ArticleReadWhereInput[]
+    NOT?: ArticleReadWhereInput | ArticleReadWhereInput[]
+    id?: StringFilter<"ArticleRead"> | string
+    userId?: StringFilter<"ArticleRead"> | string
+    articleId?: StringFilter<"ArticleRead"> | string
+    progress?: IntFilter<"ArticleRead"> | number
+    completedAt?: DateTimeNullableFilter<"ArticleRead"> | Date | string | null
+    createdAt?: DateTimeFilter<"ArticleRead"> | Date | string
+    updatedAt?: DateTimeFilter<"ArticleRead"> | Date | string
+    article?: XOR<ArticleScalarRelationFilter, ArticleWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type ArticleReadOrderByWithRelationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    articleId?: SortOrder
+    progress?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    article?: ArticleOrderByWithRelationInput
+    user?: UserOrderByWithRelationInput
+  }
+
+  export type ArticleReadWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    userId_articleId?: ArticleReadUserIdArticleIdCompoundUniqueInput
+    AND?: ArticleReadWhereInput | ArticleReadWhereInput[]
+    OR?: ArticleReadWhereInput[]
+    NOT?: ArticleReadWhereInput | ArticleReadWhereInput[]
+    userId?: StringFilter<"ArticleRead"> | string
+    articleId?: StringFilter<"ArticleRead"> | string
+    progress?: IntFilter<"ArticleRead"> | number
+    completedAt?: DateTimeNullableFilter<"ArticleRead"> | Date | string | null
+    createdAt?: DateTimeFilter<"ArticleRead"> | Date | string
+    updatedAt?: DateTimeFilter<"ArticleRead"> | Date | string
+    article?: XOR<ArticleScalarRelationFilter, ArticleWhereInput>
+    user?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "userId_articleId">
+
+  export type ArticleReadOrderByWithAggregationInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    articleId?: SortOrder
+    progress?: SortOrder
+    completedAt?: SortOrderInput | SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: ArticleReadCountOrderByAggregateInput
+    _avg?: ArticleReadAvgOrderByAggregateInput
+    _max?: ArticleReadMaxOrderByAggregateInput
+    _min?: ArticleReadMinOrderByAggregateInput
+    _sum?: ArticleReadSumOrderByAggregateInput
+  }
+
+  export type ArticleReadScalarWhereWithAggregatesInput = {
+    AND?: ArticleReadScalarWhereWithAggregatesInput | ArticleReadScalarWhereWithAggregatesInput[]
+    OR?: ArticleReadScalarWhereWithAggregatesInput[]
+    NOT?: ArticleReadScalarWhereWithAggregatesInput | ArticleReadScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ArticleRead"> | string
+    userId?: StringWithAggregatesFilter<"ArticleRead"> | string
+    articleId?: StringWithAggregatesFilter<"ArticleRead"> | string
+    progress?: IntWithAggregatesFilter<"ArticleRead"> | number
+    completedAt?: DateTimeNullableWithAggregatesFilter<"ArticleRead"> | Date | string | null
+    createdAt?: DateTimeWithAggregatesFilter<"ArticleRead"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"ArticleRead"> | Date | string
   }
 
   export type BookmarkWhereInput = {
@@ -40100,6 +41492,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionCreateNestedManyWithoutUserInput
+    reads?: ArticleReadCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -40121,6 +41514,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -40142,6 +41536,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -40163,6 +41558,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -40491,6 +41887,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -40520,6 +41917,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -40549,6 +41947,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -40578,6 +41977,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -40977,6 +42377,74 @@ export namespace Prisma {
     type?: StringFieldUpdateOperationsInput | string
     userId?: NullableStringFieldUpdateOperationsInput | string | null
     visitorId?: NullableStringFieldUpdateOperationsInput | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReadCreateInput = {
+    id?: string
+    progress?: number
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    article: ArticleCreateNestedOneWithoutReadsInput
+    user: UserCreateNestedOneWithoutReadsInput
+  }
+
+  export type ArticleReadUncheckedCreateInput = {
+    id?: string
+    userId: string
+    articleId: string
+    progress?: number
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReadUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    article?: ArticleUpdateOneRequiredWithoutReadsNestedInput
+    user?: UserUpdateOneRequiredWithoutReadsNestedInput
+  }
+
+  export type ArticleReadUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReadCreateManyInput = {
+    id?: string
+    userId: string
+    articleId: string
+    progress?: number
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReadUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReadUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -43061,6 +44529,12 @@ export namespace Prisma {
     none?: ArticleReactionWhereInput
   }
 
+  export type ArticleReadListRelationFilter = {
+    every?: ArticleReadWhereInput
+    some?: ArticleReadWhereInput
+    none?: ArticleReadWhereInput
+  }
+
   export type SessionListRelationFilter = {
     every?: SessionWhereInput
     some?: SessionWhereInput
@@ -43093,6 +44567,10 @@ export namespace Prisma {
   }
 
   export type ArticleReactionOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type ArticleReadOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -43754,6 +45232,49 @@ export namespace Prisma {
     visitorId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+  }
+
+  export type ArticleReadUserIdArticleIdCompoundUniqueInput = {
+    userId: string
+    articleId: string
+  }
+
+  export type ArticleReadCountOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    articleId?: SortOrder
+    progress?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ArticleReadAvgOrderByAggregateInput = {
+    progress?: SortOrder
+  }
+
+  export type ArticleReadMaxOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    articleId?: SortOrder
+    progress?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ArticleReadMinOrderByAggregateInput = {
+    id?: SortOrder
+    userId?: SortOrder
+    articleId?: SortOrder
+    progress?: SortOrder
+    completedAt?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type ArticleReadSumOrderByAggregateInput = {
+    progress?: SortOrder
   }
 
   export type BookmarkUserIdArticleIdCompoundUniqueInput = {
@@ -44909,6 +46430,13 @@ export namespace Prisma {
     connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
   }
 
+  export type ArticleReadCreateNestedManyWithoutUserInput = {
+    create?: XOR<ArticleReadCreateWithoutUserInput, ArticleReadUncheckedCreateWithoutUserInput> | ArticleReadCreateWithoutUserInput[] | ArticleReadUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ArticleReadCreateOrConnectWithoutUserInput | ArticleReadCreateOrConnectWithoutUserInput[]
+    createMany?: ArticleReadCreateManyUserInputEnvelope
+    connect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+  }
+
   export type SessionCreateNestedManyWithoutUserInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -44956,6 +46484,13 @@ export namespace Prisma {
     connectOrCreate?: ArticleReactionCreateOrConnectWithoutUserInput | ArticleReactionCreateOrConnectWithoutUserInput[]
     createMany?: ArticleReactionCreateManyUserInputEnvelope
     connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+  }
+
+  export type ArticleReadUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<ArticleReadCreateWithoutUserInput, ArticleReadUncheckedCreateWithoutUserInput> | ArticleReadCreateWithoutUserInput[] | ArticleReadUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ArticleReadCreateOrConnectWithoutUserInput | ArticleReadCreateOrConnectWithoutUserInput[]
+    createMany?: ArticleReadCreateManyUserInputEnvelope
+    connect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
   }
 
   export type SessionUncheckedCreateNestedManyWithoutUserInput = {
@@ -45065,6 +46600,20 @@ export namespace Prisma {
     deleteMany?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
   }
 
+  export type ArticleReadUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ArticleReadCreateWithoutUserInput, ArticleReadUncheckedCreateWithoutUserInput> | ArticleReadCreateWithoutUserInput[] | ArticleReadUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ArticleReadCreateOrConnectWithoutUserInput | ArticleReadCreateOrConnectWithoutUserInput[]
+    upsert?: ArticleReadUpsertWithWhereUniqueWithoutUserInput | ArticleReadUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ArticleReadCreateManyUserInputEnvelope
+    set?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    disconnect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    delete?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    connect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    update?: ArticleReadUpdateWithWhereUniqueWithoutUserInput | ArticleReadUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ArticleReadUpdateManyWithWhereWithoutUserInput | ArticleReadUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ArticleReadScalarWhereInput | ArticleReadScalarWhereInput[]
+  }
+
   export type SessionUpdateManyWithoutUserNestedInput = {
     create?: XOR<SessionCreateWithoutUserInput, SessionUncheckedCreateWithoutUserInput> | SessionCreateWithoutUserInput[] | SessionUncheckedCreateWithoutUserInput[]
     connectOrCreate?: SessionCreateOrConnectWithoutUserInput | SessionCreateOrConnectWithoutUserInput[]
@@ -45161,6 +46710,20 @@ export namespace Prisma {
     update?: ArticleReactionUpdateWithWhereUniqueWithoutUserInput | ArticleReactionUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: ArticleReactionUpdateManyWithWhereWithoutUserInput | ArticleReactionUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
+  }
+
+  export type ArticleReadUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<ArticleReadCreateWithoutUserInput, ArticleReadUncheckedCreateWithoutUserInput> | ArticleReadCreateWithoutUserInput[] | ArticleReadUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: ArticleReadCreateOrConnectWithoutUserInput | ArticleReadCreateOrConnectWithoutUserInput[]
+    upsert?: ArticleReadUpsertWithWhereUniqueWithoutUserInput | ArticleReadUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: ArticleReadCreateManyUserInputEnvelope
+    set?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    disconnect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    delete?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    connect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    update?: ArticleReadUpdateWithWhereUniqueWithoutUserInput | ArticleReadUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: ArticleReadUpdateManyWithWhereWithoutUserInput | ArticleReadUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: ArticleReadScalarWhereInput | ArticleReadScalarWhereInput[]
   }
 
   export type SessionUncheckedUpdateManyWithoutUserNestedInput = {
@@ -45260,6 +46823,13 @@ export namespace Prisma {
     connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
   }
 
+  export type ArticleReadCreateNestedManyWithoutArticleInput = {
+    create?: XOR<ArticleReadCreateWithoutArticleInput, ArticleReadUncheckedCreateWithoutArticleInput> | ArticleReadCreateWithoutArticleInput[] | ArticleReadUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: ArticleReadCreateOrConnectWithoutArticleInput | ArticleReadCreateOrConnectWithoutArticleInput[]
+    createMany?: ArticleReadCreateManyArticleInputEnvelope
+    connect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+  }
+
   export type TagOnArticleCreateNestedManyWithoutArticleInput = {
     create?: XOR<TagOnArticleCreateWithoutArticleInput, TagOnArticleUncheckedCreateWithoutArticleInput> | TagOnArticleCreateWithoutArticleInput[] | TagOnArticleUncheckedCreateWithoutArticleInput[]
     connectOrCreate?: TagOnArticleCreateOrConnectWithoutArticleInput | TagOnArticleCreateOrConnectWithoutArticleInput[]
@@ -45292,6 +46862,13 @@ export namespace Prisma {
     connectOrCreate?: ArticleReactionCreateOrConnectWithoutArticleInput | ArticleReactionCreateOrConnectWithoutArticleInput[]
     createMany?: ArticleReactionCreateManyArticleInputEnvelope
     connect?: ArticleReactionWhereUniqueInput | ArticleReactionWhereUniqueInput[]
+  }
+
+  export type ArticleReadUncheckedCreateNestedManyWithoutArticleInput = {
+    create?: XOR<ArticleReadCreateWithoutArticleInput, ArticleReadUncheckedCreateWithoutArticleInput> | ArticleReadCreateWithoutArticleInput[] | ArticleReadUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: ArticleReadCreateOrConnectWithoutArticleInput | ArticleReadCreateOrConnectWithoutArticleInput[]
+    createMany?: ArticleReadCreateManyArticleInputEnvelope
+    connect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
   }
 
   export type TagOnArticleUncheckedCreateNestedManyWithoutArticleInput = {
@@ -45407,6 +46984,20 @@ export namespace Prisma {
     deleteMany?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
   }
 
+  export type ArticleReadUpdateManyWithoutArticleNestedInput = {
+    create?: XOR<ArticleReadCreateWithoutArticleInput, ArticleReadUncheckedCreateWithoutArticleInput> | ArticleReadCreateWithoutArticleInput[] | ArticleReadUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: ArticleReadCreateOrConnectWithoutArticleInput | ArticleReadCreateOrConnectWithoutArticleInput[]
+    upsert?: ArticleReadUpsertWithWhereUniqueWithoutArticleInput | ArticleReadUpsertWithWhereUniqueWithoutArticleInput[]
+    createMany?: ArticleReadCreateManyArticleInputEnvelope
+    set?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    disconnect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    delete?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    connect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    update?: ArticleReadUpdateWithWhereUniqueWithoutArticleInput | ArticleReadUpdateWithWhereUniqueWithoutArticleInput[]
+    updateMany?: ArticleReadUpdateManyWithWhereWithoutArticleInput | ArticleReadUpdateManyWithWhereWithoutArticleInput[]
+    deleteMany?: ArticleReadScalarWhereInput | ArticleReadScalarWhereInput[]
+  }
+
   export type TagOnArticleUpdateManyWithoutArticleNestedInput = {
     create?: XOR<TagOnArticleCreateWithoutArticleInput, TagOnArticleUncheckedCreateWithoutArticleInput> | TagOnArticleCreateWithoutArticleInput[] | TagOnArticleUncheckedCreateWithoutArticleInput[]
     connectOrCreate?: TagOnArticleCreateOrConnectWithoutArticleInput | TagOnArticleCreateOrConnectWithoutArticleInput[]
@@ -45471,6 +47062,20 @@ export namespace Prisma {
     update?: ArticleReactionUpdateWithWhereUniqueWithoutArticleInput | ArticleReactionUpdateWithWhereUniqueWithoutArticleInput[]
     updateMany?: ArticleReactionUpdateManyWithWhereWithoutArticleInput | ArticleReactionUpdateManyWithWhereWithoutArticleInput[]
     deleteMany?: ArticleReactionScalarWhereInput | ArticleReactionScalarWhereInput[]
+  }
+
+  export type ArticleReadUncheckedUpdateManyWithoutArticleNestedInput = {
+    create?: XOR<ArticleReadCreateWithoutArticleInput, ArticleReadUncheckedCreateWithoutArticleInput> | ArticleReadCreateWithoutArticleInput[] | ArticleReadUncheckedCreateWithoutArticleInput[]
+    connectOrCreate?: ArticleReadCreateOrConnectWithoutArticleInput | ArticleReadCreateOrConnectWithoutArticleInput[]
+    upsert?: ArticleReadUpsertWithWhereUniqueWithoutArticleInput | ArticleReadUpsertWithWhereUniqueWithoutArticleInput[]
+    createMany?: ArticleReadCreateManyArticleInputEnvelope
+    set?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    disconnect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    delete?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    connect?: ArticleReadWhereUniqueInput | ArticleReadWhereUniqueInput[]
+    update?: ArticleReadUpdateWithWhereUniqueWithoutArticleInput | ArticleReadUpdateWithWhereUniqueWithoutArticleInput[]
+    updateMany?: ArticleReadUpdateManyWithWhereWithoutArticleInput | ArticleReadUpdateManyWithWhereWithoutArticleInput[]
+    deleteMany?: ArticleReadScalarWhereInput | ArticleReadScalarWhereInput[]
   }
 
   export type TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput = {
@@ -45755,6 +47360,34 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReactionsInput, UserUpdateWithoutReactionsInput>, UserUncheckedUpdateWithoutReactionsInput>
+  }
+
+  export type ArticleCreateNestedOneWithoutReadsInput = {
+    create?: XOR<ArticleCreateWithoutReadsInput, ArticleUncheckedCreateWithoutReadsInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutReadsInput
+    connect?: ArticleWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutReadsInput = {
+    create?: XOR<UserCreateWithoutReadsInput, UserUncheckedCreateWithoutReadsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReadsInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ArticleUpdateOneRequiredWithoutReadsNestedInput = {
+    create?: XOR<ArticleCreateWithoutReadsInput, ArticleUncheckedCreateWithoutReadsInput>
+    connectOrCreate?: ArticleCreateOrConnectWithoutReadsInput
+    upsert?: ArticleUpsertWithoutReadsInput
+    connect?: ArticleWhereUniqueInput
+    update?: XOR<XOR<ArticleUpdateToOneWithWhereWithoutReadsInput, ArticleUpdateWithoutReadsInput>, ArticleUncheckedUpdateWithoutReadsInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutReadsNestedInput = {
+    create?: XOR<UserCreateWithoutReadsInput, UserUncheckedCreateWithoutReadsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReadsInput
+    upsert?: UserUpsertWithoutReadsInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReadsInput, UserUpdateWithoutReadsInput>, UserUncheckedUpdateWithoutReadsInput>
   }
 
   export type ArticleCreateNestedOneWithoutBookmarksInput = {
@@ -46734,6 +48367,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -46762,6 +48396,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -46888,6 +48523,34 @@ export namespace Prisma {
 
   export type ArticleReactionCreateManyUserInputEnvelope = {
     data: ArticleReactionCreateManyUserInput | ArticleReactionCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type ArticleReadCreateWithoutUserInput = {
+    id?: string
+    progress?: number
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    article: ArticleCreateNestedOneWithoutReadsInput
+  }
+
+  export type ArticleReadUncheckedCreateWithoutUserInput = {
+    id?: string
+    articleId: string
+    progress?: number
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReadCreateOrConnectWithoutUserInput = {
+    where: ArticleReadWhereUniqueInput
+    create: XOR<ArticleReadCreateWithoutUserInput, ArticleReadUncheckedCreateWithoutUserInput>
+  }
+
+  export type ArticleReadCreateManyUserInputEnvelope = {
+    data: ArticleReadCreateManyUserInput | ArticleReadCreateManyUserInput[]
     skipDuplicates?: boolean
   }
 
@@ -47117,6 +48780,35 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"ArticleReaction"> | Date | string
   }
 
+  export type ArticleReadUpsertWithWhereUniqueWithoutUserInput = {
+    where: ArticleReadWhereUniqueInput
+    update: XOR<ArticleReadUpdateWithoutUserInput, ArticleReadUncheckedUpdateWithoutUserInput>
+    create: XOR<ArticleReadCreateWithoutUserInput, ArticleReadUncheckedCreateWithoutUserInput>
+  }
+
+  export type ArticleReadUpdateWithWhereUniqueWithoutUserInput = {
+    where: ArticleReadWhereUniqueInput
+    data: XOR<ArticleReadUpdateWithoutUserInput, ArticleReadUncheckedUpdateWithoutUserInput>
+  }
+
+  export type ArticleReadUpdateManyWithWhereWithoutUserInput = {
+    where: ArticleReadScalarWhereInput
+    data: XOR<ArticleReadUpdateManyMutationInput, ArticleReadUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type ArticleReadScalarWhereInput = {
+    AND?: ArticleReadScalarWhereInput | ArticleReadScalarWhereInput[]
+    OR?: ArticleReadScalarWhereInput[]
+    NOT?: ArticleReadScalarWhereInput | ArticleReadScalarWhereInput[]
+    id?: StringFilter<"ArticleRead"> | string
+    userId?: StringFilter<"ArticleRead"> | string
+    articleId?: StringFilter<"ArticleRead"> | string
+    progress?: IntFilter<"ArticleRead"> | number
+    completedAt?: DateTimeNullableFilter<"ArticleRead"> | Date | string | null
+    createdAt?: DateTimeFilter<"ArticleRead"> | Date | string
+    updatedAt?: DateTimeFilter<"ArticleRead"> | Date | string
+  }
+
   export type SessionUpsertWithWhereUniqueWithoutUserInput = {
     where: SessionWhereUniqueInput
     update: XOR<SessionUpdateWithoutUserInput, SessionUncheckedUpdateWithoutUserInput>
@@ -47165,6 +48857,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionCreateNestedManyWithoutUserInput
+    reads?: ArticleReadCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutSessionsInput = {
@@ -47185,6 +48878,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutSessionsInput = {
@@ -47221,6 +48915,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -47241,6 +48936,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateWithoutAccountsInput = {
@@ -47260,6 +48956,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionCreateNestedManyWithoutUserInput
+    reads?: ArticleReadCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -47280,6 +48977,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -47316,6 +49014,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -47336,6 +49035,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -47356,6 +49056,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionCreateNestedManyWithoutUserInput
+    reads?: ArticleReadCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -47376,6 +49077,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -47654,6 +49356,34 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type ArticleReadCreateWithoutArticleInput = {
+    id?: string
+    progress?: number
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutReadsInput
+  }
+
+  export type ArticleReadUncheckedCreateWithoutArticleInput = {
+    id?: string
+    userId: string
+    progress?: number
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReadCreateOrConnectWithoutArticleInput = {
+    where: ArticleReadWhereUniqueInput
+    create: XOR<ArticleReadCreateWithoutArticleInput, ArticleReadUncheckedCreateWithoutArticleInput>
+  }
+
+  export type ArticleReadCreateManyArticleInputEnvelope = {
+    data: ArticleReadCreateManyArticleInput | ArticleReadCreateManyArticleInput[]
+    skipDuplicates?: boolean
+  }
+
   export type TagOnArticleCreateWithoutArticleInput = {
     tag: TagCreateNestedOneWithoutArticlesInput
   }
@@ -47700,6 +49430,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -47720,6 +49451,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -47985,6 +49717,22 @@ export namespace Prisma {
     data: XOR<ArticleReactionUpdateManyMutationInput, ArticleReactionUncheckedUpdateManyWithoutArticleInput>
   }
 
+  export type ArticleReadUpsertWithWhereUniqueWithoutArticleInput = {
+    where: ArticleReadWhereUniqueInput
+    update: XOR<ArticleReadUpdateWithoutArticleInput, ArticleReadUncheckedUpdateWithoutArticleInput>
+    create: XOR<ArticleReadCreateWithoutArticleInput, ArticleReadUncheckedCreateWithoutArticleInput>
+  }
+
+  export type ArticleReadUpdateWithWhereUniqueWithoutArticleInput = {
+    where: ArticleReadWhereUniqueInput
+    data: XOR<ArticleReadUpdateWithoutArticleInput, ArticleReadUncheckedUpdateWithoutArticleInput>
+  }
+
+  export type ArticleReadUpdateManyWithWhereWithoutArticleInput = {
+    where: ArticleReadScalarWhereInput
+    data: XOR<ArticleReadUpdateManyMutationInput, ArticleReadUncheckedUpdateManyWithoutArticleInput>
+  }
+
   export type TagOnArticleUpsertWithWhereUniqueWithoutArticleInput = {
     where: TagOnArticleWhereUniqueInput
     update: XOR<TagOnArticleUpdateWithoutArticleInput, TagOnArticleUncheckedUpdateWithoutArticleInput>
@@ -48034,6 +49782,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -48062,6 +49811,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -48196,6 +49946,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
   }
 
   export type ArticleUncheckedCreateWithoutTagsInput = {
@@ -48224,6 +49975,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
   }
 
   export type ArticleCreateOrConnectWithoutTagsInput = {
@@ -48289,6 +50041,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
   }
 
   export type ArticleUncheckedUpdateWithoutTagsInput = {
@@ -48317,6 +50070,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
   }
 
   export type TagUpsertWithoutArticlesInput = {
@@ -48371,6 +50125,7 @@ export namespace Prisma {
     story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -48399,6 +50154,7 @@ export namespace Prisma {
     story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -48479,6 +50235,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionCreateNestedManyWithoutUserInput
+    reads?: ArticleReadCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -48499,6 +50256,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -48543,6 +50301,7 @@ export namespace Prisma {
     story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -48571,6 +50330,7 @@ export namespace Prisma {
     story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -48649,6 +50409,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -48669,6 +50430,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -48697,6 +50459,7 @@ export namespace Prisma {
     story?: NewsStoryCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -48725,6 +50488,7 @@ export namespace Prisma {
     story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -48750,6 +50514,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
+    reads?: ArticleReadCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -48770,6 +50535,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -48814,6 +50580,7 @@ export namespace Prisma {
     story?: NewsStoryUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -48842,6 +50609,7 @@ export namespace Prisma {
     story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -48873,6 +50641,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -48893,6 +50662,239 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutUserNestedInput
+    sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
+  }
+
+  export type ArticleCreateWithoutReadsInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    publishedAt?: Date | string | null
+    lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    author: UserCreateNestedOneWithoutArticlesInput
+    category?: CategoryCreateNestedOneWithoutArticlesInput
+    aiPersona?: AiPersonaCreateNestedOneWithoutArticlesInput
+    sourceRssItem?: RssFeedItemCreateNestedOneWithoutArticleInput
+    story?: NewsStoryCreateNestedOneWithoutArticleInput
+    bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
+    comments?: CommentCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleUncheckedCreateWithoutReadsInput = {
+    id?: string
+    title: string
+    slug: string
+    content: string
+    excerpt?: string | null
+    coverImage?: string | null
+    status?: string
+    viewCount?: number
+    authorId: string
+    categoryId?: string | null
+    aiPersonaId?: string | null
+    sourceRssItemId?: string | null
+    publishedAt?: Date | string | null
+    lang?: string
+    plagiarismRate?: number | null
+    seoScore?: number | null
+    readabilityScore?: number | null
+    qualityScore?: number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
+    comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
+  }
+
+  export type ArticleCreateOrConnectWithoutReadsInput = {
+    where: ArticleWhereUniqueInput
+    create: XOR<ArticleCreateWithoutReadsInput, ArticleUncheckedCreateWithoutReadsInput>
+  }
+
+  export type UserCreateWithoutReadsInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    role?: string
+    bio?: string | null
+    newsletterSubscribed?: boolean
+    newsletterTime?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountCreateNestedManyWithoutUserInput
+    articles?: ArticleCreateNestedManyWithoutAuthorInput
+    bookmarks?: BookmarkCreateNestedManyWithoutUserInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    media?: MediaCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionCreateNestedManyWithoutUserInput
+    sessions?: SessionCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutReadsInput = {
+    id?: string
+    name: string
+    email: string
+    emailVerified?: boolean
+    image?: string | null
+    role?: string
+    bio?: string | null
+    newsletterSubscribed?: boolean
+    newsletterTime?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    accounts?: AccountUncheckedCreateNestedManyWithoutUserInput
+    articles?: ArticleUncheckedCreateNestedManyWithoutAuthorInput
+    bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    media?: MediaUncheckedCreateNestedManyWithoutUserInput
+    reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
+    sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutReadsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReadsInput, UserUncheckedCreateWithoutReadsInput>
+  }
+
+  export type ArticleUpsertWithoutReadsInput = {
+    update: XOR<ArticleUpdateWithoutReadsInput, ArticleUncheckedUpdateWithoutReadsInput>
+    create: XOR<ArticleCreateWithoutReadsInput, ArticleUncheckedCreateWithoutReadsInput>
+    where?: ArticleWhereInput
+  }
+
+  export type ArticleUpdateToOneWithWhereWithoutReadsInput = {
+    where?: ArticleWhereInput
+    data: XOR<ArticleUpdateWithoutReadsInput, ArticleUncheckedUpdateWithoutReadsInput>
+  }
+
+  export type ArticleUpdateWithoutReadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    author?: UserUpdateOneRequiredWithoutArticlesNestedInput
+    category?: CategoryUpdateOneWithoutArticlesNestedInput
+    aiPersona?: AiPersonaUpdateOneWithoutArticlesNestedInput
+    sourceRssItem?: RssFeedItemUpdateOneWithoutArticleNestedInput
+    story?: NewsStoryUpdateOneWithoutArticleNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
+    comments?: CommentUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
+  }
+
+  export type ArticleUncheckedUpdateWithoutReadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    slug?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
+    coverImage?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    viewCount?: IntFieldUpdateOperationsInput | number
+    authorId?: StringFieldUpdateOperationsInput | string
+    categoryId?: NullableStringFieldUpdateOperationsInput | string | null
+    aiPersonaId?: NullableStringFieldUpdateOperationsInput | string | null
+    sourceRssItemId?: NullableStringFieldUpdateOperationsInput | string | null
+    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    lang?: StringFieldUpdateOperationsInput | string
+    plagiarismRate?: NullableIntFieldUpdateOperationsInput | number | null
+    seoScore?: NullableIntFieldUpdateOperationsInput | number | null
+    readabilityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    qualityScore?: NullableIntFieldUpdateOperationsInput | number | null
+    analysisReport?: NullableJsonNullValueInput | InputJsonValue
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
+  }
+
+  export type UserUpsertWithoutReadsInput = {
+    update: XOR<UserUpdateWithoutReadsInput, UserUncheckedUpdateWithoutReadsInput>
+    create: XOR<UserCreateWithoutReadsInput, UserUncheckedCreateWithoutReadsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutReadsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutReadsInput, UserUncheckedUpdateWithoutReadsInput>
+  }
+
+  export type UserUpdateWithoutReadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUpdateManyWithoutUserNestedInput
+    articles?: ArticleUpdateManyWithoutAuthorNestedInput
+    bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    media?: MediaUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
+    sessions?: SessionUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReadsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    image?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: StringFieldUpdateOperationsInput | string
+    bio?: NullableStringFieldUpdateOperationsInput | string | null
+    newsletterSubscribed?: BoolFieldUpdateOperationsInput | boolean
+    newsletterTime?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    accounts?: AccountUncheckedUpdateManyWithoutUserNestedInput
+    articles?: ArticleUncheckedUpdateManyWithoutAuthorNestedInput
+    bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    media?: MediaUncheckedUpdateManyWithoutUserNestedInput
+    reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -48921,6 +50923,7 @@ export namespace Prisma {
     story?: NewsStoryCreateNestedOneWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -48949,6 +50952,7 @@ export namespace Prisma {
     story?: NewsStoryUncheckedCreateNestedOneWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -48974,6 +50978,7 @@ export namespace Prisma {
     comments?: CommentCreateNestedManyWithoutUserInput
     media?: MediaCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionCreateNestedManyWithoutUserInput
+    reads?: ArticleReadCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -48994,6 +50999,7 @@ export namespace Prisma {
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     media?: MediaUncheckedCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -49038,6 +51044,7 @@ export namespace Prisma {
     story?: NewsStoryUpdateOneWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -49066,6 +51073,7 @@ export namespace Prisma {
     story?: NewsStoryUncheckedUpdateOneWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -49097,6 +51105,7 @@ export namespace Prisma {
     comments?: CommentUpdateManyWithoutUserNestedInput
     media?: MediaUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -49117,6 +51126,7 @@ export namespace Prisma {
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     media?: MediaUncheckedUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -49137,6 +51147,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutUserInput
     comments?: CommentCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionCreateNestedManyWithoutUserInput
+    reads?: ArticleReadCreateNestedManyWithoutUserInput
     sessions?: SessionCreateNestedManyWithoutUserInput
   }
 
@@ -49157,6 +51168,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutUserInput
     comments?: CommentUncheckedCreateNestedManyWithoutUserInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutUserInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutUserInput
     sessions?: SessionUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -49193,6 +51205,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutUserNestedInput
     comments?: CommentUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUpdateManyWithoutUserNestedInput
     sessions?: SessionUpdateManyWithoutUserNestedInput
   }
 
@@ -49213,6 +51226,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutUserNestedInput
     comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutUserNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutUserNestedInput
     sessions?: SessionUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -49584,6 +51598,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -49612,6 +51627,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -49802,6 +51818,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -49830,6 +51847,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -49858,6 +51876,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -49886,6 +51905,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -49984,6 +52004,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -50012,6 +52033,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -50286,6 +52308,7 @@ export namespace Prisma {
     bookmarks?: BookmarkCreateNestedManyWithoutArticleInput
     comments?: CommentCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleCreateNestedManyWithoutArticleInput
   }
 
@@ -50314,6 +52337,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedCreateNestedManyWithoutArticleInput
     comments?: CommentUncheckedCreateNestedManyWithoutArticleInput
     reactions?: ArticleReactionUncheckedCreateNestedManyWithoutArticleInput
+    reads?: ArticleReadUncheckedCreateNestedManyWithoutArticleInput
     tags?: TagOnArticleUncheckedCreateNestedManyWithoutArticleInput
   }
 
@@ -50715,6 +52739,15 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type ArticleReadCreateManyUserInput = {
+    id?: string
+    articleId: string
+    progress?: number
+    completedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type SessionCreateManyUserInput = {
     id?: string
     token: string
@@ -50798,6 +52831,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -50826,6 +52860,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -50965,6 +53000,33 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ArticleReadUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    article?: ArticleUpdateOneRequiredWithoutReadsNestedInput
+  }
+
+  export type ArticleReadUncheckedUpdateWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReadUncheckedUpdateManyWithoutUserInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    articleId?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type SessionUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
@@ -51015,6 +53077,15 @@ export namespace Prisma {
     type: string
     userId?: string | null
     visitorId?: string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type ArticleReadCreateManyArticleInput = {
+    id?: string
+    userId: string
+    progress?: number
+    completedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -51097,6 +53168,33 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ArticleReadUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutReadsNestedInput
+  }
+
+  export type ArticleReadUncheckedUpdateWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleReadUncheckedUpdateManyWithoutArticleInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    userId?: StringFieldUpdateOperationsInput | string
+    progress?: IntFieldUpdateOperationsInput | number
+    completedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type TagOnArticleUpdateWithoutArticleInput = {
     tag?: TagUpdateOneRequiredWithoutArticlesNestedInput
   }
@@ -51162,6 +53260,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -51190,6 +53289,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 
@@ -51621,6 +53721,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUpdateManyWithoutArticleNestedInput
     comments?: CommentUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUpdateManyWithoutArticleNestedInput
   }
 
@@ -51649,6 +53750,7 @@ export namespace Prisma {
     bookmarks?: BookmarkUncheckedUpdateManyWithoutArticleNestedInput
     comments?: CommentUncheckedUpdateManyWithoutArticleNestedInput
     reactions?: ArticleReactionUncheckedUpdateManyWithoutArticleNestedInput
+    reads?: ArticleReadUncheckedUpdateManyWithoutArticleNestedInput
     tags?: TagOnArticleUncheckedUpdateManyWithoutArticleNestedInput
   }
 

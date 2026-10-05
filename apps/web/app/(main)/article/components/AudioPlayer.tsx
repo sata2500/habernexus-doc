@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Pause, Play, Volume2, Loader2 } from "lucide-react";
-import { DEFAULT_TTS_VOICE, isTtsVoiceId, TTS_VOICES, type TtsVoiceId } from "@/lib/tts-voices";
+import { cn } from "@/lib/utils";
+import { DEFAULT_TTS_VOICE, normalizeTtsVoice, TTS_VOICES, type TtsVoiceId } from "@/lib/tts-voices";
 
 interface Props {
   articleId: string;
@@ -37,8 +38,7 @@ const subscribeNoop = () => () => {};
 
 function readStoredVoice(): TtsVoiceId {
   try {
-    const stored = localStorage.getItem(VOICE_STORAGE_KEY);
-    return isTtsVoiceId(stored) ? stored : DEFAULT_TTS_VOICE;
+    return normalizeTtsVoice(localStorage.getItem(VOICE_STORAGE_KEY));
   } catch {
     return DEFAULT_TTS_VOICE;
   }
@@ -247,19 +247,23 @@ export function AudioPlayer({ articleId, content, title }: Props) {
         {rate}x
       </button>
 
-      <label className="shrink-0">
-        <span className="sr-only">Okuyucu sesi</span>
-        <select
-          value={voice}
-          onChange={(e) => { if (isTtsVoiceId(e.target.value)) changeVoice(e.target.value); }}
-          className="h-8 w-[6.75rem] sm:w-auto rounded-lg border border-border bg-card px-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground cursor-pointer"
-          title="Okuyucu sesi"
-        >
-          {(Object.keys(TTS_VOICES) as TtsVoiceId[]).map((id) => (
-            <option key={id} value={id}>{TTS_VOICES[id].gender} · {TTS_VOICES[id].label}</option>
-          ))}
-        </select>
-      </label>
+      <div role="radiogroup" aria-label="Okuyucu sesi" className="shrink-0 flex h-8 rounded-lg border border-border bg-card p-0.5">
+        {(Object.keys(TTS_VOICES) as TtsVoiceId[]).map((id) => (
+          <button
+            key={id}
+            type="button"
+            role="radio"
+            aria-checked={id === voice}
+            onClick={() => changeVoice(id)}
+            className={cn(
+              "px-2 sm:px-2.5 rounded-md text-xs font-semibold transition-colors cursor-pointer",
+              id === voice ? "bg-primary-600 text-white" : "text-muted-foreground hover:text-foreground"
+            )}
+          >
+            {TTS_VOICES[id].label}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }

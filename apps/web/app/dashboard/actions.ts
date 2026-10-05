@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth";
 import { checkRateLimitAsync } from "@/lib/server/rate-limit";
 import { NewsletterTimeSchema } from "@/lib/validation/schemas";
 import { deleteAccountSafely } from "@/lib/server/account-deletion";
+import { clearReads, removeRead } from "@/lib/server/reading-history";
 
 const MAX_BIO_LENGTH = 1000;
 
@@ -281,4 +282,21 @@ export async function getUserBio() {
     console.error("Error fetching user bio:", err);
     return "";
   }
+}
+
+/** Okuma geçmişinden tek bir haberi kaldırır (yalnızca oturum sahibinin kaydı). */
+export async function removeReadingHistoryItem(articleId: string) {
+  const session = await getVerifiedSession();
+  if (typeof articleId !== "string" || articleId.length > 100) return { success: false };
+  await removeRead(session.user.id, articleId);
+  revalidatePath("/dashboard/history");
+  return { success: true };
+}
+
+/** Okuma geçmişinin tamamını siler. */
+export async function clearReadingHistory() {
+  const session = await getVerifiedSession();
+  await clearReads(session.user.id);
+  revalidatePath("/dashboard/history");
+  return { success: true };
 }

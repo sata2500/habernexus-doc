@@ -27,6 +27,7 @@ model User {
   comments             Comment[]
   media                Media[]
   reactions            ArticleReaction[]
+  reads                ArticleRead[]
   sessions             Session[]
 }
 
@@ -106,6 +107,7 @@ model Article {
   bookmarks     Bookmark[]
   comments      Comment[]
   reactions     ArticleReaction[]
+  reads         ArticleRead[]
   tags          TagOnArticle[]
 
   @@index([authorId])
@@ -186,6 +188,24 @@ model ArticleReaction {
   @@unique([articleId, userId])
   @@unique([articleId, visitorId])
   @@index([articleId, type])
+}
+
+/// Giriş yapmış okurun okuma geçmişi: ne kadarını okuduğu ve sonuna kadar okuyup okumadığı
+model ArticleRead {
+  id          String    @id @default(cuid())
+  userId      String
+  articleId   String
+  /// 0-100, hiç geriye düşmez
+  progress    Int       @default(0)
+  /// Haberin sonuna (tepkiler bölümüne) ulaşıldığı an
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  article     Article   @relation(fields: [articleId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, articleId])
+  @@index([userId, updatedAt])
 }
 
 model Bookmark {
