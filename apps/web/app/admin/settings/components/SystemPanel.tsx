@@ -2,10 +2,10 @@
 
 import { useState, useTransition } from "react";
 import {
-  AlertTriangle, CheckCircle2, Database, Loader2, PlayCircle, RefreshCw, XCircle, CircleDashed,
+  AlertTriangle, CheckCircle2, Database, Loader2, PlayCircle, RefreshCw, XCircle, CircleDashed, Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { applyMigrationsAction, getMigrationStatusAction } from "../system-actions";
+import { applyMigrationsAction, getMigrationStatusAction, runSeoMaintenanceAction } from "../system-actions";
 import type { MigrationRunResult, MigrationStatus } from "@/lib/server/db-migrations";
 
 interface Props {
@@ -28,7 +28,52 @@ const MIGRATION_TITLES: Record<string, string> = {
   add_rss_processing_claim: "RSS haber işleme kilidi",
   sync_schema_drift: "Google Trends ve analiz alanları",
   add_article_reactions: "Okur tepkileri",
+  ai_settings: "Yapay zekâ model ayarları",
+  news_stories: "Karar Merkezi (konular ve puanlama)",
+  unique_oauth_accounts: "Google ile giriş onarımı",
+  article_reads: "Okuma geçmişi (Okuduklarım)",
 };
+
+/** Eski haberlerin eksik etiket ve meta açıklamalarını tamamlar */
+function SeoMaintenance() {
+  const [pending, start] = useTransition();
+  const [result, setResult] = useState<string | null>(null);
+  const [error, setError] = useState(false);
+  const run = () =>
+    start(async () => {
+      const res = await runSeoMaintenanceAction();
+      setError(!res.success);
+      setResult(
+        res.success
+          ? res.processed === 0
+            ? "Tüm yayındaki haberlerin etiketleri tamam."
+            : `${res.processed} haber işlendi, ${res.updated} habere etiket eklendi.${res.remaining > 0 ? ` Etiketsiz ${res.remaining} haber kaldı; tekrar çalıştırabilirsiniz.` : ""}`
+          : res.error,
+      );
+    });
+  return (
+    <section className="rounded-2xl border border-border bg-card p-4 sm:p-6 space-y-3 shadow-card">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 space-y-1">
+          <h2 className="font-bold font-display flex items-center gap-2"><Search className="h-4 w-4 text-primary-500" /> SEO Bakımı</h2>
+          <p className="text-xs text-muted-foreground max-w-xl">
+            Etiketi olmayan haberlere yapay zekâ ile etiket ekler, eksik ya da kısa spotları (Google&apos;daki açıklama) tamamlar.
+            Başlık ve haber adresi değiştirilmez. Her çalıştırmada en yeni 10 haber işlenir; yeni haberler bunu zaten otomatik alır.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={run}
+          disabled={pending}
+          className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-primary-600 hover:bg-primary-500 text-white text-sm font-semibold disabled:opacity-60 cursor-pointer"
+        >
+          {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <PlayCircle className="h-4 w-4" />} {pending ? "İşleniyor…" : "Çalıştır"}
+        </button>
+      </div>
+      {result && <p className={cn("text-sm", error ? "text-error" : "text-foreground")} aria-live="polite">{result}</p>}
+    </section>
+  );
+}
 
 function formatName(name: string) {
   // 20261004120000_sync_schema_drift → 04.10.2026 · Google Trends ve analiz alanları
@@ -194,6 +239,8 @@ export function SystemPanel({ initialStatus, dbError, services }: Props) {
           </div>
         )}
       </section>
+
+      <SeoMaintenance />
 
       {/* ── Servis yapılandırması ───────────────────────────── */}
       <section className="rounded-2xl border border-border bg-card p-4 sm:p-6 space-y-3 shadow-card">

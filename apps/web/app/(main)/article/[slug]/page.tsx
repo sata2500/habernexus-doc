@@ -13,6 +13,7 @@ import { AudioPlayer } from "../components/AudioPlayer";
 import { TldrCard } from "../components/TldrCard";
 import { getStoredSummary } from "@/lib/tldr";
 import { stripLeadingTitleHeading } from "@/lib/article-content";
+import { firstParagraphText, normalizeMetaDescription } from "@/lib/news/seo-text";
 import { ReadingProgressBar } from "../components/ReadingProgressBar";
 import { ArticleReactions } from "../components/ArticleReactions";
 import { ReadingProgressTracker } from "../components/ReadingProgressTracker";
@@ -54,19 +55,27 @@ export async function generateMetadata({ params }: { params: Params }) {
   if (!article) return { title: "Makale Bulunamadı" };
 
   const isPublished = article.status === "PUBLISHED";
+  // Spot yoksa ya da kısaysa gövdenin ilk paragrafından tamamlanır (başlığın tekrarı yerine)
+  const description = normalizeMetaDescription(
+    article.excerpt || "",
+    firstParagraphText(stripLeadingTitleHeading(article.title, article.content)),
+  ) || article.title;
+  const images = article.coverImage ? [{ url: article.coverImage, alt: article.title }] : [];
 
   return {
     title: article.title,
-    description: article.excerpt || article.title,
+    description,
     alternates: {
       canonical: `/article/${slug}`,
     },
-    robots: isPublished ? "index, follow" : "noindex, nofollow",
+    robots: isPublished
+      ? { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" as const, "max-snippet": -1, "max-video-preview": -1 } }
+      : { index: false, follow: false },
     openGraph: {
       type: "article",
       title: article.title,
-      description: article.excerpt || article.title,
-      images: article.coverImage ? [article.coverImage] : [],
+      description,
+      images,
       publishedTime: article.publishedAt?.toISOString(),
       modifiedTime: article.updatedAt?.toISOString(),
       section: article.category?.name,
@@ -76,8 +85,8 @@ export async function generateMetadata({ params }: { params: Params }) {
     twitter: {
       card: "summary_large_image",
       title: article.title,
-      description: article.excerpt || article.title,
-      images: article.coverImage ? [article.coverImage] : [],
+      description,
+      images,
     },
   };
 }
@@ -125,7 +134,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
       {/* ── SEO: Structured Data ────────────────────────── */}
       <NewsArticleJsonLd
         title={article.title}
-        description={article.excerpt || article.title}
+        description={normalizeMetaDescription(article.excerpt || "", firstParagraphText(body)) || article.title}
         slug={article.slug}
         coverImage={article.coverImage}
         datePublished={article.publishedAt}
@@ -277,12 +286,12 @@ export default async function ArticlePage({ params }: { params: Params }) {
         </div>
       </section>
 
-      {/* ── Etiketler: aramaya bağlanır ────────────────────────── */}
+      {/* ── Etiketler: etiket sayfalarına bağlanır ────────────────────────── */}
       {article.tags.length > 0 && (
         <div className="flex flex-wrap items-center gap-2 border-t border-border pt-6 mt-8 mb-8">
           <span className="font-semibold font-display">Etiketler:</span>
           {article.tags.map((tagRel) => (
-            <Link key={tagRel.tag.id} href={`/search?q=${encodeURIComponent(tagRel.tag.name)}`}>
+            <Link key={tagRel.tag.id} href={`/etiket/${tagRel.tag.slug}`}>
               <Badge variant="default" className="hover:bg-primary-500 hover:text-white transition-colors">#{tagRel.tag.name}</Badge>
             </Link>
           ))}

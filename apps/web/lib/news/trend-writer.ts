@@ -3,8 +3,9 @@ import "server-only";
 import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { prisma } from "@/lib/prisma";
 import { AiError, cleanHtmlResponse, generateText, parseJsonResponse } from "@/lib/ai/client";
-import { slugify } from "@/lib/utils";
 import { keyTokens, signature } from "./text";
+import { attachTags, buildSeoPackage, uniqueArticleSlug } from "./seo";
+import { WRITER_RULES } from "./writing-guide";
 
 const HOUR = 3_600_000;
 
@@ -48,14 +49,14 @@ export async function writeTrendArticle(trendId: string) {
     if (!adminUser) return { success: false as const, error: "Admin kullanıcı bulunamadı." };
 
     const { text } = await generateText("writer", {
-      system: settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün.",
+      system: `${settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün."}\n\n${WRITER_RULES}`,
       prompt: `Bugün: ${new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul", dateStyle: "long", timeStyle: "short" })}
 Türkiye'de şu an çok aranan konu: "${trend.keyword}"
 Bu konuyu web/Google araması ile araştır; insanların neden aradığını ve son gelişmeyi doğru, tarafsız ve özgün bir haberle anlat.
 Doğrulanamayan bilgi uydurma.
 
 Yanıtı SADECE şu JSON biçiminde ver:
-{ "title": "En fazla 90 karakterlik başlık", "excerpt": "1-2 cümlelik spot", "category": "${categories.map((c) => c.name).join(" | ") || "Gündem"}", "content": "HTML gövde (h2, p, strong; en az 400 kelime; başlık yok)" }`,
+{ "title": "En fazla 90 karakterlik başlık", "excerpt": "1-2 cümlelik spot", "category": "${categories.map((c) => c.name).join(" | ") || "Gündem"}", "content": "HTML gövde (h2, h3, p, strong, ul, li; 500-900 kelime; h1 ve başlık tekrarı yok)" }`,
       search: true,
       temperature: 0.6,
     });
@@ -63,17 +64,19 @@ Yanıtı SADECE şu JSON biçiminde ver:
     const rawContent = cleanHtmlResponse(parsed.content || "");
     if (!rawContent) return { success: false as const, error: "İçerik üretilemedi." };
 
-    const title = parsed.title?.trim().slice(0, 140) || `${trend.keyword}: Son gelişmeler`;
+    const draftTitle = parsed.title?.trim().slice(0, 140) || `${trend.keyword}: Son gelişmeler`;
     const categoryId = categories.find((c) => c.name.toLocaleLowerCase("tr") === parsed.category?.trim().toLocaleLowerCase("tr"))?.id ?? null;
+    const seo = await buildSeoPackage({ title: draftTitle, content: rawContent, summary: parsed.excerpt, category: parsed.category });
+    const title = seo.title;
     const sig = signature(title);
-    const content = stripLeadingTitleHeading(title, rawContent);
+    const content = stripLeadingTitleHeading(title, stripLeadingTitleHeading(draftTitle, rawContent));
 
     const article = await prisma.article.create({
       data: {
         title,
-        slug: `${slugify(title)}-${Date.now().toString().slice(-4)}`,
+        slug: await uniqueArticleSlug(title),
         content,
-        excerpt: parsed.excerpt?.trim().slice(0, 300) || null,
+        excerpt: seo.description || parsed.excerpt?.trim().slice(0, 300) || null,
         status: "PUBLISHED",
         authorId: adminUser.id,
         categoryId,
@@ -81,6 +84,7 @@ Yanıtı SADECE şu JSON biçiminde ver:
         lang: "tr",
       },
     });
+    await attachTags(article.id, seo.tags);
     // Karar Merkezi kaydı: bu trend artık "yazıldı" görünür ve tekrar yazılmaz
     await prisma.newsStory.create({
       data: {

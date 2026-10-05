@@ -28,7 +28,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     ...["about", "contact", "careers", "advertise", "privacy", "terms", "cookies", "kvkk"].map(
       (slug) => ({
         url: `${BASE_URL}/${slug}`,
-        lastModified: new Date(),
         changeFrequency: "monthly" as const,
         priority: 0.3,
       })
@@ -71,5 +70,29 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Build sırasında veritabanı olmayabilir
   }
 
-  return [...staticPages, ...articlePages, ...categoryPages];
+  // Etiket sayfaları: yalnızca en az 2 haberi olan (dizine eklenebilir) etiketler
+  let tagPages: MetadataRoute.Sitemap = [];
+  try {
+    const tags = await prisma.tag.findMany({
+      where: { articles: { some: { article: { status: "PUBLISHED" } } } },
+      select: {
+        slug: true,
+        _count: { select: { articles: { where: { article: { status: "PUBLISHED" } } } } },
+        articles: { where: { article: { status: "PUBLISHED" } }, orderBy: { article: { publishedAt: "desc" } }, take: 1, select: { article: { select: { publishedAt: true } } } },
+      },
+      take: 5000,
+    });
+    tagPages = tags
+      .filter((t) => t._count.articles >= 2)
+      .map((t) => ({
+        url: `${BASE_URL}/etiket/${t.slug}`,
+        lastModified: t.articles[0]?.article.publishedAt ?? undefined,
+        changeFrequency: "daily" as const,
+        priority: 0.5,
+      }));
+  } catch {
+    // Build sırasında veritabanı olmayabilir
+  }
+
+  return [...staticPages, ...articlePages, ...categoryPages, ...tagPages];
 }

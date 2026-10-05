@@ -81,6 +81,8 @@ export async function generateMetadata(): Promise<Metadata> {
     robots: {
       index: true,
       follow: true,
+      // Google Discover ve Haberler'de büyük görselli kart için gerekli
+      googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 },
     },
   };
 }

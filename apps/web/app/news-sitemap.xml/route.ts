@@ -19,6 +19,7 @@ export async function GET() {
         title: true,
         slug: true,
         publishedAt: true,
+        lang: true,
       },
       orderBy: {
         publishedAt: "desc",
@@ -45,7 +46,7 @@ export async function GET() {
     <news:news>
       <news:publication>
         <news:name>${SITE_NAME}</news:name>
-        <news:language>tr</news:language>
+        <news:language>${article.lang === "en" ? "en" : "tr"}</news:language>
       </news:publication>
       <news:publication_date>${article.publishedAt?.toISOString() || new Date().toISOString()}</news:publication_date>
       <news:title>${safeTitle}</news:title>

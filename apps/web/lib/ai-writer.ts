@@ -3,7 +3,6 @@ import { prisma } from "./prisma";
 import { randomUUID } from "node:crypto";
 import { put } from "@vercel/blob";
 
-import { slugify } from "./utils";
 import { AiError, cleanHtmlResponse, generateImage, generateText, toAiError } from "./ai/client";
 import { analyzeArticle } from "./article-analyzer";
 import { fetchPublicResource } from "./server/remote-fetch";
@@ -11,6 +10,8 @@ import type { Prisma } from "./generated/client";
 import { findPublishedDuplicate } from "./news/stories";
 import { LIKELY_DUPLICATE, signature, storySimilarity } from "./news/text";
 import { stripLeadingTitleHeading } from "./article-content";
+import { WRITER_FORMAT } from "./news/writing-guide";
+import { attachTags, buildSeoPackage, uniqueArticleSlug } from "./news/seo";
 
 
 /** Üretilen kapak görselini Vercel Blob'a kaydeder. */
@@ -19,14 +20,6 @@ async function saveCoverImage(buffer: Buffer, mimeType: string) {
   const { url } = await put(`articles/ai-${Date.now()}.${ext}`, buffer, { access: "public", contentType: mimeType });
   return url;
 }
-
-/** Haber metni için ortak yazım çerçevesi */
-const WRITER_FORMAT = `Çıktı kuralları:
-- Yalnızca makale gövdesini HTML olarak döndür (h2, h3, p, strong, ul, li, blockquote). Başlık (h1), markdown veya kod bloğu kullanma.
-- Haber başlığını gövdede tekrar etme; metin doğrudan giriş paragrafıyla başlasın.
-- En az 500 kelime, kısa ve okunur paragraflar.
-- Kaynak metni kopyalama; bilgiyi kendi cümlelerinle, tarafsız gazetecilik diliyle yaz.
-- Doğrulanamayan bilgi uydurma.`;
 
 /** Kapak görseli üret; başarısızsa RSS görselini sisteme aktar. */
 async function produceCoverImage(imagePromptBase: string, title: string, rssImageUrl: string | null, useRssImageAsReference: boolean) {
@@ -174,10 +167,15 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
       search: useGoogleSearch,
       temperature: 0.7,
     });
-    const title = (story.headline || story.title).trim().slice(0, 140);
-    let content = stripLeadingTitleHeading(title, cleanHtmlResponse(rawContent));
+    const sourceTitle = (story.headline || story.title).trim().slice(0, 140);
+    let content = stripLeadingTitleHeading(sourceTitle, cleanHtmlResponse(rawContent));
     if (!content) throw new Error("Yapay zekâ metin üretemedi.");
     console.log(`[AI Writer] Metin üretildi: ${usedModel}`);
+
+    // SEO paketi: özgün arama başlığı, meta açıklama (spot) ve etiketler
+    const seo = await buildSeoPackage({ title: sourceTitle, content, summary: story.summary, category: story.categoryName });
+    const title = seo.title;
+    content = stripLeadingTitleHeading(title, content);
     if (related?.status === "PUBLISHED") {
       content += `\n<p><strong>İlgili haber:</strong> <a href="/article/${related.slug}">${escapeHtml(related.title)}</a></p>`;
     }
@@ -195,9 +193,9 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
       const created = await tx.article.create({
         data: {
           title,
-          slug: `${slugify(title)}-${Date.now().toString().slice(-4)}`,
+          slug: await uniqueArticleSlug(title, tx),
           content,
-          excerpt: story.summary || story.items[0].excerpt,
+          excerpt: seo.description || story.summary || story.items[0].excerpt,
           coverImage: imageUrl,
           status: "PUBLISHED",
           authorId: adminUser.id,
@@ -217,6 +215,7 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
       return created;
     });
 
+    await attachTags(article.id, seo.tags, article.lang);
     await afterPublish(article, { systemPrompt, textPrompt, useGoogleSearch });
     return { success: true, articleId: article.id, title: article.title, slug: article.slug };
   } catch (error) {
@@ -275,7 +274,7 @@ async function afterPublish(
           search: ctx.useGoogleSearch,
           temperature: 0.8,
         });
-        newContent = cleanHtmlResponse(res.text);
+        newContent = stripLeadingTitleHeading(article.title, cleanHtmlResponse(res.text));
       } catch (e) {
         console.error("[AI Writer] Yeniden yazım hatası:", toAiError(e).message);
       }

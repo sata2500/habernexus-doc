@@ -157,10 +157,9 @@ export async function incrementViewCount(id: string) {
     const rate = await checkRateLimitAsync(`view:${await getActionIdentity()}:${id}`, 1, 30 * 60 * 1000);
     if (!rate.allowed) return { success: true };
 
-    await prisma.article.update({
-      where: { id, status: "PUBLISHED" },
-      data: { viewCount: { increment: 1 } },
-    });
+    // Ham SQL: Prisma'nın @updatedAt alanını değiştirmemesi için. Aksi halde her görüntülenme haberin
+    // "güncellenme tarihini" (Google'a bildirilen dateModified ve site haritası lastmod) bozuyordu.
+    await prisma.$executeRaw`UPDATE "Article" SET "viewCount" = "viewCount" + 1 WHERE "id" = ${id} AND "status" = 'PUBLISHED'`;
     return { success: true };
   } catch {
     return { success: false };

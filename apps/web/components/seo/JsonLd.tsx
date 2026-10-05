@@ -159,25 +159,16 @@ export function NewsArticleJsonLd({
         width: 600,
         height: 60,
       },
-      sameAs: sameAs.length > 0 ? sameAs : [
-        "https://twitter.com/habernexus",
-        "https://instagram.com/habernexus"
-      ]
+      // Yalnızca ayarlarda girilmiş gerçek hesaplar (uydurma hesap Google'ı yanıltır)
+      ...(sameAs.length > 0 ? { sameAs } : {}),
     },
-    isAccessibleForFree: "True",
-    hasPart: {
-      "@type": "WebPageElement",
-      "isAccessibleForFree": "True",
-      "cssSelector": ".prose"
-    }
+    isAccessibleForFree: true,
   };
 
   if (coverImage) {
-    data.image = {
-      "@type": "ImageObject",
-      url: coverImage,
-    };
-    data.thumbnailUrl = coverImage;
+    const image = coverImage.startsWith("http") ? coverImage : `${BASE_URL}${coverImage}`;
+    data.image = [{ "@type": "ImageObject", url: image }];
+    data.thumbnailUrl = image;
   }
 
   if (datePublished) {
