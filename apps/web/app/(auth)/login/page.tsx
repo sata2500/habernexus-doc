@@ -1,15 +1,27 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { signIn } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { authErrorMessage, safeCallbackPath } from "@/lib/auth-errors";
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
+  const searchParams = useSearchParams();
+  const callbackPath = safeCallbackPath(searchParams.get("callbackUrl"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Google'dan hata ile dönüldüyse (ör. ?error=account_not_linked) açıklamasını göster
+  const [error, setError] = useState<string | null>(() => authErrorMessage(searchParams.get("error")));
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -25,7 +37,7 @@ export default function LoginPage() {
     if (signInError) {
       setError(signInError.message || "Giriş yapılamadı, bilgilerinizi kontrol edin.");
     } else {
-      router.push("/");
+      router.push(callbackPath);
       router.refresh();
     }
     setLoading(false);
@@ -33,9 +45,11 @@ export default function LoginPage() {
 
   const handleGoogleLogin = async () => {
     setLoading(true);
+    setError(null);
     await signIn.social({
       provider: "google",
-      callbackURL: "/",
+      callbackURL: callbackPath,
+      errorCallbackURL: "/login",
     });
   };
 

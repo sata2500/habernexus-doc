@@ -38,6 +38,7 @@ export default function RegisterPage() {
     await signIn.social({
       provider: "google",
       callbackURL: "/",
+      errorCallbackURL: "/login",
     });
   };
 

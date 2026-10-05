@@ -58,6 +58,10 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Aynı sağlayıcı hesabı yalnızca bir kez bağlanabilir (better-auth 1.7.7 bunu varsayar)
+  @@unique([providerId, accountId])
+  @@index([userId])
 }
 
 model Verification {
