@@ -63,6 +63,17 @@ export async function deleteUser(userId: string) {
   return { success: true };
 }
 
+// E-posta adresini doğrulanmış say (doğrulama e-postası ulaşamayan, yönetici tarafından tanınan hesaplar için)
+export async function markEmailVerified(userId: string) {
+  const session = await assertAdmin();
+  if (typeof userId !== "string" || !userId) return { success: false, error: "Geçersiz kullanıcı." };
+  const res = await prisma.user.updateMany({ where: { id: userId }, data: { emailVerified: true } });
+  if (res.count === 0) return { success: false, error: "Kullanıcı bulunamadı." };
+  console.warn(`[Admin] ${session.user.id} kullanıcısı ${userId} e-postasını doğrulanmış saydı.`);
+  revalidatePath("/admin/users");
+  return { success: true };
+}
+
 // Makale durumunu güncelle
 export async function updateArticleStatus(articleId: string, status: string) {
   await assertAdmin();

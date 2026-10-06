@@ -2,6 +2,8 @@ import { betterAuth } from "better-auth";
 import { APIError } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
+import { sendEmail } from "./mail";
+import { AuthEmailTemplate } from "@/components/mail/AuthEmailTemplate";
 
 /** Profil fotoğrafı yalnızca kendi depolamamızdan ya da Google hesap fotoğrafından olabilir */
 function isAllowedAvatar(url: string) {
@@ -21,6 +23,46 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
     maxPasswordLength: 128,
+    // E-posta adresini doğrulamayan hesap giriş yapamaz (Google hesapları zaten doğrulanmıştır)
+    requireEmailVerification: true,
+    resetPasswordTokenExpiresIn: 60 * 60,
+    // Şifre değişince açık oturumlar kapanır (çalınmış oturum kalmasın)
+    revokeSessionsOnPasswordReset: true,
+    sendResetPassword: async ({ user, url }) => {
+      if (process.env.NODE_ENV !== "production") console.info("[Auth] Şifre sıfırlama bağlantısı (geliştirme):", url);
+      await sendEmail({
+        to: user.email,
+        subject: "Haber Nexus şifre sıfırlama",
+        react: AuthEmailTemplate({
+          title: "Şifrenizi sıfırlayın",
+          intro: `Merhaba ${user.name}, hesabınız için şifre sıfırlama isteği aldık. Yeni şifre belirlemek için aşağıdaki düğmeye tıklayın.`,
+          buttonLabel: "Yeni şifre belirle",
+          url,
+          note: "Bağlantı 1 saat geçerlidir. Bu isteği siz yapmadıysanız e-postayı yok sayabilirsiniz; şifreniz değişmez.",
+        }),
+      });
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    // Doğrulanmamış hesapla giriş denenirse yeni bağlantı otomatik gönderilir
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
+    expiresIn: 60 * 60 * 24,
+    sendVerificationEmail: async ({ user, url }) => {
+      if (process.env.NODE_ENV !== "production") console.info("[Auth] Doğrulama bağlantısı (geliştirme):", url);
+      await sendEmail({
+        to: user.email,
+        subject: "Haber Nexus e-posta adresinizi doğrulayın",
+        react: AuthEmailTemplate({
+          title: "E-posta adresinizi doğrulayın",
+          intro: `Merhaba ${user.name}, Haber Nexus'a hoş geldiniz! Hesabınızı kullanmaya başlamak için e-posta adresinizi doğrulayın.`,
+          buttonLabel: "E-postamı doğrula",
+          url,
+          note: "Bağlantı 24 saat geçerlidir. Bu hesabı siz oluşturmadıysanız e-postayı yok sayabilirsiniz.",
+        }),
+      });
+    },
   },
   socialProviders: {
     google: {
@@ -37,6 +79,13 @@ export const auth = betterAuth({
         defaultValue: "USER",
         input: false,
       },
+      // Bülten yalnızca açık onayla: kayıt formundaki kutu işaretlenirse true
+      newsletterSubscribed: {
+        type: "boolean",
+        required: false,
+        defaultValue: false,
+        input: true,
+      },
     },
   },
   // Kaba kuvvet denemelerine karşı istek sınırları (üretimde etkin)
@@ -47,6 +96,7 @@ export const auth = betterAuth({
     customRules: {
       "/sign-in/email": { window: 60, max: 5 },
       "/sign-up/email": { window: 600, max: 5 },
+      "/send-verification-email": { window: 600, max: 3 },
       "/sign-in/social": { window: 60, max: 10 },
       "/forget-password": { window: 600, max: 3 },
       "/request-password-reset": { window: 600, max: 3 },

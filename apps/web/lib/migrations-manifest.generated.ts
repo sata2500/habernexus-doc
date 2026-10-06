@@ -47,5 +47,10 @@ export const MIGRATIONS: MigrationManifestEntry[] = [
     "name": "20261009090000_article_reads",
     "checksum": "c84d8328e99352c5010feec1e3393cbda918013a2bb56a699fa5d68f28a9a9ba",
     "sql": "-- Okurların okuma geçmişi (okunan ve yarım kalan haberler). Idempotent.\n\n-- CreateTable\nCREATE TABLE IF NOT EXISTS \"ArticleRead\" (\n    \"id\" TEXT NOT NULL,\n    \"userId\" TEXT NOT NULL,\n    \"articleId\" TEXT NOT NULL,\n    \"progress\" INTEGER NOT NULL DEFAULT 0,\n    \"completedAt\" TIMESTAMP(3),\n    \"createdAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    \"updatedAt\" TIMESTAMP(3) NOT NULL,\n\n    CONSTRAINT \"ArticleRead_pkey\" PRIMARY KEY (\"id\")\n);\n\n-- CreateIndex\nCREATE UNIQUE INDEX IF NOT EXISTS \"ArticleRead_userId_articleId_key\" ON \"ArticleRead\"(\"userId\", \"articleId\");\nCREATE INDEX IF NOT EXISTS \"ArticleRead_userId_updatedAt_idx\" ON \"ArticleRead\"(\"userId\", \"updatedAt\");\n\n-- AddForeignKey\nDO $$ BEGIN\n  ALTER TABLE \"ArticleRead\" ADD CONSTRAINT \"ArticleRead_articleId_fkey\" FOREIGN KEY (\"articleId\") REFERENCES \"Article\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;\nEXCEPTION WHEN duplicate_object THEN NULL;\nEND $$;\n\nDO $$ BEGIN\n  ALTER TABLE \"ArticleRead\" ADD CONSTRAINT \"ArticleRead_userId_fkey\" FOREIGN KEY (\"userId\") REFERENCES \"User\"(\"id\") ON DELETE CASCADE ON UPDATE CASCADE;\nEXCEPTION WHEN duplicate_object THEN NULL;\nEND $$;\n"
+  },
+  {
+    "name": "20261010090000_newsletter_opt_in",
+    "checksum": "5025cf1afea36c8237d6cb77af341e548a514698fdf89b383ed08115a0a2188f",
+    "sql": "-- Bülten yalnızca açık onayla: yeni kullanıcılar varsayılan olarak abone değildir. Idempotent.\nALTER TABLE \"User\" ALTER COLUMN \"newsletterSubscribed\" SET DEFAULT false;\n"
   }
 ];

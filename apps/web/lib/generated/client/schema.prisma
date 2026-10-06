@@ -17,7 +17,7 @@ model User {
   image                String?
   role                 String            @default("USER")
   bio                  String?
-  newsletterSubscribed Boolean           @default(true)
+  newsletterSubscribed Boolean           @default(false)
   newsletterTime       String            @default("08:00")
   createdAt            DateTime          @default(now())
   updatedAt            DateTime          @updatedAt

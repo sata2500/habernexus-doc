@@ -65,7 +65,7 @@ export async function listUsers({ q, role, pageNo }: { q: string; role: string; 
       orderBy: { createdAt: "desc" },
       ...page(pageNo),
       select: {
-        id: true, name: true, email: true, image: true, role: true, createdAt: true,
+        id: true, name: true, email: true, image: true, role: true, createdAt: true, emailVerified: true,
         _count: { select: { articles: true, comments: true } },
       },
     }),

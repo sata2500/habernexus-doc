@@ -34,6 +34,7 @@ const MIGRATION_TITLES: Record<string, string> = {
   news_stories: "Karar Merkezi (konular ve puanlama)",
   unique_oauth_accounts: "Google ile giriş onarımı",
   article_reads: "Okuma geçmişi (Okuduklarım)",
+  newsletter_opt_in: "Bülten yalnızca açık onayla",
 };
 
 /** Google'a otomatik dizin bildirimi: durum, bağlantı testi ve son bildirimler */

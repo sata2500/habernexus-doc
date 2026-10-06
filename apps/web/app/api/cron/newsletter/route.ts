@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
     });
 
     const userSubscribers = await prisma.user.findMany({
-      where: { newsletterSubscribed: true, newsletterTime: currentHourString },
+      // Yalnızca e-posta adresi doğrulanmış kullanıcılar
+      where: { newsletterSubscribed: true, emailVerified: true, newsletterTime: currentHourString },
       select: { email: true, id: true },
     });
 

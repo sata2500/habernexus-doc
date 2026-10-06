@@ -2,8 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, Trash2 } from "lucide-react";
-import { updateUserRole, deleteUser } from "../actions";
+import { BadgeCheck, Loader2, Trash2 } from "lucide-react";
+import { updateUserRole, deleteUser, markEmailVerified } from "../actions";
 import { Avatar } from "@/components/ui/Avatar";
 import { formatRelativeTime } from "@/lib/utils";
 import type { AdminUserRow } from "@/lib/server/admin-lists";
@@ -42,7 +42,10 @@ export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[
             <Avatar src={u.image ?? undefined} fallback={u.name ?? undefined} size="sm" />
             <div className="flex-1 min-w-[10rem]">
               <p className="text-sm font-semibold truncate">{u.name}{isMe && <span className="ml-1.5 text-xs font-normal text-muted-foreground">(siz)</span>}</p>
-              <p className="text-xs text-muted-foreground truncate">{u.email}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {u.email}
+                {!u.emailVerified && <span className="ml-1.5 rounded px-1.5 py-0.5 text-[10px] font-bold bg-warning/10 text-warning">E-posta doğrulanmadı</span>}
+              </p>
               <p className="text-[11px] text-muted-foreground">
                 {formatRelativeTime(u.createdAt, { compact: true })} katıldı · {u._count.articles} makale · {u._count.comments} yorum
               </p>
@@ -61,10 +64,22 @@ export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[
                   >
                     {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
                   </select>
+                  {!u.emailVerified && (
+                    <button
+                      onClick={() => {
+                        if (confirm(`"${u.email}" adresi doğrulanmış sayılsın mı? Bu kişi doğrulama e-postası olmadan şifresiyle giriş yapabilecek. Yalnızca adresin bu kişiye ait olduğundan eminseniz onaylayın.`)) run(u.id, () => markEmailVerified(u.id));
+                      }}
+                      aria-label="E-postayı doğrulanmış say"
+                      title="E-postayı doğrulanmış say"
+                      className="h-9 w-9 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:bg-success/10 hover:text-success"
+                    >
+                      <BadgeCheck className="h-4 w-4" />
+                    </button>
+                  )}
                   {!isMe && (
                     <button
                       onClick={() => {
-                        if (confirm(`"${u.name}" silinsin mi? Bu işlem geri alınamaz; kullanıcının makaleleri ve yorumları da silinir.`)) run(u.id, () => deleteUser(u.id));
+                        if (confirm(`"${u.name}" silinsin mi? Bu işlem geri alınamaz; yorumları silinir, yazdığı haberler size (yöneticiye) devredilir.`)) run(u.id, () => deleteUser(u.id));
                       }}
                       aria-label="Kullanıcıyı sil"
                       title="Kullanıcıyı sil"

@@ -8,6 +8,9 @@ const MESSAGES: Record<string, string> = {
   access_denied: "Google girişi iptal edildi.",
   email_not_found: "Google hesabından e-posta adresi alınamadı.",
   unable_to_get_user_info: "Google hesap bilgileri alınamadı. Lütfen tekrar dene.",
+  invalid_token: "Doğrulama bağlantısı geçersiz ya da süresi dolmuş. Giriş yapmayı deneyin; size yeni bir bağlantı gönderilecek.",
+  token_expired: "Doğrulama bağlantısının süresi dolmuş. Giriş yapmayı deneyin; size yeni bir bağlantı gönderilecek.",
+  user_not_found: "Bu bağlantıya ait hesap bulunamadı.",
   internal_server_error: "Giriş sırasında bir sunucu hatası oluştu. Lütfen biraz sonra tekrar dene.",
 };
 

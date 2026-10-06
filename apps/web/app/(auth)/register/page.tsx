@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { signUp, signIn } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { MailCheck } from "lucide-react";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -11,7 +11,9 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
+  const [newsletter, setNewsletter] = useState(false);
+  // Kayıt sonrası: doğrulama e-postası gönderildi ekranı
+  const [sentTo, setSentTo] = useState<string | null>(null);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,13 +24,20 @@ export default function RegisterPage() {
       name,
       email,
       password,
+      newsletterSubscribed: newsletter,
+      callbackURL: "/email-verified",
     });
 
     if (signUpError) {
-      setError(signUpError.message || "Kayıt işlemi başarısız oldu.");
+      setError(
+        signUpError.code === "USER_ALREADY_EXISTS" || signUpError.code === "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL"
+          ? "Bu e-posta adresiyle zaten bir hesap var. Giriş yapmayı deneyin."
+          : signUpError.code === "PASSWORD_TOO_SHORT"
+            ? "Şifre en az 8 karakter olmalı."
+            : signUpError.message || "Kayıt işlemi başarısız oldu.",
+      );
     } else {
-      router.push("/");
-      router.refresh();
+      setSentTo(email);
     }
     setLoading(false);
   };
@@ -58,6 +67,18 @@ export default function RegisterPage() {
           Haber detaylarına ulaşmak ve yorum yapmak için kayıt olun.
         </p>
 
+        {sentTo ? (
+          <div className="text-center space-y-4" role="status">
+            <span className="h-14 w-14 mx-auto rounded-full bg-success/10 text-success flex items-center justify-center"><MailCheck className="h-7 w-7" /></span>
+            <h3 className="text-lg font-bold">E-postanızı kontrol edin</h3>
+            <p className="text-sm text-muted-foreground">
+              <strong className="text-foreground">{sentTo}</strong> adresine bir doğrulama bağlantısı gönderdik. Hesabınızı kullanmaya başlamak için
+              e-postadaki bağlantıya tıklayın. E-posta birkaç dakika içinde gelmezse gereksiz (spam) klasörüne bakın.
+            </p>
+            <Link href="/login" className="inline-flex h-11 items-center px-6 rounded-xl bg-primary-600 text-white text-sm font-semibold">Giriş sayfasına git</Link>
+          </div>
+        ) : (
+        <>
         {error && (
           <div className="mb-6 p-4 rounded-xl bg-error/10 text-error text-sm border border-error/30 ">
             {error}
@@ -136,11 +157,24 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-card border border-border focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
-              placeholder="••••••••"
-              minLength={6}
+              placeholder="En az 8 karakter"
+              minLength={8}
+              maxLength={128}
+              autoComplete="new-password"
               required
             />
           </div>
+          <label className="flex items-start gap-3 text-sm cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={newsletter}
+              onChange={(e) => setNewsletter(e.target.checked)}
+              className="mt-0.5 h-4 w-4 rounded border-border accent-primary-600"
+            />
+            <span className="text-muted-foreground">
+              Günlük haber bültenini e-posta ile almak istiyorum. <span className="text-xs">(İsteğe bağlı; istediğiniz zaman ayarlardan kapatabilirsiniz.)</span>
+            </span>
+          </label>
           <button
             type="submit"
             disabled={loading}
@@ -154,6 +188,9 @@ export default function RegisterPage() {
             ) : "Hesap Oluştur"}
           </button>
         </form>
+
+        </>
+        )}
 
         <div className="mt-8 pt-6 border-t border-border text-center">
           <p className="text-muted-foreground">

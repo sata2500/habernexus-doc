@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense, useState } from "react";
-import { signIn } from "@/lib/auth-client";
+import { authClient, signIn } from "@/lib/auth-client";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { authErrorMessage, safeCallbackPath } from "@/lib/auth-errors";
@@ -23,19 +23,32 @@ function LoginForm() {
   // Google'dan hata ile dönüldüyse (ör. ?error=account_not_linked) açıklamasını göster
   const [error, setError] = useState<string | null>(() => authErrorMessage(searchParams.get("error")));
   const router = useRouter();
+  const [unverified, setUnverified] = useState(false);
+  const [resent, setResent] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const verifiedNotice = searchParams.get("dogrulandi") === "1";
+
+  const resend = async () => {
+    setResent("sending");
+    const { error: e } = await authClient.sendVerificationEmail({ email, callbackURL: "/email-verified" });
+    setResent(e ? "error" : "sent");
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error: signInError } = await signIn.email({
-      email,
-      password,
-    });
+    setUnverified(false);
+    const { error: signInError } = await signIn.email({ email, password });
 
     if (signInError) {
-      setError(signInError.message || "Giriş yapılamadı, bilgilerinizi kontrol edin.");
+      if (signInError.code === "EMAIL_NOT_VERIFIED" || signInError.status === 403) {
+        // Sunucu bu durumda yeni doğrulama bağlantısını kendiliğinden gönderir
+        setUnverified(true);
+        setError("E-posta adresiniz henüz doğrulanmamış. Adresinize yeni bir doğrulama bağlantısı gönderdik; bağlantıya tıkladıktan sonra giriş yapabilirsiniz.");
+      } else {
+        setError(signInError.code === "INVALID_EMAIL_OR_PASSWORD" ? "E-posta adresi ya da şifre hatalı." : signInError.message || "Giriş yapılamadı, bilgilerinizi kontrol edin.");
+      }
     } else {
       router.push(callbackPath);
       router.refresh();
@@ -69,9 +82,22 @@ function LoginForm() {
           Haberleri takip etmek için hesabınıza giriş yapın.
         </p>
 
+        {verifiedNotice && !error && (
+          <div className="mb-6 p-4 rounded-xl bg-success/10 text-sm border border-success/30">E-posta adresiniz doğrulandı. Şimdi giriş yapabilirsiniz.</div>
+        )}
         {error && (
-          <div className="mb-6 p-4 rounded-xl bg-error/10 text-error text-sm border border-error/30 ">
+          <div className={`mb-6 p-4 rounded-xl text-sm border ${unverified ? "bg-warning/10 border-warning/30 text-foreground" : "bg-error/10 text-error border-error/30"}`} role="alert">
             {error}
+            {unverified && (
+              <button
+                type="button"
+                onClick={resend}
+                disabled={resent === "sending" || resent === "sent"}
+                className="mt-2 block font-semibold text-primary-600 hover:underline disabled:opacity-60 disabled:no-underline"
+              >
+                {resent === "sent" ? "Bağlantı tekrar gönderildi." : resent === "error" ? "Gönderilemedi, birazdan tekrar deneyin." : resent === "sending" ? "Gönderiliyor…" : "Bağlantıyı tekrar gönder"}
+              </button>
+            )}
           </div>
         )}
 
@@ -130,7 +156,7 @@ function LoginForm() {
               <label className="block text-sm font-medium text-foreground">
                 Şifre
               </label>
-              <Link href="#" className="text-sm font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
+              <Link href="/forgot-password" className="text-sm font-medium text-primary-600 hover:text-primary-500 dark:text-primary-400 dark:hover:text-primary-300">
                 Şifremi unuttum?
               </Link>
             </div>
@@ -140,6 +166,7 @@ function LoginForm() {
               onChange={(e) => setPassword(e.target.value)}
               className="w-full px-4 py-3 rounded-xl bg-card border border-border focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all"
               placeholder="••••••••"
+              autoComplete="current-password"
               required
             />
           </div>
