@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { LiveSeoPanel } from "./LiveSeoPanel";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -223,6 +224,8 @@ export function ArticleEditor({ article, categories, suggestion, initialNotice }
             <ImageUploader value={fields.coverImage} onChange={(url) => set("coverImage", url)} type="article" aspectRatio="video" />
             <p className="text-[11px] text-muted-foreground">Önerilen: 1200×675 (16:9)</p>
           </section>
+
+          <LiveSeoPanel title={fields.title} excerpt={fields.excerpt} content={fields.content} coverImage={fields.coverImage} />
 
           <section className="rounded-2xl border border-border bg-card p-4 shadow-card space-y-1.5 text-sm">
             <h3 className="font-semibold flex items-center gap-2"><Info className="h-4 w-4 text-muted-foreground" /> Durum</h3>

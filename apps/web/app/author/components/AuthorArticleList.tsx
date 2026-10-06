@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { BarChart3, ExternalLink, Eye, Loader2, MessageSquare, Newspaper, Pencil, PenSquare, Sparkles, Trash2 } from "lucide-react";
 import { cn, formatRelativeTime, formatViewCount } from "@/lib/utils";
 import type { AuthorArticleRow } from "@/lib/server/author-desk";
+import { displayScore } from "@/lib/analysis/report";
 import { deleteArticle } from "../actions";
 
 const ArticleAnalysisModal = dynamic(
@@ -73,7 +74,14 @@ export function AuthorArticleList({ articles, filtered }: { articles: AuthorArti
                   <span>{published && a.publishedAt ? formatRelativeTime(a.publishedAt, { compact: true }) : `düzenlendi ${formatRelativeTime(a.updatedAt, { compact: true })}`}</span>
                   {published && <span className="inline-flex items-center gap-0.5"><Eye className="h-3 w-3" /> {formatViewCount(a.viewCount)}</span>}
                   {a._count.comments > 0 && <span className="inline-flex items-center gap-0.5"><MessageSquare className="h-3 w-3" /> {a._count.comments}</span>}
-                  {a.qualityScore !== null && <span className={cn("rounded px-1.5 py-0.5 font-bold", scoreTone(a.qualityScore))}>Kalite {a.qualityScore}</span>}
+                  {(() => {
+                    const score = displayScore(a.analysisReport, a.qualityScore);
+                    return score ? (
+                      <button onClick={() => setAnalysis(a)} className={cn("rounded px-1.5 py-0.5 font-bold cursor-pointer", scoreTone(score.value))} title="Analizi aç">
+                        {score.label} {score.value}
+                      </button>
+                    ) : null;
+                  })()}
                 </div>
               </div>
               <div className="flex items-start gap-0.5 shrink-0">

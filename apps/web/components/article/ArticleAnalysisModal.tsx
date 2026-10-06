@@ -1,578 +1,388 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import {
-  X,
-  Sparkles,
-  CheckCircle2,
-  AlertTriangle,
-  TrendingUp,
-  RefreshCw,
-  Wand2,
-  ListChecks,
-  Search,
-  BookOpen,
-  ExternalLink,
-  AlertCircle
+  AlertCircle, AlertTriangle, BookOpen, CheckCircle2, CircleAlert, ExternalLink, FileSearch, ListChecks, PenLine,
+  RefreshCw, Search, Sparkles, TrendingUp, Wand2, X, XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { analyzeArticleAction as adminAnalyze, rewriteArticleWithAIAction as adminRewrite } from "@/app/admin/actions";
 import { analyzeArticleAction as authorAnalyze, rewriteArticleWithAIAction as authorRewrite } from "@/app/author/actions";
 
-interface PlagiarismSource {
-  url?: string;
-  title?: string;
-  matchPercent?: number;
+/* ── Rapor (sürüm 2) ─────────────────────────────────── */
+
+type CheckStatus = "pass" | "warn" | "fail";
+interface ReportV2 {
+  version: 2;
+  analyzedAt?: string;
+  overall?: number;
+  quality?: { score: number | null; ai: boolean; comment: string | null; strengths: string[]; issues: string[] };
+  seo?: { score: number; focusKeyword: string | null; checks: { id: string; label: string; status: CheckStatus; detail: string }[] };
+  readability?: {
+    score: number;
+    level: string;
+    stats: { words: number; sentences: number; paragraphs: number; avgSentenceWords: number; longSentences: number; longParagraphs: number; readingMinutes: number; atesman: number; h2: number; h3: number };
+  };
+  originality?: {
+    score: number;
+    copiedRate: number;
+    sourcesChecked: number;
+    fullTextChecked: number;
+    siteArticlesChecked: number;
+    matches: { title: string; url: string | null; kind: "source" | "site"; percent: number }[];
+  };
+  fixes?: string[];
+  suggestions?: string[];
 }
 
-interface AnalysisReportData {
-  plagiarism?: {
-    score?: number;
-    aiProbability?: number;
-    sources?: PlagiarismSource[];
-    comment?: string;
-  };
-  seo?: {
-    score?: number;
-    hasHeadingStructure?: boolean;
-    keywordSuggestions?: string[];
-    comment?: string;
-  };
-  readability?: {
-    score?: number;
-    comment?: string;
-  };
-  suggestions?: string[];
+interface Scores {
+  plagiarismRate: number | null;
+  seoScore: number | null;
+  readabilityScore: number | null;
+  qualityScore: number | null;
+  analysisReport: unknown;
 }
 
 interface ArticleAnalysisModalProps {
   articleId: string;
   articleTitle: string;
   userRole: "ADMIN" | "AUTHOR";
-  initialData?: {
-    plagiarismRate: number | null;
-    seoScore: number | null;
-    readabilityScore: number | null;
-    qualityScore: number | null;
-    analysisReport: unknown;
-  };
+  initialData?: Scores;
   onClose: () => void;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  onAnalysisComplete?: (updatedArticle: any) => void;
+  onAnalysisComplete?: (updatedArticle: unknown) => void;
 }
 
-function CircularProgress({
-  value,
-  label,
-  size = 100,
-  strokeWidth = 8,
-  isPlagiarism = false
-}: {
-  value: number | null;
-  label: string;
-  size?: number;
-  strokeWidth?: number;
-  isPlagiarism?: boolean;
-}) {
-  const val = value ?? 0;
-  const radius = (size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const strokeDashoffset = circumference - (val / 100) * circumference;
+const asV2 = (r: unknown): ReportV2 | null =>
+  r && typeof r === "object" && !Array.isArray(r) && (r as { version?: unknown }).version === 2 ? (r as ReportV2) : null;
 
-  let colorClass = "stroke-primary-500 text-primary-500";
-  let bgClass = "stroke-primary-500/10";
-  
-  if (value === null) {
-    colorClass = "stroke-muted text-muted-foreground";
-    bgClass = "stroke-muted/10";
-  } else if (isPlagiarism) {
-    if (val <= 30) {
-      colorClass = "stroke-success text-success";
-      bgClass = "stroke-success/10";
-    } else if (val <= 60) {
-      colorClass = "stroke-warning text-warning";
-      bgClass = "stroke-warning/10";
-    } else {
-      colorClass = "stroke-error text-error";
-      bgClass = "stroke-error/10";
-    }
-  } else {
-    if (val >= 70) {
-      colorClass = "stroke-success text-success";
-      bgClass = "stroke-success/10";
-    } else if (val >= 40) {
-      colorClass = "stroke-warning text-warning";
-      bgClass = "stroke-warning/10";
-    } else {
-      colorClass = "stroke-error text-error";
-      bgClass = "stroke-error/10";
-    }
-  }
+const tone = (v: number) => (v >= 80 ? "text-success" : v >= 60 ? "text-warning" : "text-error");
+const barTone = (v: number) => (v >= 80 ? "bg-success" : v >= 60 ? "bg-warning" : "bg-error");
+const verdict = (v: number) => (v >= 85 ? "Çok iyi" : v >= 70 ? "İyi" : v >= 55 ? "Geliştirilmeli" : "Zayıf");
 
+function Ring({ value }: { value: number }) {
+  const r = 34;
+  const c = 2 * Math.PI * r;
   return (
-    <div className="flex flex-col items-center justify-center p-4 bg-muted/20 border border-border/40 rounded-2xl">
-      <div className="relative" style={{ width: size, height: size }}>
-        <svg className="w-full h-full transform -rotate-90">
-          <circle
-            className={cn("transition-all duration-300", bgClass)}
-            strokeWidth={strokeWidth}
-            fill="transparent"
-            r={radius}
-            cx={size / 2}
-            cy={size / 2}
-          />
-          {value !== null && (
-            <circle
-              className={cn("transition-all duration-500 ease-out", colorClass)}
-              strokeWidth={strokeWidth}
-              strokeDasharray={circumference}
-              strokeDashoffset={strokeDashoffset}
-              strokeLinecap="round"
-              fill="transparent"
-              r={radius}
-              cx={size / 2}
-              cy={size / 2}
-            />
-          )}
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-xl font-extrabold tracking-tight">
-            {value !== null ? `${val}%` : "—"}
-          </span>
-        </div>
-      </div>
-      <span className="mt-3 text-xs font-bold text-muted-foreground uppercase tracking-wider text-center">{label}</span>
+    <div className="relative h-24 w-24 shrink-0">
+      <svg viewBox="0 0 80 80" className="h-full w-full -rotate-90">
+        <circle cx="40" cy="40" r={r} strokeWidth="7" className="stroke-muted" fill="none" />
+        <circle cx="40" cy="40" r={r} strokeWidth="7" fill="none" strokeLinecap="round" strokeDasharray={c} strokeDashoffset={c - (value / 100) * c}
+          className={cn("transition-all duration-700", value >= 80 ? "stroke-success" : value >= 60 ? "stroke-warning" : "stroke-error")} />
+      </svg>
+      <span className={cn("absolute inset-0 flex items-center justify-center text-2xl font-extrabold tabular-nums", tone(value))}>{value}</span>
     </div>
   );
 }
 
-export function ArticleAnalysisModal({
-  articleId,
-  articleTitle,
-  userRole,
-  initialData,
-  onClose,
-  onAnalysisComplete
-}: ArticleAnalysisModalProps) {
-  const [activeTab, setActiveTab] = useState<"overview" | "plagiarism" | "seo" | "suggestions">("overview");
+function ScoreBar({ label, value, hint }: { label: string; value: number | null; hint?: string }) {
+  return (
+    <div className="space-y-1">
+      <div className="flex items-baseline justify-between gap-2 text-xs">
+        <span className="font-semibold">{label}</span>
+        <span className={cn("font-bold tabular-nums", value === null ? "text-muted-foreground" : tone(value))}>{value ?? "—"}</span>
+      </div>
+      <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+        {value !== null && <div className={cn("h-full rounded-full", barTone(value))} style={{ width: `${value}%` }} />}
+      </div>
+      {hint && <p className="text-[11px] text-muted-foreground">{hint}</p>}
+    </div>
+  );
+}
+
+const STATUS_ICON: Record<CheckStatus, React.ReactNode> = {
+  pass: <CheckCircle2 className="h-4 w-4 text-success shrink-0" />,
+  warn: <CircleAlert className="h-4 w-4 text-warning shrink-0" />,
+  fail: <XCircle className="h-4 w-4 text-error shrink-0" />,
+};
+
+type Tab = "todo" | "seo" | "readability" | "originality" | "editor";
+const TABS: { id: Tab; label: string; icon: typeof ListChecks }[] = [
+  { id: "todo", label: "Yapılacaklar", icon: ListChecks },
+  { id: "seo", label: "SEO", icon: TrendingUp },
+  { id: "readability", label: "Okunabilirlik", icon: BookOpen },
+  { id: "originality", label: "Özgünlük", icon: FileSearch },
+  { id: "editor", label: "Editör", icon: PenLine },
+];
+
+/**
+ * Haber analizi: genel puan, ölçülen SEO kontrolleri, Türkçe okunabilirlik, kaynaklarla gerçek metin
+ * karşılaştırması ve yapay zekâ editör değerlendirmesi.
+ */
+export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initialData, onClose, onAnalysisComplete }: ArticleAnalysisModalProps) {
+  const [tab, setTab] = useState<Tab>("todo");
   const [isPending, startTransition] = useTransition();
-  const [actionType, setActionType] = useState<"analyze" | "rewrite" | null>(null);
+  const [action, setAction] = useState<"analyze" | "rewrite" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [data, setData] = useState<Scores | null>(initialData ?? null);
+  const report = asV2(data?.analysisReport);
+  const hasOld = !report && data?.qualityScore != null;
 
-  const [articleData, setArticleData] = useState({
-    plagiarismRate: initialData?.plagiarismRate ?? null,
-    seoScore: initialData?.seoScore ?? null,
-    readabilityScore: initialData?.readabilityScore ?? null,
-    qualityScore: initialData?.qualityScore ?? null,
-    analysisReport: (initialData?.analysisReport as AnalysisReportData) ?? null
-  });
-
-  const hasAnalysis = articleData.qualityScore !== null;
-
-  const handleAnalyze = () => {
+  const run = (kind: "analyze" | "rewrite") => {
+    if (kind === "rewrite" && !confirm("Haber metni yapay zekâ ile, analizdeki eksikler giderilecek şekilde yeniden yazılacak. Mevcut metin değişecek. Devam edilsin mi?")) return;
     setError(null);
-    setActionType("analyze");
+    setAction(kind);
     startTransition(async () => {
       try {
-        const res = userRole === "ADMIN" ? await adminAnalyze(articleId) : await authorAnalyze(articleId);
-        if (res.success && res.article) {
-          setArticleData({
-            plagiarismRate: res.plagiarismRate ?? null,
-            seoScore: res.seoScore ?? null,
-            readabilityScore: res.readabilityScore ?? null,
-            qualityScore: res.qualityScore ?? null,
-            analysisReport: (res.analysisReport as AnalysisReportData) ?? null
-          });
-          if (onAnalysisComplete) onAnalysisComplete(res.article);
+        if (kind === "analyze") {
+          const res = userRole === "ADMIN" ? await adminAnalyze(articleId) : await authorAnalyze(articleId);
+          if (res.success && "analysisReport" in res) {
+            setData({ plagiarismRate: res.plagiarismRate, seoScore: res.seoScore, readabilityScore: res.readabilityScore, qualityScore: res.qualityScore, analysisReport: res.analysisReport });
+            setTab("todo");
+            onAnalysisComplete?.(res.article);
+          } else setError(("error" in res && res.error) || "Analiz tamamlanamadı.");
         } else {
-          setError(res.error || "Analiz sırasında bir hata meydana geldi.");
+          const res = userRole === "ADMIN" ? await adminRewrite(articleId) : await authorRewrite(articleId);
+          const a = res.success && "analysis" in res ? res.analysis : null;
+          if (a && a.success) {
+            setData({ plagiarismRate: a.plagiarismRate, seoScore: a.seoScore, readabilityScore: a.readabilityScore, qualityScore: a.qualityScore, analysisReport: a.analysisReport });
+            setTab("todo");
+            onAnalysisComplete?.(a.article);
+          } else setError(("error" in res && res.error) || "Yeniden yazım tamamlanamadı.");
         }
-      } catch (err: unknown) {
-        const errMsg = err instanceof Error ? err.message : "Sunucuyla bağlantı kurulurken hata oluştu.";
-        setError(errMsg);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Sunucuya ulaşılamadı.");
       } finally {
-        setActionType(null);
+        setAction(null);
       }
     });
   };
 
-  const handleRewrite = () => {
-    if (!confirm("Makale yapay zeka tarafından yeniden yazılacaktır. Mevcut makale içeriği güncellenecektir. Devam etmek istiyor musunuz?")) return;
-    setError(null);
-    setActionType("rewrite");
-    startTransition(async () => {
-      try {
-        const res = userRole === "ADMIN" ? await adminRewrite(articleId) : await authorRewrite(articleId);
-        if (res.success && res.analysis?.success) {
-          const re = res.analysis;
-          setArticleData({
-            plagiarismRate: re.plagiarismRate ?? null,
-            seoScore: re.seoScore ?? null,
-            readabilityScore: re.readabilityScore ?? null,
-            qualityScore: re.qualityScore ?? null,
-            analysisReport: (re.analysisReport as AnalysisReportData) ?? null
-          });
-          if (onAnalysisComplete) onAnalysisComplete(re.article);
-          setActiveTab("overview");
-        } else {
-          setError(res.error || "Makale yeniden yazılırken bir hata oluştu.");
-        }
-      } catch (err: unknown) {
-        const errMsg = err instanceof Error ? err.message : "Sunucuyla bağlantı kurulurken hata oluştu.";
-        setError(errMsg);
-      } finally {
-        setActionType(null);
-      }
-    });
-  };
-
-  const report = articleData.analysisReport;
+  const busy = (kind: "analyze" | "rewrite") => isPending && action === kind;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-background border border-border rounded-3xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-in zoom-in-95 duration-200">
-        
-        {/* Header */}
-        <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-muted/20">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <h2 className="text-lg font-bold font-(family-name:--font-outfit) text-foreground">Makale Analiz ve İntihal Raporu</h2>
-              <p className="text-xs text-muted-foreground truncate max-w-[280px] sm:max-w-md md:max-w-xl font-medium mt-0.5">{articleTitle}</p>
-            </div>
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-background/80 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="analysis-title">
+      <div className="bg-background border border-border rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-3xl max-h-[92vh] flex flex-col overflow-hidden">
+        {/* Başlık */}
+        <div className="px-4 sm:px-6 py-4 border-b border-border flex items-center gap-3">
+          <span className="h-10 w-10 shrink-0 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500"><Sparkles className="h-5 w-5" /></span>
+          <div className="min-w-0 flex-1">
+            <h2 id="analysis-title" className="text-base sm:text-lg font-bold font-display">Haber Analizi</h2>
+            <p className="text-xs text-muted-foreground truncate">{articleTitle}</p>
           </div>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-xl hover:bg-muted text-muted-foreground hover:text-foreground transition-all cursor-pointer border border-transparent hover:border-border"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <button onClick={onClose} aria-label="Kapat" className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-xl hover:bg-muted text-muted-foreground cursor-pointer"><X className="h-5 w-5" /></button>
         </div>
 
-        {/* Error Banner */}
         {error && (
-          <div className="px-6 py-3 bg-error/10 border-b border-error/20 text-error text-xs font-semibold flex items-center gap-2">
-            <AlertCircle className="h-4 w-4 shrink-0" />
-            <span>{error}</span>
+          <div className="px-4 sm:px-6 py-2.5 bg-error/10 border-b border-error/20 text-error text-xs font-semibold flex items-center gap-2">
+            <AlertCircle className="h-4 w-4 shrink-0" /> {error}
           </div>
         )}
 
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {!hasAnalysis ? (
-            <div className="text-center py-16 space-y-6 max-w-md mx-auto">
-              <div className="h-16 w-16 bg-muted/40 rounded-full flex items-center justify-center mx-auto text-muted-foreground/60">
-                <Search className="h-8 w-8" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="font-bold text-lg text-foreground">Analiz Bulunmuyor</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Bu makale henüz yapay zeka ile analiz edilmemiş. Özgünlük (intihal), SEO uyumluluğu, okunabilirlik ve içerik kalitesi skorlarını hesaplamak için analizi başlatın.
+        <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
+          {!report ? (
+            <div className="text-center py-10 space-y-4 max-w-md mx-auto">
+              <span className="h-14 w-14 bg-muted/50 rounded-full flex items-center justify-center mx-auto text-muted-foreground"><Search className="h-7 w-7" /></span>
+              <div className="space-y-1.5">
+                <h3 className="font-bold">{hasOld ? "Bu analiz eski yöntemle yapılmış" : "Henüz analiz yok"}</h3>
+                <p className="text-sm text-muted-foreground">
+                  Analiz; SEO kontrollerini, Türkçe okunabilirliği ve kaynak haberlerle metin örtüşmesini ölçer, yapay zekâ editörü de
+                  kaliteyi değerlendirip somut öneriler verir.
                 </p>
               </div>
-              <button
-                onClick={handleAnalyze}
-                disabled={isPending}
-                className="w-full py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-600/50 text-white font-bold rounded-xl transition-all shadow-md shadow-primary-500/20 flex items-center justify-center gap-2 cursor-pointer"
-              >
-                {isPending && actionType === "analyze" ? (
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Sparkles className="h-4 w-4" />
-                )}
-                Makaleyi Şimdi Analiz Et
+              <button onClick={() => run("analyze")} disabled={isPending} className="w-full h-11 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer">
+                {busy("analyze") ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                {busy("analyze") ? "Analiz ediliyor… (20-40 sn)" : hasOld ? "Yeniden analiz et" : "Şimdi analiz et"}
               </button>
             </div>
           ) : (
             <>
-              {/* Gauges Grid */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <CircularProgress value={articleData.qualityScore} label="Yazım Kalitesi" />
-                <CircularProgress value={articleData.plagiarismRate} label="İntihal Oranı" isPlagiarism={true} />
-                <CircularProgress value={articleData.seoScore} label="SEO Skoru" />
-                <CircularProgress value={articleData.readabilityScore} label="Okunabilirlik" />
-              </div>
+              {/* Özet */}
+              <section className="grid gap-4 sm:grid-cols-[auto_1fr] items-center rounded-2xl border border-border bg-muted/20 p-4">
+                <div className="flex items-center gap-4">
+                  <Ring value={report.overall ?? 0} />
+                  <div className="sm:hidden">
+                    <p className={cn("text-lg font-bold", tone(report.overall ?? 0))}>{verdict(report.overall ?? 0)}</p>
+                    <p className="text-xs text-muted-foreground">Genel puan</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <p className="hidden sm:block text-sm">
+                    <span className={cn("font-bold", tone(report.overall ?? 0))}>{verdict(report.overall ?? 0)}</span>
+                    <span className="text-muted-foreground"> · Genel puan
+                      {report.analyzedAt && ` · ${new Date(report.analyzedAt).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}`}
+                    </span>
+                  </p>
+                  <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+                    <ScoreBar label="Editoryal kalite" value={report.quality?.score ?? null} hint={report.quality?.ai ? undefined : "Yapay zekâ değerlendirmesi alınamadı"} />
+                    <ScoreBar label="SEO" value={report.seo?.score ?? null} />
+                    <ScoreBar label="Okunabilirlik" value={report.readability?.score ?? null} />
+                    <ScoreBar label="Özgünlük" value={report.originality?.score ?? null} />
+                  </div>
+                </div>
+              </section>
 
-              {/* Navigation Tabs */}
-              <div className="flex border-b border-border bg-muted/10 p-1.5 rounded-xl">
-                <button
-                  onClick={() => setActiveTab("overview")}
-                  className={cn(
-                    "flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer",
-                    activeTab === "overview" ? "bg-background shadow text-primary-600" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <BookOpen className="h-3.5 w-3.5" /> Özet Analiz
-                </button>
-                <button
-                  onClick={() => setActiveTab("plagiarism")}
-                  className={cn(
-                    "flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer",
-                    activeTab === "plagiarism" ? "bg-background shadow text-primary-600" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <Search className="h-3.5 w-3.5" /> İntihal & AI Tespiti
-                </button>
-                <button
-                  onClick={() => setActiveTab("seo")}
-                  className={cn(
-                    "flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer",
-                    activeTab === "seo" ? "bg-background shadow text-primary-600" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <TrendingUp className="h-3.5 w-3.5" /> SEO & Okunabilirlik
-                </button>
-                <button
-                  onClick={() => setActiveTab("suggestions")}
-                  className={cn(
-                    "flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-2 cursor-pointer",
-                    activeTab === "suggestions" ? "bg-background shadow text-primary-600" : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <ListChecks className="h-3.5 w-3.5" /> Öneriler
-                </button>
-              </div>
-
-              {/* Tab Contents */}
-              <div className="min-h-[220px] bg-muted/5 border border-border/40 p-5 rounded-2xl">
-                <AnimatePresence mode="wait">
-                  {activeTab === "overview" && (
-                    <motion.div
-                      key="overview"
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -5 }}
-                      className="space-y-4"
-                    >
-                      <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">Editör Özeti</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="p-4 bg-muted/20 border border-border/30 rounded-xl space-y-2">
-                          <p className="text-[11px] font-bold text-muted-foreground uppercase">İntihal Durumu</p>
-                          <p className="text-sm font-medium leading-relaxed">
-                            {report?.plagiarism?.comment || "Makale özgünlük analizi tamamlandı."}
-                          </p>
-                        </div>
-                        <div className="p-4 bg-muted/20 border border-border/30 rounded-xl space-y-2">
-                          <p className="text-[11px] font-bold text-muted-foreground uppercase">Okunabilirlik Analizi</p>
-                          <p className="text-sm font-medium leading-relaxed">
-                            {report?.readability?.comment || "Makale okunabilirlik analizi tamamlandı."}
-                          </p>
-                        </div>
-                      </div>
-
-                      {/* Warnings / High Plagiarism Banner */}
-                      {(articleData.plagiarismRate ?? 0) > 30 && (
-                        <div className="p-4 bg-warning/10 border border-warning/20 text-warning rounded-xl flex gap-3 text-xs">
-                          <AlertTriangle className="h-5 w-5 shrink-0" />
-                          <div className="space-y-1">
-                            <p className="font-bold">Yüksek Benzerlik / İntihal Uyarısı (%{articleData.plagiarismRate})</p>
-                            <p className="leading-relaxed font-medium">
-                              Bu makalede benzer haber kaynaklarıyla yüksek oranda anlamsal benzerlik tespit edilmiştir. İntihal oranını düşürmek için makaleyi düzenleyebilir veya Yapay Zeka ile yeniden yazdırabilirsiniz.
-                            </p>
-                          </div>
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-
-                  {activeTab === "plagiarism" && (
-                    <motion.div
-                      key="plagiarism"
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -5 }}
-                      className="space-y-5"
-                    >
-                      <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-                        <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">İntihal ve Yapay Zeka Tespiti</h3>
-                        {report?.plagiarism?.aiProbability !== undefined && (
-                          <div className="flex items-center gap-2 self-start px-3 py-1 rounded-full bg-primary-500/10 border border-primary-500/20 text-primary-500 font-semibold text-xs">
-                            <Sparkles className="h-3.5 w-3.5" />
-                            <span>Yapay Zeka Olasılığı: %{report.plagiarism.aiProbability}</span>
-                          </div>
+              {/* Sekmeler */}
+              <nav className="-mx-4 px-4 sm:mx-0 sm:px-0 overflow-x-auto no-scrollbar" aria-label="Analiz bölümleri">
+                <ul className="flex gap-1.5 w-max">
+                  {TABS.map((t) => (
+                    <li key={t.id}>
+                      <button
+                        onClick={() => setTab(t.id)}
+                        aria-current={tab === t.id ? "page" : undefined}
+                        className={cn(
+                          "inline-flex items-center gap-1.5 h-9 px-3 rounded-full border text-xs font-semibold whitespace-nowrap cursor-pointer",
+                          tab === t.id ? "bg-foreground text-background border-foreground" : "border-border hover:bg-muted",
                         )}
-                      </div>
+                      >
+                        <t.icon className="h-3.5 w-3.5" /> {t.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
 
-                      <div className="space-y-3">
-                        <p className="text-sm font-medium text-muted-foreground">Eşleşen Benzer Kaynaklar</p>
-                        {!report?.plagiarism?.sources || report.plagiarism.sources.length === 0 ? (
-                          <div className="p-6 bg-muted/20 border border-dashed border-border rounded-xl text-center text-xs font-semibold text-muted-foreground">
-                            Herhangi bir doğrudan kopya veya eşleşen haber kaynağı bulunamadı. Makale anlamsal olarak özgün görünüyor.
-                          </div>
-                        ) : (
-                          <div className="divide-y divide-border border border-border/40 rounded-xl overflow-hidden bg-background">
-                            {report.plagiarism.sources.map((source, i) => (
-                              <div key={i} className="p-3 flex items-center justify-between gap-4 text-xs">
-                                <div className="min-w-0">
-                                  <p className="font-bold truncate text-foreground">{source.title || "Haber Kaynağı"}</p>
-                                  {source.url && (
-                                    <a
-                                      href={source.url}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-primary-500 hover:underline flex items-center gap-1 mt-1 font-semibold"
-                                    >
-                                      {source.url} <ExternalLink className="h-3 w-3" />
-                                    </a>
-                                  )}
-                                </div>
-                                <div className="shrink-0 px-2 py-1 bg-error/10 text-error font-extrabold rounded-md text-[10px]">
-                                  %{source.matchPercent || 0} Benzerlik
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-
-                      {report?.plagiarism?.comment && (
-                        <div className="p-4 bg-muted/20 border border-border/30 rounded-xl">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">Analiz Yorumu</p>
-                          <p className="text-xs font-medium leading-relaxed">{report.plagiarism.comment}</p>
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-
-                  {activeTab === "seo" && (
-                    <motion.div
-                      key="seo"
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -5 }}
-                      className="space-y-4"
-                    >
-                      <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">SEO Analizi ve Okunabilirlik</h3>
-                      
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="p-4 bg-muted/20 border border-border/30 rounded-xl space-y-3">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Hiyerarşik Yapı</p>
-                          <div className="flex items-center gap-2">
-                            {report?.seo?.hasHeadingStructure ? (
-                              <div className="flex items-center gap-1.5 text-success text-xs font-bold">
-                                <CheckCircle2 className="h-4.5 w-4.5" />
-                                <span>Doğru Alt Başlık Yapısı (H2, H3)</span>
-                              </div>
-                            ) : (
-                              <div className="flex items-center gap-1.5 text-warning text-xs font-bold">
-                                <AlertTriangle className="h-4.5 w-4.5" />
-                                <span>Başlık Hiyerarşisi Eksik</span>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-
-                        <div className="p-4 bg-muted/20 border border-border/30 rounded-xl space-y-2">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase">Önerilen Anahtar Kelimeler</p>
-                          <div className="flex flex-wrap gap-1.5">
-                            {report?.seo?.keywordSuggestions && report.seo.keywordSuggestions.length > 0 ? (
-                              report.seo.keywordSuggestions.map((kw, i) => (
-                                <span key={i} className="text-[10px] px-2 py-0.5 bg-primary-500/10 border border-primary-500/20 text-primary-500 font-bold rounded-full">
-                                  {kw}
-                                </span>
-                              ))
-                            ) : (
-                              <span className="text-xs text-muted-foreground italic font-semibold">Anahtar kelime önerisi bulunmuyor.</span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {report?.seo?.comment && (
-                        <div className="p-4 bg-muted/20 border border-border/30 rounded-xl">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">SEO Değerlendirmesi</p>
-                          <p className="text-xs font-medium leading-relaxed">{report.seo.comment}</p>
-                        </div>
-                      )}
-
-                      {report?.readability?.comment && (
-                        <div className="p-4 bg-muted/20 border border-border/30 rounded-xl">
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">Okunabilirlik Değerlendirmesi</p>
-                          <p className="text-xs font-medium leading-relaxed">{report.readability.comment}</p>
-                        </div>
-                      )}
-                    </motion.div>
-                  )}
-
-                  {activeTab === "suggestions" && (
-                    <motion.div
-                      key="suggestions"
-                      initial={{ opacity: 0, y: 5 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -5 }}
-                      className="space-y-4"
-                    >
-                      <h3 className="font-bold text-sm text-foreground uppercase tracking-wider">İçerik İyileştirme Önerileri</h3>
-                      
-                      {!report?.suggestions || report.suggestions.length === 0 ? (
-                        <div className="p-6 bg-muted/20 border border-dashed border-border rounded-xl text-center text-xs font-semibold text-muted-foreground">
-                          Yapay zekanın bu makale için sunduğu ek bir iyileştirme önerisi bulunmuyor.
-                        </div>
-                      ) : (
-                        <ul className="space-y-3">
-                          {report.suggestions.map((suggestion, i) => (
-                            <li key={i} className="flex gap-3 p-3 bg-primary-500/5 border border-primary-500/10 rounded-xl text-xs font-medium leading-relaxed">
-                              <span className="flex-shrink-0 h-5 w-5 bg-primary-600 text-white rounded-full flex items-center justify-center font-bold text-[10px]">
-                                {i + 1}
-                              </span>
-                              <span>{suggestion}</span>
+              <div className="min-h-[200px]">
+                {tab === "todo" && (
+                  <div className="space-y-4">
+                    {(report.fixes?.length ?? 0) === 0 && (report.suggestions?.length ?? 0) === 0 ? (
+                      <p className="flex items-center gap-2 text-sm rounded-xl bg-success/10 p-3"><CheckCircle2 className="h-4 w-4 text-success" /> Ölçülen bir eksik yok.</p>
+                    ) : null}
+                    {(report.fixes?.length ?? 0) > 0 && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Ölçülen eksikler (önem sırasıyla)</h3>
+                        <ol className="space-y-2">
+                          {report.fixes!.map((f, i) => (
+                            <li key={i} className="flex gap-2.5 text-sm rounded-xl border border-border p-3">
+                              <span className="h-5 w-5 shrink-0 rounded-full bg-primary-500/10 text-primary-500 text-[11px] font-bold flex items-center justify-center">{i + 1}</span>
+                              {f}
                             </li>
                           ))}
+                        </ol>
+                      </div>
+                    )}
+                    {(report.suggestions?.length ?? 0) > 0 && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Editör önerileri</h3>
+                        <ul className="space-y-2">
+                          {report.suggestions!.map((s, i) => (
+                            <li key={i} className="flex gap-2.5 text-sm rounded-xl bg-muted/30 p-3"><Sparkles className="h-4 w-4 text-primary-500 shrink-0 mt-0.5" /> {s}</li>
+                          ))}
                         </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {tab === "seo" && report.seo && (
+                  <div className="space-y-3">
+                    <p className="text-sm">
+                      Odak ifade: <strong>{report.seo.focusKeyword ?? "belirlenemedi"}</strong>
+                      <span className="text-muted-foreground"> — okurun bu haberi ararken yazması en olası ifade</span>
+                    </p>
+                    <ul className="divide-y divide-border rounded-xl border border-border">
+                      {report.seo.checks.map((c) => (
+                        <li key={c.id} className="flex items-start gap-2.5 px-3 py-2.5 text-sm">
+                          {STATUS_ICON[c.status]}
+                          <span className="min-w-0 flex-1">
+                            <span className="font-medium">{c.label}</span>
+                            <span className="block text-xs text-muted-foreground">{c.detail}</span>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {tab === "readability" && report.readability && (
+                  <div className="space-y-3">
+                    <p className="text-sm">
+                      Ateşman okunabilirlik indeksi: <strong>{report.readability.stats.atesman}</strong> ({report.readability.level}).
+                      <span className="text-muted-foreground"> Türkçe haber metinlerinde 40 ve üzeri iyi kabul edilir; düşük değer uzun cümle ve kelimelere işaret eder.</span>
+                    </p>
+                    <dl className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                      {[
+                        ["Kelime", report.readability.stats.words],
+                        ["Okuma süresi", `${report.readability.stats.readingMinutes} dk`],
+                        ["Cümle", report.readability.stats.sentences],
+                        ["Ort. cümle", `${report.readability.stats.avgSentenceWords} kelime`],
+                        ["Uzun cümle (25+)", report.readability.stats.longSentences],
+                        ["Paragraf", report.readability.stats.paragraphs],
+                        ["Uzun paragraf (90+)", report.readability.stats.longParagraphs],
+                        ["Ara başlık", report.readability.stats.h2 + report.readability.stats.h3],
+                      ].map(([k, v]) => (
+                        <div key={String(k)} className="rounded-xl border border-border p-2.5">
+                          <dt className="text-[11px] text-muted-foreground">{k}</dt>
+                          <dd className="text-sm font-bold tabular-nums">{v}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </div>
+                )}
+
+                {tab === "originality" && report.originality && (
+                  <div className="space-y-3">
+                    <p className="text-sm">
+                      Metnin <strong className={tone(100 - report.originality.copiedRate * 2.5)}>%{report.originality.copiedRate}</strong>&apos;i kaynak haberlerle aynen örtüşüyor.
+                      <span className="block text-xs text-muted-foreground mt-1">
+                        {report.originality.sourcesChecked} kaynak haber ({report.originality.fullTextChecked} tanesinin tam metni) ve sitedeki son {report.originality.siteArticlesChecked} haberle,
+                        5 kelimelik ifadeler düzeyinde karşılaştırıldı.
+                      </span>
+                    </p>
+                    {report.originality.matches.length === 0 ? (
+                      <p className="flex items-center gap-2 text-sm rounded-xl bg-success/10 p-3"><CheckCircle2 className="h-4 w-4 text-success" /> Belirgin bir örtüşme bulunmadı.</p>
+                    ) : (
+                      <ul className="divide-y divide-border rounded-xl border border-border">
+                        {report.originality.matches.map((m, i) => (
+                          <li key={i} className="flex items-center gap-3 px-3 py-2.5 text-sm">
+                            <span className="min-w-0 flex-1">
+                              <span className="block font-medium truncate">{m.title}</span>
+                              <span className="text-[11px] text-muted-foreground">{m.kind === "site" ? "Sitedeki başka bir haber" : "Kaynak haber"}</span>
+                            </span>
+                            <span className={cn("shrink-0 rounded-md px-2 py-0.5 text-xs font-bold", m.percent >= 30 ? "bg-error/10 text-error" : m.percent >= 10 ? "bg-warning/10 text-warning" : "bg-muted text-muted-foreground")}>%{m.percent}</span>
+                            {m.url && (
+                              <a href={m.url} target="_blank" rel="noopener noreferrer" aria-label="Aç" className="h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground"><ExternalLink className="h-4 w-4" /></a>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
+
+                {tab === "editor" && (
+                  report.quality?.ai ? (
+                    <div className="space-y-4">
+                      {report.quality.comment && <p className="text-sm leading-relaxed rounded-xl bg-muted/30 p-3">{report.quality.comment}</p>}
+                      {report.quality.strengths.length > 0 && (
+                        <div className="space-y-1.5">
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Güçlü yönler</h3>
+                          <ul className="space-y-1.5">{report.quality.strengths.map((s, i) => <li key={i} className="flex gap-2 text-sm"><CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /> {s}</li>)}</ul>
+                        </div>
                       )}
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                      {report.quality.issues.length > 0 && (
+                        <div className="space-y-1.5">
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Sorunlar</h3>
+                          <ul className="space-y-1.5">{report.quality.issues.map((s, i) => <li key={i} className="flex gap-2 text-sm"><AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" /> {s}</li>)}</ul>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground rounded-xl bg-muted/30 p-3">
+                      Yapay zekâ editör değerlendirmesi bu analizde alınamadı (servis yoğun ya da yapılandırılmamış olabilir). Diğer puanlar ölçüme dayandığı için geçerlidir; birazdan yeniden analiz edebilirsiniz.
+                    </p>
+                  )
+                )}
               </div>
             </>
           )}
         </div>
 
-        {/* Footer */}
-        <div className="px-6 py-5 border-t border-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-muted/20">
-          <div>
-            {hasAnalysis && (
-              <button
-                onClick={handleAnalyze}
-                disabled={isPending}
-                className="flex items-center gap-2 text-xs font-bold text-primary-600 hover:text-primary-700 hover:underline transition-all cursor-pointer disabled:opacity-50"
-              >
-                <RefreshCw className={cn("h-3.5 w-3.5", isPending && actionType === "analyze" && "animate-spin")} />
-                Yeniden Analiz Et
-              </button>
-            )}
-          </div>
-
-          <div className="flex items-center justify-end gap-2.5">
-            <button
-              onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-border text-xs font-bold hover:bg-muted text-muted-foreground hover:text-foreground transition-all cursor-pointer"
-            >
-              Kapat
+        {report && (
+          <div className="px-4 sm:px-6 py-3 border-t border-border flex flex-wrap items-center justify-between gap-2 bg-muted/20">
+            <button onClick={() => run("analyze")} disabled={isPending} className="inline-flex items-center gap-1.5 h-10 px-3 rounded-xl text-xs font-bold text-primary-600 hover:bg-primary-500/10 disabled:opacity-50 cursor-pointer">
+              <RefreshCw className={cn("h-3.5 w-3.5", busy("analyze") && "animate-spin")} /> {busy("analyze") ? "Analiz ediliyor…" : "Yeniden analiz et"}
             </button>
-            
-            {/* Rewrite Action (shows when plagiarism is above 30% or quality below 70, and article has analysis) */}
-            {hasAnalysis && (
-              <button
-                onClick={handleRewrite}
-                disabled={isPending}
-                title="Makaleyi yapay zeka ile yeniden yazdır"
-                className="px-4 py-2.5 bg-primary-600 hover:bg-primary-700 disabled:bg-primary-600/50 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-primary-500/20 flex items-center gap-1.5 cursor-pointer"
-              >
-                {isPending && actionType === "rewrite" ? (
-                  <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Wand2 className="h-3.5 w-3.5" />
-                )}
-                Yapay Zeka ile Yeniden Yaz
-              </button>
-            )}
+            <button
+              onClick={() => run("rewrite")}
+              disabled={isPending}
+              title="Metni, analizdeki eksikleri giderecek şekilde yapay zekâ ile yeniden yazdırır"
+              className="inline-flex items-center gap-1.5 h-10 px-4 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white text-xs font-bold rounded-xl cursor-pointer"
+            >
+              {busy("rewrite") ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Wand2 className="h-3.5 w-3.5" />}
+              {busy("rewrite") ? "Yeniden yazılıyor…" : "Eksikleri gidererek yeniden yaz"}
+            </button>
           </div>
-        </div>
-
+        )}
       </div>
     </div>
   );

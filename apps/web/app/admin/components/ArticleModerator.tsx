@@ -1,5 +1,6 @@
 "use client";
 
+import { displayScore } from "@/lib/analysis/report";
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
@@ -114,9 +115,10 @@ export function ArticleModerator({ articles }: { articles: AdminArticleRow[] }) 
                   {a.category && <span style={{ color: a.category.color || undefined }} className="font-semibold">{a.category.name}</span>}
                   <span>{formatRelativeTime(a.publishedAt ?? a.createdAt, { compact: true })}</span>
                   <span>{formatViewCount(a.viewCount)} okunma</span>
-                  {a.qualityScore !== null && (
-                    <span className={cn("rounded px-1.5 py-0.5 font-bold", scoreClass(a.qualityScore))} title="Kalite puanı">Kalite {a.qualityScore}</span>
-                  )}
+                  {(() => {
+                    const score = displayScore(a.analysisReport, a.qualityScore);
+                    return score && <span className={cn("rounded px-1.5 py-0.5 font-bold", scoreClass(score.value))} title="Analiz puanı">{score.label} {score.value}</span>;
+                  })()}
                   {(a.plagiarismRate ?? 0) > 30 && (
                     <span className="rounded px-1.5 py-0.5 font-bold text-error bg-error/10" title="Benzerlik oranı">Benzerlik %{a.plagiarismRate}</span>
                   )}

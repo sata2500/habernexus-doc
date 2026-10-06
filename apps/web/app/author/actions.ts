@@ -240,7 +240,10 @@ async function assertAuthorOrAdmin(articleId: string) {
 // Makaleyi analiz et (yazar)
 export async function analyzeArticleAction(articleId: string) {
   try {
-    await assertAuthorOrAdmin(articleId);
+    const session = await assertAuthorOrAdmin(articleId);
+    // Yapay zekâ maliyeti: yazar başına saatte 20 analiz
+    const rate = await checkRateLimitAsync(`analyze:${session.user.id}`, 20, 60 * 60 * 1000);
+    if (!rate.allowed) return { success: false as const, error: "Çok sık analiz istendi. Lütfen biraz sonra tekrar deneyin." };
     const res = await analyzeArticle(articleId);
     revalidatePath("/author/articles");
     return res;

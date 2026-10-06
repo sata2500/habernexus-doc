@@ -312,6 +312,20 @@ export async function writeArticleWithAI(suggestionId: string): Promise<WriteRes
   return writeStory(storyId);
 }
 
+/** Son analizdeki eksik ve önerileri yeniden yazım talimatına dönüştürür (varsa) */
+function analysisNotes(report: unknown) {
+  if (!report || typeof report !== "object" || Array.isArray(report)) return "";
+  const r = report as { fixes?: unknown; suggestions?: unknown; seo?: { focusKeyword?: unknown }; quality?: { issues?: unknown } };
+  const list = (v: unknown) => (Array.isArray(v) ? v.filter((x): x is string => typeof x === "string") : []);
+  // Spot, kapak görseli ve etiket gibi metin dışı eksikler yeniden yazımla düzelmez
+  const items = [...list(r.quality?.issues), ...list(r.fixes), ...list(r.suggestions)]
+    .filter((x) => !/spot|kapak|görsel|etiket|adres|url/i.test(x))
+    .slice(0, 10);
+  const keyword = typeof r.seo?.focusKeyword === "string" ? r.seo.focusKeyword : null;
+  if (!items.length && !keyword) return "";
+  return `\nSon kalite analizinde tespit edilenler; yeniden yazarken bunları gider:\n${items.map((x) => `- ${x}`).join("\n")}${keyword ? `\n- Odak ifade: "${keyword}" (giriş paragrafında ve bir ara başlıkta doğal biçimde kullan)` : ""}\n`;
+}
+
 export async function rewriteArticleWithAI(articleId: string) {
   try {
     const article = await prisma.article.findUnique({
@@ -334,7 +348,7 @@ export async function rewriteArticleWithAI(articleId: string) {
     const { text } = await generateText("writer", {
       system: `${finalPrompt}\n\n${WRITER_FORMAT}`,
       prompt: `Aşağıdaki haberi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz. Anlatım bozukluklarını düzelt, bilgileri koru.
-
+${analysisNotes(article.analysisReport)}
 Başlık: ${article.title}
 
 Mevcut metin:
