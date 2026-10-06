@@ -28,7 +28,6 @@ const ANALYZE_BATCH = 12;
 /** Kural tabanlı değerlendirilen konular bu süre boyunca yapay zekâyla yeniden denenir */
 const FALLBACK_RETRY_HOURS = 12;
 
-export const OPEN_STATUSES = ["NEW", "READY", "WRITING"] as const;
 
 type StoryRow = {
   id: string;

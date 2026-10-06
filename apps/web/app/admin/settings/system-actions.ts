@@ -63,12 +63,6 @@ export async function runSeoMaintenanceAction() {
   }
 }
 
-export async function getIndexingStatusAction() {
-  await requireRole("ADMIN");
-  const { getIndexingLog, isIndexingConfigured } = await import("@/lib/google-indexing");
-  return { configured: isIndexingConfigured(), log: await getIndexingLog() };
-}
-
 export async function testIndexingAction() {
   await requireRole("ADMIN");
   const { testIndexingAccess } = await import("@/lib/google-indexing");

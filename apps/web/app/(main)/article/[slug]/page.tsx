@@ -52,7 +52,7 @@ export async function generateMetadata({ params }: { params: Params }) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
 
-  if (!article) return { title: "Makale Bulunamadı" };
+  if (!article) return { title: "Haber bulunamadı", robots: { index: false, follow: true } };
 
   const isPublished = article.status === "PUBLISHED";
   // Spot yoksa ya da kısaysa gövdenin ilk paragrafından tamamlanır (başlığın tekrarı yerine)

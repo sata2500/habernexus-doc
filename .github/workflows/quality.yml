@@ -15,7 +15,7 @@ concurrency:
 jobs:
   web-quality:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 25
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -46,6 +46,16 @@ jobs:
       - name: Unit tests
         working-directory: apps/web
         run: npm run test
+
+      - name: Production build
+        working-directory: apps/web
+        env:
+          # Derlemedeki tip denetimi varsayılan 2 GB yığını aşıyor
+          NODE_OPTIONS: --max-old-space-size=6144
+          # Yalnızca derleme için sahte değer; gerçek anahtar Vercel ortamındadır
+          BETTER_AUTH_SECRET: ci-build-only-not-a-real-secret-000000
+          NEXT_PUBLIC_APP_URL: https://habernexus.com
+        run: npm run build
 
       - name: Production dependency audit (critical gate)
         working-directory: .

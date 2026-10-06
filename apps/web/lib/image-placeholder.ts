@@ -39,13 +39,3 @@ export function getShimmerDataUrl(w: number = 700, h: number = 475): string {
  * Standart kapak görselleri için hazır 16:9 Blur Placeholder Data URL'i.
  */
 export const ARTICLE_COVER_BLUR_DATA_URL = getShimmerDataUrl(800, 450);
-
-/**
- * Slider görselleri için 21:9 Blur Placeholder Data URL'i.
- */
-export const SLIDER_BLUR_DATA_URL = getShimmerDataUrl(1200, 500);
-
-/**
- * Kare avatar ve profil fotoğrafları için Blur Data URL'i.
- */
-export const AVATAR_BLUR_DATA_URL = getShimmerDataUrl(200, 200);

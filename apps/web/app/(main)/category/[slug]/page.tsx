@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Params }) {
   const { slug } = await params;
   const category = await getCategoryWithArticles(slug);
 
-  if (!category) return { title: "Kategori Bulunamadı | Haber Nexus" };
+  if (!category) return { title: "Kategori bulunamadı", robots: { index: false, follow: true } };
 
   return {
     title: `${category.name} Haberleri`,

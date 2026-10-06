@@ -64,7 +64,7 @@ export async function writeStoryNow(id: string): Promise<Result> {
   await prisma.newsStory.updateMany({ where: { id: parsed.data, status: { in: ["NEW", "FAILED"] } }, data: { status: "READY", attempts: 0 } });
   const r = await dispatchStories([parsed.data]);
   refresh();
-  if (r.mode === "sync" && r.failed > 0) return { success: false, error: r.errors[0] };
+  if (r.mode === "sync" && r.failed > 0) return { success: false, error: r.errors[0] ?? "Konu yazılamadı." };
   return { success: true, message: describeDispatch(r) };
 }
 

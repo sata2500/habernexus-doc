@@ -7,7 +7,9 @@ import { SupportReceiptTemplate } from "@/components/mail/SupportReceiptTemplate
 import { AdminNotificationTemplate } from "@/components/mail/AdminNotificationTemplate";
 import * as React from "react";
 
-const resendClient = new Resend(process.env.RESEND_API_KEY);
+// İstemci ilk kullanımda oluşturulur: dosya yüklenirken oluşturmak anahtar yoksa derlemeyi çökertiyordu
+let resendClient: Resend | null = null;
+const getResend = () => (resendClient ??= new Resend(process.env.RESEND_API_KEY));
 
 /**
  * E-posta ekinin metadata'sını temsil eden tip.
@@ -66,7 +68,7 @@ export async function POST(req: NextRequest) {
 
     try {
       const { data: fullEmail, error: fetchError } =
-        await resendClient.emails.receiving.get(emailId);
+        await getResend().emails.receiving.get(emailId);
 
       if (fetchError || !fullEmail) {
         console.error("Email fetch error:", fetchError);

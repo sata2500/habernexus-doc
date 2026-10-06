@@ -38,22 +38,4 @@ function SkeletonArticleCard() {
   );
 }
 
-function SkeletonHero() {
-  return (
-    <div className="relative rounded-2xl overflow-hidden">
-      <Skeleton className="h-[400px] md:h-[500px] w-full" />
-      <div className="absolute bottom-0 left-0 right-0 p-8 space-y-3">
-        <Skeleton className="h-5 w-24" />
-        <Skeleton className="h-8 w-3/4" />
-        <Skeleton className="h-8 w-1/2" />
-        <Skeleton className="h-4 w-2/3" />
-      </div>
-    </div>
-  );
-}
-
-function SkeletonLine({ className }: SkeletonProps) {
-  return <Skeleton className={cn("h-4 w-full", className)} />;
-}
-
-export { Skeleton, SkeletonArticleCard, SkeletonHero, SkeletonLine };
+export { Skeleton, SkeletonArticleCard };

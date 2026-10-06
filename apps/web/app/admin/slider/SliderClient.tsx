@@ -73,9 +73,12 @@ export function SliderClient({ slider }: { slider: SliderData }) {
     act(() => updateSliderSettings({ autoPlay: slider.autoPlay, interval: slider.interval, isActive: slider.isActive, ...patch }));
 
   const move = (index: number, dir: -1 | 1) => {
+    const target = index + dir;
+    if (target < 0 || target >= slides.length) return;
     const next = [...slides];
     const [item] = next.splice(index, 1);
-    next.splice(index + dir, 0, item);
+    if (!item) return;
+    next.splice(target, 0, item);
     setSlides(next);
     act(() => reorderSlides(next.map((s) => s.id)));
   };

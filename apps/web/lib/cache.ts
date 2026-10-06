@@ -193,4 +193,3 @@ class DistributedCache {
 }
 
 export const appCache = new DistributedCache();
-export const memoryCache = appCache;
