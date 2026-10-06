@@ -1,155 +1,104 @@
 import {
-  Body,
-  Container,
-  Head,
-  Heading,
-  Hr,
-  Html,
-  Img,
-  Link,
-  Preview,
-  Section,
-  Text,
-  Tailwind,
-  Row,
-  Column,
+  Body, Column, Container, Head, Heading, Hr, Html, Img, Link, Preview, Row, Section, Text,
 } from "@react-email/components";
 import * as React from "react";
+import type { NewsletterArticle } from "@/lib/newsletter-content";
 
-interface Article {
-  title: string;
-  excerpt: string | null;
-  slug: string;
-  coverImage: string | null;
-  category: { name: string } | null;
-}
+/**
+ * Günlük bülten e-postası. E-posta istemcileri modern CSS'i desteklemediği için satır içi stil
+ * kullanılır; genişlik esnektir (telefonda tam genişlik, masaüstünde en fazla 600px).
+ */
 
 interface NewsletterTemplateProps {
-  articles: Article[];
+  articles: NewsletterArticle[];
   unsubscribeUrl: string;
+  /** Kayıtlı kullanıcılar için gönderim saatini değiştirme sayfası (misafirlerde yok) */
+  settingsUrl?: string | null;
+  dateLabel: string;
+  link: (path: string) => string;
+  /** Test gönderimi notu */
+  isTest?: boolean;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+const RED = "#dc2626";
+const INK = "#111827";
+const MUTED = "#4b5563";
+const SOFT = "#9ca3af";
+const LINE = "#e5e7eb";
+const FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
-export const NewsletterTemplate = ({
-  articles = [],
-  unsubscribeUrl,
-}: NewsletterTemplateProps) => {
-  const previewText = articles.length > 0 
-    ? `Günün Özet Haberleri: ${articles[0].title}`
-    : "Haber Nexus Günlük Bülten";
+const meta = (a: NewsletterArticle) => [a.category?.name, `${a.readingMinutes} dk okuma`].filter(Boolean).join(" · ");
 
-  const mainArticle = articles[0];
-  const otherArticles = articles.slice(1);
+export const NewsletterTemplate = ({ articles, unsubscribeUrl, settingsUrl, dateLabel, link, isTest }: NewsletterTemplateProps): React.ReactElement => {
+  const [main, ...others] = articles;
+  const preview = articles.slice(0, 3).map((a) => a.title).join(" · ");
 
   return (
-    <Html>
-      <Tailwind
-        config={{
-          theme: {
-            extend: {
-              colors: {
-                brand: "#2563eb",
-                slate: {
-                  900: "#0f172a",
-                  600: "#475569",
-                  400: "#94a3b8",
-                  50: "#f8fafc",
-                },
-              },
-            },
-          },
-        }}
-      >
-        <Head />
-        <Preview>{previewText}</Preview>
-        <Body className="bg-[#f1f5f9] font-sans m-0 p-0">
-          <Container className="mx-auto my-10 w-[600px] bg-white rounded-3xl overflow-hidden shadow-xl border border-solid border-slate-200">
-            
-            {/* Header / Logo Section */}
-            <Section className="bg-brand py-8 text-center">
-              <Link href={BASE_URL}>
-                <Img
-                  src={`${BASE_URL}/logo-light.png`} // Logo URL'nizin doğruluğundan emin olun
-                  alt="Haber Nexus"
-                  width="180"
-                  className="mx-auto"
-                />
-              </Link>
-              <Text className="text-primary-100 text-[12px] font-bold uppercase tracking-[2px] mt-2 m-0">
-                GÜNLÜK HABER ÖZETİ
-              </Text>
-            </Section>
-
-            {/* Main Featured Article */}
-            {mainArticle && (
-              <Section className="p-8 pb-4">
-                <Text className="text-brand text-xs font-bold uppercase tracking-widest mb-2 m-0">
-                  {mainArticle.category?.name || "GÜNDEM"}
-                </Text>
-                <Link href={`${BASE_URL}/article/${mainArticle.slug}`}>
-                  <Heading className="text-slate-900 text-[28px] font-extrabold leading-[1.2] m-0 mb-4 tracking-tight">
-                    {mainArticle.title}
-                  </Heading>
+    <Html lang="tr">
+      <Head />
+      <Preview>{preview}</Preview>
+      <Body style={{ backgroundColor: "#f3f4f6", margin: 0, padding: "24px 0", fontFamily: FONT }}>
+        <Container style={{ width: "100%", maxWidth: "600px", backgroundColor: "#ffffff", borderRadius: "16px", overflow: "hidden", border: `1px solid ${LINE}` }}>
+          {/* Başlık */}
+          <Section style={{ padding: "24px 28px 16px", borderBottom: `3px solid ${RED}` }}>
+            <Row>
+              <Column>
+                <Link href={link("/")} style={{ textDecoration: "none" }}>
+                  <Text style={{ margin: 0, fontSize: "24px", fontWeight: 800, letterSpacing: "-0.5px", color: INK }}>
+                    <span style={{ color: RED }}>Haber</span> Nexus
+                  </Text>
                 </Link>
-                {mainArticle.coverImage && (
-                  <Link href={`${BASE_URL}/article/${mainArticle.slug}`}>
-                    <Img
-                      src={mainArticle.coverImage}
-                      alt={mainArticle.title}
-                      width="536"
-                      className="rounded-2xl object-cover w-full aspect-video shadow-lg mb-4"
-                    />
-                  </Link>
-                )}
-                <Text className="text-slate-600 text-[16px] leading-[1.6] m-0">
-                  {mainArticle.excerpt || mainArticle.title}
-                </Text>
-                <Section className="mt-6">
-                  <Link
-                    href={`${BASE_URL}/article/${mainArticle.slug}`}
-                    className="bg-brand text-white px-8 py-4 rounded-xl font-bold text-sm inline-block shadow-lg shadow-primary-500/20"
-                  >
-                    Haberi Oku →
-                  </Link>
-                </Section>
-              </Section>
-            )}
+              </Column>
+              <Column align="right">
+                <Text style={{ margin: 0, fontSize: "11px", fontWeight: 700, letterSpacing: "1.5px", color: RED, textTransform: "uppercase" }}>Günün özeti</Text>
+                <Text style={{ margin: "2px 0 0", fontSize: "12px", color: MUTED }}>{dateLabel}</Text>
+              </Column>
+            </Row>
+          </Section>
 
-            <Hr className="border-slate-100 mx-8 my-6" />
+          {isTest && (
+            <Section style={{ padding: "10px 28px", backgroundColor: "#fef3c7" }}>
+              <Text style={{ margin: 0, fontSize: "12px", color: "#92400e" }}>Bu bir deneme gönderimidir; gerçek bültende son 24 saatin öne çıkan haberleri yer alır.</Text>
+            </Section>
+          )}
 
-            {/* Other Articles Grid Style */}
-            <Section className="px-8 pb-8">
-              <Heading className="text-slate-900 text-[18px] font-bold mb-6 m-0">
-                Daha Fazla Gelişme
-              </Heading>
+          {/* Manşet */}
+          {main && (
+            <Section style={{ padding: "24px 28px 8px" }}>
+              {main.coverImage && (
+                <Link href={link(`/article/${main.slug}`)}>
+                  <Img src={main.coverImage} alt={main.title} width="544" style={{ width: "100%", maxWidth: "544px", height: "auto", borderRadius: "12px", display: "block" }} />
+                </Link>
+              )}
+              <Text style={{ margin: "16px 0 6px", fontSize: "11px", fontWeight: 700, letterSpacing: "1px", color: RED, textTransform: "uppercase" }}>{meta(main)}</Text>
+              <Link href={link(`/article/${main.slug}`)} style={{ textDecoration: "none" }}>
+                <Heading as="h1" style={{ margin: "0 0 10px", fontSize: "24px", lineHeight: "1.25", fontWeight: 800, color: INK }}>{main.title}</Heading>
+              </Link>
+              {main.excerpt && <Text style={{ margin: "0 0 16px", fontSize: "16px", lineHeight: "1.6", color: MUTED }}>{main.excerpt}</Text>}
+              <Link href={link(`/article/${main.slug}`)} style={{ display: "inline-block", backgroundColor: RED, color: "#ffffff", padding: "12px 22px", borderRadius: "10px", fontSize: "14px", fontWeight: 700, textDecoration: "none" }}>
+                Haberi oku →
+              </Link>
+            </Section>
+          )}
 
-              {otherArticles.map((article) => (
-                <Section key={article.slug} className="mb-8 last:mb-0">
+          {/* Diğer haberler */}
+          {others.length > 0 && (
+            <Section style={{ padding: "16px 28px 8px" }}>
+              <Hr style={{ borderColor: LINE, margin: "8px 0 16px" }} />
+              <Text style={{ margin: "0 0 8px", fontSize: "13px", fontWeight: 800, letterSpacing: "1px", color: INK, textTransform: "uppercase" }}>Gündemin diğer başlıkları</Text>
+              {others.map((a) => (
+                <Section key={a.slug} style={{ padding: "12px 0", borderBottom: `1px solid ${LINE}` }}>
                   <Row>
-                    <Column className="align-top pr-4">
-                      <Text className="text-brand text-[10px] font-bold uppercase mb-1 m-0">
-                        {article.category?.name || "HABER"}
-                      </Text>
-                      <Link href={`${BASE_URL}/article/${article.slug}`}>
-                        <Text className="text-slate-900 text-[18px] font-bold leading-tight m-0 mb-2">
-                          {article.title}
-                        </Text>
+                    <Column style={{ verticalAlign: "top", paddingRight: a.coverImage ? "14px" : 0 }}>
+                      <Text style={{ margin: "0 0 4px", fontSize: "11px", fontWeight: 700, color: RED, textTransform: "uppercase", letterSpacing: "0.5px" }}>{meta(a)}</Text>
+                      <Link href={link(`/article/${a.slug}`)} style={{ textDecoration: "none" }}>
+                        <Text style={{ margin: 0, fontSize: "16px", lineHeight: "1.35", fontWeight: 700, color: INK }}>{a.title}</Text>
                       </Link>
-                      <Text className="text-slate-600 text-[14px] leading-snug m-0 line-clamp-2">
-                        {article.excerpt || article.title}
-                      </Text>
                     </Column>
-                    {article.coverImage && (
-                      <Column className="w-[120px] align-top">
-                        <Link href={`${BASE_URL}/article/${article.slug}`}>
-                          <Img
-                            src={article.coverImage}
-                            alt={article.title}
-                            width="120"
-                            height="80"
-                            className="rounded-xl object-cover"
-                          />
+                    {a.coverImage && (
+                      <Column style={{ width: "96px", verticalAlign: "top" }}>
+                        <Link href={link(`/article/${a.slug}`)}>
+                          <Img src={a.coverImage} alt="" width="96" height="64" style={{ width: "96px", height: "64px", objectFit: "cover", borderRadius: "8px", display: "block" }} />
                         </Link>
                       </Column>
                     )}
@@ -157,47 +106,32 @@ export const NewsletterTemplate = ({
                 </Section>
               ))}
             </Section>
+          )}
 
-            {/* Professional Footer */}
-            <Section className="bg-slate-50 p-10 text-center border-t border-solid border-slate-200">
-              <Text className="text-slate-900 font-bold text-[16px] m-0 mb-2">
-                Haber Nexus
-              </Text>
-              <Text className="text-slate-400 text-[12px] leading-relaxed m-0 mb-6">
-                Gerçek haber, yeni nesil deneyim.<br />
-                Her sabah en önemli gelişmeleri sizin için özetliyoruz.
-              </Text>
-              
-              <Row className="w-[200px] mx-auto mb-6">
-                <Column>
-                  <Link href={`${BASE_URL}/about`} className="text-slate-600 text-[12px] font-medium underline">Hakkımızda</Link>
-                </Column>
-                <Column>
-                  <Link href={`${BASE_URL}/advertise`} className="text-slate-600 text-[12px] font-medium underline">Reklam</Link>
-                </Column>
-              </Row>
+          <Section style={{ padding: "20px 28px 28px", textAlign: "center" }}>
+            <Link href={link("/latest")} style={{ display: "inline-block", border: `1px solid ${LINE}`, color: INK, padding: "11px 20px", borderRadius: "10px", fontSize: "14px", fontWeight: 700, textDecoration: "none" }}>
+              Tüm son dakika haberleri
+            </Link>
+          </Section>
 
-              <Hr className="border-slate-200 mb-6" />
-
-              <Text className="text-slate-400 text-[11px] m-0 mb-4">
-                Bu bülten Haber Nexus üyeliğiniz kapsamında gönderilmiştir.
-              </Text>
-              
-              <Link
-                href={unsubscribeUrl}
-                className="text-error text-[12px] font-bold underline"
-              >
-                Abonelikten Ayrıl
-              </Link>
-
-              <Text className="text-slate-400 text-[10px] mt-8 m-0">
-                © {new Date().getFullYear()} Haber Nexus. Tüm hakları saklıdır.<br />
-                İstanbul, Türkiye
-              </Text>
-            </Section>
-          </Container>
-        </Body>
-      </Tailwind>
+          {/* Alt bilgi */}
+          <Section style={{ backgroundColor: "#f9fafb", padding: "22px 28px", borderTop: `1px solid ${LINE}`, textAlign: "center" }}>
+            <Text style={{ margin: "0 0 8px", fontSize: "12px", lineHeight: "1.6", color: MUTED }}>
+              Bu e-postayı Haber Nexus günlük bültenine abone olduğunuz için aldınız.
+            </Text>
+            <Text style={{ margin: "0 0 12px", fontSize: "12px", color: MUTED }}>
+              {settingsUrl && (
+                <>
+                  <Link href={settingsUrl} style={{ color: MUTED, textDecoration: "underline" }}>Gönderim saatini değiştir</Link>
+                  {"  ·  "}
+                </>
+              )}
+              <Link href={unsubscribeUrl} style={{ color: MUTED, textDecoration: "underline" }}>Abonelikten çık</Link>
+            </Text>
+            <Text style={{ margin: 0, fontSize: "11px", color: SOFT }}>© {new Date().getFullYear()} Haber Nexus · İstanbul, Türkiye</Text>
+          </Section>
+        </Container>
+      </Body>
     </Html>
   );
 };

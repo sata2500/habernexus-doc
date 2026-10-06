@@ -229,6 +229,9 @@ export async function updateNewsletterTime(time: string) {
  */
 import { sendEmail } from "@/lib/mail";
 import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
+import { newsletterDateLabel, newsletterLink, newsletterSubject, newsletterText, selectNewsletterArticles } from "@/lib/newsletter-content";
+import { userUnsubscribeUrl } from "@/lib/newsletter-links";
+import { estimateReadingTime } from "@/lib/data";
 
 export async function testNewsletterEmail() {
   try {
@@ -239,27 +242,33 @@ export async function testNewsletterEmail() {
       return { success: false, error: "Çok fazla test e-postası istendi. Lütfen daha sonra tekrar deneyin." };
     }
 
-    // Test için son 3 haberi alalım
-    const latestArticles = await prisma.article.findMany({
-      where: { status: "PUBLISHED" },
-      take: 3,
-      orderBy: { createdAt: "desc" },
-      include: { category: { select: { name: true } } },
-    });
+    // Gerçek bültenle aynı seçim; son 48 saatte haber yoksa en yeni 3 haber
+    let articles = await selectNewsletterArticles(5);
+    if (articles.length === 0) {
+      const latest = await prisma.article.findMany({
+        where: { status: "PUBLISHED" },
+        take: 3,
+        orderBy: { publishedAt: "desc" },
+        select: { title: true, excerpt: true, slug: true, coverImage: true, content: true, category: { select: { name: true } } },
+      });
+      articles = latest.map(({ content, ...a }) => ({ ...a, readingMinutes: estimateReadingTime(content) }));
+    }
 
-    const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
-    const unsubscribeUrl = `${BASE_URL}/dashboard/settings`;
-
+    const unsubscribeUrl = userUnsubscribeUrl(session.user.id);
+    const settingsUrl = newsletterLink("/dashboard/settings", "test");
+    const dateLabel = newsletterDateLabel();
     const result = await sendEmail({
       to: session.user.email,
-      subject: `Haber Nexus — Test Bülteni`,
-      react: NewsletterTemplate({ articles: latestArticles, unsubscribeUrl }),
+      subject: `[Deneme] ${newsletterSubject(articles)}`,
+      react: NewsletterTemplate({ articles, unsubscribeUrl, settingsUrl, dateLabel, link: (p) => newsletterLink(p, "test"), isTest: true }),
+      text: newsletterText(articles, { unsubscribeUrl, settingsUrl, dateLabel }),
     });
 
     if (result.success) {
       return { success: true, message: "Test e-postası başarıyla gönderildi." };
     } else {
-      return { success: false, error: "Resend hatası: " + (result.error || "Bilinmeyen hata") };
+      console.error("Test bülteni gönderilemedi:", result.error);
+      return { success: false, error: "Test e-postası gönderilemedi. Lütfen daha sonra tekrar deneyin." };
     }
   } catch (err) {
     console.error("Test email error:", err);

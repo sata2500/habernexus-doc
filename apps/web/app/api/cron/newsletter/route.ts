@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import { sendEmailBatch } from "@/lib/mail";
 import { guestUnsubscribeUrl, oneClickUrl, unsubscribeHeaders, userUnsubscribeUrl } from "@/lib/newsletter-links";
 import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
+import { newsletterDateLabel, newsletterLink, newsletterSubject, newsletterText, selectNewsletterArticles } from "@/lib/newsletter-content";
+import { appCache } from "@/lib/cache";
 import { verifyQStashRequest } from "@/lib/server/qstash-verify";
 
 /**
@@ -41,44 +43,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: `No subscribers scheduled for ${currentHourString}. Skipping.` });
     }
 
-    // 3. Son 24 Saat Haberlerini Çek
-    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-
-    const latestArticles = await prisma.article.findMany({
-      where: {
-        status: "PUBLISHED",
-        publishedAt: { gte: twentyFourHoursAgo },
-      },
-      take: 7,
-      orderBy: { viewCount: "desc" },
-      include: { category: { select: { name: true } } },
-    });
-
+    // 3. Bülten içeriği: son 24 saatin öne çıkanları (kategori çeşitliliğiyle)
+    const latestArticles = await selectNewsletterArticles(7);
     if (latestArticles.length === 0) {
-      return NextResponse.json({ message: "No new articles found in last 24h. Skipping newsletter." });
+      return NextResponse.json({ message: "No new articles found. Skipping newsletter." });
     }
+
+    // Aynı saat diliminin bülteni iki kez gönderilmesin (QStash yeniden denemesi vb.)
+    const dayKey = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Istanbul" });
+    const guardKey = `newsletter:sent:${dayKey}:${currentHourString}`;
+    if (await appCache.get(guardKey)) {
+      return NextResponse.json({ message: `Newsletter for ${dayKey} ${currentHourString} already sent. Skipping.` });
+    }
+    await appCache.set(guardKey, true, 3 * 3600);
 
     // 4. Alıcıları birleştir: aynı adres hem kayıtlı kullanıcı hem misafir aboneyse kullanıcı kaydı esas alınır.
     // Her alıcıya kendi tek tıklık abonelikten çıkış bağlantısı verilir (kayıtlı kullanıcılar için oturum gerekmez).
-    const recipients = new Map<string, { email: string; unsubscribeUrl: string; oneClick: string }>();
+    const recipients = new Map<string, { email: string; unsubscribeUrl: string; oneClick: string; registered: boolean }>();
     guestSubscribers.forEach((sub) => {
-      recipients.set(sub.email.toLowerCase(), { email: sub.email, unsubscribeUrl: guestUnsubscribeUrl(sub.unsubscribeToken), oneClick: oneClickUrl({ token: sub.unsubscribeToken }) });
+      recipients.set(sub.email.toLowerCase(), { email: sub.email, unsubscribeUrl: guestUnsubscribeUrl(sub.unsubscribeToken), oneClick: oneClickUrl({ token: sub.unsubscribeToken }), registered: false });
     });
     userSubscribers.forEach((user) => {
-      recipients.set(user.email.toLowerCase(), { email: user.email, unsubscribeUrl: userUnsubscribeUrl(user.id), oneClick: oneClickUrl({ userId: user.id }) });
+      recipients.set(user.email.toLowerCase(), { email: user.email, unsubscribeUrl: userUnsubscribeUrl(user.id), oneClick: oneClickUrl({ userId: user.id }), registered: true });
     });
 
-    const subject = `Haber Nexus — ${new Date().toLocaleDateString("tr-TR", { timeZone: "Europe/Istanbul" })} Özetiniz`;
+    const subject = newsletterSubject(latestArticles);
+    const dateLabel = newsletterDateLabel();
+    const settingsUrl = newsletterLink("/dashboard/settings");
     const uniqueSubscribers = [...recipients.values()];
 
-    // 5. Toplu ve hız sınırına uygun gönderim
+    // 5. Toplu ve hız sınırına uygun gönderim (HTML + düz metin)
     const { sent: sentCount, failed } = await sendEmailBatch(
-      uniqueSubscribers.map((sub) => ({
-        to: sub.email,
-        subject,
-        react: NewsletterTemplate({ articles: latestArticles, unsubscribeUrl: sub.unsubscribeUrl }),
-        headers: unsubscribeHeaders(sub.oneClick),
-      })),
+      uniqueSubscribers.map((sub) => {
+        const userSettings = sub.registered ? settingsUrl : null;
+        return {
+          to: sub.email,
+          subject,
+          react: NewsletterTemplate({ articles: latestArticles, unsubscribeUrl: sub.unsubscribeUrl, settingsUrl: userSettings, dateLabel, link: (p) => newsletterLink(p) }),
+          text: newsletterText(latestArticles, { unsubscribeUrl: sub.unsubscribeUrl, settingsUrl: userSettings, dateLabel }),
+          headers: unsubscribeHeaders(sub.oneClick),
+        };
+      }),
     );
 
     return NextResponse.json({

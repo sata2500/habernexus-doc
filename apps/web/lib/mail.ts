@@ -11,6 +11,8 @@ interface SendMailOptions {
   to: string | string[];
   subject: string;
   react: React.ReactElement;
+  /** Düz metin sürümü (verilmezse yalnızca HTML gider) */
+  text?: string;
   from?: string;
   replyTo?: string;
 }
@@ -18,7 +20,7 @@ interface SendMailOptions {
 /**
  * Merkezi Mail Gönderim Fonksiyonu.
  */
-export async function sendEmail({ to, subject, react, from, replyTo }: SendMailOptions) {
+export async function sendEmail({ to, subject, react, text, from, replyTo }: SendMailOptions) {
   if (!process.env.RESEND_API_KEY) {
     console.warn("[Mail] RESEND_API_KEY bulunamadı. Mail gönderimi atlanıyor.");
     return { success: false, error: "API Key missing" };
@@ -33,6 +35,7 @@ export async function sendEmail({ to, subject, react, from, replyTo }: SendMailO
       subject,
       replyTo,
       react,
+      ...(text ? { text } : {}),
     });
 
     if (error) {
@@ -60,6 +63,7 @@ export interface BatchMail {
   to: string;
   subject: string;
   react: React.ReactElement;
+  text?: string;
   headers?: Record<string, string>;
 }
 
@@ -82,7 +86,7 @@ export async function sendEmailBatch(mails: BatchMail[]) {
     const chunk = mails.slice(i, i + BATCH_SIZE);
     for (let attempt = 0; attempt < 3; attempt++) {
       try {
-        const { error } = await resend.batch.send(chunk.map((m) => ({ from: FROM_EMAIL, to: m.to, subject: m.subject, react: m.react, headers: m.headers })));
+        const { error } = await resend.batch.send(chunk.map((m) => ({ from: FROM_EMAIL, to: m.to, subject: m.subject, react: m.react, headers: m.headers, ...(m.text ? { text: m.text } : {}) })));
         if (!error) { sent += chunk.length; break; }
         // Hız sınırında bekleyip aynı partiyi tekrar dene
         if (/rate|429|too many/i.test(error.message) && attempt < 2) { await new Promise((r) => setTimeout(r, 2000 * (attempt + 1))); continue; }
