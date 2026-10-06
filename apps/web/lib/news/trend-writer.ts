@@ -7,6 +7,7 @@ import { AiError, cleanHtmlResponse, generateText, parseJsonResponse } from "@/l
 import { keyTokens, signature } from "./text";
 import { attachTags, buildSeoPackage, uniqueArticleSlug } from "./seo";
 import { WRITER_RULES } from "./writing-guide";
+import { invalidateArticle } from "@/lib/server/article-cache";
 
 const HOUR = 3_600_000;
 
@@ -86,6 +87,7 @@ Yanıtı SADECE şu JSON biçiminde ver:
       },
     });
     await attachTags(article.id, seo.tags);
+    await invalidateArticle(article.slug);
     // Karar Merkezi kaydı: bu trend artık "yazıldı" görünür ve tekrar yazılmaz
     await prisma.newsStory.create({
       data: {

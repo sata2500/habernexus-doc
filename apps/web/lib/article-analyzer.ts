@@ -151,7 +151,7 @@ export async function analyzeArticle(articleId: string, options: { webSearch?: b
     const article = await prisma.article.findUnique({
       where: { id: articleId },
       select: {
-        id: true, title: true, content: true, excerpt: true, slug: true, coverImage: true, analysisReport: true,
+        id: true, title: true, content: true, excerpt: true, slug: true, coverImage: true, analysisReport: true, updatedAt: true,
         tags: { select: { tag: { select: { name: true } } } },
         sourceRssItem: { select: { title: true, url: true, excerpt: true } },
         story: { select: { items: { take: 8, orderBy: { publishedAt: "asc" }, select: { title: true, url: true, excerpt: true, source: { select: { name: true } } } } } },
@@ -254,6 +254,8 @@ export async function analyzeArticle(articleId: string, options: { webSearch?: b
         readabilityScore: readability,
         qualityScore,
         analysisReport: JSON.parse(JSON.stringify(report)),
+        // Analiz içerik değişikliği değildir: Google'a bildirilen güncellenme tarihi korunur
+        updatedAt: article.updatedAt,
       },
     });
     console.log(`[Article Analyzer] ${article.id}: genel=${overall} kalite=${qualityScore} seo=${seo} okunabilirlik=${readability} kopya=%${overlap.rate}`);

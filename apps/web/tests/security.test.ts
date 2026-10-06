@@ -55,6 +55,8 @@ import { join as _join } from "node:path";
 
 const PUBLIC_ACTIONS = new Set([
   "app/actions/newsletter.ts:unsubscribeByToken",
+  // Oturum yerine HMAC imzalı bağlantıyla korunur (verifyUserSignature)
+  "app/actions/newsletter.ts:unsubscribeSignedUser",
   "app/actions/slider.ts:getSlider",
   "app/actions/static-pages.ts:getStaticPageBySlug",
   "app/author/actions.ts:incrementViewCount",

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { requireRole, getSafeActionError } from "@/lib/server/authz";
 import { applyPendingMigrations, getMigrationStatus } from "@/lib/server/db-migrations";
+import { invalidateArticle } from "@/lib/server/article-cache";
 
 export async function getMigrationStatusAction() {
   await requireRole("ADMIN");
@@ -42,7 +43,7 @@ export async function runSeoMaintenanceAction() {
       where,
       orderBy: { publishedAt: "desc" },
       take: SEO_BATCH,
-      select: { id: true, title: true, content: true, excerpt: true, lang: true, category: { select: { name: true } } },
+      select: { id: true, slug: true, title: true, content: true, excerpt: true, lang: true, category: { select: { name: true } } },
     });
     let updated = 0;
     for (const a of articles) {
@@ -51,6 +52,7 @@ export async function runSeoMaintenanceAction() {
         await prisma.article.update({ where: { id: a.id }, data: { excerpt: seo.description } });
       }
       await attachTags(a.id, seo.tags, a.lang);
+      await invalidateArticle(a.slug);
       if (seo.tags.length) updated++;
     }
     const remaining = await prisma.article.count({ where });

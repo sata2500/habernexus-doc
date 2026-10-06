@@ -1,3 +1,9 @@
+/** JSON'a çevrilen Date alanları geri Date olur (Redis'ten okunan haberlerde publishedAt vb.) */
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/;
+function reviveDates(_key: string, value: unknown) {
+  return typeof value === "string" && ISO_DATE.test(value) ? new Date(value) : value;
+}
+
 interface CacheEntry<T> {
   data: T;
   expiresAt: number;
@@ -84,11 +90,14 @@ class DistributedCache {
         if (res.ok) {
           const json = await res.json();
           if (json.result !== null && json.result !== undefined) {
-            return typeof json.result === "string" ? JSON.parse(json.result) : json.result;
+            return (typeof json.result === "string" ? JSON.parse(json.result, reviveDates) : json.result) as T;
           }
+          // Redis yanıt verdi ve kayıt yok: başka bir sunucu kaydı silmiş olabilir. Bu sunucunun
+          // belleğindeki eski kopyaya dönülmez (yayından kaldırılan haber görünmeye devam ederdi).
+          return null;
         }
       } catch {
-        // Fallback to memory
+        // Redis'e ulaşılamadı: bellekteki kopya kullanılır
       }
     }
 

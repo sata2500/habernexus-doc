@@ -9,6 +9,7 @@ import { deleteAccountSafely } from "@/lib/server/account-deletion";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { rewriteArticleWithAI } from "@/lib/ai-writer";
 import { ROLES, type Role } from "@/lib/server/authz";
+import { invalidateArticle, invalidateArticles } from "@/lib/server/article-cache";
 
 const ARTICLE_STATUSES = ["DRAFT", "PUBLISHED"] as const;
 
@@ -75,8 +76,8 @@ export async function updateArticleStatus(articleId: string, status: string) {
     where: { id: articleId },
     data: {
       status,
-      // Zaten yayında olan bir makalenin yayın tarihini sıfırlama
-      publishedAt: status === "PUBLISHED" ? (articleBefore?.publishedAt ?? new Date()) : null,
+      // Yayın tarihi korunur: yayından kaldırılıp yeniden yayımlanan haber "yeni haber" gibi görünmez
+      ...(status === "PUBLISHED" && !articleBefore?.publishedAt ? { publishedAt: new Date() } : {}),
     },
   });
 
@@ -88,8 +89,8 @@ export async function updateArticleStatus(articleId: string, status: string) {
     after(() => notifyGoogle(getArticleUrl(articleBefore.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
   }
 
+  await invalidateArticle(updatedArticle.slug);
   revalidatePath("/admin/articles");
-  revalidatePath("/");
   return { success: true };
 }
 
@@ -105,8 +106,8 @@ export async function deleteArticle(articleId: string) {
     after(() => notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
   }
 
+  await invalidateArticle(article?.slug);
   revalidatePath("/admin/articles");
-  revalidatePath("/");
   return { success: true };
 }
 
@@ -137,7 +138,7 @@ export async function bulkUpdateArticleStatus(articleIds: string[], status: stri
   } else {
     await prisma.article.updateMany({
       where: { id: { in: articleIds } },
-      data: { status, publishedAt: null },
+      data: { status },
     });
   }
 
@@ -151,7 +152,7 @@ export async function bulkUpdateArticleStatus(articleIds: string[], status: stri
   }
 
   revalidatePath("/admin/articles");
-  revalidatePath("/");
+  await invalidateArticles(articlesBefore.map((a) => a.slug));
   return { success: true };
 }
 
@@ -176,7 +177,7 @@ export async function bulkDeleteArticles(articleIds: string[]) {
   }
 
   revalidatePath("/admin/articles");
-  revalidatePath("/");
+  await invalidateArticles(articlesBefore.map((a) => a.slug));
   return { success: true };
 }
 
@@ -207,7 +208,7 @@ export async function createCategory(data: { name: string; slug: string; color: 
     },
   });
   revalidatePath("/admin/categories");
-  revalidatePath("/");
+  await invalidateArticle(null);
   return { success: true };
 }
 
@@ -232,7 +233,7 @@ export async function updateCategory(id: string, data: { name: string; slug: str
     },
   });
   revalidatePath("/admin/categories");
-  revalidatePath("/");
+  await invalidateArticle(null);
   return { success: true };
 }
 
@@ -251,7 +252,7 @@ export async function deleteCategoryAdmin(id: string) {
 
   await prisma.category.delete({ where: { id } });
   revalidatePath("/admin/categories");
-  revalidatePath("/");
+  await invalidateArticle(null);
   return { success: true };
 }
 

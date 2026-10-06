@@ -147,7 +147,15 @@ export default async function CategoryPage({ params }: { params: Params }) {
             </Link>
           ))}
         </div>
-      ) : (
+      ) : null}
+      {category.articles.length > 0 && category._count.articles > category.articles.length && (
+        <div className="text-center">
+          <Link href={`/latest?kategori=${category.slug}`} className="inline-flex items-center gap-2 h-11 px-5 rounded-xl border border-border bg-card font-semibold hover:bg-muted">
+            Tüm {category.name} haberleri ({category._count.articles})
+          </Link>
+        </div>
+      )}
+      {category.articles.length === 0 && (
         <div className="text-center py-20 bg-muted/30 rounded-2xl border border-dashed border-border mt-8">
           <Newspaper className="h-12 w-12 mx-auto text-muted-foreground/50 mb-4" />
           <h3 className="text-xl font-bold font-display text-foreground">Henüz Haber Yok</h3>

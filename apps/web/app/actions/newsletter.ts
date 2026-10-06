@@ -1,32 +1,29 @@
 "use server";
 
-import { prisma } from "@/lib/prisma";
+import { unsubscribeGuest, unsubscribeUser } from "@/lib/server/newsletter";
 
 /**
- * Handles guest unsubscription via secure token.
+ * Abonelikten çıkış (sayfadaki onay düğmesi). Bağlantıyı açmak tek başına çıkış yapmaz:
+ * e-posta güvenlik tarayıcıları bağlantıları otomatik açtığı için okur istemeden çıkarılıyordu.
  */
 export async function unsubscribeByToken(token: string) {
-  if (!token) {
-    return { success: false, error: "Geçersiz işlem." };
-  }
-
   try {
-    const subscriber = await prisma.subscriber.findUnique({
-      where: { unsubscribeToken: token },
-    });
-
-    if (!subscriber) {
-      return { success: false, error: "Abonelik bulunamadı veya daha önce iptal edilmiş." };
-    }
-
-    await prisma.subscriber.update({
-      where: { id: subscriber.id },
-      data: { isActive: false },
-    });
-
-    return { success: true };
+    return (await unsubscribeGuest(token))
+      ? { success: true as const }
+      : { success: false as const, error: "Abonelik bulunamadı veya daha önce iptal edilmiş." };
   } catch (error) {
     console.error("Unsubscribe error:", error);
-    return { success: false, error: "İşlem sırasında bir hata oluştu." };
+    return { success: false as const, error: "İşlem sırasında bir hata oluştu." };
+  }
+}
+
+export async function unsubscribeSignedUser(userId: string, sig: string) {
+  try {
+    return (await unsubscribeUser(userId, sig))
+      ? { success: true as const }
+      : { success: false as const, error: "Bağlantı geçersiz." };
+  } catch (error) {
+    console.error("Unsubscribe error:", error);
+    return { success: false as const, error: "İşlem sırasında bir hata oluştu." };
   }
 }

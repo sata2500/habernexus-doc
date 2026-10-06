@@ -9,6 +9,7 @@ import { slugify } from "@/lib/utils";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { rewriteArticleWithAI } from "@/lib/ai-writer";
 import { checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
+import { invalidateArticle } from "@/lib/server/article-cache";
 
 
 const ArticleInputSchema = z.object({
@@ -104,8 +105,7 @@ export async function saveArticle(id: string | null, input: ArticleInput): Promi
     }
 
     revalidatePath("/author", "layout");
-    revalidatePath(`/article/${article.slug}`);
-    revalidatePath("/");
+    await invalidateArticle(article.slug);
     return { success: true, id: article.id, slug: article.slug, status: article.status as "DRAFT" | "PUBLISHED" };
   } catch (err) {
     console.error("Haber kaydetme hatası:", err);
@@ -140,7 +140,7 @@ export async function deleteArticle(id: string) {
     }
 
     revalidatePath("/author", "layout");
-    revalidatePath("/");
+    await invalidateArticle(article.slug);
 
     return { success: true };
   } catch (err) {

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { generateText, parseJsonResponse } from "@/lib/ai/client";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { normalize } from "@/lib/news/text";
+import { invalidateArticle } from "@/lib/server/article-cache";
 
 /**
  * "Kopyaları gider": analizde kaynaklardan aynen alındığı tespit edilen cümlelerin geçtiği
@@ -71,7 +72,8 @@ Yalnızca şu JSON'u döndür (her paragraf için bir öğe, aynı sırayla):
   }
   if (rewritten === 0) return { success: false as const, error: "Yapay zekâ geçerli bir düzeltme üretemedi; tekrar deneyin." };
 
-  await prisma.article.update({ where: { id: article.id }, data: { content } });
+  const saved = await prisma.article.update({ where: { id: article.id }, data: { content }, select: { slug: true } });
+  await invalidateArticle(saved.slug);
   const analysis = await analyzeArticle(article.id);
   return {
     success: true as const,

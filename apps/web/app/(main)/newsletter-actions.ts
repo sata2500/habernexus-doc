@@ -5,6 +5,9 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { checkRateLimit, checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
 import { NewsletterEmailSchema } from "@/lib/validation/schemas";
+import { sendEmail } from "@/lib/mail";
+import { confirmUrl } from "@/lib/newsletter-links";
+import { NewsletterConfirmTemplate } from "@/components/mail/NewsletterConfirmTemplate";
 
 export async function subscribeToNewsletter(email: string) {
   const parsedEmail = NewsletterEmailSchema.safeParse(email);
@@ -54,22 +57,22 @@ export async function subscribeToNewsletter(email: string) {
       where: { email: emailLower },
     });
 
-    if (existingSubscriber) {
-      if (!existingSubscriber.isActive) {
-        await prisma.subscriber.update({
-          where: { id: existingSubscriber.id },
-          data: { isActive: true },
-        });
-        return { success: true, message: "Aboneliğiniz yeniden aktifleştirildi!" };
-      }
+    // Çift onay: abonelik, adresin sahibi e-postadaki bağlantıya tıklayınca başlar.
+    // Böylece kimse başkasının adresini abone yapamaz, iptal etmiş birini yeniden ekleyemez.
+    if (existingSubscriber?.isActive) {
       return { success: false, error: "Bu e-posta adresi zaten bültene kayıtlı." };
     }
+    const subscriber = existingSubscriber ?? (await prisma.subscriber.create({ data: { email: emailLower, isActive: false } }));
 
-    await prisma.subscriber.create({
-      data: { email: emailLower },
+    const mail = await sendEmail({
+      to: emailLower,
+      subject: "Haber Nexus bülten aboneliğinizi onaylayın",
+      react: NewsletterConfirmTemplate({ confirmUrl: confirmUrl(subscriber.unsubscribeToken) }),
     });
-
-    return { success: true, message: "Bültene başarıyla abone oldunuz!" };
+    if (!mail.success) {
+      return { success: false, error: "Onay e-postası gönderilemedi. Lütfen daha sonra tekrar deneyin." };
+    }
+    return { success: true, message: "Son bir adım: e-posta adresinize gelen bağlantıya tıklayarak aboneliğinizi onaylayın." };
   } catch (error) {
     console.error("Newsletter error:", error);
     return { success: false, error: "Servis geçici olarak kullanılamıyor. Lütfen daha sonra tekrar deneyin." };

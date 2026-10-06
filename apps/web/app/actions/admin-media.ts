@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { requireRole } from "@/lib/server/authz";
+import { invalidateArticles } from "@/lib/server/article-cache";
 
 const IdsSchema = z.array(z.string().min(1).max(100)).min(1).max(200);
 
@@ -28,6 +29,8 @@ export async function deleteMediaItems(ids: string[]) {
       console.warn("[Media] Bazı dosyalar depodan silinemedi:", e);
     }
 
+    // Kapak görseli silinen haberlerin sayfa önbellekleri de temizlenir
+    const affected = await prisma.article.findMany({ where: { coverImage: { in: urls } }, select: { slug: true } });
     await prisma.$transaction([
       prisma.article.updateMany({ where: { coverImage: { in: urls } }, data: { coverImage: null } }),
       prisma.user.updateMany({ where: { image: { in: urls } }, data: { image: null } }),
@@ -37,7 +40,7 @@ export async function deleteMediaItems(ids: string[]) {
     ]);
 
     revalidatePath("/admin/media");
-    revalidatePath("/");
+    await invalidateArticles(affected.map((a) => a.slug));
     return { success: true as const, deleted: items.length };
   } catch (error) {
     console.error("[Media] Silme hatası:", error);

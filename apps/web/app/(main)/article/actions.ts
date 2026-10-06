@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { after } from "next/server";
+import { checkRateLimitAsync } from "@/lib/server/rate-limit";
 import { checkCommentToxicity, generateCommentsSummary } from "@/lib/comment-ai";
 import { requireSession } from "@/lib/server/authz";
 import { CommentIdSchema, CommentInputSchema } from "@/lib/validation/schemas";
@@ -47,9 +49,12 @@ export async function addComment(data: {
     }
 
     const input = parsed.data;
+    // Yorum seli ve yapay zekâ moderasyon maliyeti: kullanıcı başına 10 dakikada 10 yorum
+    const rate = await checkRateLimitAsync(`comment:${session.user.id}`, 10, 10 * 60 * 1000);
+    if (!rate.allowed) return { success: false, error: "Çok sık yorum gönderdiniz. Lütfen biraz sonra tekrar deneyin." };
     const article = await prisma.article.findFirst({
       where: { id: input.articleId, status: "PUBLISHED" },
-      select: { id: true },
+      select: { id: true, slug: true },
     });
 
     if (!article) {
@@ -87,35 +92,31 @@ export async function addComment(data: {
       },
     });
 
-    const totalCommentsCount = await prisma.comment.count({
-      where: { articleId: input.articleId },
-    });
-
-    if (totalCommentsCount >= 3) {
-      const summary = await generateCommentsSummary(input.articleId);
-      if (summary) {
-        const articleWithReport = await prisma.article.findUnique({
-          where: { id: input.articleId },
-          select: { analysisReport: true },
-        });
-
-        const oldReport = isJsonObject(articleWithReport?.analysisReport)
-          ? articleWithReport.analysisReport
-          : {};
-        const updatedReport = {
-          ...oldReport,
-          commentsSummary: summary,
-          commentsSummaryUpdatedAt: new Date().toISOString(),
-        };
-
-        await prisma.article.update({
-          where: { id: input.articleId },
-          data: { analysisReport: JSON.parse(JSON.stringify(updatedReport)) },
-        });
-      }
+    // Okur yorum özeti: 3. yorumda ve sonra her 5 yorumda bir, yanıtı bekletmeden arka planda güncellenir
+    const totalCommentsCount = await prisma.comment.count({ where: { articleId: input.articleId } });
+    if (totalCommentsCount === 3 || (totalCommentsCount > 3 && totalCommentsCount % 5 === 0)) {
+      after(async () => {
+        try {
+          const summary = await generateCommentsSummary(input.articleId);
+          if (!summary) return;
+          const current = await prisma.article.findUnique({ where: { id: input.articleId }, select: { analysisReport: true, updatedAt: true } });
+          const oldReport = isJsonObject(current?.analysisReport) ? current.analysisReport : {};
+          await prisma.article.update({
+            where: { id: input.articleId },
+            data: {
+              analysisReport: JSON.parse(JSON.stringify({ ...oldReport, commentsSummary: summary, commentsSummaryUpdatedAt: new Date().toISOString() })),
+              updatedAt: current?.updatedAt, // yorum özeti haberin güncellenme tarihini değiştirmez
+            },
+          });
+          revalidatePath(`/article/${article.slug}`);
+        } catch (e) {
+          console.error("Yorum özeti hatası:", e);
+        }
+      });
     }
 
-    revalidatePath(`/article/[slug]`, "page");
+    // Yalnızca bu haberin sayfası yenilenir (önceden tüm haber sayfalarının önbelleği siliniyordu)
+    revalidatePath(`/article/${article.slug}`);
     return { success: true, comment };
   } catch (error) {
     console.error("Add comment error:", error);
@@ -139,7 +140,7 @@ export async function deleteComment(commentId: string) {
 
     const comment = await prisma.comment.findUnique({
       where: { id: parsedId.data },
-      select: { id: true, userId: true },
+      select: { id: true, userId: true, article: { select: { slug: true } } },
     });
 
     if (!comment || comment.userId !== session.user.id) {
@@ -148,7 +149,7 @@ export async function deleteComment(commentId: string) {
 
     await prisma.comment.delete({ where: { id: comment.id } });
 
-    revalidatePath(`/article/[slug]`, "page");
+    revalidatePath(`/article/${comment.article.slug}`);
     return { success: true };
   } catch (error) {
     console.error("Delete comment error:", error);

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { sendEmail } from "@/lib/mail";
+import { sendEmailBatch } from "@/lib/mail";
+import { guestUnsubscribeUrl, oneClickUrl, unsubscribeHeaders, userUnsubscribeUrl } from "@/lib/newsletter-links";
 import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
 import { verifyQStashRequest } from "@/lib/server/qstash-verify";
 
@@ -56,46 +57,33 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: "No new articles found in last 24h. Skipping newsletter." });
     }
 
-    const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
-
-    // 4. Alıcıları Birleştir (De-duplication)
-    // Eğer bir e-posta hem User hem de Subscriber tablosunda varsa, User (kayıtlı) olanı önceliklendir.
-    const subscribersMap = new Map<string, { email: string; unsubscribeUrl: string }>();
-
-    // Önce misafirleri ekle
-    guestSubscribers.forEach(sub => {
-      subscribersMap.set(sub.email.toLowerCase(), {
-        email: sub.email,
-        unsubscribeUrl: `${BASE_URL}/newsletter/unsubscribe?token=${sub.unsubscribeToken}`
-      });
+    // 4. Alıcıları birleştir: aynı adres hem kayıtlı kullanıcı hem misafir aboneyse kullanıcı kaydı esas alınır.
+    // Her alıcıya kendi tek tıklık abonelikten çıkış bağlantısı verilir (kayıtlı kullanıcılar için oturum gerekmez).
+    const recipients = new Map<string, { email: string; unsubscribeUrl: string; oneClick: string }>();
+    guestSubscribers.forEach((sub) => {
+      recipients.set(sub.email.toLowerCase(), { email: sub.email, unsubscribeUrl: guestUnsubscribeUrl(sub.unsubscribeToken), oneClick: oneClickUrl({ token: sub.unsubscribeToken }) });
+    });
+    userSubscribers.forEach((user) => {
+      recipients.set(user.email.toLowerCase(), { email: user.email, unsubscribeUrl: userUnsubscribeUrl(user.id), oneClick: oneClickUrl({ userId: user.id }) });
     });
 
-    // Sonra kayıtlı kullanıcıları ekle (aynı e-posta varsa üzerine yazar - öncelik User'da)
-    userSubscribers.forEach(user => {
-      subscribersMap.set(user.email.toLowerCase(), {
-        email: user.email,
-        unsubscribeUrl: `${BASE_URL}/dashboard/settings`
-      });
-    });
+    const subject = `Haber Nexus — ${new Date().toLocaleDateString("tr-TR", { timeZone: "Europe/Istanbul" })} Özetiniz`;
+    const uniqueSubscribers = [...recipients.values()];
 
-    const uniqueSubscribers = Array.from(subscribersMap.values());
-    let sentCount = 0;
-
-    // 5. E-postaları Gönder
-    const emailPromises = uniqueSubscribers.map(sub => {
-      return sendEmail({
+    // 5. Toplu ve hız sınırına uygun gönderim
+    const { sent: sentCount, failed } = await sendEmailBatch(
+      uniqueSubscribers.map((sub) => ({
         to: sub.email,
-        subject: `Haber Nexus — ${new Date().toLocaleDateString("tr-TR")} Özetiniz`,
+        subject,
         react: NewsletterTemplate({ articles: latestArticles, unsubscribeUrl: sub.unsubscribeUrl }),
-      });
-    });
-
-    const results = await Promise.all(emailPromises);
-    sentCount = results.filter(r => r.success).length;
+        headers: unsubscribeHeaders(sub.oneClick),
+      })),
+    );
 
     return NextResponse.json({
       success: true,
       sentCount,
+      failed,
       totalScheduled: uniqueSubscribers.length,
       articleCount: latestArticles.length,
       scheduledTime: currentHourString,

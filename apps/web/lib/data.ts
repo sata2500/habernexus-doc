@@ -34,15 +34,23 @@ export const getTrendingArticles = cache(async (limit: number = 4) => {
   if (isMissingDb) return [];
   return appCache.getOrSet(`data:trending:${limit}`, 60, async () => {
     try {
+      const include = { category: true, author: { select: PUBLIC_AUTHOR }, aiPersona: true } as const;
+      // "Trend": son 3 günün en çok okunanları (tüm zamanlar sıralaması eski haberleri hep üstte tutuyordu).
+      // Yeterli haber yoksa pencere 14 güne, o da yetmezse tüm haberlere genişler.
+      for (const days of [3, 14]) {
+        const recent = await prisma.article.findMany({
+          where: { status: "PUBLISHED", publishedAt: { gte: new Date(Date.now() - days * 86_400_000) } },
+          orderBy: [{ viewCount: "desc" }, { publishedAt: "desc" }],
+          take: limit,
+          include,
+        });
+        if (recent.length >= limit) return recent;
+      }
       return await prisma.article.findMany({
         where: { status: "PUBLISHED" },
-        orderBy: { viewCount: "desc" },
+        orderBy: [{ publishedAt: "desc" }],
         take: limit,
-        include: {
-          category: true,
-          author: { select: PUBLIC_AUTHOR },
-          aiPersona: true,
-        },
+        include,
       });
     } catch (e) {
       console.error("getTrendingArticles error:", e);
@@ -94,6 +102,8 @@ export const getArticleBySlug = cache(async (slug: string) => {
   });
 });
 
+export const CATEGORY_PAGE_SIZE = 30;
+
 // Tekil Kategori ve İlgili Güncel Haberleri Çekimi
 export const getCategoryWithArticles = cache(async (slug: string) => {
   if (isMissingDb) return null;
@@ -102,11 +112,18 @@ export const getCategoryWithArticles = cache(async (slug: string) => {
       return await prisma.category.findUnique({
         where: { slug },
         include: {
+          // Kart için gereken alanlar ve en yeni 30 haber (önceden kategorinin tüm haberleri yükleniyordu)
           articles: {
             where: { status: "PUBLISHED" },
             orderBy: { publishedAt: "desc" },
-            include: { author: { select: PUBLIC_AUTHOR }, category: true, aiPersona: true },
+            take: CATEGORY_PAGE_SIZE,
+            select: {
+              id: true, title: true, slug: true, excerpt: true, coverImage: true, viewCount: true, publishedAt: true, createdAt: true,
+              content: true, // okuma süresi için (yalnızca 30 haber)
+              author: { select: PUBLIC_AUTHOR }, aiPersona: { select: { name: true, image: true } },
+            },
           },
+          _count: { select: { articles: { where: { status: "PUBLISHED" } } } },
         },
       });
     } catch (e) {

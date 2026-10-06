@@ -11,6 +11,7 @@ import { findPublishedDuplicate } from "./news/stories";
 import { LIKELY_DUPLICATE, signature, storySimilarity } from "./news/text";
 import { stripLeadingTitleHeading } from "./article-content";
 import { WRITER_FORMAT } from "./news/writing-guide";
+import { invalidateArticle } from "./server/article-cache";
 import { attachTags, buildSeoPackage, uniqueArticleSlug } from "./news/seo";
 
 
@@ -216,6 +217,7 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
     });
 
     await attachTags(article.id, seo.tags, article.lang);
+    await invalidateArticle(article.slug);
     await afterPublish(article, { systemPrompt, textPrompt, useGoogleSearch });
     return { success: true, articleId: article.id, title: article.title, slug: article.slug };
   } catch (error) {
@@ -289,6 +291,7 @@ async function afterPublish(
       }
       if (!newContent) continue;
       await prisma.article.update({ where: { id: article.id }, data: { content: newContent } });
+      await invalidateArticle(article.slug);
       const re = await analyzeArticle(article.id);
       if (re.success) rate = re.plagiarismRate ?? 0;
     }
@@ -374,6 +377,7 @@ ${article.content.slice(0, 20000)}`,
       where: { id: articleId },
       data: { content }
     });
+    await invalidateArticle(updatedArticle.slug);
 
     if (updatedArticle.status === "PUBLISHED") {
       try {
