@@ -1,3 +1,4 @@
+import { getAppUrl } from "@/lib/utils";
 import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
@@ -33,10 +34,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const siteDescription =
     settings.siteDescription ||
     "Gündemdeki en son haberleri, analizleri ve derinlemesine içerikleri keşfedin. Modern, hızlı ve kişiselleştirilmiş haber deneyimi.";
-  const siteUrl =
-    settings.siteUrl ||
-    process.env.NEXT_PUBLIC_APP_URL ||
-    "http://localhost:3000";
+  const siteUrl = settings.siteUrl || getAppUrl();
   const keywords = settings.keywords
     ? settings.keywords.split(",").map((k) => k.trim())
     : ["haber", "gündem", "son dakika", "analiz", "Türkiye", "dünya", "teknoloji", "spor"];

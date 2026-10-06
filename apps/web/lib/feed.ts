@@ -2,8 +2,7 @@ import "server-only";
 
 import { prisma } from "./prisma";
 import type { FeedArticle, FeedPage } from "./feed-types";
-
-const WORDS_PER_MINUTE = 200;
+import { readingMinutes } from "./utils";
 
 const feedSelect = {
   id: true,
@@ -32,12 +31,6 @@ type FeedRow = {
   author: { name: string; image: string | null };
   aiPersona: { name: string; image: string | null } | null;
 };
-
-function readingMinutes(content: string) {
-  const text = content.replace(/<[^>]*>/g, " ").trim();
-  if (!text) return 1;
-  return Math.max(1, Math.ceil(text.split(/\s+/).length / WORDS_PER_MINUTE));
-}
 
 /** İçerik gövdesini istemciye göndermeden kart için gereken alanları üretir. */
 export function toFeedArticle(row: FeedRow): FeedArticle {

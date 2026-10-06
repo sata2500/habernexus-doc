@@ -5,6 +5,9 @@ import { FolderOpen, ArrowRight, Newspaper } from "lucide-react";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { getCardGlowStyles } from "@/lib/utils";
 
+// Kategori sayıları saatte bir yenilenir
+export const revalidate = 3600;
+
 export const metadata = {
   alternates: { canonical: "/categories" },
   title: "Tüm Kategoriler",

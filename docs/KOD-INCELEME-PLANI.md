@@ -33,11 +33,11 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 - [x] `tsconfig`: hedef ES2022, `noFallthroughCasesInSwitch`, `forceConsistentCasingInFileNames`, `noImplicitOverride`. `noUncheckedIndexedAccess` denendi: 60 uyarının tamamı korunmuş/kesin değerli erişim çıktı, **açılmadı** (yalnızca gürültü ekler)
 - [x] Kullanılmayan kod temizlendi (`use-debounce`, kullanılmayan Card/Skeleton parçaları, ölü fonksiyonlar); yönetici betiği `npm run admin:make` komutu oldu
 
-### Aşama 1 — Veri katmanı ve sunucu altyapısı (`lib/`)
-- [ ] Veri erişim katmanı: tüm veritabanı erişiminin `server-only` modüllerde toplanması (Next.js önerisi)
-- [ ] Önbellek ve yeniden doğrulama stratejisinin tek yerde toplanması; Next.js 16 `use cache` değerlendirmesi
-- [ ] Sunucu işlemleri: tek tip sonuç (`ActionResult`), zod doğrulaması, yetki kontrolü, hata mesajları
-- [ ] Hız sınırı, kimlik doğrulama, yetkilendirme yardımcılarının gözden geçirilmesi
+### Aşama 1 — Veri katmanı ve sunucu altyapısı (`lib/`) ✅
+- [x] Altyapı dosyalarının tamamı okundu (prisma, önbellek, veri, akış, öneriler, site ayarları, yetki, hız sınırı, QStash, uzak istek, içerik süzgeci, hesap silme, otomasyon, migration, medya, e-posta, sosyal paylaşım, yorum yapay zekâsı)
+- [x] Yeniden doğrulama stratejisi: genel 60 sn kaldırıldı, sayfa başına süre (haber 1 sa, kategori 5 dk, statik 1 gün); değişiklikler zaten anında temizleniyor. `use cache` (Cache Components) geçişi büyük bir mimari değişiklik; mevcut ISR + anında temizleme yeterli olduğu için **şimdilik değerlendirme dışı**
+- [x] `ActionResult` tipi ve `actionError()` yardımcısı eklendi — işlem dosyalarına uygulanması ilgili aşamalarda (4–6) yapılacak
+- [x] Hız sınırı: Vercel IP başlıkları öncelikli; bellek içi (dağıtık olmayan) bülten sınırı Redis'e taşındı
 
 ### Aşama 2 — Yapay zekâ ve haber hattı
 - [ ] `lib/ai/*`, `lib/news/*`, AI Yazar, trend yazarı, analiz, TTS, özet
@@ -82,3 +82,19 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 | Güvenlik | Üretim bağımlılıklarında 6 açık (mysql2, deepmerge-ts, postcss-selector-parser — Prisma CLI ve Tailwind tipografi üzerinden) | `overrides` ile yamalı sürümler → **0 açık** |
 | Bilgi | ESLint'in `braces` bağımlılığında yaması olmayan açık (yalnızca geliştirme aracı, kendi dosyalarımızı tarar) | İzleniyor |
 | Not (Aşama 1) | `(main)/layout.tsx`'teki `revalidate = 60`, haber sayfalarının 1 saatlik ISR ayarını geçersiz kılıyor | Aşama 1'de ele alınacak |
+
+### Aşama 1
+| Tür | Bulgu | Durum |
+|---|---|---|
+| Performans | `getSiteSettings` **her sayfa isteğinde veritabanı işlemi (upsert)** açıyordu | Yalnızca okuma + 5 dk önbellek; kaydedilince temizleniyor |
+| Performans | `(main)` yerleşimindeki `revalidate = 60` tüm sayfaları dakikada bir yeniden üretiyor, haber sayfalarının 1 saatlik ayarını eziyordu | Kaldırıldı; sayfa başına süreler |
+| Performans | Veritabanı havuzu sınırsızdı (sunucusuz ortamda bağlantı tükenmesi riski); geliştirmede her sorgu günlüğe yazılıyordu | Havuz 5 bağlantı + boşta kapatma; sorgu günlüğü isteğe bağlı |
+| Hata | İçerik süzgeci editörün **ayraç çizgisi (hr)** ve **üstü çizili (s)** biçimlerini siliyordu | İzin verilen etiketler genişletildi |
+| Güvenlik | Süzgeç `id` niteliğine izin veriyordu (haber metni sayfa öğelerini gölgeleyebilirdi) | Kaldırıldı |
+| Güvenlik | Yorum denetimi komutu, yorumdaki talimatlarla atlatılabiliyordu; özet tüm yorumları sınırsız gönderiyordu | Veri etiketleme + talimat yok sayma; son 80 yorum, kısaltılmış |
+| Hata | Görsel optimizasyonu eski dosyayı veritabanı güncellenmeden siliyordu; slider görselleri güncellenmiyordu | Önce tek işlemde tüm kayıtlar, sonra dosya silme; önbellek temizliği |
+| Hata | Admin özetinde "bugün" UTC'ye göreydi (3 saat kayık) | Türkiye saati |
+| Hata | Telegram kaçış ifadesi hatalı (rakamları da kaçışlıyordu), zaman aşımı yoktu | Düzeltildi, 10 sn zaman aşımı |
+| Tutarlılık | Okuma süresi 4 farklı yöntemle hesaplanıyordu (bazıları HTML etiketlerini kelime sayıyordu) | Tek `readingMinutes()` |
+| Tutarlılık | Site adresi 14 yerde farklı varsayılanlarla tekrarlanıyordu | `getAppUrl()` |
+| Test | `server-only` modülleri testlerde yüklenemiyordu | Testler `react-server` koşuluyla; içerik süzgeci ve okuma süresi testleri (45 test) |

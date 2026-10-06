@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getAppUrl } from "@/lib/utils";
 import { createHmac, timingSafeEqual } from "node:crypto";
 
 /**
@@ -7,7 +8,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
  * çalışsın diye kullanıcı kimliğinin HMAC imzasını taşır (tahmin edilemez, değiştirilemez).
  */
 
-const BASE_URL = () => process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+const BASE_URL = getAppUrl;
 
 function secret() {
   const s = process.env.BETTER_AUTH_SECRET;

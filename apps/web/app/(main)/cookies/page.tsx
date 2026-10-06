@@ -1,6 +1,9 @@
 import { getStaticPageBySlug } from "@/app/actions/static-pages";
 import { sanitizeHtml } from "@/lib/server/sanitize-html";
 
+// Sayfa admin panelinden düzenlenince anında yenilenir; aksi halde günde bir
+export const revalidate = 86400;
+
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("cookies");
   return {

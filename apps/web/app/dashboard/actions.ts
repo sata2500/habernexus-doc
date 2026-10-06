@@ -8,6 +8,11 @@ import { checkRateLimitAsync } from "@/lib/server/rate-limit";
 import { NewsletterTimeSchema } from "@/lib/validation/schemas";
 import { deleteAccountSafely } from "@/lib/server/account-deletion";
 import { clearReads, removeRead } from "@/lib/server/reading-history";
+import { sendEmail } from "@/lib/mail";
+import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
+import { newsletterDateLabel, newsletterLink, newsletterSubject, newsletterText, selectNewsletterArticles } from "@/lib/newsletter-content";
+import { userUnsubscribeUrl } from "@/lib/newsletter-links";
+import { readingMinutes } from "@/lib/utils";
 
 const MAX_BIO_LENGTH = 1000;
 
@@ -227,12 +232,6 @@ export async function updateNewsletterTime(time: string) {
 /**
  * Kullanıcıya hemen anında bir test maili gönderir.
  */
-import { sendEmail } from "@/lib/mail";
-import { NewsletterTemplate } from "@/components/mail/NewsletterTemplate";
-import { newsletterDateLabel, newsletterLink, newsletterSubject, newsletterText, selectNewsletterArticles } from "@/lib/newsletter-content";
-import { userUnsubscribeUrl } from "@/lib/newsletter-links";
-import { estimateReadingTime } from "@/lib/data";
-
 export async function testNewsletterEmail() {
   try {
     const session = await getVerifiedSession();
@@ -251,7 +250,7 @@ export async function testNewsletterEmail() {
         orderBy: { publishedAt: "desc" },
         select: { title: true, excerpt: true, slug: true, coverImage: true, content: true, category: { select: { name: true } } },
       });
-      articles = latest.map(({ content, ...a }) => ({ ...a, readingMinutes: estimateReadingTime(content) }));
+      articles = latest.map(({ content, ...a }) => ({ ...a, readingMinutes: readingMinutes(content) }));
     }
 
     const unsubscribeUrl = userUnsubscribeUrl(session.user.id);

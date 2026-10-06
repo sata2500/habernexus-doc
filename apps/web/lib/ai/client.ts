@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getAppUrl } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
 import { fetchPublicResource } from "@/lib/server/remote-fetch";
 import { AI_TASKS, formatModelRef, parseModelRef, type AiProvider, type AiTask, type ModelRef } from "./models";
@@ -113,7 +114,7 @@ async function openRouterFetch(body: Record<string, unknown>) {
     headers: {
       Authorization: `Bearer ${apiKey}`,
       "Content-Type": "application/json",
-      "HTTP-Referer": process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com",
+      "HTTP-Referer": getAppUrl(),
       "X-Title": "Haber Nexus",
     },
     body: JSON.stringify(body),

@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { getCategoryWithArticles, estimateReadingTime } from "@/lib/data";
+import { getCategoryWithArticles } from "@/lib/data";
 import Link from "next/link";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -8,7 +8,10 @@ import { Clock, Eye, Newspaper } from "lucide-react";
 import { BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import Image from "next/image";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
-import { getCardGlowStyles, formatRelativeTime, formatViewCount } from "@/lib/utils";
+import { getCardGlowStyles, formatRelativeTime, formatViewCount, readingMinutes } from "@/lib/utils";
+
+// Kategori listesi 5 dakikada bir yenilenir (haber değişikliklerinde anında)
+export const revalidate = 300;
 
 // Async Params Arayüzü
 type Params = Promise<{ slug: string }>;
@@ -129,7 +132,7 @@ export default async function CategoryPage({ params }: { params: Params }) {
                     <div className="flex flex-wrap items-center gap-3">
                       <span className="flex items-center gap-1 font-medium shrink-0">
                         <Clock className="h-3.5 w-3.5" />
-                        {estimateReadingTime(article.content)} dk
+                        {readingMinutes(article.content)} dk
                       </span>
                       <span className="flex items-center gap-1 font-medium shrink-0">
                         <Eye className="h-3.5 w-3.5" />

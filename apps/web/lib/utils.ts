@@ -93,12 +93,14 @@ export function formatBytes(bytes: number): string {
 }
 
 /**
- * Calculate estimated reading time in minutes
+ * Tahmini okuma süresi (dakika, en az 1). HTML etiketleri ve Markdown işaretleri kelime sayılmaz;
+ * sitedeki tüm "dk okuma" değerleri bu fonksiyondan gelir.
  */
-export function calculateReadingTime(content: string): number {
-  const wordsPerMinute = 200;
-  const wordCount = content.split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.ceil(wordCount / wordsPerMinute));
+export function readingMinutes(content: string | null | undefined, wordsPerMinute = 200): number {
+  if (!content) return 1;
+  const text = content.replace(/<[^>]*>/g, " ").replace(/&[#\w]+;/g, " ").replace(/[#*_`>]/g, " ");
+  const words = text.split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / wordsPerMinute));
 }
 
 /**

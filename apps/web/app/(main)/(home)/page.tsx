@@ -17,10 +17,9 @@ import {
   getHeroArticle,
   getTrendingArticles,
   getCategoriesWithCount,
-  estimateReadingTime,
 } from "@/lib/data";
 import Image from "next/image";
-import { getCardGlowStyles, formatRelativeTime, formatViewCount } from "@/lib/utils";
+import { getCardGlowStyles, formatRelativeTime, formatViewCount, readingMinutes } from "@/lib/utils";
 import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
 import { getFeedPage } from "@/lib/feed";
@@ -146,7 +145,7 @@ export default async function HomePage() {
                       </div>
                       <span className="flex items-center gap-1">
                         <Clock className="h-3.5 w-3.5" />
-                        {estimateReadingTime(heroArticle.content)} dk okuma
+                        {readingMinutes(heroArticle.content)} dk okuma
                       </span>
                       <span className="flex items-center gap-1">
                         <Eye className="h-3.5 w-3.5" />

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { getArticleBySlug, estimateReadingTime } from "@/lib/data";
+import { getArticleBySlug } from "@/lib/data";
+import { readingMinutes } from "@/lib/utils";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Clock, Eye, Calendar, Sparkles } from "lucide-react";
@@ -112,7 +113,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
   // Gövdenin başında başlığın tekrarı varsa gösterme (eski yapay zekâ haberleri)
   const body = stripLeadingTitleHeading(article.title, article.content);
-  const readTime = estimateReadingTime(article.content);
+  const readTime = readingMinutes(article.content);
   const [related, storedSummary] = await Promise.all([
     getRelatedArticles({
       id: article.id,

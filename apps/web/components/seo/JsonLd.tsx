@@ -1,3 +1,4 @@
+import { getAppUrl } from "@/lib/utils";
 /**
  * SEO JSON-LD Structured Data Bileşenleri
  *
@@ -10,7 +11,7 @@
 
 import type { SiteSettings } from "@/lib/site-settings";
 
-const DEFAULT_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const DEFAULT_BASE_URL = getAppUrl();
 const DEFAULT_SITE_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Haber Nexus";
 
 // XSS koruması: JSON-LD içinde < karakterini escape et

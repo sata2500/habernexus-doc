@@ -154,11 +154,3 @@ export const searchArticles = cache(async (query: string) => {
     return [];
   }
 });
-
-// UI'da "dk okuma" değerlerini göstermek için basit bir yardımcı fonksiyon
-export function estimateReadingTime(text: string): number {
-  if (!text) return 1;
-  const wordsPerMinute = 200;
-  const words = text.trim().split(/\s+/).length;
-  return Math.ceil(words / wordsPerMinute);
-}

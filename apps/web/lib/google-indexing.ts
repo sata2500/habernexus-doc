@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getAppUrl } from "./utils";
 import { google } from "googleapis";
 import { appCache } from "./cache";
 
@@ -24,8 +25,7 @@ export interface IndexingLogEntry {
 
 /** Makalenin tam URL adresi */
 export function getArticleUrl(slug: string): string {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-  return `${baseUrl}/article/${slug}`;
+  return `${getAppUrl()}/article/${slug}`;
 }
 
 export function isIndexingConfigured() {
@@ -91,7 +91,7 @@ export async function getIndexingLog() {
  */
 export async function testIndexingAccess(): Promise<{ ok: boolean; message: string }> {
   if (!isIndexingConfigured()) return { ok: false, message: "GOOGLE_CLIENT_EMAIL ve GOOGLE_PRIVATE_KEY tanımlı değil." };
-  const url = `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/`;
+  const url = `${getAppUrl()}/`;
   try {
     const api = await authorizedClient();
     await api.urlNotifications.getMetadata({ url });

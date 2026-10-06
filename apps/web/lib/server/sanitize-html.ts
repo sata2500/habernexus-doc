@@ -2,26 +2,11 @@ import render from "dom-serializer";
 import { parseDocument } from "htmlparser2";
 import type { ChildNode, Element } from "domhandler";
 
+// Editörün (Tiptap) ürettiği tüm biçimler: ayraç (hr) ve üstü çizili (s) önceden siliniyordu
 const ALLOWED_TAGS = new Set([
-  "a",
-  "b",
-  "blockquote",
-  "br",
-  "code",
-  "em",
-  "h1",
-  "h2",
-  "h3",
-  "h4",
-  "i",
-  "li",
-  "ol",
-  "p",
-  "pre",
-  "strong",
-  "u",
-  "ul",
-  "img",
+  "a", "b", "blockquote", "br", "code", "del", "em", "figcaption", "figure",
+  "h1", "h2", "h3", "h4", "h5", "h6", "hr", "i", "img", "li", "mark", "ol", "p", "pre",
+  "s", "small", "strong", "sub", "sup", "u", "ul",
 ]);
 
 const DROP_WITH_CONTENT_TAGS = new Set([
@@ -41,7 +26,8 @@ const DROP_WITH_CONTENT_TAGS = new Set([
   "video",
 ]);
 
-const GLOBAL_ATTRIBUTES = new Set(["class", "dir", "id", "lang", "title"]);
+// "id" bilinçli olarak yok: haber metni sayfadaki öğelerin kimliklerini (ör. article-body) gölgeleyemesin
+const GLOBAL_ATTRIBUTES = new Set(["class", "dir", "lang", "title"]);
 const LINK_ATTRIBUTES = new Set(["href", "target", "rel"]);
 const IMAGE_ATTRIBUTES = new Set(["alt", "height", "src", "title", "width"]);
 

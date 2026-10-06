@@ -3,6 +3,9 @@ import { Mail } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { sanitizeHtml } from "@/lib/server/sanitize-html";
 
+// Sayfa admin panelinden düzenlenince anında yenilenir; aksi halde günde bir
+export const revalidate = 86400;
+
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("advertise");
   return {

@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Clock, Eye, Bookmark, Newspaper } from "lucide-react";
-import { estimateReadingTime } from "@/lib/data";
+import { readingMinutes } from "@/lib/utils";
 
 export default async function BookmarksPage() {
   const reqHeaders = await headers();
@@ -77,7 +77,7 @@ export default async function BookmarksPage() {
                       <div className="flex items-center gap-2">
                         <span className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          {estimateReadingTime(article.content)} dk
+                          {readingMinutes(article.content)} dk
                         </span>
                         <span className="flex items-center gap-1">
                           <Eye className="h-3 w-3" />

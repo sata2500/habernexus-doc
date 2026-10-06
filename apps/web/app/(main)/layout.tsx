@@ -4,7 +4,9 @@ import { getCategoriesWithCount } from "@/lib/data";
 import { getSiteSettings } from "@/lib/site-settings";
 import { PwaRegister } from "@/components/PwaRegister";
 
-export const revalidate = 60; // ISR: sayfa her 60 saniyede bir arka planda yenilenir
+// Not: Burada genel bir revalidate tanımlanmaz. Yerleşimdeki süre, altındaki tüm sayfaların süresini
+// ezer (önceden 60 sn, haber sayfalarının 1 saatlik ayarını geçersiz kılıyordu). Her sayfa kendi süresini
+// belirler; içerik değişince ilgili sayfalar zaten anında yenilenir (lib/server/article-cache).
 
 export default async function MainLayout({
   children,

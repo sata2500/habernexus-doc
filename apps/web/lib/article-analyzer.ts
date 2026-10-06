@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getAppUrl } from "./utils";
 import { prisma } from "./prisma";
 import { AiError, generateText, parseJsonResponse, searchWeb, toAiError } from "./ai/client";
 import { fetchPublicPage } from "./server/remote-fetch";
@@ -34,7 +35,7 @@ async function fetchPageText(url: string) {
 }
 
 const OWN_HOST = (() => {
-  try { return new URL(process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com").hostname.replace(/^www\./, ""); } catch { return "habernexus.com"; }
+  try { return new URL(getAppUrl()).hostname.replace(/^www\./, ""); } catch { return "habernexus.com"; }
 })();
 const hostOf = (u: string) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
 

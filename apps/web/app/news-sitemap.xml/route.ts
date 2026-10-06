@@ -1,6 +1,7 @@
+import { getAppUrl } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
 
-const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+const BASE_URL = getAppUrl();
 const SITE_NAME = process.env.NEXT_PUBLIC_APP_NAME || "Haber Nexus";
 
 export async function GET() {

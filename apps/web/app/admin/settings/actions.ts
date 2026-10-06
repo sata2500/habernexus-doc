@@ -4,6 +4,8 @@ import { requireRole } from "@/lib/server/authz";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { appCache } from "@/lib/cache";
+import { SITE_SETTINGS_CACHE_KEY } from "@/lib/site-settings";
 import { SiteSettingsInputSchema } from "@/lib/validation/schemas";
 
 // Ortak yetki kontrolü (lib/server/authz)
@@ -100,7 +102,8 @@ export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
     update: sanitized,
   });
 
-  // Tüm public sayfaları yeniden validate et
+  // Ayar önbelleği ve tüm herkese açık sayfalar yenilenir
+  await appCache.invalidate(SITE_SETTINGS_CACHE_KEY);
   revalidatePath("/", "layout");
   revalidatePath("/admin/settings");
 

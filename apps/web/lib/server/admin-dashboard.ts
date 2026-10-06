@@ -25,7 +25,9 @@ export interface DashboardTask {
 export async function getAdminDashboard() {
   const now = Date.now();
   const since7d = new Date(now - 7 * DAY);
-  const startOfDay = new Date(new Date().setHours(0, 0, 0, 0));
+  // "Bugün" Türkiye saatine göre (sunucu UTC'de çalışır; önceki hesap günü 3 saat kaydırıyordu)
+  const istanbulDate = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Istanbul" });
+  const startOfDay = new Date(`${istanbulDate}T00:00:00+03:00`);
   const settled = <T,>(p: Promise<T>, fallback: T) => p.catch((e) => { console.error("[Dashboard]", e); return fallback; });
 
   const [

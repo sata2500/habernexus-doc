@@ -39,6 +39,10 @@ export async function requireRole(...roles: Role[]) {
   return session;
 }
 
+/**
+ * Sunucu işleminde yakalanan hatayı kullanıcıya gösterilebilir metne çevirir: yetki hataları
+ * kendi açıklamasıyla, diğerleri (veritabanı vb.) günlüğe yazılıp genel bir mesajla döner.
+ */
 export function getSafeActionError(error: unknown, fallback = "İşlem gerçekleştirilemedi.") {
   if (error instanceof AuthorizationError) {
     return error.message;
@@ -46,4 +50,9 @@ export function getSafeActionError(error: unknown, fallback = "İşlem gerçekle
 
   console.error("Server action error:", error);
   return fallback;
+}
+
+/** `{ success: false, error }` sonucu üretir (try/catch bloklarında tek satır) */
+export function actionError(error: unknown, fallback?: string) {
+  return { success: false as const, error: getSafeActionError(error, fallback) };
 }

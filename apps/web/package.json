@@ -9,7 +9,7 @@
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
-    "test": "node ../../node_modules/tsx/dist/cli.mjs --test tests/*.test.ts",
+    "test": "NODE_OPTIONS=--conditions=react-server node ../../node_modules/tsx/dist/cli.mjs --test tests/*.test.ts",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:status": "prisma migrate status",

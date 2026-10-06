@@ -220,6 +220,8 @@ export async function createCategory(data: { name: string; slug: string; color: 
   });
   revalidatePath("/admin/categories");
   await invalidateArticle(null);
+  // Menüdeki kategori listesi tüm sayfalarda görünür
+  revalidatePath("/", "layout");
   return { success: true };
 }
 
@@ -245,6 +247,8 @@ export async function updateCategory(id: string, data: { name: string; slug: str
   });
   revalidatePath("/admin/categories");
   await invalidateArticle(null);
+  // Menüdeki kategori listesi tüm sayfalarda görünür
+  revalidatePath("/", "layout");
   return { success: true };
 }
 
@@ -264,6 +268,8 @@ export async function deleteCategoryAdmin(id: string) {
   await prisma.category.delete({ where: { id } });
   revalidatePath("/admin/categories");
   await invalidateArticle(null);
+  // Menüdeki kategori listesi tüm sayfalarda görünür
+  revalidatePath("/", "layout");
   return { success: true };
 }
 

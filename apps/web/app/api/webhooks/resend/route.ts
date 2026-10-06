@@ -1,3 +1,4 @@
+import { getAppUrl } from "@/lib/utils";
 import { Resend } from "resend";
 import { Webhook } from "svix";
 import { prisma } from "@/lib/prisma";
@@ -134,7 +135,7 @@ export async function POST(req: NextRequest) {
 
       // Bildirimler — try-catch ayrıldı (ana işlemi etkilemez)
       try {
-        const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
+        const appUrl = getAppUrl();
 
         if (isNewTicket) {
           await sendEmail({

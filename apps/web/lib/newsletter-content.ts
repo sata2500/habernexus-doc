@@ -1,7 +1,8 @@
 import "server-only";
 
+import { getAppUrl } from "@/lib/utils";
 import { prisma } from "@/lib/prisma";
-import { estimateReadingTime } from "@/lib/data";
+import { readingMinutes } from "@/lib/utils";
 
 export interface NewsletterArticle {
   title: string;
@@ -38,7 +39,7 @@ export async function selectNewsletterArticles(limit = 7): Promise<NewsletterArt
     // Çeşitlilik yetmezse kalan yerler en çok okunanlarla doldurulur
     const final = [...picked, ...rest].slice(0, limit);
     if (final.length >= 3 || hours === 48) {
-      return final.map(({ content, ...a }) => ({ ...a, readingMinutes: estimateReadingTime(content) }));
+      return final.map(({ content, ...a }) => ({ ...a, readingMinutes: readingMinutes(content) }));
     }
   }
   return [];
@@ -55,7 +56,7 @@ export function newsletterDateLabel(date = new Date()) {
   return date.toLocaleDateString("tr-TR", { timeZone: "Europe/Istanbul", weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
 
-const BASE_URL = () => process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+const BASE_URL = getAppUrl;
 
 /** Bülten bağlantıları: hangi haberin bültenden okunduğu ölçülebilsin diye UTM parametreleri (canonical ayrı) */
 export function newsletterLink(path: string, campaign = "daily") {

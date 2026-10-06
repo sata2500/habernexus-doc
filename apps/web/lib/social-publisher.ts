@@ -1,3 +1,4 @@
+import { getAppUrl } from "./utils";
 export interface SocialPostPayload {
   title: string;
   excerpt?: string | null;
@@ -19,7 +20,7 @@ export async function publishToTelegram(payload: SocialPostPayload): Promise<boo
       return false;
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "https://habernexus.com";
+    const siteUrl = getAppUrl();
     const articleUrl = `${siteUrl}/article/${payload.slug}`;
     const text = `🚨 *${escapeMarkdownV2(payload.title)}*\n\n${escapeMarkdownV2(payload.excerpt || "")}\n\n👉 [Haberi Oku](${articleUrl})`;
 
@@ -27,6 +28,7 @@ export async function publishToTelegram(payload: SocialPostPayload): Promise<boo
     const res = await fetch(apiUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      signal: AbortSignal.timeout(10_000),
       body: JSON.stringify({
         chat_id: channelId,
         text,
@@ -50,5 +52,6 @@ export async function publishToTelegram(payload: SocialPostPayload): Promise<boo
 }
 
 function escapeMarkdownV2(text: string): string {
-  return text.replace(/[_*[\]()~`>#+-=|{}.!]/g, "\\$&");
+  // MarkdownV2'de kaçışlanması gereken karakterler (önceki ifadede "+-=" bir aralık olarak okunup rakamları da kaçışlıyordu)
+  return text.replace(/[_*[\]()~`>#+\-=|{}.!\\]/g, "\\$&");
 }

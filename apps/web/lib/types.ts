@@ -1,8 +1,6 @@
 import type { Category } from "./generated/client";
 
-/**
- * Category with article count
- */
+/** Kategori ve yayındaki haber sayısı */
 export interface CategoryWithCount extends Category {
   _count: {
     articles: number;
@@ -10,11 +8,9 @@ export interface CategoryWithCount extends Category {
 }
 
 /**
- * Server Action Response generic type
+ * Sunucu işlemlerinin (server action) ortak sonuç tipi. İstemci `success` alanına bakar;
+ * hata metni her zaman kullanıcıya gösterilebilir Türkçe bir cümledir (iç ayrıntı içermez).
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type ActionResponse<T = any> = {
-  success: boolean;
-  error?: string;
-  data?: T;
-};
+export type ActionResult<T = undefined> =
+  | ({ success: true; message?: string } & (T extends undefined ? { data?: undefined } : { data: T }))
+  | { success: false; error: string };

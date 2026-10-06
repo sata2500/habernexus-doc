@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { checkRateLimit, checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
+import { checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
 import { NewsletterEmailSchema } from "@/lib/validation/schemas";
 import { sendEmail } from "@/lib/mail";
 import { confirmUrl } from "@/lib/newsletter-links";
@@ -17,7 +17,7 @@ export async function subscribeToNewsletter(email: string) {
 
   const emailLower = parsedEmail.data;
   const ipRate = await checkRateLimitAsync(`newsletter-ip:${await getActionIdentity()}`, 10, 60 * 60 * 1000);
-  const rate = checkRateLimit(`newsletter:${emailLower}`, 3, 60 * 60 * 1000);
+  const rate = await checkRateLimitAsync(`newsletter:${emailLower}`, 3, 60 * 60 * 1000);
   if (!ipRate.allowed || !rate.allowed) {
     return { success: false, error: "Çok fazla deneme yapıldı. Lütfen daha sonra tekrar deneyin." };
   }

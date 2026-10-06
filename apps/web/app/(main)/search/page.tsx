@@ -1,5 +1,5 @@
-import { searchArticles, estimateReadingTime } from "@/lib/data";
-import { formatViewCount } from "@/lib/utils";
+import { searchArticles } from "@/lib/data";
+import { formatViewCount, readingMinutes } from "@/lib/utils";
 import Link from "next/link";
 import Image from "next/image";
 import { Badge } from "@/components/ui/Badge";
@@ -112,7 +112,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Searc
                     <div className="flex items-center gap-3">
                       <span className="flex items-center gap-1">
                         <Clock className="h-3 w-3" />
-                        {estimateReadingTime(article.content)} dk
+                        {readingMinutes(article.content)} dk
                       </span>
                       <span className="flex items-center gap-1">
                         <Eye className="h-3 w-3" />

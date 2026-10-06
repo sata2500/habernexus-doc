@@ -4,6 +4,9 @@ import Link from "next/link";
 import { getCategoriesWithCount } from "@/lib/data";
 import { RSSFeedList } from "@/components/seo/RSSFeedList";
 
+// Neredeyse hiç değişmeyen sayfa
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   alternates: { canonical: "/rss-feeds" },
   title: "RSS Kaynakları",

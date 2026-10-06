@@ -1,3 +1,5 @@
+import "server-only";
+
 import { headers } from "next/headers";
 
 interface RateLimitEntry {
@@ -98,17 +100,24 @@ function pruneExpiredEntries(now: number) {
   }
 }
 
-export function getRequestIdentity(request: Request) {
-  const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
-  return forwardedFor || request.headers.get("x-real-ip") || "unknown";
+/**
+ * İsteği yapan istemcinin IP adresi. Vercel'in kendi eklediği başlıklar önceliklidir
+ * (istemcinin gönderebileceği x-forwarded-for'un ilk değerine kör güvenilmez).
+ */
+function clientIp(h: Headers) {
+  return (
+    h.get("x-vercel-forwarded-for")?.split(",")[0]?.trim()
+    || h.get("x-real-ip")?.trim()
+    || h.get("x-forwarded-for")?.split(",")[0]?.trim()
+    || "unknown"
+  );
 }
 
+export function getRequestIdentity(request: Request) {
+  return clientIp(request.headers);
+}
 
-/**
- * Server Action'lar için istek kimliği (Request nesnesi olmadığından header'lardan okunur).
- */
+/** Sunucu işlemleri için istek kimliği (Request nesnesi olmadığından başlıklardan okunur) */
 export async function getActionIdentity() {
-  const reqHeaders = await headers();
-  const forwardedFor = reqHeaders.get("x-forwarded-for")?.split(",")[0]?.trim();
-  return forwardedFor || reqHeaders.get("x-real-ip") || "unknown";
+  return clientIp(await headers());
 }
