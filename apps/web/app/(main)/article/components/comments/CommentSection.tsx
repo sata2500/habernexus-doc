@@ -6,6 +6,7 @@ import { CommentForm } from "./CommentForm";
 import { CommentItem } from "./CommentItem";
 import { getComments } from "../../actions";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 
 type CommentWithReplies = Awaited<ReturnType<typeof getComments>>[number];
@@ -18,11 +19,12 @@ export function CommentSection({ articleId }: Props) {
   const { data: session, isPending: isSessionLoading } = authClient.useSession();
   const userId = session?.user?.id;
 
+  const pathname = usePathname();
   const [comments, setComments] = useState<CommentWithReplies[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Yalnızca ilk yüklemede iskelet gösterilir; yorum gönderince liste yerinde yenilenir
   const fetchComments = useCallback(async () => {
-    setIsLoading(true);
     try {
       const data = await getComments(articleId);
       setComments(data);
@@ -38,13 +40,15 @@ export function CommentSection({ articleId }: Props) {
     fetchComments();
   }, [fetchComments]);
 
+  const total = comments.reduce((n, c) => n + 1 + (c.replies?.length ?? 0), 0);
+
   return (
-    <section className="mt-16 border-t border-border pt-12 animate-in fade-in duration-700">
+    <section id="yorumlar" aria-labelledby="comments-title" className="mt-16 border-t border-border pt-12 scroll-mt-20">
       <div className="flex items-center justify-between mb-8">
-        <h2 className="text-2xl font-bold font-(family-name:--font-outfit) flex items-center gap-3">
-          <MessageSquare className="h-6 w-6 text-primary-500" />
+        <h2 id="comments-title" className="text-2xl font-bold font-(family-name:--font-outfit) flex items-center gap-3">
+          <MessageSquare className="h-6 w-6 text-primary-500" aria-hidden="true" />
           Yorumlar
-          <span className="text-sm font-normal text-muted-foreground ml-2">({comments.length})</span>
+          {!isLoading && <span className="text-sm font-normal text-muted-foreground ml-2">({total})</span>}
         </h2>
       </div>
 
@@ -52,18 +56,14 @@ export function CommentSection({ articleId }: Props) {
          <div className="h-24 bg-muted animate-pulse rounded-2xl mb-12" />
       ) : userId ? (
         <div className="mb-12">
-          <CommentForm
-            articleId={articleId}
-
-            onSuccess={fetchComments}
-          />
+          <CommentForm articleId={articleId} onSuccess={fetchComments} />
         </div>
       ) : (
         <div className="bg-muted/50 rounded-2xl p-8 text-center mb-12 border border-dashed border-border group hover:border-primary-500/30 transition-colors">
           <LogIn className="h-8 w-8 text-muted-foreground mx-auto mb-3 group-hover:text-primary-500 transition-colors" />
           <p className="text-muted-foreground mb-4 font-medium">Yorum yapmak için giriş yapmalısınız.</p>
           <Link
-            href="/login"
+            href={`/login?callbackUrl=${encodeURIComponent(`${pathname}#yorumlar`)}`}
             className="inline-flex items-center px-6 py-2.5 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-500 transition-all shadow-md shadow-primary-500/20 active:scale-95"
           >
             Giriş Yap
@@ -95,7 +95,7 @@ export function CommentSection({ articleId }: Props) {
             />
           ))
         ) : (
-          <div className="text-center py-12 opacity-50">
+          <div className="text-center py-12 text-muted-foreground">
             <p className="text-sm">Henüz yorum yapılmamış. İlk yorumu siz yapın!</p>
           </div>
         )}

@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { getArticleBySlug } from "@/lib/data";
-import { readingMinutes } from "@/lib/utils";
+import { formatDateTime, formatViewCount, getAppUrl, readingMinutes } from "@/lib/utils";
+import { plainText } from "@/lib/analysis/metrics";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Clock, Eye, Calendar, Sparkles } from "lucide-react";
@@ -92,17 +93,6 @@ export async function generateMetadata({ params }: { params: Params }) {
   };
 }
 
-// Tarih Formatlayıcı Yardımcı Fonksiyon
-function formatDate(date: Date) {
-  return new Intl.DateTimeFormat("tr-TR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  }).format(date);
-}
-
 export default async function ArticlePage({ params }: { params: Params }) {
   const { slug } = await params;
   const article = await getArticleBySlug(slug);
@@ -124,8 +114,8 @@ export default async function ArticlePage({ params }: { params: Params }) {
     getStoredSummary(article),
   ]);
 
-  // Kelime sayısını hesapla (JSON-LD wordCount için)
-  const wordCount = article.content ? article.content.trim().split(/\s+/).length : 0;
+  // JSON-LD için kelime sayısı (HTML etiketleri sayılmaz)
+  const wordCount = plainText(body).split(/\s+/).filter(Boolean).length;
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
@@ -177,22 +167,22 @@ export default async function ArticlePage({ params }: { params: Params }) {
             </Badge>
           )}
           <span className="text-sm text-muted-foreground flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4" aria-hidden="true" />
             {article.publishedAt ? (
               <time dateTime={article.publishedAt.toISOString()}>
-                {formatDate(article.publishedAt)}
+                {formatDateTime(article.publishedAt)}
               </time>
             ) : (
               "Belirsiz"
             )}
           </span>
           <span className="text-sm text-muted-foreground flex items-center gap-1">
-            <Clock className="h-4 w-4" />
+            <Clock className="h-4 w-4" aria-hidden="true" />
             {readTime} dk okuma
           </span>
           <span className="text-sm text-muted-foreground flex items-center gap-1">
-            <Eye className="h-4 w-4" />
-            {article.viewCount} görüntülenme
+            <Eye className="h-4 w-4" aria-hidden="true" />
+            {formatViewCount(article.viewCount)} görüntülenme
           </span>
         </div>
 
@@ -220,7 +210,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
             </div>
           </div>
           <div className="flex items-center gap-1 sm:gap-2 ml-auto">
-            <ShareButtons title={article.title} url={""} />
+            <ShareButtons title={article.title} url={`${getAppUrl()}/article/${article.slug}`} />
             <BookmarkButton articleId={article.id} />
           </div>
         </div>
@@ -241,6 +231,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
             fill
             className="object-cover"
             priority
+            fetchPriority="high"
             placeholder="blur"
             blurDataURL={ARTICLE_COVER_BLUR_DATA_URL}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 896px"
@@ -261,7 +252,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
       </div>
 
       {/* ── Yazar Bilgi Kartı ────────────────────────── */}
-      <section className="bg-muted/30 rounded-2xl p-6 md:p-8 mb-12 border border-border">
+      <section className="bg-muted/30 rounded-2xl p-6 md:p-8 mb-12 border border-border" aria-label="Yazar hakkında">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
           <Avatar
             src={(article.aiPersona?.image || article.author.image) || undefined}
@@ -271,7 +262,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
           />
           <div className="flex-1 space-y-3">
             <div>
-              <h3 className="text-xl font-bold font-display">{article.aiPersona?.name || article.author.name}</h3>
+              <h2 className="text-xl font-bold font-display">{article.aiPersona?.name || article.author.name}</h2>
               <p className="text-sm text-primary-600 font-medium">{article.aiPersona?.role || "Haber Nexus Yazarı"}</p>
             </div>
             {(article.aiPersona?.description || article.author.bio) ? (
@@ -289,14 +280,14 @@ export default async function ArticlePage({ params }: { params: Params }) {
 
       {/* ── Etiketler: etiket sayfalarına bağlanır ────────────────────────── */}
       {article.tags.length > 0 && (
-        <div className="flex flex-wrap items-center gap-2 border-t border-border pt-6 mt-8 mb-8">
+        <nav className="flex flex-wrap items-center gap-2 border-t border-border pt-6 mt-8 mb-8" aria-label="Etiketler">
           <span className="font-semibold font-display">Etiketler:</span>
           {article.tags.map((tagRel) => (
             <Link key={tagRel.tag.id} href={`/etiket/${tagRel.tag.slug}`}>
               <Badge variant="default" className="hover:bg-primary-500 hover:text-white transition-colors">#{tagRel.tag.name}</Badge>
             </Link>
           ))}
-        </div>
+        </nav>
       )}
 
       {/* ── Yapay Zeka Yorum Özeti ────────────────────────── */}
@@ -314,9 +305,9 @@ export default async function ArticlePage({ params }: { params: Params }) {
               <div className="h-8 w-8 rounded-lg bg-primary-500/10 flex items-center justify-center text-primary-500">
                 <Sparkles className="h-4 w-4" />
               </div>
-              <h3 className="text-base font-bold font-display">
-                Yapay Zeka Okur Özetleri
-              </h3>
+              <h2 className="text-base font-bold font-display">
+                Yapay Zekâ Okur Özeti
+              </h2>
             </div>
             <div
               className="prose prose-sm dark:prose-invert prose-primary max-w-none text-muted-foreground leading-relaxed"

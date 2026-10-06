@@ -17,6 +17,8 @@ interface ArticleFeedProps {
   maxLoads?: number;
   pageSize?: number;
   category?: string;
+  /** Görseli öncelikli yüklenecek ilk kart sayısı (akış sayfanın üstündeyse 3, aşağıdaysa 0) */
+  eagerCount?: number;
 }
 
 export function ArticleFeed({
@@ -26,6 +28,7 @@ export function ArticleFeed({
   maxLoads = 3,
   pageSize = 12,
   category,
+  eagerCount = 3,
 }: ArticleFeedProps) {
   const [items, setItems] = useState(initialItems);
   const [cursor, setCursor] = useState(initialCursor);
@@ -91,7 +94,7 @@ export function ArticleFeed({
     <div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
         {items.map((article, i) => (
-          <FeedArticleCard key={article.id} article={article} priority={i < 3} />
+          <FeedArticleCard key={article.id} article={article} priority={i < eagerCount} />
         ))}
       </div>
 
@@ -100,7 +103,7 @@ export function ArticleFeed({
       <div className="mt-8 flex flex-col items-center gap-3" aria-live="polite">
         {status === "loading" && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
-            <Loader2 className="h-4 w-4 animate-spin" /> Haberler yükleniyor...
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Haberler yükleniyor…
           </div>
         )}
 

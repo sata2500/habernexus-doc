@@ -43,7 +43,7 @@ export function FeedArticleCard({ article, priority, badge, layout = "responsive
           {article.coverImage ? (
             <Image
               src={article.coverImage}
-              alt={article.title}
+              alt=""
               fill
               priority={priority}
               className="object-cover group-hover:scale-105 transition-transform duration-700"
@@ -52,9 +52,9 @@ export function FeedArticleCard({ article, priority, badge, layout = "responsive
           ) : (
             <div
               className="absolute inset-0 flex items-center justify-center"
-              style={{ background: `linear-gradient(135deg, ${color}26, ${color}0a)` }}
+              style={{ background: `linear-gradient(135deg, color-mix(in srgb, ${color} 15%, transparent), color-mix(in srgb, ${color} 4%, transparent))` }}
             >
-              <Newspaper className="h-7 w-7 sm:h-10 sm:w-10 text-muted-foreground/30" />
+              <Newspaper className="h-7 w-7 sm:h-10 sm:w-10 text-muted-foreground/30" aria-hidden="true" />
             </div>
           )}
           {badge && <div className={cn("absolute top-2 right-2 z-10", !v && "hidden sm:block")}>{badge}</div>}
@@ -97,12 +97,12 @@ export function FeedArticleCard({ article, priority, badge, layout = "responsive
             </div>
             <div className="flex items-center gap-3 shrink-0">
               <span className="flex items-center gap-1">
-                <Clock className="h-3.5 w-3.5" />
-                {article.readingMinutes} dk
+                <Clock className="h-3.5 w-3.5" aria-hidden="true" />
+                {article.readingMinutes} dk<span className="sr-only"> okuma</span>
               </span>
               <span className="flex items-center gap-1">
-                <Eye className="h-3.5 w-3.5" />
-                {formatViewCount(article.viewCount)}
+                <Eye className="h-3.5 w-3.5" aria-hidden="true" />
+                {formatViewCount(article.viewCount)}<span className="sr-only"> okunma</span>
               </span>
             </div>
           </div>

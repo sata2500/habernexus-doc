@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { motion } from "framer-motion";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { Slide } from "@/lib/generated/client";
+import type { Slide } from "@/lib/generated/client";
+import { cn } from "@/lib/utils";
 
 interface SliderClientProps {
   slides: Slide[];
@@ -13,185 +13,192 @@ interface SliderClientProps {
   autoPlay?: boolean;
 }
 
-export function SliderClient({ 
-  slides: initialSlides, 
-  interval = 5000, 
-  autoPlay = true,
-}: SliderClientProps) {
-  // Infinite loop için slaytları üç kata çıkarıyoruz
-  const slides = [...initialSlides, ...initialSlides, ...initialSlides];
-  const [current, setCurrent] = useState(initialSlides.length);
-  const [itemsToShow, setItemsToShow] = useState(1);
-  const [isHovering, setIsHovering] = useState(false);
-  const [isDragging, setIsDragging] = useState(false);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+/**
+ * Ana sayfa slaytı. Kaydırma tarayıcının yerel "scroll-snap" özelliğiyle yapılır: dokunmatik
+ * kaydırma akıcıdır, ek animasyon kütüphanesi gerekmez. Otomatik geçiş fare üzerindeyken,
+ * klavye odağı içerideyken, kullanıcı dokunurken ve "azaltılmış hareket" tercihinde durur.
+ */
+export function SliderClient({ slides, interval = 5000, autoPlay = true }: SliderClientProps) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [perView, setPerView] = useState(1);
+  const count = slides.length;
+  /** Gidilebilecek konum sayısı (masaüstünde 2 slayt yan yana: 3 slayt → 2 konum) */
+  const positions = Math.max(1, count - perView + 1);
 
-  // Masaüstü: 2 slayt yan yana, mobil/tablet: 1 slayt
   useEffect(() => {
-    const updateItems = () => {
-      setItemsToShow(window.innerWidth >= 1024 ? 2 : 1);
-    };
-    updateItems();
-    window.addEventListener("resize", updateItems);
-    return () => window.removeEventListener("resize", updateItems);
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
   }, []);
 
-  const nextSlide = useCallback(() => setCurrent((p) => p + 1), []);
-  const prevSlide = useCallback(() => setCurrent((p) => p - 1), []);
-
-  // Sonsuz döngü: sınır aşıldığında sessizce sıçra
+  // Görünürdeki slayt sayısı (masaüstünde 2), ekran boyutu değişince güncellenir
   useEffect(() => {
-    if (current >= initialSlides.length * 2) {
-      setTimeout(() => setCurrent(initialSlides.length), 500);
-    } else if (current < initialSlides.length) {
-      setTimeout(() => setCurrent(initialSlides.length * 2 - 1), 500);
-    }
-  }, [current, initialSlides.length]);
+    const track = trackRef.current;
+    if (!track) return;
+    const measure = () => {
+      const first = track.firstElementChild as HTMLElement | null;
+      setPerView(first ? Math.max(1, Math.round(track.clientWidth / first.offsetWidth)) : 1);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(track);
+    return () => ro.disconnect();
+  }, []);
 
+  const goTo = useCallback((index: number) => {
+    const track = trackRef.current;
+    const first = track?.firstElementChild as HTMLElement | null;
+    if (!track || !first) return;
+    const last = Math.max(0, count - perView);
+    // Sondan sonra başa, baştan önce sona döner
+    const target = index > last ? 0 : index < 0 ? last : index;
+    track.scrollTo({ left: target * first.offsetWidth, behavior: "smooth" });
+  }, [count, perView]);
+
+  // Kaydırma konumundan etkin slayt
   useEffect(() => {
-    if (autoPlay && !isHovering && !isDragging) {
-      timerRef.current = setInterval(nextSlide, interval);
-    }
-    return () => { if (timerRef.current) clearInterval(timerRef.current); };
-  }, [autoPlay, isHovering, isDragging, interval, nextSlide]);
+    const track = trackRef.current;
+    if (!track) return;
+    const onScroll = () => {
+      const first = track.firstElementChild as HTMLElement | null;
+      if (first) setCurrent(Math.round(track.scrollLeft / first.offsetWidth));
+    };
+    track.addEventListener("scroll", onScroll, { passive: true });
+    return () => track.removeEventListener("scroll", onScroll);
+  }, []);
 
-  if (!initialSlides.length) return null;
+  const playing = autoPlay && !paused && !reducedMotion && positions > 1;
+  useEffect(() => {
+    if (!playing) return;
+    const timer = setTimeout(() => goTo(current + 1), interval);
+    return () => clearTimeout(timer);
+  }, [playing, current, interval, goTo]);
+
+  if (!count) return null;
 
   return (
     <div
-      ref={containerRef}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-      // Dış konteyner: slaytlar ile tam uyumlu aspect-ratio (16:9 ve 32:9)
-      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-card transition-all duration-500 aspect-[16/9] lg:aspect-[32/9]"
+      className="relative w-full overflow-hidden rounded-[2rem] md:rounded-[2.5rem] shadow-2xl border border-border/50 group bg-card aspect-[16/9] lg:aspect-[32/9]"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      onFocus={() => setPaused(true)}
+      onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget)) setPaused(false); }}
+      onTouchStart={() => setPaused(true)}
+      onTouchEnd={() => setPaused(false)}
+      aria-roledescription="carousel"
     >
-      <motion.div
-        animate={{ x: `-${current * (100 / slides.length)}%` }}
-        transition={{ type: "spring", stiffness: 150, damping: 25, mass: 1 }}
-        drag="x"
-        dragConstraints={{ left: -10000, right: 10000 }}
-        dragElastic={0.2}
-        onDragStart={() => setIsDragging(true)}
-        onDragEnd={(_, info) => {
-          setIsDragging(false);
-          if (info.velocity.x > 500 || info.offset.x > 100) prevSlide();
-          else if (info.velocity.x < -500 || info.offset.x < -100) nextSlide();
-        }}
-        className="flex h-full cursor-grab active:cursor-grabbing touch-pan-y"
-        style={{ width: `${(slides.length / itemsToShow) * 100}%` }}
+      <div
+        ref={trackRef}
+        className="flex h-full overflow-x-auto snap-x snap-mandatory no-scrollbar overscroll-x-contain"
+        aria-live={playing ? "off" : "polite"}
       >
-        {slides.map((slide, index) => {
-          const isActive = index >= current && index < current + itemsToShow;
-          return (
-            <div
-              key={`${slide.id}-${index}`}
-              className="relative h-full px-1.5 md:px-2.5 py-0 flex-shrink-0 flex items-center"
-              style={{ width: `${100 / slides.length}%` }}
-            >
-              {/* Slayt kartı — tam 16:9, dikey ortala */}
-              <div className="relative w-full aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide">
+        {slides.map((slide, index) => (
+          <div
+            key={slide.id}
+            className="relative h-full shrink-0 basis-full lg:basis-1/2 snap-start px-1.5 md:px-2.5 flex items-center"
+            role="group"
+            aria-roledescription="slide"
+            aria-label={`${index + 1} / ${count}${slide.title ? `: ${slide.title}` : ""}`}
+          >
+            <div className="relative w-full aspect-[16/9] rounded-[1.5rem] md:rounded-[2rem] overflow-hidden group/slide">
+              <Image
+                src={slide.imageUrl}
+                alt={slide.title || ""}
+                fill
+                sizes="(min-width: 1024px) 50vw, 100vw"
+                className="object-cover group-hover/slide:scale-105 transition-transform duration-1000"
+                priority={index === 0}
+                fetchPriority={index === 0 ? "high" : undefined}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
 
-                {/* Arka plan görseli — alana tam oturan */}
-                <div className="absolute inset-0 z-10">
-                  <Image
-                    src={slide.imageUrl}
-                    alt={slide.title || ""}
-                    fill
-                    className="object-cover group-hover/slide:scale-105 transition-transform duration-1000"
-                    priority={index >= initialSlides.length && index < initialSlides.length + itemsToShow}
-                  />
-                </div>
-
-                {/* Gradient örtüsü — Metin okunabilirliği için her zaman koyu gradyan */}
-                <div className="absolute inset-0 z-20 bg-gradient-to-t from-black/85 via-black/40 to-transparent transition-colors duration-300" />
-
-                {/* İçerik */}
-                <div className="absolute inset-0 z-30 flex items-end justify-center pb-7 md:pb-10 px-4 md:px-5">
-                  <motion.div
-                    initial={{ opacity: 0, y: 15 }}
-                    animate={isActive ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
-                    transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                    className="w-full max-w-[95%] space-y-1.5 md:space-y-2.5 text-center"
-                  >
-                    {slide.title && (
-                      <h2 className="text-base md:text-xl lg:text-2xl font-bold font-display leading-tight line-clamp-2 text-white drop-shadow transition-colors duration-300">
-                        {slide.title}
-                      </h2>
-                    )}
-                    {itemsToShow === 1 && slide.description && (
-                      <p className="text-white/85 text-xs md:text-sm line-clamp-2 font-medium leading-relaxed max-w-xl mx-auto hidden md:block transition-colors duration-300">
-                        {slide.description}
-                      </p>
-                    )}
-                    {slide.link && (
-                      <div className="pt-1.5 md:pt-2.5">
-                        <Link
-                          href={slide.link}
-                          className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-xl font-bold text-xs hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-primary-500/20 group/btn"
-                        >
-                          İncele
-                          <div className="bg-white/25 rounded-full p-0.5 group-hover/btn:bg-white/40 transition-colors duration-200">
-                            <ArrowRight className="h-3 w-3" />
-                          </div>
-                        </Link>
-                      </div>
-                    )}
-                  </motion.div>
+              <div className="absolute inset-0 flex items-end justify-center pb-7 md:pb-10 px-4 md:px-5">
+                <div className="w-full max-w-[95%] space-y-1.5 md:space-y-2.5 text-center">
+                  {slide.title && (
+                    <h2 className="text-base md:text-xl lg:text-2xl font-bold font-display leading-tight line-clamp-2 text-white drop-shadow">
+                      {slide.title}
+                    </h2>
+                  )}
+                  {slide.description && (
+                    <p className="text-white/85 text-xs md:text-sm line-clamp-2 font-medium leading-relaxed max-w-xl mx-auto hidden md:block lg:hidden">
+                      {slide.description}
+                    </p>
+                  )}
+                  {slide.link && (
+                    <div className="pt-1.5 md:pt-2.5">
+                      <Link
+                        href={slide.link}
+                        className="inline-flex items-center gap-2 px-4 py-2 md:px-5 md:py-2.5 bg-primary-500 hover:bg-primary-600 active:bg-primary-700 text-white rounded-xl font-bold text-xs hover:scale-105 active:scale-95 transition-all duration-300 shadow-lg shadow-primary-500/20 group/btn focus-ring"
+                      >
+                        İncele<span className="sr-only">: {slide.title}</span>
+                        <span className="bg-white/25 rounded-full p-0.5 group-hover/btn:bg-white/40 transition-colors duration-200" aria-hidden="true">
+                          <ArrowRight className="h-3 w-3" />
+                        </span>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-          );
-        })}
-      </motion.div>
-
-      {/* ← Önceki */}
-      <div className="absolute inset-y-0 left-2 md:left-4 flex items-center z-40">
-        <button
-          onClick={(e) => { e.stopPropagation(); prevSlide(); }}
-          className="h-9 w-9 md:h-11 md:w-11 rounded-full bg-card/80 backdrop-blur-xl border border-border/40 text-foreground flex items-center justify-center hover:bg-primary-500 hover:text-white hover:border-primary-400 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
-        >
-          <ChevronLeft className="h-5 w-5" />
-        </button>
+          </div>
+        ))}
       </div>
 
-      {/* → Sonraki */}
-      <div className="absolute inset-y-0 right-2 md:right-4 flex items-center z-40">
-        <button
-          onClick={(e) => { e.stopPropagation(); nextSlide(); }}
-          className="h-9 w-9 md:h-11 md:w-11 rounded-full bg-card/80 backdrop-blur-xl border border-border/40 text-foreground flex items-center justify-center hover:bg-primary-500 hover:text-white hover:border-primary-400 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 group-hover:opacity-100 shadow-md"
-        >
-          <ChevronRight className="h-5 w-5" />
-        </button>
-      </div>
-
-      {/* Progress Dots */}
-      <div className="absolute bottom-3 md:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-40">
-        {initialSlides.map((_, idx) => {
-          const isActive = (current % initialSlides.length) === idx;
-          return (
+      {positions > 1 && (
+        <>
+          {/* Oklar: dokunmatikte kaydırma yeterli; masaüstünde üzerine gelince ya da klavye odağında görünür */}
+          {([["prev", ChevronLeft, "Önceki slayt", "left-2 md:left-4"], ["next", ChevronRight, "Sonraki slayt", "right-2 md:right-4"]] as const).map(([dir, Icon, label, pos]) => (
             <button
-              key={idx}
-              onClick={() => setCurrent(initialSlides.length + idx)}
-              className={`relative h-1 md:h-1.5 transition-all duration-300 rounded-full overflow-hidden ${
-                isActive ? "bg-primary-500" : "bg-foreground/20"
-              }`}
-              style={{ width: isActive ? "1.5rem" : "0.4rem" }}
-            >
-              {isActive && autoPlay && (
-                <motion.div
-                  key={current}
-                  initial={{ width: 0 }}
-                  animate={{ width: (isHovering || isDragging) ? "0%" : "100%" }}
-                  transition={{ duration: interval / 1000, ease: "linear" }}
-                  className="absolute inset-0 bg-primary-600"
-                />
+              key={dir}
+              type="button"
+              onClick={() => goTo(dir === "next" ? current + 1 : current - 1)}
+              aria-label={label}
+              className={cn(
+                "absolute top-1/2 -translate-y-1/2 z-10 hidden md:flex h-11 w-11 rounded-full bg-card/80 backdrop-blur-xl border border-border/40 text-foreground items-center justify-center hover:bg-primary-500 hover:text-white hover:border-primary-400 hover:scale-110 active:scale-95 transition-all duration-300 opacity-0 group-hover:opacity-100 focus-visible:opacity-100 shadow-md cursor-pointer focus-ring",
+                pos,
               )}
-              {isActive && !autoPlay && <div className="absolute inset-0 bg-primary-600" />}
+            >
+              <Icon className="h-5 w-5" />
             </button>
-          );
-        })}
-      </div>
+          ))}
+
+          <div className="absolute bottom-3 md:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1 z-10">
+            {slides.slice(0, positions).map((slide, idx) => {
+              const active = idx === Math.min(current, positions - 1);
+              return (
+                <button
+                  key={slide.id}
+                  type="button"
+                  onClick={() => goTo(idx)}
+                  aria-label={`${idx + 1}. slayta git`}
+                  aria-current={active ? "true" : undefined}
+                  className="p-1.5 cursor-pointer group/dot"
+                >
+                  <span
+                    className={cn(
+                      "relative block h-1 md:h-1.5 rounded-full overflow-hidden transition-all duration-300",
+                      active ? "w-6 bg-primary-500/40" : "w-1.5 bg-white/50 group-hover/dot:bg-white/80",
+                    )}
+                  >
+                    {active && (
+                      <span
+                        key={`${current}-${playing}`}
+                        className="absolute inset-y-0 left-0 bg-primary-500"
+                        style={playing ? { animation: `slider-progress ${interval}ms linear forwards` } : { width: "100%" }}
+                      />
+                    )}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 }

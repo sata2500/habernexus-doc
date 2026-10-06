@@ -21,5 +21,6 @@ export function authErrorMessage(code: string | null | undefined) {
 
 /** Yalnızca site içi yollara yönlendir (açık yönlendirme açığını önler) */
 export function safeCallbackPath(raw: string | null | undefined) {
-  return raw && raw.startsWith("/") && !raw.startsWith("//") ? raw : "/";
+  // "//site" ve "/\site" tarayıcıda başka siteye gider (açık yönlendirme); kontrol karakterleri de reddedilir
+  return raw && raw.startsWith("/") && !/^\/[\\/]/.test(raw) && !/[\u0000-\u001f]/.test(raw) ? raw : "/";
 }

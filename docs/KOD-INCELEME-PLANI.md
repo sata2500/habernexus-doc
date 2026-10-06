@@ -45,11 +45,11 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 - [x] Testler: karakter kodu çözme, trend puanı, seslendirme bölme (48 test). Kümeleme ve puanlama testleri zaten vardı
 - [ ] Not: yapay zekâ ayarları her çağrıda birincil anahtarla tek satır okunuyor; çağrı saniyeler sürdüğü için önbelleğe alınmadı (model değişikliği anında geçerli olsun)
 
-### Aşama 3 — Herkese açık site
-- [ ] Ana sayfa, haber, kategori, etiket, son haberler, arama, statik sayfalar
-- [ ] Arayüz hataları, erişilebilirlik (klavye, ekran okuyucu, kontrast)
-- [ ] Performans: istemci paket boyutu, görseller, yükleme durumları, Core Web Vitals
-- [ ] İçerik güvenlik politikası (CSP) sıkılaştırması
+### Aşama 3 — Herkese açık site ✅
+- [x] Ana sayfa, haber, kategori, etiket, son haberler, arama, statik sayfalar, yerleşim (menü, alt bilgi, slayt), yorumlar, tepkiler, paylaşım
+- [x] Erişilebilirlik: içeriğe geç bağlantısı, tek h1, düğme/bağlantı etiketleri, klavye ile menü (Esc), odak yönetimi, `aria-current`/`aria-pressed`
+- [x] Performans: ana sayfa JavaScript'i **1.699 KB → 725 KB** (framer-motion ve tüm lucide ikon kütüphanesi paketten çıktı); kategori/arama kartlarında haber gövdesi yüklenmiyor; aşağıdaki görsellere öncelik verilmiyor
+- [x] CSP: dış kaynaklı betik ve üretimde `eval` kapalı; `object-src`, `base-uri`, `form-action`, `frame-src` kısıtlandı (nonce, ISR'yi bozacağı için kullanılmadı)
 
 ### Aşama 4 — Kimlik doğrulama ve okur paneli
 - [ ] Giriş, kayıt, doğrulama, şifre sıfırlama ekranları
@@ -118,3 +118,22 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 | Hata | Seslendirmede çok uzun cümle kesilip kayboluyordu; zaman aşımı yoktu, parçalar sırayla üretiliyordu, aynı ses eşzamanlı iki kez üretilebiliyordu | Kelime sınırından bölme; 90 sn zaman aşımı, 2'li paralel üretim, eşzamanlı istek birleştirme; uç nokta 300 sn |
 | Tutarlılık | Trend haberinde makale ve Karar Merkezi kaydı ayrı yazılıyordu; Telegram ve kalite analizi yapılmıyordu | Tek işlem; RSS haberleriyle aynı yayın sonrası akış |
 | Tutarlılık | Otomatik yazım cron'u kuyruk mantığını kopyalıyordu; yazar olarak rastgele admin seçiliyordu | Ortak `dispatchStories`; ilk admin |
+
+### Aşama 3
+| Tür | Bulgu | Durum |
+|---|---|---|
+| Performans | Kategori ikonu bileşeni `import * as` ile **tüm lucide kütüphanesini** (1.500+ ikon) her sayfanın istemci paketine ekliyordu | Seçili ikon listesi; ana sayfa JS'i 1.699 KB → 725 KB (framer-motion kaldırılmasıyla birlikte) |
+| Hata | 44 yerde kullanılan `animate-in`/`fade-in` sınıflarının paketi yüklü değildi (animasyonlar hiç çalışmıyordu) | `tw-animate-css` eklendi |
+| Hata | Haber sayfasında yayın saati **UTC** gösteriliyordu (3 saat geri); yorum tarihleri de | Tüm tarihler Türkiye saatiyle |
+| Hata | Her öne çıkan habere (günler önce yayımlanmış olsa bile) "Son Dakika" yazılıyordu; öne çıkan haber trend listesinde tekrar ediyordu | Yalnızca son 3 saat; tekrar kaldırıldı |
+| Hata | İletişim sayfası, bilgi girilmemişse **uydurma telefon ve adres** gösteriyordu (tohum verisi de bunları yazıyordu); "Haritada Gör" düğmesi çalışmıyordu; reklam/kariyer e-postaları koda gömülüydü | Yalnızca admin panelinde girilen bilgiler; harita bağlantısı; kariyer e-postası admin'den |
+| Güvenlik | Haber metni `class` niteliğiyle sitenin sınıflarını kullanıp sayfanın üstüne sahte katman çizebiliyordu | `class` süzülüyor; metindeki h1'ler h2'ye çevriliyor (sayfada tek h1) |
+| Güvenlik | Giriş sonrası yönlendirme `/\site.com` biçimiyle başka siteye gönderilebiliyordu (açık yönlendirme) | Engellendi + test |
+| Güvenlik | CSP her `https:` kaynağından betiğe ve üretimde `eval`'a izin veriyordu | Sıkılaştırıldı |
+| Gizlilik | Çevrimdışı yedeği, kurulum anındaki ana sayfa kopyasını (oturum açmış kullanıcının kişisel içeriğiyle) her adres için gösteriyordu | Sade "bağlantı yok" sayfası |
+| Hata | Yanıta verilen yanıtlar "Anonim" görünüyordu; yorum sayısı yanıtları saymıyordu; gönder düğmesi uzun yorumun üstüne biniyordu; yorum avatarı sabit "HB" idi; sil/yanıtla düğmeleri dokunmatikte görünmüyordu | İki düzeyli yorum ağacı, doğru sayı, düzen ve avatar düzeltildi |
+| Hata | Arama sınırsız sonuç döndürüyor, her haberin tam metnini yüklüyordu; "istanbul" araması "İstanbul"u bulamayabiliyordu; sonuç sayfasında arama kutusu yoktu | En yeni 30 sonuç, Türkçe harf varyantları, sayfa içi arama kutusu |
+| Hata | Slayt: sonsuz döngü için görseller 3 kez çiziliyordu, oklar dokunmatikte görünmüyor ve etiketsizdi, "azaltılmış hareket" tercihi yok sayılıyordu | Yerel kaydırma (scroll-snap) ile yeniden yazıldı |
+| Erişilebilirlik | Menü/arama düğmelerinde durum bilgisi yoktu, mobil menü Esc ile kapanmıyor ve arka plan kayıyordu; bağlantı içinde düğme (geçersiz HTML); X paylaşımında "kapat" ikonu | Düzeltildi |
+| Erişilebilirlik | iOS'ta e-posta ve arama kutularına dokununca sayfa yakınlaşıyordu (16 px altı yazı) | Mobilde 16 px |
+| Hata | Kaydet düğmesi giriş yapmamış kullanıcıya `alert` gösterip haberi kaybettiriyordu | Girişten sonra aynı habere döner |

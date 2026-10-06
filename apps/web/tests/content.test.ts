@@ -28,3 +28,8 @@ test("okuma süresi HTML ve Markdown işaretlerini kelime saymaz", () => {
   assert.equal(readingMinutes(""), 1);
   assert.equal(readingMinutes(null), 1);
 });
+
+test("içerik süzgeci sınıfları atar ve h1'i h2'ye düşürür (sayfada tek h1)", () => {
+  const out = sanitizeHtml('<h1>Baslik</h1><div class="fixed inset-0 z-50"><p class="x">metin</p></div>');
+  assert.equal(out, "<h2>Baslik</h2><p>metin</p>");
+});

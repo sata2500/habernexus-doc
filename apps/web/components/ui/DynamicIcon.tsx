@@ -1,5 +1,6 @@
-import * as LucideIcons from "lucide-react";
-import { LucideIcon, Bookmark } from "lucide-react";
+import { createElement } from "react";
+import { Bookmark, type LucideIcon } from "lucide-react";
+import { categoryIcon } from "./category-icons";
 
 interface Props {
   name: string | null | undefined;
@@ -8,13 +9,8 @@ interface Props {
   fallback?: LucideIcon;
 }
 
-export function DynamicIcon({ name, className, style, fallback: Fallback = Bookmark }: Props) {
-  if (!name) return <Fallback className={className} style={style} />;
-  
-  // @ts-expect-error — LucideIcons is a dynamic import, key access is intentional
-  const Icon = LucideIcons[name] || LucideIcons[name.charAt(0).toUpperCase() + name.slice(1)];
-  
-  if (!Icon) return <Fallback className={className} style={style} />;
-  
-  return <Icon className={className} style={style} />;
+/** Kategoriye kayıtlı simgeyi çizer; tanınmayan adlarda yedek simge kullanılır. */
+export function DynamicIcon({ name, className, style, fallback = Bookmark }: Props) {
+  // Simge sabit bir tablodan seçilir (render sırasında yeni bileşen oluşturulmaz)
+  return createElement(categoryIcon(name) ?? fallback, { className, style, "aria-hidden": true });
 }

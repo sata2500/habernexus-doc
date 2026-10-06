@@ -1,12 +1,11 @@
 import { auth } from "@/lib/auth";
-import { formatViewCount } from "@/lib/utils";
+import { formatViewCount, readingMinutes, SITE_TIME_ZONE } from "@/lib/utils";
 import { headers } from "next/headers";
 import { getUserBookmarks } from "../actions";
 import Link from "next/link";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Clock, Eye, Bookmark, Newspaper } from "lucide-react";
-import { readingMinutes } from "@/lib/utils";
 
 export default async function BookmarksPage() {
   const reqHeaders = await headers();
@@ -85,7 +84,7 @@ export default async function BookmarksPage() {
                         </span>
                       </div>
                       <div>
-                        {new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short" }).format(bookmark.createdAt)} eklendi
+                        {new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "short", timeZone: SITE_TIME_ZONE }).format(bookmark.createdAt)} eklendi
                       </div>
                     </div>
                   </div>

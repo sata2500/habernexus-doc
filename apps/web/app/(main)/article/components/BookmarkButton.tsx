@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-
+import { useEffect, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Bookmark } from "lucide-react";
 import { toggleBookmark, checkIsBookmarked } from "@/app/dashboard/actions";
 import { cn } from "@/lib/utils";
@@ -13,80 +12,64 @@ interface Props {
 }
 
 export function BookmarkButton({ articleId }: Props) {
-    const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
+  const userId = session?.user?.id;
   const router = useRouter();
+  const pathname = usePathname();
 
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [isChecking, setIsChecking] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Sayfa yüklendiğinde ve session değiştiğinde bookmark durumunu kontrol et
+  // Oturum açıksa kayıt durumu okunur
   useEffect(() => {
-    async function getStatus() {
-      if (session?.user) {
-        setIsChecking(true);
-        try {
-          const status = await checkIsBookmarked(articleId);
-          setIsBookmarked(status);
-        } catch (err) {
-          console.error("Bookmark status check failed:", err);
-        } finally {
-          setIsChecking(false);
-        }
-      } else {
-        setIsBookmarked(false);
-      }
-    }
-    getStatus();
-  }, [articleId, session]);
+    if (!userId) return;
+    let cancelled = false;
+    checkIsBookmarked(articleId)
+      .then((status) => { if (!cancelled) setIsBookmarked(status); })
+      .catch((err) => console.error("Bookmark status check failed:", err));
+    return () => { cancelled = true; };
+  }, [articleId, userId]);
 
   const handleToggle = async () => {
-    if (!session?.user) {
-      alert("Haberleri kaydetmek için lütfen giriş yapın.");
-            router.push("/login");
-
+    if (!userId) {
+      // Girişten sonra aynı habere dönülür
+      router.push(`/login?callbackUrl=${encodeURIComponent(pathname)}`);
       return;
     }
-
     setLoading(true);
+    setError(null);
     try {
       const res = await toggleBookmark(articleId);
-      if (res.success) {
-        setIsBookmarked(res.isBookmarked!);
-      } else {
-        alert(res.error || "Bir hata oluştu.");
-      }
-    } catch (e) {
-      console.error(e);
+      if (res.success) setIsBookmarked(!!res.isBookmarked);
+      else setError(res.error || "Kaydedilemedi.");
+    } catch {
+      setError("Kaydedilemedi.");
     } finally {
       setLoading(false);
     }
   };
 
-  if (isChecking) {
-    return (
-      <div className="p-2 rounded-full bg-muted animate-pulse">
-        <Bookmark className="h-5 w-5 text-muted-foreground/30" />
-      </div>
-    );
-  }
+  const saved = !!userId && isBookmarked;
+  const label = !userId ? "Kaydetmek için giriş yapın" : saved ? "Kaydedilenlerden çıkar" : "Daha sonra okumak için kaydet";
 
   return (
     <button
+      type="button"
       onClick={handleToggle}
-      disabled={loading}
+      disabled={loading || isPending}
+      aria-pressed={saved}
+      aria-label={label}
+      title={error ?? label}
       className={cn(
-        "p-2 rounded-full transition-all duration-200 cursor-pointer shadow-none flex items-center justify-center",
-        isBookmarked
-          ? "bg-primary-500 text-white hover:bg-primary-600 scale-110 shadow-lg shadow-primary-500/30"
-          : "bg-muted text-muted-foreground hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20"
+        "h-10 w-10 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center focus-ring disabled:opacity-60",
+        saved
+          ? "bg-primary-500 text-white hover:bg-primary-600 shadow-lg shadow-primary-500/30"
+          : "bg-muted text-muted-foreground hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20",
+        error && "ring-2 ring-error",
       )}
-      aria-label="Kaydet"
-      title="Daha sonra okumak için kaydet"
     >
-      <Bookmark
-        className={cn("h-5 w-5 transition-all", isBookmarked && "fill-current")}
-      />
+      <Bookmark className={cn("h-5 w-5 transition-all", saved && "fill-current")} aria-hidden="true" />
     </button>
   );
 }

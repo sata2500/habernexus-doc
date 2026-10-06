@@ -26,8 +26,10 @@ const DROP_WITH_CONTENT_TAGS = new Set([
   "video",
 ]);
 
-// "id" bilinçli olarak yok: haber metni sayfadaki öğelerin kimliklerini (ör. article-body) gölgeleyemesin
-const GLOBAL_ATTRIBUTES = new Set(["class", "dir", "lang", "title"]);
+// "id" ve "class" bilinçli olarak yok: haber metni sayfadaki öğelerin kimliklerini gölgeleyemesin ve
+// sitenin kendi sınıflarıyla (ör. "fixed inset-0 z-50") sayfanın üstüne sahte katman çizemesin.
+// Editör (Tiptap) sınıf üretmez; biçim "prose" ile verilir.
+const GLOBAL_ATTRIBUTES = new Set(["dir", "lang", "title"]);
 const LINK_ATTRIBUTES = new Set(["href", "target", "rel"]);
 const IMAGE_ATTRIBUTES = new Set(["alt", "height", "src", "title", "width"]);
 
@@ -101,7 +103,8 @@ function sanitizeElement(element: Element): ChildNode[] {
     return [];
   }
 
-  element.name = tagName;
+  // Metin her zaman başlığı (h1) olan bir sayfanın içine basılır: sayfada tek h1 kalsın
+  element.name = tagName === "h1" ? "h2" : tagName;
   element.attribs = sanitizedAttributes;
   element.children = children;
 

@@ -54,10 +54,10 @@ export function ArticleReactions({ articleId }: ArticleReactionsProps) {
   return (
     <section aria-label="Okur tepkileri" className="w-full my-8 p-4 sm:p-5 rounded-2xl bg-muted/20 border border-border/60">
       <div className="flex items-center justify-between gap-3 mb-3">
-        <h3 className="flex items-center gap-2 text-sm sm:text-base font-bold font-display text-foreground">
-          <Sparkles className="h-4 w-4 text-primary-500 shrink-0" />
+        <h2 className="flex items-center gap-2 text-sm sm:text-base font-bold font-display text-foreground">
+          <Sparkles className="h-4 w-4 text-primary-500 shrink-0" aria-hidden="true" />
           Bu habere tepkiniz?
-        </h3>
+        </h2>
         <span className="text-[11px] sm:text-xs text-muted-foreground font-medium shrink-0">
           {summary ? (total > 0 ? `${total} tepki` : "İlk tepkiyi siz verin") : " "}
         </span>

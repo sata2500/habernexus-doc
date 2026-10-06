@@ -19,13 +19,14 @@ export default async function LatestArticlesPage({ searchParams }: { searchParam
   const { kategori } = await searchParams;
   const categories = await getCategoriesWithCount();
   const activeCategory = categories.find((c) => c.slug === kategori)?.slug;
+  // Kategori filtresi sayfanın ayrı bir kopyası sayılmasın (kanonik adres /latest)
   const firstPage = await getFeedPage({ limit: 12, categorySlug: activeCategory });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-14 space-y-6 md:space-y-10">
       <div className="text-center space-y-2 md:space-y-4 max-w-3xl mx-auto">
         <div className="inline-flex items-center justify-center h-12 w-12 md:h-16 md:w-16 rounded-2xl bg-gradient-primary text-white mb-1 md:mb-2 shadow-glow">
-          <TrendingUp className="h-6 w-6 md:h-8 md:w-8" />
+          <TrendingUp className="h-6 w-6 md:h-8 md:w-8" aria-hidden="true" />
         </div>
         <h1 className="text-2xl md:text-5xl font-bold font-display tracking-tight">
           Son Haberler
@@ -42,6 +43,7 @@ export default async function LatestArticlesPage({ searchParams }: { searchParam
             <Link
               href="/latest"
               scroll={false}
+              aria-current={!activeCategory ? "page" : undefined}
               className={cn(
                 "inline-flex items-center h-9 px-4 rounded-full text-sm font-semibold border transition-colors whitespace-nowrap",
                 !activeCategory
@@ -57,6 +59,7 @@ export default async function LatestArticlesPage({ searchParams }: { searchParam
               <Link
                 href={`/latest?kategori=${c.slug}`}
                 scroll={false}
+                aria-current={activeCategory === c.slug ? "page" : undefined}
                 className={cn(
                   "inline-flex items-center gap-1.5 h-9 px-4 rounded-full text-sm font-semibold border transition-colors whitespace-nowrap",
                   activeCategory === c.slug

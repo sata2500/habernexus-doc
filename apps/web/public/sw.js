@@ -1,33 +1,22 @@
-const CACHE_NAME = "habernexus-cache-v1";
+// Çevrimdışı yedeği: bağlantı yokken sayfa istekleri sade bir "bağlantı yok" sayfası gösterir.
+// Kişisel içerik barındırabilecek sayfalar (ana sayfa, panel) önbelleğe alınmaz.
+const CACHE_NAME = "habernexus-cache-v2";
+const OFFLINE_URL = "/offline.html";
 
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(["/", "/manifest.json"]);
-    })
-  );
+  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll([OFFLINE_URL, "/manifest.json"])));
   self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) => {
-      return Promise.all(
-        keys.map((key) => {
-          if (key !== CACHE_NAME) {
-            return caches.delete(key);
-          }
-        })
-      );
-    })
+    caches.keys().then((keys) => Promise.all(keys.filter((key) => key !== CACHE_NAME).map((key) => caches.delete(key)))),
   );
   self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
   if (event.request.mode === "navigate") {
-    event.respondWith(
-      fetch(event.request).catch(() => caches.match("/"))
-    );
+    event.respondWith(fetch(event.request).catch(() => caches.match(OFFLINE_URL)));
   }
 });

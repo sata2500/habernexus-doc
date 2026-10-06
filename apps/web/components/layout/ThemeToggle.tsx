@@ -73,6 +73,7 @@ export function ThemeToggle({ variant = "icon" }: ThemeToggleProps) {
 
   return (
     <button
+      type="button"
       onClick={() => setTheme(next.value)}
       className={cn(
         "h-10 w-10 rounded-xl flex items-center justify-center",

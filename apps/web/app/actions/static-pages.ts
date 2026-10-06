@@ -7,9 +7,10 @@ import { requireRole } from "@/lib/server/authz";
 
 const REQUIRED_PAGES = [
   { slug: "about", title: "Hakkımızda" },
-  { slug: "contact", title: "İletişim", defaults: { email: "info@habernexus.com", phone: "+90 (212) 000 00 00", address: "Levent Mah. Medya Sk. No: 1, Beşiktaş / İstanbul" } },
+  // İletişim bilgileri admin panelinden girilir; uydurma varsayılan telefon/adres konmaz
+  { slug: "contact", title: "İletişim" },
   { slug: "careers", title: "Kariyer" },
-  { slug: "advertise", title: "Reklam", defaults: { email: "ads@habernexus.com" } },
+  { slug: "advertise", title: "Reklam" },
   { slug: "privacy", title: "Gizlilik Politikası" },
   { slug: "terms", title: "Kullanım Şartları" },
   { slug: "cookies", title: "Çerez Politikası" },
@@ -28,8 +29,9 @@ async function seedStaticPages() {
         create: {
           slug: page.slug,
           title: page.title,
-          content: `<h1>${page.title}</h1><p>İçerik yakında eklenecektir...</p>`,
-          extraData: page.defaults || {},
+          // Sayfa başlığı şablonda h1 olarak basılır; içerikte ikinci h1 olmasın
+          content: "<p>İçerik yakında eklenecektir.</p>",
+          extraData: {},
         },
       });
     }

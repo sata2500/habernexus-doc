@@ -30,6 +30,15 @@ const sizeStyles: Record<ButtonSize, string> = {
   icon: "h-10 w-10 rounded-xl",
 };
 
+const BASE_STYLES =
+  "inline-flex items-center justify-center font-medium transition-all duration-300 ease-spring focus-ring cursor-pointer select-none";
+
+/** Bağlantıyı (Link) düğme gibi göstermek için: `<Link className={buttonVariants({ size: "sm" })}>`.
+ *  Düğmeyi bağlantı içine koymak (a > button) geçersiz HTML'dir ve klavyede iki kez odaklanır. */
+function buttonVariants({ variant = "primary", size = "md", className }: { variant?: ButtonVariant; size?: ButtonSize; className?: string } = {}) {
+  return cn(BASE_STYLES, variantStyles[variant], sizeStyles[size], className);
+}
+
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "primary", size = "md", isLoading, disabled, children, ...props }, ref) => {
     return (
@@ -37,8 +46,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || isLoading}
         className={cn(
-          "inline-flex items-center justify-center font-medium transition-all duration-300 ease-spring",
-          "focus-ring cursor-pointer select-none",
+          BASE_STYLES,
           "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
           variantStyles[variant],
           sizeStyles[size],
@@ -80,4 +88,4 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
 Button.displayName = "Button";
 
-export { Button, type ButtonProps, type ButtonVariant, type ButtonSize };
+export { Button, buttonVariants, type ButtonProps, type ButtonVariant, type ButtonSize };

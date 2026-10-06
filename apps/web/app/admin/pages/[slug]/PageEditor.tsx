@@ -22,6 +22,7 @@ const EXTRA_FIELDS: Record<string, { key: "email" | "phone" | "address"; label: 
     { key: "address", label: "Adres", placeholder: "Mahalle, sokak, ilçe / il" },
   ],
   advertise: [{ key: "email", label: "Reklam e-postası", placeholder: "reklam@habernexus.com" }],
+  careers: [{ key: "email", label: "Başvuru e-postası", placeholder: "ik@habernexus.com" }],
 };
 
 export function PageEditor({ page, extra: initialExtra }: {

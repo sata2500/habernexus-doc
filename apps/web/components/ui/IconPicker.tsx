@@ -3,23 +3,8 @@
 import React, { useState, useMemo } from "react";
 import { Search, X, Check } from "lucide-react";
 import { DynamicIcon } from "./DynamicIcon";
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
-
-function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
-}
-
-// Haber siteleri için özenle seçilmiş ikon havuzu
-const NEWS_ICONS = [
-  "Newspaper", "Globe", "TrendingUp", "Zap", "Cpu", "Tv", "Music", "Heart", "Trophy", 
-  "Scale", "Briefcase", "Plane", "Scale", "Anchor", "Sun", "Cloud", "Book", "Video", 
-  "Phone", "Shield", "HardDrive", "Terminal", "Settings", "User", "Users", "Mail", 
-  "Calendar", "MapPin", "Activity", "Package", "Box", "Archive", "Tag", "Flame", 
-  "Star", "Lightbulb", "Camera", "Smartphone", "Headphones", "Gamepad", "ShoppingBag",
-  "Bitcoin", "DollarSign", "EuroIcon", "LineChart", "PieChart", "BarChart", "Target",
-  "Rocket", "Flag", "Map", "Compass", "LifeBuoy", "Truck", "ShoppingBasket", "Gift"
-];
+import { CATEGORY_ICON_NAMES } from "./category-icons";
+import { cn } from "@/lib/utils";
 
 interface IconPickerProps {
   value: string;
@@ -32,7 +17,7 @@ export function IconPicker({ value, onChange, className }: IconPickerProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredIcons = useMemo(() => {
-    return NEWS_ICONS.filter(name => 
+    return CATEGORY_ICON_NAMES.filter(name => 
       name.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [searchTerm]);

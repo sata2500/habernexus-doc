@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { prisma } from "./prisma";
 import { appCache } from "./cache";
+import { feedSelect, toFeedArticle } from "./feed";
 
 /** Herkese açık sayfalarda yazar için yalnızca bu alanlar çekilir (e-posta, rol vb. asla) */
 const PUBLIC_AUTHOR = { id: true, name: true, image: true, bio: true } as const;
@@ -109,7 +110,7 @@ export const getCategoryWithArticles = cache(async (slug: string) => {
   if (isMissingDb) return null;
   return appCache.getOrSet(`data:category:${slug}`, 120, async () => {
     try {
-      return await prisma.category.findUnique({
+      const category = await prisma.category.findUnique({
         where: { slug },
         include: {
           // Kart için gereken alanlar ve en yeni 30 haber (önceden kategorinin tüm haberleri yükleniyordu)
@@ -117,15 +118,13 @@ export const getCategoryWithArticles = cache(async (slug: string) => {
             where: { status: "PUBLISHED" },
             orderBy: { publishedAt: "desc" },
             take: CATEGORY_PAGE_SIZE,
-            select: {
-              id: true, title: true, slug: true, excerpt: true, coverImage: true, viewCount: true, publishedAt: true, createdAt: true,
-              content: true, // okuma süresi için (yalnızca 30 haber)
-              author: { select: PUBLIC_AUTHOR }, aiPersona: { select: { name: true, image: true } },
-            },
+            select: feedSelect,
           },
           _count: { select: { articles: { where: { status: "PUBLISHED" } } } },
         },
       });
+      // Önbelleğe yalnızca kart verisi girer (haber gövdeleri değil)
+      return category ? { ...category, articles: category.articles.map(toFeedArticle) } : null;
     } catch (e) {
       console.error(`getCategoryWithArticles error (${slug}):`, e);
       return null;
@@ -133,22 +132,39 @@ export const getCategoryWithArticles = cache(async (slug: string) => {
   });
 });
 
-// Arama Motoru
-export const searchArticles = cache(async (query: string) => {
-  if (isMissingDb) return [];
+export const SEARCH_MIN_LENGTH = 2;
+export const SEARCH_MAX_LENGTH = 100;
+const SEARCH_LIMIT = 30;
+
+/**
+ * Haber araması (başlık, spot, metin). En yeni 30 sonuç döner.
+ * Türkçe büyük/küçük harf: veritabanı "i/İ" ve "ı/I" eşleşmesini her zaman yapamadığından
+ * aranan ifadenin Türkçe büyük harfle başlayan ve tamamen büyük harf hâlleri de aranır.
+ */
+export const searchArticles = cache(async (rawQuery: string) => {
+  const query = rawQuery.trim().slice(0, SEARCH_MAX_LENGTH);
+  if (isMissingDb || query.length < SEARCH_MIN_LENGTH) return [];
+  const variants = [...new Set([
+    query,
+    query.charAt(0).toLocaleUpperCase("tr") + query.slice(1),
+    query.toLocaleUpperCase("tr"),
+    query.toLocaleLowerCase("tr"),
+  ])];
   try {
-    return await prisma.article.findMany({
+    const rows = await prisma.article.findMany({
       where: {
         status: "PUBLISHED",
-        OR: [
-          { title: { contains: query, mode: "insensitive" } },
-          { excerpt: { contains: query, mode: "insensitive" } },
-          { content: { contains: query, mode: "insensitive" } },
-        ],
+        OR: variants.flatMap((v) => [
+          { title: { contains: v, mode: "insensitive" as const } },
+          { excerpt: { contains: v, mode: "insensitive" as const } },
+          { content: { contains: v, mode: "insensitive" as const } },
+        ]),
       },
       orderBy: { publishedAt: "desc" },
-      include: { author: { select: PUBLIC_AUTHOR }, category: true, aiPersona: true },
+      take: SEARCH_LIMIT,
+      select: feedSelect,
     });
+    return rows.map(toFeedArticle);
   } catch (e) {
     console.error("searchArticles error:", e);
     return [];

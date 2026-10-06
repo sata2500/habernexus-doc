@@ -13,14 +13,20 @@ export default async function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const categories = await getCategoriesWithCount();
-  const settings = await getSiteSettings();
+  const [categories, settings] = await Promise.all([getCategoriesWithCount(), getSiteSettings()]);
 
   return (
     <>
       <PwaRegister />
+      {/* Klavye ve ekran okuyucu kullanıcıları menüyü atlayıp doğrudan içeriğe geçebilir */}
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[calc(var(--z-sticky)+1)] focus:px-4 focus:py-2 focus:rounded-xl focus:bg-primary-600 focus:text-white focus:font-semibold focus:shadow-lg"
+      >
+        İçeriğe geç
+      </a>
       <Navbar categories={categories} settings={settings} />
-      <main className="flex-1">{children}</main>
+      <main id="main-content" tabIndex={-1} className="flex-1 outline-none">{children}</main>
       <Footer categories={categories} settings={settings} />
     </>
   );

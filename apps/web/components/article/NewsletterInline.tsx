@@ -42,7 +42,7 @@ export function NewsletterInline() {
               placeholder="E-posta adresiniz"
               aria-label="E-posta adresiniz"
               autoComplete="email"
-              className="h-11 flex-1 min-w-0 rounded-xl border border-border bg-background px-3.5 text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
+              className="h-11 flex-1 min-w-0 rounded-xl border border-border bg-background px-3.5 text-base sm:text-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20"
             />
             <button type="submit" disabled={pending} className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold disabled:opacity-60">
               {pending && <Loader2 className="h-4 w-4 animate-spin" />} Abone ol

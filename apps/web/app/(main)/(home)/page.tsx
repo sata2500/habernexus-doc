@@ -7,8 +7,7 @@ import {
   Flame,
   Zap,
   Newspaper,
-    Sparkles
-
+  Sparkles,
 } from "lucide-react";
 import { Badge } from "@/components/ui/Badge";
 import { Card } from "@/components/ui/Card";
@@ -31,6 +30,10 @@ import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { HomepageSlider } from "@/components/layout/HomepageSlider";
 import { ContinueReading } from "@/components/home/ContinueReading";
 import { getUnfinishedReads } from "@/lib/server/reading-history";
+import { getSiteSettings } from "@/lib/site-settings";
+
+/** "Son Dakika" etiketi yalnızca gerçekten yeni haberde gösterilir */
+const BREAKING_WINDOW_MS = 3 * 3_600_000;
 
 /* ============================================
    Page Component (RSC - Server Component)
@@ -39,15 +42,22 @@ import { getUnfinishedReads } from "@/lib/server/reading-history";
 export const metadata = { alternates: { canonical: "/" } };
 
 export default async function HomePage() {
-  const [heroArticle, trendingArticles, categories, latestFeed, session, cookieStore] = await Promise.all([
+  const [heroArticle, trendingCandidates, categories, latestFeed, session, cookieStore, settings] = await Promise.all([
     getHeroArticle(),
-    getTrendingArticles(4),
+    getTrendingArticles(5),
     getCategoriesWithCount(),
     getFeedPage({ limit: 9 }),
     auth.api.getSession({ headers: await headers() }),
     cookies(),
+    getSiteSettings(),
   ]);
   const userId = session?.user?.id;
+  // Öne çıkan haber trend listesinde ikinci kez görünmesin
+  const trendingArticles = trendingCandidates.filter((a) => a.id !== heroArticle?.id).slice(0, 4);
+  const heroPublishedAt = heroArticle?.publishedAt ? new Date(heroArticle.publishedAt).getTime() : 0;
+  // eslint-disable-next-line react-hooks/purity -- sunucu bileşeni, istek anına göre hesaplanır
+  const heroIsBreaking = heroPublishedAt > 0 && Date.now() - heroPublishedAt < BREAKING_WINDOW_MS;
+  const siteName = settings?.siteName || "Haber Nexus";
 
   // Hesapta yarım kalan haberler (diğer cihazlarda başlananlar dahil)
   const accountUnfinished = userId
@@ -78,6 +88,7 @@ export default async function HomePage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-4 md:pt-6 space-y-12">
+      <h1 className="sr-only">{siteName} — Türkiye ve dünya gündeminden son dakika haberler</h1>
       {/* ── Slider Section ────────────────────────── */}
       <HomepageSlider />
 
@@ -100,18 +111,23 @@ export default async function HomePage() {
                   {heroArticle.coverImage && (
                     <Image
                       src={heroArticle.coverImage}
-                      alt={heroArticle.title}
+                      alt=""
                       fill
                       priority
+                      sizes="(min-width: 1024px) 66vw, 100vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   )}
                   <div className="absolute inset-0 bg-linear-to-t from-black/85 via-black/40 to-transparent" />
                   <div className="absolute top-4 left-4 z-10 flex flex-wrap gap-2 items-center">
-                    <Badge variant="error" className="animate-pulse-glow">
-                      <Zap className="h-3 w-3 mr-1" />
-                      Son Dakika
-                    </Badge>
+                    {heroIsBreaking ? (
+                      <Badge variant="error" className="animate-pulse-glow">
+                        <Zap className="h-3 w-3 mr-1" aria-hidden="true" />
+                        Son Dakika
+                      </Badge>
+                    ) : (
+                      <Badge variant="primary">Öne Çıkan</Badge>
+                    )}
                     {heroArticle.category && (
                       <Badge
                         className="text-white border-white/30 backdrop-blur-md bg-white/10"
@@ -124,7 +140,6 @@ export default async function HomePage() {
                   </div>
 
                   <div className="relative z-10 p-6 md:p-8 text-white space-y-3.5">
-                    <h1 className="sr-only">Haber Nexus — Türkiye ve Dünya Gündeminden Son Dakika Haberler</h1>
                     <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold font-display leading-tight group-hover:text-[var(--art-color)] transition-colors duration-300">
                       {heroArticle.title}
                     </h2>
@@ -279,7 +294,7 @@ export default async function HomePage() {
                 >
                   <div
                     className="h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_12px_var(--cat-glow)]"
-                    style={{ backgroundColor: `${cat.color || "#888"}12` }}
+                    style={{ backgroundColor: `color-mix(in srgb, ${cat.color || "#888"} 7%, transparent)` }}
                   >
                     <DynamicIcon name={cat.icon} fallback={Newspaper} className="h-5.5 w-5.5 transition-colors duration-300" style={{ color: cat.color || "#888" }} />
                   </div>
@@ -316,7 +331,7 @@ export default async function HomePage() {
           </Link>
         </div>
 
-        <ArticleFeed initialItems={latestFeed.items} initialCursor={latestFeed.nextCursor} mode="button" maxLoads={3} />
+        <ArticleFeed initialItems={latestFeed.items} initialCursor={latestFeed.nextCursor} mode="button" maxLoads={3} eagerCount={0} />
       </section>
 
       {/* ── CTA Section ────────────────────────── */}

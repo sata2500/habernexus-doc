@@ -8,14 +8,28 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Format a date to Turkish locale
- */
+/** Tarihler her zaman Türkiye saatiyle gösterilir (sunucu UTC'de çalışır; sunucu ve tarayıcı çıktısı aynı olur) */
+export const SITE_TIME_ZONE = "Europe/Istanbul";
+
+/** "6 Ekim 2026" */
 export function formatDate(date: Date | string): string {
   return new Intl.DateTimeFormat("tr-TR", {
     day: "numeric",
     month: "long",
     year: "numeric",
+    timeZone: SITE_TIME_ZONE,
+  }).format(new Date(date));
+}
+
+/** "6 Ekim 2026 14:30" */
+export function formatDateTime(date: Date | string): string {
+  return new Intl.DateTimeFormat("tr-TR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: SITE_TIME_ZONE,
   }).format(new Date(date));
 }
 

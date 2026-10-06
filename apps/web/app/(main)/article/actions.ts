@@ -12,23 +12,42 @@ function isJsonObject(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-export async function getComments(articleId: string) {
+type PublicComment = {
+  id: string;
+  content: string;
+  createdAt: Date;
+  userId: string;
+  parentId: string | null;
+  user: { id: string; name: string; image: string | null };
+  replies: PublicComment[];
+};
+
+/**
+ * Haberin yorumları iki düzeyde: ana yorumlar (yeniden eskiye) ve altlarında tüm yanıtlar
+ * (eskiden yeniye). Yanıta verilen yanıtlar da ait olduğu ana yorumun altında gösterilir.
+ */
+export async function getComments(articleId: string): Promise<PublicComment[]> {
   try {
-    const comments = await prisma.comment.findMany({
-      where: { articleId, parentId: null },
-      include: {
-        user: { select: { id: true, name: true, image: true } },
-        replies: {
-          include: {
-            user: { select: { id: true, name: true, image: true } },
-            replies: true,
-          },
-          orderBy: { createdAt: "asc" },
-        },
-      },
-      orderBy: { createdAt: "desc" },
+    if (typeof articleId !== "string" || !articleId || articleId.length > 100) return [];
+    const rows = await prisma.comment.findMany({
+      where: { articleId },
+      select: { id: true, content: true, createdAt: true, userId: true, parentId: true, user: { select: { id: true, name: true, image: true } } },
+      orderBy: { createdAt: "asc" },
+      take: 500,
     });
-    return comments;
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    const rootOf = (id: string) => {
+      let node = byId.get(id);
+      for (let depth = 0; node?.parentId && byId.has(node.parentId) && depth < 20; depth++) node = byId.get(node.parentId);
+      return node?.id ?? id;
+    };
+    const roots = new Map<string, PublicComment>();
+    for (const r of rows) if (!r.parentId || !byId.has(r.parentId)) roots.set(r.id, { ...r, replies: [] });
+    for (const r of rows) {
+      if (roots.has(r.id)) continue;
+      roots.get(rootOf(r.id))?.replies.push({ ...r, replies: [] });
+    }
+    return [...roots.values()].reverse();
   } catch (error) {
     console.error("Fetch comments error:", error);
     return [];

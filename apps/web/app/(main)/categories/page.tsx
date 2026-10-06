@@ -21,7 +21,7 @@ export default async function CategoriesPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16 space-y-12">
       <div className="text-center space-y-4 max-w-3xl mx-auto">
         <div className="inline-flex items-center justify-center h-16 w-16 rounded-2xl bg-gradient-primary text-white mb-2 shadow-glow animate-pulse-glow">
-          <FolderOpen className="h-8 w-8" />
+          <FolderOpen className="h-8 w-8" aria-hidden="true" />
         </div>
         <h1 className="text-3xl md:text-5xl font-bold font-display tracking-tight">
           Kategoriler
@@ -44,7 +44,7 @@ export default async function CategoriesPage() {
                 <div className="flex items-center justify-between mb-5">
                   <div
                     className="h-12 w-12 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:shadow-[0_0_12px_var(--cat-glow)]"
-                    style={{ backgroundColor: `${cat.color || "#888"}12` }}
+                    style={{ backgroundColor: `color-mix(in srgb, ${cat.color || "#888"} 7%, transparent)` }}
                   >
                     <DynamicIcon name={cat.icon} fallback={Newspaper} className="h-6 w-6 transition-colors duration-300" style={{ color: cat.color || "#888" }} />
                   </div>
@@ -52,9 +52,9 @@ export default async function CategoriesPage() {
                     {cat._count.articles} İçerik
                   </div>
                 </div>
-                <h3 className="text-xl font-bold font-display mb-2 text-card-foreground group-hover:text-[var(--cat-color)] transition-colors duration-300">
+                <h2 className="text-xl font-bold font-display mb-2 text-card-foreground group-hover:text-[var(--cat-color)] transition-colors duration-300">
                   {cat.name}
-                </h3>
+                </h2>
                 <p className="text-sm text-muted-foreground flex-1 mb-5 leading-relaxed">
                   {cat.description || `${cat.name} alanındaki en güncel gelişmeler ve detaylı analizler.`}
                 </p>

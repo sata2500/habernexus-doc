@@ -87,3 +87,9 @@ test("privileged server actions always check the caller's role", () => {
   }
   assert.deepEqual(missing, [], `Rol kontrolü olmayan işlemler: ${missing.join(", ")}`);
 });
+
+test("giriş sonrası yönlendirme yalnızca site içi yollara izin verir", async () => {
+  const { safeCallbackPath } = await import("../lib/auth-errors");
+  assert.equal(safeCallbackPath("/article/x#yorumlar"), "/article/x#yorumlar");
+  for (const bad of ["//evil.com", "/\\evil.com", "https://evil.com", "/a\nb", null]) assert.equal(safeCallbackPath(bad), "/");
+});

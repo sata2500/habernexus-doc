@@ -29,7 +29,7 @@ export async function generateMetadata({ params, searchParams }: { params: Param
   const { slug } = await params;
   const tag = await getTag(slug);
   if (!tag) return { title: "Etiket bulunamadı", robots: { index: false } };
-  const pageNo = Math.max(1, Number((await searchParams).sayfa) || 1);
+  const pageNo = Math.max(1, Math.floor(Number((await searchParams).sayfa)) || 1);
   const count = tag._count.articles;
   return {
     title: `${tag.name} Haberleri${pageNo > 1 ? ` – Sayfa ${pageNo}` : ""}`,
@@ -43,7 +43,7 @@ export default async function TagPage({ params, searchParams }: { params: Params
   const { slug } = await params;
   const tag = await getTag(slug);
   if (!tag || tag._count.articles === 0) notFound();
-  const pageNo = Math.max(1, Number((await searchParams).sayfa) || 1);
+  const pageNo = Math.max(1, Math.floor(Number((await searchParams).sayfa)) || 1);
   const pages = Math.max(1, Math.ceil(tag._count.articles / PAGE_SIZE));
   if (pageNo > pages) notFound();
 
