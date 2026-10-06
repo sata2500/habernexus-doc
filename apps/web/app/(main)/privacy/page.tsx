@@ -5,6 +5,7 @@ import { sanitizeHtml } from "@/lib/server/sanitize-html";
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("privacy");
   return {
+    alternates: { canonical: "/privacy" },
     title: page?.title || "Gizlilik Politikası",
     description: page?.description || "Haber Nexus gizlilik politikası ve verilerinizin korunması hakkında bilgiler.",
   };

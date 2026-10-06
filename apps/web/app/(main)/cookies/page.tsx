@@ -4,6 +4,7 @@ import { sanitizeHtml } from "@/lib/server/sanitize-html";
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("cookies");
   return {
+    alternates: { canonical: "/cookies" },
     title: page?.title || "Çerez Politikası",
     description: page?.description || "Haber Nexus çerez politikası ve çerez kullanımı hakkında bilgiler.",
   };

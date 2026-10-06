@@ -4,6 +4,7 @@ import { sanitizeHtml } from "@/lib/server/sanitize-html";
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("kvkk");
   return {
+    alternates: { canonical: "/kvkk" },
     title: page?.title || "KVKK Aydınlatma Metni",
     description: page?.description || "Haber Nexus KVKK aydınlatma metni ve kişisel verilerin korunması kanunu kapsamındaki haklarınız.",
   };

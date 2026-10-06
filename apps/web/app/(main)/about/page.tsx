@@ -5,6 +5,7 @@ import { sanitizeHtml } from "@/lib/server/sanitize-html";
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("about");
   return {
+    alternates: { canonical: "/about" },
     title: page?.title || "Hakkımızda",
     description: page?.description || "Haber Nexus hakkında detaylı bilgi, vizyonumuz ve misyonumuz.",
   };

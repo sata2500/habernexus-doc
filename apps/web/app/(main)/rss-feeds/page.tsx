@@ -5,6 +5,7 @@ import { getCategoriesWithCount } from "@/lib/data";
 import { RSSFeedList } from "@/components/seo/RSSFeedList";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/rss-feeds" },
   title: "RSS Kaynakları",
   description: "Haber Nexus yayınlarını RSS üzerinden takip edin. Genel, kategori bazlı ve dile özel tüm RSS akışlarımızı burada bulabilirsiniz.",
   openGraph: {

@@ -36,6 +36,9 @@ import { getUnfinishedReads } from "@/lib/server/reading-history";
 /* ============================================
    Page Component (RSC - Server Component)
    ============================================ */
+// Ana sayfanın tek adresi (?utm_… gibi parametreli kopyalar buna bağlanır)
+export const metadata = { alternates: { canonical: "/" } };
+
 export default async function HomePage() {
   const [heroArticle, trendingArticles, categories, latestFeed, session, cookieStore] = await Promise.all([
     getHeroArticle(),

@@ -6,6 +6,7 @@ import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { getCardGlowStyles } from "@/lib/utils";
 
 export const metadata = {
+  alternates: { canonical: "/categories" },
   title: "Tüm Kategoriler",
   description: "Haber Nexus üzerinde bulunan tüm haber kategorileri ve konular.",
 };
