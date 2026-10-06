@@ -2,16 +2,18 @@
 
 import { useState, useTransition } from "react";
 import {
-  AlertTriangle, CheckCircle2, Database, Loader2, PlayCircle, RefreshCw, XCircle, CircleDashed, Search,
+  AlertTriangle, CheckCircle2, Database, Globe, Loader2, PlayCircle, RefreshCw, XCircle, CircleDashed, Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { applyMigrationsAction, getMigrationStatusAction, runSeoMaintenanceAction } from "../system-actions";
+import { applyMigrationsAction, getMigrationStatusAction, runSeoMaintenanceAction, testIndexingAction } from "../system-actions";
 import type { MigrationRunResult, MigrationStatus } from "@/lib/server/db-migrations";
+import type { IndexingLogEntry } from "@/lib/google-indexing";
 
 interface Props {
   initialStatus: MigrationStatus | null;
   dbError: string | null;
   services: { label: string; configured: boolean }[];
+  indexing: { configured: boolean; log: IndexingLogEntry[] };
 }
 
 
@@ -33,6 +35,71 @@ const MIGRATION_TITLES: Record<string, string> = {
   unique_oauth_accounts: "Google ile giriş onarımı",
   article_reads: "Okuma geçmişi (Okuduklarım)",
 };
+
+/** Google'a otomatik dizin bildirimi: durum, bağlantı testi ve son bildirimler */
+function GoogleIndexing({ configured, log }: Props["indexing"]) {
+  const [pending, start] = useTransition();
+  const [test, setTest] = useState<{ ok: boolean; message: string } | null>(null);
+  const failed = log.filter((l) => !l.ok).length;
+  return (
+    <section className="rounded-2xl border border-border bg-card p-4 sm:p-6 space-y-4 shadow-card">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 space-y-1">
+          <h2 className="font-bold font-display flex items-center gap-2"><Globe className="h-4 w-4 text-primary-500" /> Google&apos;a Otomatik Bildirim</h2>
+          <p className="text-xs text-muted-foreground max-w-xl">
+            Bir haber yayınlandığında Google&apos;a &quot;dizine ekle&quot;, yayından kaldırıldığında ya da silindiğinde &quot;dizinden kaldır&quot; bildirimi
+            otomatik gönderilir (AI Yazar, yazarlar ve admin işlemleri dahil). Site haritaları da her an günceldir.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => start(async () => setTest(await testIndexingAction()))}
+          disabled={pending || !configured}
+          className="inline-flex items-center gap-2 h-10 px-4 rounded-xl border border-border text-sm font-semibold hover:bg-muted disabled:opacity-50 cursor-pointer"
+        >
+          {pending ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />} Bağlantıyı test et
+        </button>
+      </div>
+
+      {!configured ? (
+        <p className="flex items-start gap-2 text-sm rounded-xl bg-warning/10 text-foreground px-3 py-2.5">
+          <AlertTriangle className="h-4 w-4 text-warning shrink-0 mt-0.5" />
+          Kapalı: GOOGLE_CLIENT_EMAIL ve GOOGLE_PRIVATE_KEY ortam değişkenleri tanımlı değil. Google haberleri yine site haritasından bulur, yalnızca daha yavaş.
+        </p>
+      ) : test ? (
+        <p className={cn("flex items-start gap-2 text-sm rounded-xl px-3 py-2.5", test.ok ? "bg-success/10" : "bg-error/10")} aria-live="polite">
+          {test.ok ? <CheckCircle2 className="h-4 w-4 text-success shrink-0 mt-0.5" /> : <XCircle className="h-4 w-4 text-error shrink-0 mt-0.5" />}
+          {test.message}
+        </p>
+      ) : null}
+
+      {configured && (
+        <div className="space-y-2">
+          <p className="text-xs font-semibold text-muted-foreground">
+            Son bildirimler {log.length > 0 && <>· {log.length - failed} başarılı{failed > 0 && <span className="text-error">, {failed} başarısız</span>}</>}
+          </p>
+          {log.length === 0 ? (
+            <p className="text-sm text-muted-foreground">Henüz kayıtlı bildirim yok. Bir sonraki yayında burada görünecek.</p>
+          ) : (
+            <ul className="divide-y divide-border rounded-xl border border-border text-xs">
+              {log.slice(0, 10).map((l, i) => (
+                <li key={`${l.at}-${i}`} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 px-3 py-2">
+                  {l.ok ? <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" /> : <XCircle className="h-3.5 w-3.5 text-error shrink-0" />}
+                  <span className={cn("font-semibold", l.type === "URL_DELETED" ? "text-warning" : "text-foreground")}>
+                    {l.type === "URL_DELETED" ? "Dizinden kaldır" : "Dizine ekle"}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-muted-foreground" title={l.url}>{l.url.replace(/^https?:\/\/[^/]+/, "")}</span>
+                  <span className="text-muted-foreground tabular-nums">{new Date(l.at).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}</span>
+                  {l.error && <span className="w-full text-error">{l.error}</span>}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </section>
+  );
+}
 
 /** Eski haberlerin eksik etiket ve meta açıklamalarını tamamlar */
 function SeoMaintenance() {
@@ -82,7 +149,7 @@ function formatName(name: string) {
   return { date: `${m[3]}.${m[2]}.${m[1]}`, title: MIGRATION_TITLES[m[4]] ?? m[4].replace(/_/g, " ") };
 }
 
-export function SystemPanel({ initialStatus, dbError, services }: Props) {
+export function SystemPanel({ initialStatus, dbError, services, indexing }: Props) {
   const [status, setStatus] = useState(initialStatus);
   const [error, setError] = useState(dbError);
   const [results, setResults] = useState<MigrationRunResult[] | null>(null);
@@ -240,6 +307,7 @@ export function SystemPanel({ initialStatus, dbError, services }: Props) {
         )}
       </section>
 
+      <GoogleIndexing {...indexing} />
       <SeoMaintenance />
 
       {/* ── Servis yapılandırması ───────────────────────────── */}

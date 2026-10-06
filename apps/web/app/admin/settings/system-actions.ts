@@ -60,3 +60,15 @@ export async function runSeoMaintenanceAction() {
     return { success: false as const, error: getSafeActionError(error, "SEO bakımı tamamlanamadı.") };
   }
 }
+
+export async function getIndexingStatusAction() {
+  await requireRole("ADMIN");
+  const { getIndexingLog, isIndexingConfigured } = await import("@/lib/google-indexing");
+  return { configured: isIndexingConfigured(), log: await getIndexingLog() };
+}
+
+export async function testIndexingAction() {
+  await requireRole("ADMIN");
+  const { testIndexingAccess } = await import("@/lib/google-indexing");
+  return testIndexingAccess();
+}

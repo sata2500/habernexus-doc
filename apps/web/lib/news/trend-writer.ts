@@ -1,5 +1,6 @@
 import "server-only";
 
+import { after } from "next/server";
 import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { prisma } from "@/lib/prisma";
 import { AiError, cleanHtmlResponse, generateText, parseJsonResponse } from "@/lib/ai/client";
@@ -93,6 +94,9 @@ Yanıtı SADECE şu JSON biçiminde ver:
         categoryName: parsed.category ?? null, reason: "Google Trends'ten yazıldı",
       },
     });
+    // Google'a yeni haberi bildir (yanıt beklenmez)
+    const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+    after(() => notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED"));
     return { success: true as const, articleId: article.id, title: article.title, slug: article.slug };
   } catch (error) {
     const message = error instanceof AiError ? `${error.message}${error.raw ? ` Ayrıntı: ${error.raw}` : ""}` : error instanceof Error ? error.message : String(error);

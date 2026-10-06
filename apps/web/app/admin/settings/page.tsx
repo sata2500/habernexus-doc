@@ -6,6 +6,7 @@ import { getAiOverview } from "./ai-actions";
 import { SiteSettingsForm } from "./components/SiteSettingsForm";
 import { AiSettingsPanel } from "./components/AiSettingsPanel";
 import { SystemPanel } from "./components/SystemPanel";
+import { getIndexingLog, isIndexingConfigured } from "@/lib/google-indexing";
 import { AutomationPanel } from "./components/AutomationPanel";
 import { getAutomationOverview } from "./automation-actions";
 import { getMigrationStatus, type MigrationStatus } from "@/lib/server/db-migrations";
@@ -108,5 +109,6 @@ async function SystemTab() {
   }
   // Değerlerin kendisi asla istemciye gönderilmez, yalnızca tanımlı olup olmadıkları
   const services = SERVICES.map((s) => ({ label: s.label, configured: !!process.env[s.key] }));
-  return <SystemPanel initialStatus={status} dbError={dbError} services={services} />;
+  const indexing = { configured: isIndexingConfigured(), log: await getIndexingLog() };
+  return <SystemPanel initialStatus={status} dbError={dbError} services={services} indexing={indexing} />;
 }
