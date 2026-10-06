@@ -262,10 +262,19 @@ async function afterPublish(
 
   try {
     const analysis = await analyzeArticle(article.id);
-    const PLAGIARISM_THRESHOLD = 30;
     let rate = analysis.success ? (analysis.plagiarismRate ?? 0) : 0;
-    for (let attempt = 1; attempt <= 2 && rate > PLAGIARISM_THRESHOLD; attempt++) {
-      console.log(`[AI Writer] Benzerlik %${rate}; özgünleştirme denemesi ${attempt}/2`);
+    // 1) Önce yalnızca kaynaklardan aynen alınmış paragraflar özgünleştirilir (en fazla 2 tur)
+    const { fixCopiedPassages } = await import("./analysis/fix-copies");
+    for (let round = 1; round <= 2 && rate > 10; round++) {
+      console.log(`[AI Writer] Kaynaklarla aynen örtüşme %${rate}; kopya paragraflar özgünleştiriliyor (${round}/2)`);
+      const fixed = await fixCopiedPassages(article.id).catch((e) => ({ success: false as const, error: String(e) }));
+      if (!fixed.success || fixed.after === null) break;
+      rate = fixed.after;
+    }
+    // 2) Hâlâ yüksekse metnin tamamı yeniden yazılır
+    const PLAGIARISM_THRESHOLD = 30;
+    for (let attempt = 1; attempt <= 1 && rate > PLAGIARISM_THRESHOLD; attempt++) {
+      console.log(`[AI Writer] Örtüşme hâlâ %${rate}; metin tamamen yeniden yazılıyor`);
       let newContent = "";
       try {
         const res = await generateText("writer", {

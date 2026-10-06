@@ -6,8 +6,8 @@ import {
   RefreshCw, Search, Sparkles, TrendingUp, Wand2, X, XCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { analyzeArticleAction as adminAnalyze, rewriteArticleWithAIAction as adminRewrite } from "@/app/admin/actions";
-import { analyzeArticleAction as authorAnalyze, rewriteArticleWithAIAction as authorRewrite } from "@/app/author/actions";
+import { analyzeArticleAction as adminAnalyze, fixCopiedPassagesAction as adminFix, rewriteArticleWithAIAction as adminRewrite } from "@/app/admin/actions";
+import { analyzeArticleAction as authorAnalyze, fixCopiedPassagesAction as authorFix, rewriteArticleWithAIAction as authorRewrite } from "@/app/author/actions";
 
 /* ── Rapor (sürüm 2) ─────────────────────────────────── */
 
@@ -17,7 +17,7 @@ interface ReportV2 {
   analyzedAt?: string;
   overall?: number;
   quality?: { score: number | null; ai: boolean; comment: string | null; strengths: string[]; issues: string[] };
-  seo?: { score: number; focusKeyword: string | null; checks: { id: string; label: string; status: CheckStatus; detail: string }[] };
+  seo?: { score: number; focusKeyword: string | null; titleSuggestion?: string | null; descriptionSuggestion?: string | null; checks: { id: string; label: string; status: CheckStatus; detail: string }[] };
   readability?: {
     score: number;
     level: string;
@@ -29,7 +29,9 @@ interface ReportV2 {
     sourcesChecked: number;
     fullTextChecked: number;
     siteArticlesChecked: number;
-    matches: { title: string; url: string | null; kind: "source" | "site"; percent: number }[];
+    web?: { enabled: boolean; queries: number; candidates: number; verified: number; error?: string };
+    matches: { title: string; url: string | null; kind: "source" | "web" | "site"; percent: number }[];
+    passages?: { text: string; source: string; url: string | null; percent: number }[];
   };
   fixes?: string[];
   suggestions?: string[];
@@ -57,6 +59,7 @@ const asV2 = (r: unknown): ReportV2 | null =>
 
 const tone = (v: number) => (v >= 80 ? "text-success" : v >= 60 ? "text-warning" : "text-error");
 const barTone = (v: number) => (v >= 80 ? "bg-success" : v >= 60 ? "bg-warning" : "bg-error");
+const KIND_LABEL = { source: "Haberin kaynağı", web: "İnternette bulunan sayfa", site: "Sitedeki başka bir haber" } as const;
 const verdict = (v: number) => (v >= 85 ? "Çok iyi" : v >= 70 ? "İyi" : v >= 55 ? "Geliştirilmeli" : "Zayıf");
 
 function Ring({ value }: { value: number }) {
@@ -111,15 +114,18 @@ const TABS: { id: Tab; label: string; icon: typeof ListChecks }[] = [
 export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initialData, onClose, onAnalysisComplete }: ArticleAnalysisModalProps) {
   const [tab, setTab] = useState<Tab>("todo");
   const [isPending, startTransition] = useTransition();
-  const [action, setAction] = useState<"analyze" | "rewrite" | null>(null);
+  const [action, setAction] = useState<"analyze" | "rewrite" | "fix" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
   const [data, setData] = useState<Scores | null>(initialData ?? null);
   const report = asV2(data?.analysisReport);
   const hasOld = !report && data?.qualityScore != null;
 
-  const run = (kind: "analyze" | "rewrite") => {
+  const run = (kind: "analyze" | "rewrite" | "fix") => {
+    if (kind === "fix" && !confirm("Kaynaklardan aynen alınmış cümlelerin geçtiği paragraflar, bilgiler korunarak yapay zekâ ile yeniden yazılacak ve haber tekrar analiz edilecek. Devam edilsin mi?")) return;
     if (kind === "rewrite" && !confirm("Haber metni yapay zekâ ile, analizdeki eksikler giderilecek şekilde yeniden yazılacak. Mevcut metin değişecek. Devam edilsin mi?")) return;
     setError(null);
+    setNotice(null);
     setAction(kind);
     startTransition(async () => {
       try {
@@ -130,6 +136,16 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
             setTab("todo");
             onAnalysisComplete?.(res.article);
           } else setError(("error" in res && res.error) || "Analiz tamamlanamadı.");
+        } else if (kind === "fix") {
+          const res = userRole === "ADMIN" ? await adminFix(articleId) : await authorFix(articleId);
+          if (res.success) {
+            const a = res.analysis;
+            if (a.success) {
+              setData({ plagiarismRate: a.plagiarismRate, seoScore: a.seoScore, readabilityScore: a.readabilityScore, qualityScore: a.qualityScore, analysisReport: a.analysisReport });
+              onAnalysisComplete?.(a.article);
+            }
+            setNotice(`${res.rewritten} paragraf yeniden yazıldı. Kaynaklarla aynen örtüşme: %${res.before} → ${res.after === null ? "ölçülemedi" : `%${res.after}`}.`);
+          } else setError(res.error || "Düzeltme yapılamadı.");
         } else {
           const res = userRole === "ADMIN" ? await adminRewrite(articleId) : await authorRewrite(articleId);
           const a = res.success && "analysis" in res ? res.analysis : null;
@@ -147,7 +163,7 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
     });
   };
 
-  const busy = (kind: "analyze" | "rewrite") => isPending && action === kind;
+  const busy = (kind: "analyze" | "rewrite" | "fix") => isPending && action === kind;
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-background/80 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="analysis-title">
@@ -168,6 +184,12 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
           </div>
         )}
 
+        {notice && (
+          <div className="px-4 sm:px-6 py-2.5 bg-success/10 border-b border-success/20 text-xs font-semibold flex items-center gap-2" aria-live="polite">
+            <CheckCircle2 className="h-4 w-4 shrink-0 text-success" /> {notice}
+          </div>
+        )}
+
         <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-5">
           {!report ? (
             <div className="text-center py-10 space-y-4 max-w-md mx-auto">
@@ -175,13 +197,13 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
               <div className="space-y-1.5">
                 <h3 className="font-bold">{hasOld ? "Bu analiz eski yöntemle yapılmış" : "Henüz analiz yok"}</h3>
                 <p className="text-sm text-muted-foreground">
-                  Analiz; SEO kontrollerini, Türkçe okunabilirliği ve kaynak haberlerle metin örtüşmesini ölçer, yapay zekâ editörü de
-                  kaliteyi değerlendirip somut öneriler verir.
+                  Analiz; SEO kontrollerini ve Türkçe okunabilirliği ölçer, metni kaynak haberlerle ve internette bulunan sayfalarla
+                  karşılaştırarak gerçek kopya oranını çıkarır; yapay zekâ editörü de kaliteyi değerlendirip somut öneriler verir.
                 </p>
               </div>
               <button onClick={() => run("analyze")} disabled={isPending} className="w-full h-11 bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white font-bold rounded-xl flex items-center justify-center gap-2 cursor-pointer">
                 {busy("analyze") ? <RefreshCw className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                {busy("analyze") ? "Analiz ediliyor… (20-40 sn)" : hasOld ? "Yeniden analiz et" : "Şimdi analiz et"}
+                {busy("analyze") ? "Analiz ediliyor… (30-60 sn)" : hasOld ? "Yeniden analiz et" : "Şimdi analiz et"}
               </button>
             </div>
           ) : (
@@ -269,6 +291,16 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
                       Odak ifade: <strong>{report.seo.focusKeyword ?? "belirlenemedi"}</strong>
                       <span className="text-muted-foreground"> — okurun bu haberi ararken yazması en olası ifade</span>
                     </p>
+                    {(report.seo.titleSuggestion || report.seo.descriptionSuggestion) && (
+                      <div className="rounded-xl border border-primary-500/20 bg-primary-500/5 p-3 space-y-2 text-sm">
+                        {report.seo.titleSuggestion && (
+                          <p><span className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Önerilen başlık</span>{report.seo.titleSuggestion}</p>
+                        )}
+                        {report.seo.descriptionSuggestion && (
+                          <p><span className="block text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Önerilen spot (arama sonucu açıklaması)</span>{report.seo.descriptionSuggestion}</p>
+                        )}
+                      </div>
+                    )}
                     <ul className="divide-y divide-border rounded-xl border border-border">
                       {report.seo.checks.map((c) => (
                         <li key={c.id} className="flex items-start gap-2.5 px-3 py-2.5 text-sm">
@@ -310,31 +342,63 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
                 )}
 
                 {tab === "originality" && report.originality && (
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <p className="text-sm">
-                      Metnin <strong className={tone(100 - report.originality.copiedRate * 2.5)}>%{report.originality.copiedRate}</strong>&apos;i kaynak haberlerle aynen örtüşüyor.
-                      <span className="block text-xs text-muted-foreground mt-1">
-                        {report.originality.sourcesChecked} kaynak haber ({report.originality.fullTextChecked} tanesinin tam metni) ve sitedeki son {report.originality.siteArticlesChecked} haberle,
-                        5 kelimelik ifadeler düzeyinde karşılaştırıldı.
-                      </span>
+                      Metnin <strong className={tone(100 - report.originality.copiedRate * 2.5)}>%{report.originality.copiedRate}</strong>&apos;i başka sitelerdeki metinlerle aynen örtüşüyor.
                     </p>
+                    <ul className="text-xs text-muted-foreground space-y-1 rounded-xl bg-muted/30 p-3">
+                      <li>• Haberin kaynakları: {report.originality.sourcesChecked} haber ({report.originality.fullTextChecked} tanesinin tam metni okundu)</li>
+                      <li>
+                        • İnternet taraması:{" "}
+                        {!report.originality.web?.enabled ? "yapılmadı" : report.originality.web.error ? <span className="text-warning">{report.originality.web.error}</span>
+                          : `${report.originality.web.queries} ayırt edici cümle arandı, ${report.originality.web.candidates} sayfa bulundu, ${report.originality.web.verified} sayfanın metni indirilip karşılaştırıldı`}
+                      </li>
+                      <li>• Sitedeki son {report.originality.siteArticlesChecked} haber</li>
+                      <li>Karşılaştırma 5 kelimelik ifadeler düzeyinde yapılır; listedeki her sayfa gerçekten açılıp metni okunmuştur.</li>
+                    </ul>
+
+                    {(report.originality.passages?.length ?? 0) > 0 && (
+                      <div className="space-y-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Aynen alınmış cümleler ({report.originality.passages!.length})</h3>
+                          <button onClick={() => run("fix")} disabled={isPending} className="inline-flex items-center gap-1.5 h-9 px-3 rounded-xl bg-primary-600 hover:bg-primary-700 disabled:opacity-60 text-white text-xs font-bold cursor-pointer">
+                            {busy("fix") ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : <Wand2 className="h-3.5 w-3.5" />} {busy("fix") ? "Düzeltiliyor…" : "Kopyaları gider"}
+                          </button>
+                        </div>
+                        <ul className="space-y-2">
+                          {report.originality.passages!.map((p, i) => (
+                            <li key={i} className="rounded-xl border border-error/20 bg-error/5 p-3 text-sm space-y-1">
+                              <p className="leading-relaxed">&ldquo;{p.text}&rdquo;</p>
+                              <p className="text-[11px] text-muted-foreground flex flex-wrap items-center gap-1">
+                                %{p.percent} aynı ·
+                                {p.url ? <a href={p.url} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-500 hover:underline truncate max-w-[16rem]">{p.source}</a> : <span>{p.source}</span>}
+                              </p>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
                     {report.originality.matches.length === 0 ? (
                       <p className="flex items-center gap-2 text-sm rounded-xl bg-success/10 p-3"><CheckCircle2 className="h-4 w-4 text-success" /> Belirgin bir örtüşme bulunmadı.</p>
                     ) : (
-                      <ul className="divide-y divide-border rounded-xl border border-border">
-                        {report.originality.matches.map((m, i) => (
-                          <li key={i} className="flex items-center gap-3 px-3 py-2.5 text-sm">
-                            <span className="min-w-0 flex-1">
-                              <span className="block font-medium truncate">{m.title}</span>
-                              <span className="text-[11px] text-muted-foreground">{m.kind === "site" ? "Sitedeki başka bir haber" : "Kaynak haber"}</span>
-                            </span>
-                            <span className={cn("shrink-0 rounded-md px-2 py-0.5 text-xs font-bold", m.percent >= 30 ? "bg-error/10 text-error" : m.percent >= 10 ? "bg-warning/10 text-warning" : "bg-muted text-muted-foreground")}>%{m.percent}</span>
-                            {m.url && (
-                              <a href={m.url} target="_blank" rel="noopener noreferrer" aria-label="Aç" className="h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground"><ExternalLink className="h-4 w-4" /></a>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
+                      <div className="space-y-2">
+                        <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Örtüşen sayfalar</h3>
+                        <ul className="divide-y divide-border rounded-xl border border-border">
+                          {report.originality.matches.map((m, i) => (
+                            <li key={i} className="flex items-center gap-3 px-3 py-2.5 text-sm">
+                              <span className="min-w-0 flex-1">
+                                <span className="block font-medium truncate">{m.title}</span>
+                                <span className="text-[11px] text-muted-foreground">{KIND_LABEL[m.kind] ?? "Kaynak"}</span>
+                              </span>
+                              <span className={cn("shrink-0 rounded-md px-2 py-0.5 text-xs font-bold", m.percent >= 30 ? "bg-error/10 text-error" : m.percent >= 10 ? "bg-warning/10 text-warning" : "bg-muted text-muted-foreground")}>%{m.percent}</span>
+                              {m.url && (
+                                <a href={m.url} target="_blank" rel="noopener noreferrer" aria-label="Aç" className="h-8 w-8 shrink-0 inline-flex items-center justify-center rounded-lg hover:bg-muted text-muted-foreground"><ExternalLink className="h-4 w-4" /></a>
+                              )}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
                     )}
                   </div>
                 )}

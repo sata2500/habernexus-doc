@@ -266,3 +266,18 @@ export async function rewriteArticleWithAIAction(articleId: string) {
   }
 }
 
+
+// Kaynaklardan aynen alınmış bölümleri özgünleştir (yazar)
+export async function fixCopiedPassagesAction(articleId: string) {
+  try {
+    const session = await assertAuthorOrAdmin(articleId);
+    const rate = await checkRateLimitAsync(`fixcopies:${session.user.id}`, 10, 60 * 60 * 1000);
+    if (!rate.allowed) return { success: false as const, error: "Çok sık istendi. Lütfen biraz sonra tekrar deneyin." };
+    const { fixCopiedPassages } = await import("@/lib/analysis/fix-copies");
+    const res = await fixCopiedPassages(articleId);
+    revalidatePath("/author/articles");
+    return res;
+  } catch (error) {
+    return { success: false as const, error: error instanceof Error ? error.message : "Düzeltme yapılamadı." };
+  }
+}

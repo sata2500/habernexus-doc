@@ -284,3 +284,16 @@ export async function rewriteArticleWithAIAction(articleId: string) {
   revalidatePath("/admin/articles");
   return res;
 }
+
+// Kaynaklardan aynen alınmış bölümleri özgünleştir (admin)
+export async function fixCopiedPassagesAction(articleId: string) {
+  await assertAdmin();
+  try {
+    const { fixCopiedPassages } = await import("@/lib/analysis/fix-copies");
+    const res = await fixCopiedPassages(articleId);
+    revalidatePath("/admin/articles");
+    return res;
+  } catch (error) {
+    return { success: false as const, error: error instanceof Error ? error.message : "Düzeltme yapılamadı." };
+  }
+}

@@ -98,3 +98,52 @@ export async function fetchPublicResource(rawUrl: string, options: { maxBytes: n
     clearTimeout(timeout);
   }
 }
+
+/**
+ * Herkese açık bir web sayfasını (HTML) indirir. Yönlendirmeleri en fazla 4 adım izler ve
+ * her adımda hedefin özel ağ adresi olmadığını yeniden doğrular (SSRF koruması).
+ * Dönen `url`, yönlendirmeler sonrası gerçek sayfa adresidir.
+ */
+export async function fetchPublicPage(rawUrl: string, options: { maxBytes?: number; timeoutMs?: number } = {}) {
+  const maxBytes = options.maxBytes ?? 2 * 1024 * 1024;
+  let current = rawUrl;
+  for (let hop = 0; hop < 5; hop++) {
+    const url = await assertPublicHttpUrl(current);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), options.timeoutMs ?? 8000);
+    try {
+      const response = await fetch(url, {
+        redirect: "manual",
+        signal: controller.signal,
+        headers: {
+          Accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
+          "User-Agent": "Mozilla/5.0 (compatible; HaberNexusBot/1.0; +https://habernexus.com)",
+        },
+      });
+      if (response.status >= 300 && response.status < 400) {
+        const location = response.headers.get("location");
+        if (!location) throw new Error("Redirect without location.");
+        current = new URL(location, url).toString();
+        continue;
+      }
+      if (!response.ok || !response.body) throw new Error(`Page request failed with status ${response.status}.`);
+      const type = response.headers.get("content-type") ?? "";
+      if (type && !/html|xml|text\/plain/i.test(type)) throw new Error("Not an HTML page.");
+
+      const reader = response.body.getReader();
+      const chunks: Uint8Array[] = [];
+      let total = 0;
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        total += value.byteLength;
+        if (total > maxBytes) { await reader.cancel(); break; } // büyük sayfanın başı yeterli
+        chunks.push(value);
+      }
+      return { url: url.toString(), html: Buffer.concat(chunks.map((c) => Buffer.from(c))).toString("utf8") };
+    } finally {
+      clearTimeout(timeout);
+    }
+  }
+  throw new Error("Too many redirects.");
+}

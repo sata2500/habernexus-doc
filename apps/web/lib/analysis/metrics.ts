@@ -290,17 +290,20 @@ export function shingles(text: string, n = SHINGLE) {
   return out;
 }
 
+/** source: haberin RSS kaynağı · web: internet taramasında bulunan sayfa · site: sitemizdeki başka haber */
+export type OverlapKind = "source" | "web" | "site";
+
 export interface OverlapSource {
   title: string;
   url: string | null;
   text: string;
-  kind: "source" | "site";
+  kind: OverlapKind;
 }
 
 export interface OverlapMatch {
   title: string;
   url: string | null;
-  kind: "source" | "site";
+  kind: OverlapKind;
   /** Haber metninin yüzde kaçı bu kaynakla aynı */
   percent: number;
 }
@@ -320,7 +323,7 @@ export function textOverlap(article: string, sources: OverlapSource[]) {
     for (const sh of a) {
       if (b.has(sh)) {
         shared++;
-        if (s.kind === "source") copied.add(sh);
+        if (s.kind !== "site") copied.add(sh);
       }
     }
     const percent = Math.round((shared / a.size) * 100);
@@ -339,4 +342,56 @@ export function originalityScore(copiedRate: number, maxSiteOverlap: number) {
 export function overallScore(s: { quality: number | null; seo: number; readability: number; originality: number }) {
   const quality = s.quality ?? Math.round((s.seo + s.readability + s.originality) / 3);
   return clamp(quality * 0.35 + s.seo * 0.25 + s.readability * 0.2 + s.originality * 0.2);
+}
+
+export interface CopiedPassage {
+  /** Haberdeki cümle */
+  text: string;
+  source: string;
+  url: string | null;
+  /** Cümlenin yüzde kaçı kaynakta aynen geçiyor */
+  percent: number;
+}
+
+/** Haberdeki cümleler (paragraf ve maddelerden) */
+export function sentencesOf(html: string) {
+  return contentBlocks(html)
+    .filter((b) => !/^h\d$/.test(b.tag))
+    .flatMap((b) => b.text.split(/(?<=[.!?…])\s+(?=[A-ZÇĞİÖŞÜ0-9"“'(])/))
+    .map((t) => t.trim())
+    .filter((t) => wordsOf(t).length >= 6);
+}
+
+/**
+ * Kaynaklardan aynen (ya da neredeyse aynen) alınmış cümleleri bulur: cümlenin 5 kelimelik
+ * dizilerinin en az yarısı tek bir kaynakta geçiyorsa kopya sayılır. Sitedeki haberler hariçtir.
+ */
+export function copiedPassages(html: string, sources: OverlapSource[], max = 12): CopiedPassage[] {
+  const prepared = sources.filter((s) => s.kind !== "site").map((s) => ({ s, sh: shingles(s.text) })).filter((p) => p.sh.size > 0);
+  if (!prepared.length) return [];
+  const out: CopiedPassage[] = [];
+  for (const sentence of sentencesOf(html)) {
+    const own = shingles(sentence);
+    if (own.size === 0) continue;
+    let best: { s: OverlapSource; ratio: number } | null = null;
+    for (const p of prepared) {
+      let hit = 0;
+      for (const sh of own) if (p.sh.has(sh)) hit++;
+      const ratio = hit / own.size;
+      if (!best || ratio > best.ratio) best = { s: p.s, ratio };
+    }
+    if (best && best.ratio >= 0.5) out.push({ text: sentence, source: best.s.title, url: best.s.url, percent: Math.round(best.ratio * 100) });
+    if (out.length >= max) break;
+  }
+  return out;
+}
+
+/** İnternette aranacak ayırt edici cümleler: en uzun, rakam/özel isim içeren cümleler öncelikli */
+export function distinctiveSentences(html: string, count = 4) {
+  return sentencesOf(html)
+    .map((t) => ({ t, score: wordsOf(t).length + (/\d/.test(t) ? 4 : 0) + (t.match(/\s[A-ZÇĞİÖŞÜ]/g)?.length ?? 0) }))
+    .filter((x) => wordsOf(x.t).length >= 10 && wordsOf(x.t).length <= 40)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, count)
+    .map((x) => x.t);
 }

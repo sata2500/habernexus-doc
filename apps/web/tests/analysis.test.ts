@@ -45,3 +45,15 @@ test("özgünlük: aynen alınan metin oranı ölçülür", () => {
   assert.ok(originalityScore(copy.rate, 0) < originalityScore(own.rate, 0));
   assert.equal(overallScore({ quality: null, seo: 90, readability: 90, originality: 90 }), 90);
 });
+
+test("kopya cümleler kaynağıyla birlikte bulunur; özgün cümleler işaretlenmez", async () => {
+  const { copiedPassages, distinctiveSentences } = await import("../lib/analysis/metrics");
+  const src = "Merkez Bankası politika faizini yüzde 45 seviyesinde sabit bıraktı ve piyasalar karara olumlu tepki verdi.";
+  const html = `<p>${src} Kurul toplantısından sonra yapılan açıklamada enflasyon görünümüne vurgu yapıldı ve yeni adımlar ele alındı.</p>`;
+  const found = copiedPassages(html, [{ title: "Kaynak A", url: "https://a.com/x", text: src, kind: "source" }]);
+  assert.equal(found.length, 1);
+  assert.equal(found[0].source, "Kaynak A");
+  assert.ok(found[0].text.startsWith("Merkez Bankası"));
+  assert.equal(copiedPassages(html, [{ title: "Site", url: "/article/x", text: src, kind: "site" }]).length, 0);
+  assert.ok(distinctiveSentences(html, 2).length >= 1);
+});

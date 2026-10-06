@@ -212,6 +212,57 @@ export async function generateText(task: Exclude<AiTask, "image" | "tts">, req: 
   return { text: result, model: formatModelRef(ref) };
 }
 
+export interface WebSource {
+  url: string;
+  title: string | null;
+}
+
+/** Web araması yapar; yanıt metniyle birlikte arama motorunun döndürdüğü gerçek kaynak adreslerini verir. */
+async function searchWithRef(ref: ModelRef, req: TextRequest): Promise<{ text: string; sources: WebSource[] }> {
+  if (ref.provider === "google") {
+    const ai = await googleClient();
+    const response = await ai.models.generateContent({
+      model: ref.model,
+      contents: req.prompt,
+      config: {
+        systemInstruction: req.system,
+        temperature: req.temperature,
+        tools: [{ googleSearch: {} }],
+        abortSignal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+      },
+    });
+    const chunks = response.candidates?.[0]?.groundingMetadata?.groundingChunks ?? [];
+    const sources = chunks
+      .map((c) => (c.web?.uri ? { url: c.web.uri, title: c.web.title ?? null } : null))
+      .filter((s): s is WebSource => !!s);
+    return { text: response.text ?? "", sources };
+  }
+  const data = (await openRouterFetch({
+    model: ref.model,
+    messages: [
+      ...(req.system ? [{ role: "system", content: req.system }] : []),
+      { role: "user", content: req.prompt },
+    ],
+    temperature: req.temperature,
+    tools: [{ type: "openrouter:web_search" }],
+  })) as { choices?: { message?: { content?: string | null; annotations?: { type?: string; url_citation?: { url?: string; title?: string } }[] } }[] };
+  const message = data.choices?.[0]?.message;
+  const sources = (message?.annotations ?? [])
+    .map((a) => (a.type === "url_citation" && a.url_citation?.url ? { url: a.url_citation.url, title: a.url_citation.title ?? null } : null))
+    .filter((s): s is WebSource => !!s);
+  return { text: message?.content ?? "", sources };
+}
+
+/**
+ * Web araması (admin panelinde göreve seçilen modelle). Kaynak adresleri modelin yazdığı metinden değil,
+ * arama altyapısının döndürdüğü atıflardan alınır; yine de çağıran taraf bu adresleri kendisi doğrulamalıdır.
+ */
+export async function searchWeb(task: Exclude<AiTask, "image" | "tts">, req: Omit<TextRequest, "search" | "json">) {
+  const chain = resolveModelChain(task, await loadAiSettings());
+  const { result, ref } = await runWithFallback(chain, (r) => searchWithRef(r, req));
+  return { ...result, model: formatModelRef(ref) };
+}
+
 /** Model yanıtından JSON nesnesini güvenle ayrıştırır (```json blokları, ön/son metin). */
 export function parseJsonResponse<T = unknown>(text: string): T {
   const cleaned = text.replace(/```(?:json)?/gi, "").trim();
