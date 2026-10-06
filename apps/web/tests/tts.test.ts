@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { htmlToSpeechText } from "../lib/tts-audio";
+import { htmlToSpeechText, splitForTts } from "../lib/tts-audio";
 import { stripLeadingTitleHeading } from "../lib/article-content";
 
 test("başlık gövdede tekrar ediyorsa bir kez okunur", () => {
@@ -24,4 +24,12 @@ test("gövdenin başındaki başlık tekrarı (küçük farklarla) atlanır", ()
   const other = "<h2>Puan Durumu</h2><p>x</p>";
   assert.equal(stripLeadingTitleHeading("Süper Lig'de şampiyonluk yarışı kızışıyor", other), other);
   assert.equal(stripLeadingTitleHeading("Dolar rekor kırdı", "## Dolar Rekor Kırdı\n\nMetin."), "Metin.");
+});
+
+test("seslendirme metni karakter kodlarını çözer, uzun cümleyi kaybetmeden böler", () => {
+  assert.equal(htmlToSpeechText("Başlık", "<p>Ba&#351;kan &amp; Bakan.</p>"), "Başlık.\nBaşkan & Bakan.");
+  const long = Array.from({ length: 50 }, (_, i) => `kelime${i}`).join(" ");
+  const chunks = splitForTts(long, 60);
+  assert.ok(chunks.every((c) => c.length <= 60));
+  assert.equal(chunks.join(" "), long);
 });

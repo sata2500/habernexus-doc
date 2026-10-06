@@ -4,7 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { checkRateLimitAsync, getRequestIdentity } from "@/lib/server/rate-limit";
 import { classifyTtsError, getOrCreateArticleAudio, isTtsConfigured, TTS_VOICES, type TtsVoiceId } from "@/lib/tts";
 
-export const maxDuration = 120;
+// Uzun haberlerin seslendirmesi (parçalar halinde) iki dakikayı aşabilir
+export const maxDuration = 300;
 
 const TtsRequestSchema = z.object({
   articleId: z.string().trim().min(1).max(100),

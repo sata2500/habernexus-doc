@@ -1,6 +1,5 @@
 import "server-only";
 
-import { after } from "next/server";
 import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { prisma } from "@/lib/prisma";
 import { AiError, cleanHtmlResponse, generateText, parseJsonResponse } from "@/lib/ai/client";
@@ -8,6 +7,7 @@ import { keyTokens, signature } from "./text";
 import { attachTags, buildSeoPackage, uniqueArticleSlug } from "./seo";
 import { WRITER_RULES } from "./writing-guide";
 import { invalidateArticle } from "@/lib/server/article-cache";
+import { afterPublish } from "@/lib/ai-writer";
 
 const HOUR = 3_600_000;
 
@@ -44,7 +44,7 @@ export async function writeTrendArticle(trendId: string) {
     if (covered) return { success: false as const, error: `Bu konu zaten yayında: "${covered.title}"` };
 
     const [adminUser, settings, categories] = await Promise.all([
-      prisma.user.findFirst({ where: { role: "ADMIN" } }),
+      prisma.user.findFirst({ where: { role: "ADMIN" }, orderBy: { createdAt: "asc" } }),
       prisma.systemSettings.findFirst(),
       prisma.category.findMany({ select: { id: true, name: true } }),
     ]);
@@ -73,32 +73,34 @@ Yanıtı SADECE şu JSON biçiminde ver:
     const sig = signature(title);
     const content = stripLeadingTitleHeading(title, stripLeadingTitleHeading(draftTitle, rawContent));
 
-    const article = await prisma.article.create({
-      data: {
-        title,
-        slug: await uniqueArticleSlug(title),
-        content,
-        excerpt: seo.description || parsed.excerpt?.trim().slice(0, 300) || null,
-        status: "PUBLISHED",
-        authorId: adminUser.id,
-        categoryId,
-        publishedAt: new Date(),
-        lang: "tr",
-      },
+    // Haber ve Karar Merkezi kaydı birlikte: trend "yazıldı" görünür ve tekrar yazılmaz
+    const article = await prisma.$transaction(async (tx) => {
+      const created = await tx.article.create({
+        data: {
+          title,
+          slug: await uniqueArticleSlug(title, tx),
+          content,
+          excerpt: seo.description || parsed.excerpt?.trim().slice(0, 300) || null,
+          status: "PUBLISHED",
+          authorId: adminUser.id,
+          categoryId,
+          publishedAt: new Date(),
+          lang: "tr",
+        },
+      });
+      await tx.newsStory.create({
+        data: {
+          title, headline: title, tokens: sig.tokens, entities: sig.entities, status: "PUBLISHED",
+          trendKeyword: trend.keyword, trendScore: trend.trafficScore, articleId: created.id, sourceCount: 0, itemCount: 0,
+          categoryName: parsed.category ?? null, reason: "Google Trends'ten yazıldı",
+        },
+      });
+      return created;
     });
     await attachTags(article.id, seo.tags);
     await invalidateArticle(article.slug);
-    // Karar Merkezi kaydı: bu trend artık "yazıldı" görünür ve tekrar yazılmaz
-    await prisma.newsStory.create({
-      data: {
-        title, headline: title, tokens: sig.tokens, entities: sig.entities, status: "PUBLISHED",
-        trendKeyword: trend.keyword, trendScore: trend.trafficScore, articleId: article.id, sourceCount: 0, itemCount: 0,
-        categoryName: parsed.category ?? null, reason: "Google Trends'ten yazıldı",
-      },
-    });
-    // Google'a yeni haberi bildir (yanıt beklenmez)
-    const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-    after(() => notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED"));
+    // Google ve Telegram bildirimi, ardından analiz ve gerekirse özgünleştirme
+    await afterPublish(article);
     return { success: true as const, articleId: article.id, title: article.title, slug: article.slug };
   } catch (error) {
     const message = error instanceof AiError ? `${error.message}${error.raw ? ` Ayrıntı: ${error.raw}` : ""}` : error instanceof Error ? error.message : String(error);

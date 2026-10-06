@@ -5,6 +5,7 @@ import { generateText, parseJsonResponse } from "@/lib/ai/client";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { normalize } from "@/lib/news/text";
 import { invalidateArticle } from "@/lib/server/article-cache";
+import { restoreContentSnapshot, takeContentSnapshot } from "./snapshot";
 
 /**
  * "Kopyaları gider": analizde kaynaklardan aynen alındığı tespit edilen cümlelerin geçtiği
@@ -72,9 +73,15 @@ Yalnızca şu JSON'u döndür (her paragraf için bir öğe, aynı sırayla):
   }
   if (rewritten === 0) return { success: false as const, error: "Yapay zekâ geçerli bir düzeltme üretemedi; tekrar deneyin." };
 
+  const snapshot = await takeContentSnapshot(article.id);
   const saved = await prisma.article.update({ where: { id: article.id }, data: { content }, select: { slug: true } });
   await invalidateArticle(saved.slug);
   const analysis = await analyzeArticle(article.id);
+  // Oran düşmediyse (model kopyayı gideremediyse) önceki metin geri yüklenir
+  if (analysis.success && snapshot && analysis.plagiarismRate >= before) {
+    await invalidateArticle(await restoreContentSnapshot(article.id, snapshot));
+    return { success: false as const, error: `Yeniden yazım kopya oranını düşürmedi (%${before} → %${analysis.plagiarismRate}); önceki metin korundu. Tekrar deneyin ya da bu bölümleri kendiniz düzenleyin.` };
+  }
   return {
     success: true as const,
     rewritten,

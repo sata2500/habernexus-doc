@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { keyTokens, normalize, buildIdf, SAME_STORY, LIKELY_DUPLICATE, POSSIBLE_DUPLICATE, timeHints, signature, storySimilarity } from "../lib/news/text";
-import { computeScore, deriveExpiry } from "../lib/news/score";
+import { decodeEntities, keyTokens, normalize, buildIdf, SAME_STORY, LIKELY_DUPLICATE, POSSIBLE_DUPLICATE, timeHints, signature, storySimilarity } from "../lib/news/text";
+import { computeScore, deriveExpiry, trafficToScore } from "../lib/news/score";
 
 const sim = (a: string, b: string) => storySimilarity(signature(a), signature(b));
 
@@ -107,4 +107,20 @@ test("a match preview expires when the match starts and gets an urgency boost be
   assert.equal(before.parts.urgency, 10);
   const after = computeScore({ aiScore: 70, sourceCount: 2, trendScore: 0, startAt: seen, urgency: "TIME_SENSITIVE", eventAt: kickoff, expiresAt: expiry }, new Date("2026-10-11T18:00:00Z"));
   assert.equal(after.expired, true);
+});
+
+test("decodeEntities RSS karakter kodlarını çözer", () => {
+  assert.equal(decodeEntities("Ba&#351;kan &amp; Bakan &ccedil;a&#287;r&#x131; yapt&#305; &quot;evet&quot;"), 'Başkan & Bakan çağrı yaptı "evet"');
+  assert.equal(decodeEntities("&bilinmeyen; &#0;"), "&bilinmeyen; &#0;");
+});
+
+test("trafficToScore Google Trends trafiğini logaritmik puanlar", () => {
+  assert.equal(trafficToScore("100+"), 40);
+  assert.equal(trafficToScore("1.000+"), 60);
+  assert.equal(trafficToScore("10000+"), 80);
+  assert.equal(trafficToScore("2K+"), 66);
+  assert.equal(trafficToScore("20 B+"), 86);
+  assert.equal(trafficToScore("1M+"), 100);
+  assert.equal(trafficToScore(""), 50);
+  assert.ok(trafficToScore("500+") < trafficToScore("5000+"));
 });

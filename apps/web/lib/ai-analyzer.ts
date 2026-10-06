@@ -11,14 +11,15 @@ export const DEFAULT_EDITORIAL_CRITERIA = `- Türkiye okurunu doğrudan ilgilend
  */
 export async function cleanupOldItems(): Promise<number> {
   try {
-    const settings = await prisma.systemSettings.findFirst();
+    const settings = await prisma.systemSettings.findUnique({ where: { id: "global" }, select: { rssRetentionDays: true } });
     const retentionDays = settings?.rssRetentionDays || 14;
     const deleteBefore = new Date(Date.now() - retentionDays * 24 * 60 * 60 * 1000);
 
     const result = await prisma.rssFeedItem.deleteMany({
       where: {
-        publishedAt: { lt: deleteBefore },
         usedForArticle: false, // Makale yazılmamış olanları sil
+        // Yayın tarihi olmayan öğeler eklenme tarihine göre
+        OR: [{ publishedAt: { lt: deleteBefore } }, { publishedAt: null, createdAt: { lt: deleteBefore } }],
       },
     });
 

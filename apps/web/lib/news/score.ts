@@ -72,3 +72,17 @@ export function deriveExpiry(startAt: Date, urgency: Urgency, eventAt: Date | nu
 function clamp(n: number) {
   return Math.min(100, Math.max(0, n));
 }
+
+/**
+ * Google Trends trafik ifadesini ("500+", "10.000+", "2K+", "20 B+") 0-100 ilgi puanına çevirir.
+ * Logaritmik ölçek: 100 → 40, 1.000 → 60, 10.000 → 80, 100.000+ → 100.
+ */
+export function trafficToScore(raw: string | null | undefined): number {
+  const m = raw?.replace(/\s/g, "").match(/^([\d.,]+)(k|b|bin|m|mn|milyon)?/i);
+  if (!m) return 50;
+  const base = Number(m[1].replace(/[.,]/g, ""));
+  const unit = m[2]?.toLowerCase();
+  const n = base * (unit === "k" || unit === "b" || unit === "bin" ? 1_000 : unit?.startsWith("m") ? 1_000_000 : 1);
+  if (!Number.isFinite(n) || n <= 0) return 50;
+  return clamp(Math.round(20 * Math.log10(n)));
+}

@@ -41,6 +41,12 @@ function retryDelayMs(error: unknown) {
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+/** Tek parçanın en fazla bekleme süresi (takılan istek tüm seslendirmeyi kilitlemesin) */
+const CHUNK_TIMEOUT_MS = 90_000;
+/** Aynı anda üretilen parça sayısı: hız ile sağlayıcı sınırı arasında denge */
+const CHUNK_CONCURRENCY = 2;
+// Aynı haber/ses için eşzamanlı ilk istekler tek üretimi paylaşır (çift maliyet olmasın)
+const inflight = new Map<string, Promise<{ url: string; cached: boolean }>>();
 
 async function synthesizeWithModel(model: string, text: string, voiceName: string): Promise<Buffer> {
   const { GoogleGenAI } = await import("@google/genai");
@@ -52,6 +58,7 @@ async function synthesizeWithModel(model: string, text: string, voiceName: strin
     config: {
       responseModalities: ["AUDIO"],
       speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName } } },
+      abortSignal: AbortSignal.timeout(CHUNK_TIMEOUT_MS),
     },
   });
   const data = response.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data)?.inlineData?.data;
@@ -115,18 +122,32 @@ export async function getOrCreateArticleAudio({
     if (!(error instanceof BlobNotFoundError)) throw error;
   }
 
-  const chunks = splitForTts(text);
-  const pcmParts: Buffer[] = [];
-  // Sırayla üret: sağlayıcı hız limitlerine takılmamak için
-  for (const chunk of chunks) pcmParts.push(await synthesizeChunk(chunk, voiceName));
+  let job = inflight.get(pathname);
+  if (!job) {
+    job = (async () => {
+      const chunks = splitForTts(text);
+      const pcmParts: Buffer[] = new Array(chunks.length);
+      // En fazla 2 parça aynı anda (uzun haberler süre sınırına takılmasın), sıra korunur
+      let next = 0;
+      const worker = async () => {
+        while (next < chunks.length) {
+          const i = next++;
+          pcmParts[i] = await synthesizeChunk(chunks[i]!, voiceName);
+        }
+      };
+      await Promise.all(Array.from({ length: Math.min(CHUNK_CONCURRENCY, chunks.length) }, worker));
 
-  const wav = pcmToWav(Buffer.concat(pcmParts));
-  const blob = await put(pathname, wav, {
-    access: "public",
-    contentType: "audio/wav",
-    addRandomSuffix: false,
-    allowOverwrite: true,
-    cacheControlMaxAge: 60 * 60 * 24 * 365,
-  });
-  return { url: blob.url, cached: false };
+      const wav = pcmToWav(Buffer.concat(pcmParts));
+      const blob = await put(pathname, wav, {
+        access: "public",
+        contentType: "audio/wav",
+        addRandomSuffix: false,
+        allowOverwrite: true,
+        cacheControlMaxAge: 60 * 60 * 24 * 365,
+      });
+      return { url: blob.url, cached: false };
+    })().finally(() => inflight.delete(pathname));
+    inflight.set(pathname, job);
+  }
+  return job;
 }

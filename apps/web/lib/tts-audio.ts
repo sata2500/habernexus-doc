@@ -1,6 +1,7 @@
 /** Seslendirme için saf yardımcılar (metin hazırlama, parçalama, WAV birleştirme). */
 
 import { stripLeadingTitleHeading } from "./article-content";
+import { decodeEntities } from "./news/text";
 
 export const SAMPLE_RATE = 24_000;
 const CHUNK_CHARS = 3_500; // ~8K token giriş sınırının güvenle altında
@@ -15,16 +16,13 @@ function normalizeForCompare(value: string) {
  * başlıyorsa (ör. içerikte H1 olarak tekrar edilmişse) başlık ikinci kez okunmaz.
  */
 export function htmlToSpeechText(title: string, html: string) {
-  let body = stripLeadingTitleHeading(title, html)
+  const markup = stripLeadingTitleHeading(title, html)
     .replace(/^\s{0,3}#{1,6}\s+(.+?)\s*#*\s*$/gm, "$1.") // Markdown başlıkları ayrı cümle olsun
     .replace(/<\/(p|h[1-6]|li|blockquote)>/gi, ".\n")
     .replace(/<br\s*\/?>/gi, "\n")
     .replace(/<[^>]*>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#0?39;|&apos;/gi, "'")
-    .replace(/[*#_`>]+/g, " ") // Markdown kalıntıları seslendirilmesin
+    .replace(/[*#_`>]+(?![\da-fx]+;)/gi, " "); // Markdown kalıntıları seslendirilmesin (&#351; gibi kodlar hariç)
+  let body = decodeEntities(markup)
     .replace(/\.\s*\./g, ".")
     .replace(/[ \t]+/g, " ")
     .replace(/\n\s*/g, "\n")
@@ -45,8 +43,19 @@ export function splitForTts(text: string, maxChars = CHUNK_CHARS): string[] {
   const sentences = text.split(/(?<=[.!?…])\s+|\n+/).map((s) => s.trim()).filter(Boolean);
   const chunks: string[] = [];
   let current = "";
-  for (const sentence of sentences) {
-    const piece = sentence.length > maxChars ? sentence.slice(0, maxChars) : sentence;
+  // Sınırdan uzun tek cümle kelime sınırlarından bölünür (kesilip kaybolmaz)
+  const pieces = sentences.flatMap((s) => {
+    if (s.length <= maxChars) return [s];
+    const out: string[] = [];
+    let part = "";
+    for (const word of s.split(" ")) {
+      if (part && part.length + word.length + 1 > maxChars) { out.push(part); part = ""; }
+      part = part ? `${part} ${word}` : word.slice(0, maxChars);
+    }
+    if (part) out.push(part);
+    return out;
+  });
+  for (const piece of pieces) {
     if (current && current.length + piece.length + 1 > maxChars) {
       chunks.push(current);
       current = piece;

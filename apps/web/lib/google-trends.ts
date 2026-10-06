@@ -1,5 +1,9 @@
+import "server-only";
+
 import Parser from "rss-parser";
+
 import { prisma } from "@/lib/prisma";
+import { trafficToScore } from "@/lib/news/score";
 
 export interface TrendItemData {
   keyword: string;
@@ -46,17 +50,7 @@ export async function fetchGoogleTrends(geo: string = "TR"): Promise<TrendItemDa
       const itemAny = item as unknown as Record<string, unknown>;
       const trafficRaw = (itemAny.traffic as string) || "10.000+";
       
-      let trafficScore = 50;
-      const numMatch = trafficRaw.replace(/[^0-9]/g, "");
-      if (numMatch) {
-        const num = parseInt(numMatch, 10);
-        if (num >= 500) trafficScore = 100;
-        else if (num >= 200) trafficScore = 95;
-        else if (num >= 100) trafficScore = 85;
-        else if (num >= 50) trafficScore = 75;
-        else if (num >= 20) trafficScore = 65;
-        else trafficScore = 50;
-      }
+      const trafficScore = trafficToScore(trafficRaw);
 
       trends.push({
         keyword,
@@ -79,6 +73,7 @@ export async function fetchGoogleTrends(geo: string = "TR"): Promise<TrendItemDa
   try {
     const jsonUrl = `https://trends.google.com/trends/api/dailytrends?hl=tr&geo=${geoUpper}&ns=15`;
     const res = await fetch(jsonUrl, {
+      signal: AbortSignal.timeout(10_000),
       headers: {
         "User-Agent":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
@@ -100,7 +95,7 @@ export async function fetchGoogleTrends(geo: string = "TR"): Promise<TrendItemDa
           trends.push({
             keyword,
             searchVolume: formattedTraffic,
-            trafficScore: 75,
+            trafficScore: trafficToScore(formattedTraffic),
             exploreUrl: search.shareUrl || `https://trends.google.com/trends/explore?q=${encodeURIComponent(keyword)}&geo=${geoUpper}`,
             pubDate: day.date ? new Date(day.date) : new Date(),
           });
@@ -118,7 +113,7 @@ export async function fetchGoogleTrends(geo: string = "TR"): Promise<TrendItemDa
  * Trend verilerini çeker ve veritabanındaki GoogleTrend tablosuna günceller/kaydeder.
  */
 export async function syncGoogleTrends(): Promise<{ synced: number; geo: string }> {
-  const settings = await prisma.systemSettings.findFirst();
+  const settings = await prisma.systemSettings.findUnique({ where: { id: "global" }, select: { googleTrendsEnabled: true, googleTrendsGeo: true } });
   if (settings?.googleTrendsEnabled === false) {
     console.log("[Google Trends] Devre dışı bırakılmış.");
     return { synced: 0, geo: "DISABLED" };

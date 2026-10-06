@@ -158,3 +158,21 @@ export function timeHints(text: string): { breaking: boolean; upcoming: boolean 
     upcoming: /\b(yarin|bu aksam|bu gece|bugun saat|saat \d{1,2} \d{2}|canli yayin|muhtemel 11|hafta sonu|kac(ta| ta) hangi kanalda|ne zaman)\b/.test(n),
   };
 }
+
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: " ", ndash: "–", mdash: "—", hellip: "…",
+  lsquo: "‘", rsquo: "’", ldquo: "“", rdquo: "”", laquo: "«", raquo: "»", bull: "•", middot: "·", deg: "°",
+  ccedil: "ç", Ccedil: "Ç", ouml: "ö", Ouml: "Ö", uuml: "ü", Uuml: "Ü", acirc: "â", Acirc: "Â", icirc: "î", ucirc: "û",
+  scedil: "ş", Scedil: "Ş", gbreve: "ğ", Gbreve: "Ğ", inodot: "ı", imath: "ı", Idot: "İ", euro: "€", copy: "©", reg: "®",
+};
+
+/** RSS başlık/özetlerindeki HTML karakter kodlarını çözer (&amp;, &#351;, &#x15F;, &ccedil; …) */
+export function decodeEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (match, code: string) => {
+    if (code[0] === "#") {
+      const n = code[1] === "x" || code[1] === "X" ? parseInt(code.slice(2), 16) : parseInt(code.slice(1), 10);
+      return Number.isFinite(n) && n > 0 && n <= 0x10ffff ? String.fromCodePoint(n) : match;
+    }
+    return NAMED_ENTITIES[code] ?? match;
+  });
+}

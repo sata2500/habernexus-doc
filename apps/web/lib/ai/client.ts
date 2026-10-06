@@ -49,7 +49,9 @@ export class AiError extends Error {
   }
 }
 
-const RETRYABLE: AiErrorCode[] = ["quota", "timeout", "unavailable"];
+// Zaman aşımı aynı modelle tekrar denenmez: 120 sn × 3 deneme, işçinin 300 sn sınırını aşıp işi
+// yarıda bırakıyordu. Takılan model yerine doğrudan yedek modele geçilir.
+const RETRYABLE: AiErrorCode[] = ["quota", "unavailable"];
 const FALLBACK_ON: AiErrorCode[] = ["config", "auth", "billing", "quota", "model", "unavailable", "timeout"];
 
 function scrub(text: string) {
@@ -318,7 +320,7 @@ async function imageWithRef(ref: ModelRef, prompt: string, referenceImageUrl?: s
       const res = await ai.models.generateImages({
         model: ref.model,
         prompt,
-        config: { numberOfImages: 1, outputMimeType: "image/jpeg", aspectRatio: "16:9" },
+        config: { numberOfImages: 1, outputMimeType: "image/jpeg", aspectRatio: "16:9", abortSignal: AbortSignal.timeout(REQUEST_TIMEOUT_MS) },
       });
       const bytes = res.generatedImages?.[0]?.image?.imageBytes;
       if (!bytes) throw new AiError("bad_response", ref.provider, ref.model, "Görsel dönmedi");

@@ -39,10 +39,11 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 - [x] `ActionResult` tipi ve `actionError()` yardımcısı eklendi — işlem dosyalarına uygulanması ilgili aşamalarda (4–6) yapılacak
 - [x] Hız sınırı: Vercel IP başlıkları öncelikli; bellek içi (dağıtık olmayan) bülten sınırı Redis'e taşındı
 
-### Aşama 2 — Yapay zekâ ve haber hattı
-- [ ] `lib/ai/*`, `lib/news/*`, AI Yazar, trend yazarı, analiz, TTS, özet
-- [ ] Zaman aşımları, maliyet sınırları, yeniden deneme, hata sınıflandırması
-- [ ] Kritik akışlara test (kümeleme, puanlama, yazım kilidi)
+### Aşama 2 — Yapay zekâ ve haber hattı ✅
+- [x] `lib/ai/*`, `lib/news/*`, AI Yazar, trend yazarı, analiz, intihal düzeltme, RSS tarayıcı, Google Trends, TTS, özet okundu
+- [x] Zaman aşımları ve süre bütçesi: yayın sonrası kalite işi ayrı kuyruk işine taşındı; zaman aşımında yeniden deneme kaldırıldı; seslendirme parça başına 90 sn
+- [x] Testler: karakter kodu çözme, trend puanı, seslendirme bölme (48 test). Kümeleme ve puanlama testleri zaten vardı
+- [ ] Not: yapay zekâ ayarları her çağrıda birincil anahtarla tek satır okunuyor; çağrı saniyeler sürdüğü için önbelleğe alınmadı (model değişikliği anında geçerli olsun)
 
 ### Aşama 3 — Herkese açık site
 - [ ] Ana sayfa, haber, kategori, etiket, son haberler, arama, statik sayfalar
@@ -98,3 +99,22 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 | Tutarlılık | Okuma süresi 4 farklı yöntemle hesaplanıyordu (bazıları HTML etiketlerini kelime sayıyordu) | Tek `readingMinutes()` |
 | Tutarlılık | Site adresi 14 yerde farklı varsayılanlarla tekrarlanıyordu | `getAppUrl()` |
 | Test | `server-only` modülleri testlerde yüklenemiyordu | Testler `react-server` koşuluyla; içerik süzgeci ve okuma süresi testleri (45 test) |
+
+### Aşama 2
+| Tür | Bulgu | Durum |
+|---|---|---|
+| Hata | Yeni haberin analiz + kopya düzeltme (2 tur) + tam yeniden yazım döngüsü, yazımla **aynı 5 dakikalık işçide** çalışıyordu; süre aşılınca iş yarıda kesiliyordu | Kalite işi ayrı QStash işine taşındı (kendi süre sınırıyla); yerelde `after()` ile |
+| Hata | Otomatik özgünleştirme kopya oranını düşürmese de (hatta artırsa da) yeni metin yayında kalıyordu | Oran düşmezse önceki metin ve puanlar geri yükleniyor ("Kopyaları gider" düğmesi dahil) |
+| Hata | Tam yeniden yazım, Google'a ikinci kez bildirim gönderiyordu (günlük kota) | Yeni yayımlanan haberde ek bildirim yok |
+| Hata | Yapay zekâ zaman aşımları 3 kez yeniden deneniyordu (3 × 120 sn > işçi sınırı) | Yalnızca kota/servis yoğunluğunda yeniden deneme |
+| Hata | Analiz ve puanlama, aynı anda yazıma alınan ya da elenen bir konunun durumunu ezebiliyordu | Durum korumalı güncellemeler (yalnızca açık konular değişir) |
+| Güvenlik | RSS başlık/özetlerindeki talimatlar analiz komutunu etkileyebiliyordu | Kaynak metinler veri olarak işaretlendi, içindeki talimatlar yok sayılıyor |
+| Hata | Karar Merkezi aramasında "Yazım sırası" ve "Değerlendirme" sekmelerinde **arama kelimesi yok sayılıyordu** (iki `OR` koşulu birbirini eziyordu) | Koşullar `AND` ile birleştirildi |
+| Hata | RSS kaynakları sırayla taranıyordu (yavaş kaynak tüm taramayı süre sınırına itiyordu); her haber için ayrı sorgu; eşzamanlı taramada tekil anahtar hatası tüm kaynağı "hatalı" yapıyordu | 5'li paralel tarama, toplu kontrol + `createMany(skipDuplicates)` |
+| Güvenlik | RSS akışları özel ağ korumasız indiriliyordu; haber bağlantılarında `javascript:` gibi adresler kabul ediliyordu | Güvenli indirici (SSRF korumalı, 5 MB sınır); yalnızca http(s) |
+| Hata | RSS'teki `&#351;` gibi karakter kodları ve windows-1254/iso-8859-9 akışlar bozuk Türkçe üretiyordu | Karakter kümesi algılama + kod çözme (analizdeki sayfa indirme de düzeldi) |
+| Hata | Yayın tarihi olmayan RSS öğeleri hiç temizlenmiyordu | Eklenme tarihine göre temizleniyor |
+| Hata | Google Trends puanı 500+ aramada tavana vuruyordu (500 ile 100.000 aynı puan) | Logaritmik ölçek |
+| Hata | Seslendirmede çok uzun cümle kesilip kayboluyordu; zaman aşımı yoktu, parçalar sırayla üretiliyordu, aynı ses eşzamanlı iki kez üretilebiliyordu | Kelime sınırından bölme; 90 sn zaman aşımı, 2'li paralel üretim, eşzamanlı istek birleştirme; uç nokta 300 sn |
+| Tutarlılık | Trend haberinde makale ve Karar Merkezi kaydı ayrı yazılıyordu; Telegram ve kalite analizi yapılmıyordu | Tek işlem; RSS haberleriyle aynı yayın sonrası akış |
+| Tutarlılık | Otomatik yazım cron'u kuyruk mantığını kopyalıyordu; yazar olarak rastgele admin seçiliyordu | Ortak `dispatchStories`; ilk admin |

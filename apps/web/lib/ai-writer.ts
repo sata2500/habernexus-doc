@@ -13,6 +13,8 @@ import { stripLeadingTitleHeading } from "./article-content";
 import { WRITER_FORMAT } from "./news/writing-guide";
 import { invalidateArticle } from "./server/article-cache";
 import { attachTags, buildSeoPackage, uniqueArticleSlug } from "./news/seo";
+import { enqueueJob, WORKER_PATH } from "./server/queue";
+import { restoreContentSnapshot, takeContentSnapshot } from "./analysis/snapshot";
 
 
 /** Üretilen kapak görselini Vercel Blob'a kaydeder. */
@@ -184,7 +186,7 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
     const rssImage = story.items.find((i) => i.imageUrl)?.imageUrl ?? null;
     const imageUrl = await produceCoverImage(imagePromptBase, title, rssImage, settings.aiWriterUseRssImage !== false);
 
-    const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" } });
+    const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" }, orderBy: { createdAt: "asc" } });
     if (!adminUser) throw new Error("Admin kullanıcı bulunamadı.");
     await addToMediaLibrary(imageUrl, adminUser.id);
 
@@ -218,7 +220,7 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
 
     await attachTags(article.id, seo.tags, article.lang);
     await invalidateArticle(article.slug);
-    await afterPublish(article, { systemPrompt, textPrompt, useGoogleSearch });
+    await afterPublish(article);
     return { success: true, articleId: article.id, title: article.title, slug: article.slug };
   } catch (error) {
     const aiError = error instanceof AiError ? error : null;
@@ -248,11 +250,8 @@ async function addToMediaLibrary(imageUrl: string | null, userId: string) {
   }).catch((e) => console.error("Media kütüphanesine eklenemedi:", e));
 }
 
-/** Yayın sonrası: Google bildirimi, Telegram, kalite analizi ve gerekirse özgünleştirme. */
-async function afterPublish(
-  article: { id: string; title: string; slug: string; excerpt: string | null; coverImage: string | null },
-  ctx: { systemPrompt: string; textPrompt: string; useGoogleSearch: boolean },
-) {
+/** Yayın sonrası: Google bildirimi ve Telegram (yanıt beklenmez), ardından kalite işi. */
+export async function afterPublish(article: { id: string; title: string; slug: string; excerpt: string | null; coverImage: string | null }) {
   try {
     const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
     after(() => notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
@@ -262,41 +261,42 @@ async function afterPublish(
     console.error("Yayın sonrası bildirimler yüklenemedi:", e);
   }
 
+  // Analiz ve özgünleştirme birkaç dakika sürebilir: üretimde ayrı bir işçide (kendi süre sınırıyla) çalışır
+  const queued = await enqueueJob(WORKER_PATH, { task: "quality", articleId: article.id }).catch((e) => {
+    console.warn("[AI Writer] Kalite işi kuyruğa alınamadı, bu istekte çalışacak:", e instanceof Error ? e.message : e);
+    return false;
+  });
+  if (!queued) after(() => runQualityPass(article.id));
+}
+
+const COPY_FIX_THRESHOLD = 10;
+const FULL_REWRITE_THRESHOLD = 30;
+
+/**
+ * Yeni yayımlanan haberin kalite işi: analiz → kaynaklardan aynen alınmış paragrafları özgünleştirme
+ * (en fazla 2 tur) → oran hâlâ yüksekse metnin tamamını yeniden yazma. Her düzeltme yalnızca oranı
+ * düşürdüyse kalır; aksi halde önceki metin geri yüklenir.
+ */
+export async function runQualityPass(articleId: string) {
   try {
-    const analysis = await analyzeArticle(article.id);
-    let rate = analysis.success ? (analysis.plagiarismRate ?? 0) : 0;
-    // 1) Önce yalnızca kaynaklardan aynen alınmış paragraflar özgünleştirilir (en fazla 2 tur)
+    const analysis = await analyzeArticle(articleId);
+    if (!analysis.success) return;
+    let rate = analysis.plagiarismRate;
+
     const { fixCopiedPassages } = await import("./analysis/fix-copies");
-    for (let round = 1; round <= 2 && rate > 10; round++) {
+    for (let round = 1; round <= 2 && rate > COPY_FIX_THRESHOLD; round++) {
       console.log(`[AI Writer] Kaynaklarla aynen örtüşme %${rate}; kopya paragraflar özgünleştiriliyor (${round}/2)`);
-      const fixed = await fixCopiedPassages(article.id).catch((e) => ({ success: false as const, error: String(e) }));
+      const fixed = await fixCopiedPassages(articleId).catch((e) => ({ success: false as const, error: String(e) }));
       if (!fixed.success || fixed.after === null) break;
       rate = fixed.after;
     }
-    // 2) Hâlâ yüksekse metnin tamamı yeniden yazılır
-    const PLAGIARISM_THRESHOLD = 30;
-    for (let attempt = 1; attempt <= 1 && rate > PLAGIARISM_THRESHOLD; attempt++) {
+
+    if (rate > FULL_REWRITE_THRESHOLD) {
       console.log(`[AI Writer] Örtüşme hâlâ %${rate}; metin tamamen yeniden yazılıyor`);
-      let newContent = "";
-      try {
-        const res = await generateText("writer", {
-          system: `${ctx.systemPrompt}\n\n${WRITER_FORMAT}`,
-          prompt: `Daha önce yazdığın haberde yüksek benzerlik (%${rate}) tespit edildi. Aynı bilgileri tamamen farklı cümle yapılarıyla, özgün ve tarafsız bir dille yeniden yaz.\n\n${ctx.textPrompt}`,
-          search: ctx.useGoogleSearch,
-          temperature: 0.8,
-        });
-        newContent = stripLeadingTitleHeading(article.title, cleanHtmlResponse(res.text));
-      } catch (e) {
-        console.error("[AI Writer] Yeniden yazım hatası:", toAiError(e).message);
-      }
-      if (!newContent) continue;
-      await prisma.article.update({ where: { id: article.id }, data: { content: newContent } });
-      await invalidateArticle(article.slug);
-      const re = await analyzeArticle(article.id);
-      if (re.success) rate = re.plagiarismRate ?? 0;
+      await rewriteArticleWithAI(articleId, { originalityRate: rate, notify: false });
     }
   } catch (e) {
-    console.error("[AI Writer] Otomatik analiz hatası:", e);
+    console.error("[AI Writer] Otomatik kalite işi hatası:", e);
   }
 }
 
@@ -338,68 +338,69 @@ function analysisNotes(report: unknown) {
   return `\nSon kalite analizinde tespit edilenler; yeniden yazarken bunları gider:\n${items.map((x) => `- ${x}`).join("\n")}${keyword ? `\n- Odak ifade: "${keyword}" (giriş paragrafında ve bir ara başlıkta doğal biçimde kullan)` : ""}\n`;
 }
 
-export async function rewriteArticleWithAI(articleId: string) {
+interface RewriteOptions {
+  /** Otomatik özgünleştirme: kopya oranı bu değerden düşmezse önceki metin geri yüklenir */
+  originalityRate?: number;
+  /** Yayındaki haber için Google'a güncelleme bildirimi (yeni yayımlanan haberde zaten gönderildi) */
+  notify?: boolean;
+}
+
+export async function rewriteArticleWithAI(articleId: string, options: RewriteOptions = {}) {
   try {
     const article = await prisma.article.findUnique({
       where: { id: articleId },
-      include: { aiPersona: true, category: true }
+      include: { aiPersona: true }
     });
     if (!article) throw new Error("Makale bulunamadı.");
 
     const settings = await prisma.systemSettings.findFirst();
-
-    // Prompt hazırlığı
     const systemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün.";
-    let finalPrompt = systemPrompt;
-    if (article.aiPersona) {
-      finalPrompt = `${systemPrompt}\n\nÖzel Yazım Talimatları:\n${article.aiPersona.prompt}`;
-    }
+    const finalPrompt = article.aiPersona?.prompt.trim()
+      ? `${systemPrompt}\n\nÖzel Yazım Talimatları:\n${article.aiPersona.prompt}`
+      : systemPrompt;
+    const auto = options.originalityRate !== undefined;
+    const task = auto
+      ? `Bu haberin metninin %${options.originalityRate}'i başka haber sitelerindeki cümlelerle aynı. Aynı bilgileri (isim, rakam, tarih, yer, doğrudan alıntılar) koruyarak metni kelime seçimi ve cümle yapısı tamamen farklı, özgün ve tarafsız bir dille yeniden yaz. Bağlantıları (<a href>) koru; yeni bilgi ekleme.`
+      : "Aşağıdaki haberi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz. Anlatım bozukluklarını düzelt, bilgileri ve bağlantıları koru.";
 
-    console.log(`[AI Writer] Manuel yeniden yazım başlatılıyor: Makale="${article.title}" (${article.id})`);
+    console.log(`[AI Writer] ${auto ? "Otomatik özgünleştirme" : "Manuel yeniden yazım"}: "${article.title}" (${article.id})`);
 
     const { text } = await generateText("writer", {
       system: `${finalPrompt}\n\n${WRITER_FORMAT}`,
-      prompt: `Aşağıdaki haberi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz. Anlatım bozukluklarını düzelt, bilgileri koru.
-${analysisNotes(article.analysisReport)}
+      prompt: `${task}
+${auto ? "" : analysisNotes(article.analysisReport)}
 Başlık: ${article.title}
 
 Mevcut metin:
 ${article.content.slice(0, 20000)}`,
-      search: settings?.aiWriterSearchEnabled ?? false,
-      temperature: 0.7,
+      search: !auto && (settings?.aiWriterSearchEnabled ?? false),
+      temperature: auto ? 0.8 : 0.7,
     });
     const content = stripLeadingTitleHeading(article.title, cleanHtmlResponse(text));
-
     if (!content) throw new Error("Yeniden yazım başarısız oldu, içerik üretilemedi.");
 
-    // Makaleyi güncelle
-    const updatedArticle = await prisma.article.update({
-      where: { id: articleId },
-      data: { content }
-    });
+    const snapshot = auto ? await takeContentSnapshot(articleId) : null;
+    const updatedArticle = await prisma.article.update({ where: { id: articleId }, data: { content } });
     await invalidateArticle(updatedArticle.slug);
 
-    if (updatedArticle.status === "PUBLISHED") {
-      try {
-        const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
-        after(() => notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
-      } catch (e) {
-        console.error("Failed to load google-indexing helper in rewriteArticleWithAI:", e);
-      }
+    const analysis = await analyzeArticle(articleId);
+    if (auto && snapshot && analysis.success && analysis.plagiarismRate >= options.originalityRate!) {
+      await invalidateArticle(await restoreContentSnapshot(articleId, snapshot));
+      console.log(`[AI Writer] Yeniden yazım oranı düşürmedi (%${analysis.plagiarismRate}); önceki metin korundu`);
+      return { success: false as const, error: "Yeniden yazım kopya oranını düşürmedi; önceki metin korundu." };
     }
 
-    // Tekrar analiz et
-    const analysis = await analyzeArticle(articleId);
+    if (updatedArticle.status === "PUBLISHED" && options.notify !== false) {
+      const { notifyGoogle, getArticleUrl } = await import("./google-indexing");
+      after(() => notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
+    }
 
-    return {
-      success: true,
-      analysis
-    };
+    return { success: true as const, analysis };
   } catch (error: unknown) {
     const errMsg = error instanceof AiError
       ? `${error.message}${error.raw ? ` Ayrıntı: ${error.raw}` : ""}`
       : error instanceof Error ? error.message : String(error);
-    console.error("Manuel Yeniden Yazım Hatası:", errMsg);
-    return { success: false, error: errMsg };
+    console.error("Yeniden Yazım Hatası:", errMsg);
+    return { success: false as const, error: errMsg };
   }
 }

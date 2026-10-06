@@ -1,8 +1,7 @@
 import "server-only";
 
-import { Client } from "@upstash/qstash";
-import { getAppUrl } from "@/lib/utils";
 import { writeStory } from "@/lib/ai-writer";
+import { enqueueJob, isQueueAvailable, WORKER_PATH } from "@/lib/server/queue";
 
 /**
  * Konuları yazdırır. Üretimde her konu QStash üzerinden ayrı bir işçiye gönderilir
@@ -10,16 +9,13 @@ import { writeStory } from "@/lib/ai-writer";
  */
 export async function dispatchStories(storyIds: string[]) {
   if (storyIds.length === 0) return { mode: "none" as const, enqueued: 0, written: 0, failed: 0, errors: [] as string[] };
-  const appUrl = getAppUrl();
-  const useQueue = !!process.env.QSTASH_TOKEN && !appUrl.includes("localhost");
 
-  if (useQueue) {
-    const qstash = new Client({ token: process.env.QSTASH_TOKEN! });
+  if (isQueueAvailable()) {
     let enqueued = 0;
     const errors: string[] = [];
     for (const storyId of storyIds) {
       try {
-        await qstash.publishJSON({ url: `${appUrl}/api/ai-writer/worker`, body: { storyId } });
+        await enqueueJob(WORKER_PATH, { storyId });
         enqueued++;
       } catch (e) {
         errors.push(e instanceof Error ? e.message : String(e));

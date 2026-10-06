@@ -1,28 +1,35 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeArticleWithAI, writeStory } from "@/lib/ai-writer";
+import { runQualityPass, writeArticleWithAI, writeStory } from "@/lib/ai-writer";
 import { verifyQStashRequest } from "@/lib/server/qstash-verify";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 300; // 5 dakika (Vercel Pro için)
+export const maxDuration = 300;
 
 /**
- * AI Writer Worker
- * Bu endpoint tek bir haberi asenkron olarak yazar. QStash tarafından tetiklenir.
+ * Yapay zekâ işçisi (QStash tetikler). İki iş yapar:
+ * - `{ storyId }` / `{ suggestionId }`: bir konuyu haberleştirip yayımlar
+ * - `{ task: "quality", articleId }`: yeni haberin analizi ve gerekirse özgünleştirilmesi
  */
 export async function POST(req: NextRequest) {
-  // 1. İmza Doğrulaması (Manuel)
   // İmza anahtarı yoksa ya da imza geçersizse istek reddedilir
   const verified = await verifyQStashRequest(req);
   if (!verified.ok) {
     return NextResponse.json({ error: verified.error }, { status: verified.status });
   }
-  const bodyText = verified.body;
 
   try {
-    const body = JSON.parse(bodyText);
-    const storyId = typeof body.storyId === "string" ? body.storyId : null;
-    const suggestionId = typeof body.suggestionId === "string" ? body.suggestionId : null;
+    const body = JSON.parse(verified.body) as Record<string, unknown>;
+    const str = (v: unknown) => (typeof v === "string" && v ? v : null);
 
+    if (body.task === "quality") {
+      const articleId = str(body.articleId);
+      if (!articleId) return NextResponse.json({ success: false, error: "articleId eksik" }, { status: 400 });
+      await runQualityPass(articleId);
+      return NextResponse.json({ success: true });
+    }
+
+    const storyId = str(body.storyId);
+    const suggestionId = str(body.suggestionId);
     if (!storyId && !suggestionId) {
       return NextResponse.json({ success: false, error: "storyId eksik" }, { status: 400 });
     }

@@ -100,11 +100,30 @@ export async function fetchPublicResource(rawUrl: string, options: { maxBytes: n
 }
 
 /**
+ * Gövdeyi doğru karakter kümesiyle çözer: önce Content-Type, sonra XML/HTML başlığındaki bildirim.
+ * (Bazı Türkçe siteler hâlâ windows-1254 / iso-8859-9 kullanıyor.)
+ */
+function decodeBody(bytes: Buffer, contentType: string) {
+  const head = bytes.subarray(0, 2048).toString("latin1");
+  const charset = (
+    contentType.match(/charset=["']?([\w-]+)/i)?.[1]
+    ?? head.match(/<\?xml[^>]*encoding=["']([\w-]+)["']/i)?.[1]
+    ?? head.match(/<meta[^>]*charset=["']?([\w-]+)/i)?.[1]
+    ?? "utf-8"
+  ).toLowerCase();
+  try {
+    return new TextDecoder(charset).decode(bytes);
+  } catch {
+    return bytes.toString("utf8");
+  }
+}
+
+/**
  * Herkese açık bir web sayfasını (HTML) indirir. Yönlendirmeleri en fazla 4 adım izler ve
  * her adımda hedefin özel ağ adresi olmadığını yeniden doğrular (SSRF koruması).
  * Dönen `url`, yönlendirmeler sonrası gerçek sayfa adresidir.
  */
-export async function fetchPublicPage(rawUrl: string, options: { maxBytes?: number; timeoutMs?: number } = {}) {
+export async function fetchPublicPage(rawUrl: string, options: { maxBytes?: number; timeoutMs?: number; accept?: string } = {}) {
   const maxBytes = options.maxBytes ?? 2 * 1024 * 1024;
   let current = rawUrl;
   for (let hop = 0; hop < 5; hop++) {
@@ -116,7 +135,7 @@ export async function fetchPublicPage(rawUrl: string, options: { maxBytes?: numb
         redirect: "manual",
         signal: controller.signal,
         headers: {
-          Accept: "text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
+          Accept: options.accept ?? "text/html,application/xhtml+xml;q=0.9,*/*;q=0.1",
           "User-Agent": "Mozilla/5.0 (compatible; HaberNexusBot/1.0; +https://habernexus.com)",
         },
       });
@@ -140,7 +159,8 @@ export async function fetchPublicPage(rawUrl: string, options: { maxBytes?: numb
         if (total > maxBytes) { await reader.cancel(); break; } // büyük sayfanın başı yeterli
         chunks.push(value);
       }
-      return { url: url.toString(), html: Buffer.concat(chunks.map((c) => Buffer.from(c))).toString("utf8") };
+      const bytes = Buffer.concat(chunks.map((c) => Buffer.from(c)));
+      return { url: url.toString(), html: decodeBody(bytes, type) };
     } finally {
       clearTimeout(timeout);
     }

@@ -47,24 +47,23 @@ async function minScore() {
 
 function tabWhere(tab: DecisionTab, min: number, q: string): Prisma.NewsStoryWhereInput {
   const now = new Date();
-  const search: Prisma.NewsStoryWhereInput = q
-    ? { OR: [{ title: { contains: q, mode: "insensitive" } }, { headline: { contains: q, mode: "insensitive" } }] }
-    : {};
+  // Arama koşulu sekme koşuluyla AND'lenir (aynı nesnede iki OR anahtarı birbirini ezerdi)
+  const withSearch = (where: Prisma.NewsStoryWhereInput): Prisma.NewsStoryWhereInput =>
+    q ? { AND: [where, { OR: [{ title: { contains: q, mode: "insensitive" } }, { headline: { contains: q, mode: "insensitive" } }] }] } : where;
   switch (tab) {
     case "sira":
-      return {
-        ...search,
+      return withSearch({
         OR: [
           { status: "WRITING" },
           { status: "READY", OR: [{ score: { gte: min } }, { pinned: true }], AND: [{ OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] }] },
         ],
-      };
+      });
     case "degerlendirme":
-      return { ...search, OR: [{ status: "NEW" }, { status: "READY", score: { lt: min }, pinned: false }] };
+      return withSearch({ OR: [{ status: "NEW" }, { status: "READY", score: { lt: min }, pinned: false }] });
     case "yayinlanan":
-      return { ...search, status: "PUBLISHED" };
+      return withSearch({ status: "PUBLISHED" });
     case "elenen":
-      return { ...search, status: { in: ELIMINATED }, updatedAt: { gte: new Date(now.getTime() - 3 * 24 * HOUR) } };
+      return withSearch({ status: { in: ELIMINATED }, updatedAt: { gte: new Date(now.getTime() - 3 * 24 * HOUR) } });
     default:
       return { id: "__none__" };
   }
