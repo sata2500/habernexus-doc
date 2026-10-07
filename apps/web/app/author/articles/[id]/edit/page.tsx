@@ -17,10 +17,10 @@ export default async function EditArticlePage({ params, searchParams }: {
   const notice = kaydedildi === "yayin" ? "Haber yayınlandı." : kaydedildi === "taslak" ? "Taslak kaydedildi." : null;
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-300">
+    <div className="space-y-4">
       <div className="flex items-center gap-3">
         <Link href="/author/articles" aria-label="Makalelerime dön" className="h-10 w-10 shrink-0 flex items-center justify-center rounded-xl border border-border hover:bg-muted">
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5" aria-hidden="true" />
         </Link>
         <div className="min-w-0">
           <h1 className="text-xl sm:text-2xl font-bold font-display">Haberi düzenle</h1>
@@ -37,6 +37,8 @@ export default async function EditArticlePage({ params, searchParams }: {
           coverImage: article.coverImage ?? "",
           categoryId: article.categoryId ?? "",
           status: article.status === "PUBLISHED" ? "PUBLISHED" : "DRAFT",
+          tags: article.tags.map((t) => t.tag.name),
+          updatedAt: article.updatedAt.toISOString(),
         }}
         categories={categories}
         initialNotice={notice}

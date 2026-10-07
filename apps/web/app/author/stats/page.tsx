@@ -18,7 +18,7 @@ export default async function AuthorStatsPage() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold font-display flex items-center gap-2.5">
           <BarChart3 className="h-6 w-6 text-primary-500" /> İstatistikler

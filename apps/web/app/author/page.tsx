@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Eye, FileClock, FileText, MessageSquare, PenSquare, Sparkles } from "lucide-react";
 import { getAuthorOverview } from "@/lib/server/author-desk";
 import { getAuthorSuggestions } from "./suggestions/actions";
+import { WriteSuggestionButton } from "./suggestions/components/WriteSuggestionButton";
 import { formatRelativeTime, formatViewCount } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,7 @@ export default async function AuthorDashboardPage() {
   ];
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h1 className="text-2xl md:text-3xl font-bold font-display">Merhaba{name ? `, ${name.split(" ")[0]}` : ""} 👋</h1>
@@ -78,7 +79,7 @@ export default async function AuthorDashboardPage() {
                   <span className="block text-sm font-semibold line-clamp-2">{s.aiAnalysis.suggestedTitles[0] ?? s.title}</span>
                   <span className="block text-[11px] text-muted-foreground truncate">{s.source.name}</span>
                 </span>
-                <Link href={`/author/articles/new?oneri=${s.id}`} className="shrink-0 h-8 px-3 inline-flex items-center rounded-lg bg-primary-500/10 text-primary-500 text-xs font-semibold hover:bg-primary-500/20">Yaz</Link>
+                <WriteSuggestionButton id={s.id} />
               </li>
             ))}
           </ul>

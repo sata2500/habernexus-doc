@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import {
   AlertCircle, AlertTriangle, BookOpen, CheckCircle2, CircleAlert, ExternalLink, FileSearch, ListChecks, PenLine,
   RefreshCw, Search, Sparkles, TrendingUp, Wand2, X, XCircle,
@@ -165,6 +165,18 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
 
   const busy = (kind: "analyze" | "rewrite" | "fix") => isPending && action === kind;
 
+  // Pencere açıkken arka plan kaymaz; Esc ile kapanır (işlem sürerken kapanmaz)
+  useEffect(() => {
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape" && !isPending) onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isPending, onClose]);
+
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-background/80 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="analysis-title">
       <div className="bg-background border border-border rounded-t-3xl sm:rounded-3xl shadow-2xl w-full max-w-3xl max-h-[92vh] flex flex-col overflow-hidden">
@@ -175,7 +187,7 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
             <h2 id="analysis-title" className="text-base sm:text-lg font-bold font-display">Haber Analizi</h2>
             <p className="text-xs text-muted-foreground truncate">{articleTitle}</p>
           </div>
-          <button onClick={onClose} aria-label="Kapat" className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-xl hover:bg-muted text-muted-foreground cursor-pointer"><X className="h-5 w-5" /></button>
+          <button type="button" onClick={onClose} disabled={isPending} aria-label="Kapat" className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-xl hover:bg-muted text-muted-foreground cursor-pointer"><X className="h-5 w-5" /></button>
         </div>
 
         {error && (

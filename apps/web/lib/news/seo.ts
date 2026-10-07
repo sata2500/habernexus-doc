@@ -96,3 +96,18 @@ export async function attachTags(articleId: string, tags: string[], lang = "tr")
     }
   }
 }
+
+/**
+ * Haberin etiketlerini verilen listeyle eşitler: listede olmayanlar haberden çıkarılır (etiketin
+ * kendisi silinmez; başka haberlerde kullanılıyor olabilir), yeniler eklenir.
+ */
+export async function syncArticleTags(articleId: string, rawTags: unknown, lang = "tr") {
+  const names = normalizeTags(rawTags);
+  const keep = new Set(names.map((n) => slugify(n)));
+  const current = await prisma.tagOnArticle.findMany({ where: { articleId }, select: { tagId: true, tag: { select: { slug: true } } } });
+  const remove = current.filter((c) => !keep.has(c.tag.slug)).map((c) => c.tagId);
+  if (remove.length) await prisma.tagOnArticle.deleteMany({ where: { articleId, tagId: { in: remove } } });
+  const existing = new Set(current.map((c) => c.tag.slug));
+  await attachTags(articleId, names.filter((n) => !existing.has(slugify(n))), lang);
+  return names;
+}

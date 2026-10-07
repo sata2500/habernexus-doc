@@ -17,7 +17,7 @@ export default async function AuthorArticlesPage({ searchParams }: { searchParam
   const { items, total, counts } = await listAuthorArticles({ q, status: param(params, "durum"), pageNo });
 
   return (
-    <div className="space-y-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <h1 className="text-2xl md:text-3xl font-bold font-display flex items-center gap-2.5">

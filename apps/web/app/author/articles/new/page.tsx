@@ -14,10 +14,10 @@ export default async function NewArticlePage({ searchParams }: { searchParams: P
   ]);
 
   return (
-    <div className="space-y-4 animate-in fade-in duration-300">
+    <div className="space-y-4">
       <div className="flex items-center gap-3">
         <Link href="/author/articles" aria-label="Makalelerime dön" className="h-10 w-10 shrink-0 flex items-center justify-center rounded-xl border border-border hover:bg-muted">
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft className="h-5 w-5" aria-hidden="true" />
         </Link>
         <div className="min-w-0">
           <h1 className="text-xl sm:text-2xl font-bold font-display">Yeni haber</h1>
@@ -25,7 +25,7 @@ export default async function NewArticlePage({ searchParams }: { searchParams: P
         </div>
       </div>
       <ArticleEditor
-        article={{ id: null, slug: null, title: "", excerpt: "", content: "", coverImage: "", categoryId: "", status: "DRAFT" }}
+        article={{ id: null, slug: null, title: "", excerpt: "", content: "", coverImage: "", categoryId: "", status: "DRAFT", tags: [], updatedAt: null }}
         categories={categories}
         suggestion={suggestion}
       />

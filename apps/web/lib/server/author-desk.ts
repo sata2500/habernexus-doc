@@ -108,7 +108,10 @@ export async function getArticleForEdit(id: string) {
   const session = await requireAuthor();
   const article = await prisma.article.findUnique({
     where: { id },
-    select: { id: true, title: true, slug: true, excerpt: true, content: true, coverImage: true, categoryId: true, status: true, authorId: true, publishedAt: true, updatedAt: true },
+    select: {
+      id: true, title: true, slug: true, excerpt: true, content: true, coverImage: true, categoryId: true, status: true, authorId: true, publishedAt: true, updatedAt: true,
+      tags: { select: { tag: { select: { name: true } } } },
+    },
   });
   if (!article) return null;
   if (session.user.role !== "ADMIN" && article.authorId !== session.user.id) return null;

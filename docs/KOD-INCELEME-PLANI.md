@@ -56,8 +56,9 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 - [x] Profil, okuduklarım, kaydedilenler, yorumlar, tercihler; panel işlemleri `ActionResult` + `actionError` düzeninde
 - [x] Yeni: oturum içinden şifre değiştirme (diğer oturumlar kapanır)
 
-### Aşama 5 — Yazar masası
-- [ ] Editör, haber listesi, istatistikler, öneriler, yorumlar, analiz ekranı
+### Aşama 5 — Yazar masası ✅
+- [x] Editör, haber listesi, istatistikler, öneriler, yorumlar, analiz ekranı okundu ve düzeltildi
+- [x] Yeni: etiket alanı, eşzamanlı düzenleme koruması, Ctrl/Cmd+S ile kaydetme
 
 ### Aşama 6 — Admin paneli
 - [ ] Genel bakış, Karar Merkezi, yapay zekâ, içerik, topluluk, site ayarları
@@ -154,3 +155,16 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 | Güvenlik | Adres çubuğundaki `?error=` metni giriş ekranına olduğu gibi yazılıyordu (sahte uyarı gösterilebilirdi) | Yalnızca bilinen biçimdeki kodlar |
 | Erişilebilirlik | Giriş/kayıt alanlarının etiketleri bağlı değildi, başlık h2'ydi; bülten anahtarının adı yoktu | Düzeltildi |
 | Hata | Hesap silme tek tıkla onaylanıyor, silindikten sonra tarayıcı oturumu açık görünüyordu | "SİL" yazarak onay; tam yenileme |
+
+### Aşama 5
+| Tür | Bulgu | Durum |
+|---|---|---|
+| Hata | Aynı haber iki sekmede, yönetici tarafından ya da yapay zekâ özgünleştirmesi sırasında düzenlenirse son kaydeden **diğer değişiklikleri sessizce siliyordu** | Kayıtta sürüm denetimi; çakışmada uyarı ve "güncel hâlini aç" |
+| Eksik | Yazarlar habere etiket ekleyemiyordu (yazar haberleri etiket sayfalarında hiç yer almıyordu; SEO panelinde etiket kontrolü gizliydi) | Etiket alanı (Enter/virgül), sunucuda eşitleme, SEO kontrolüne dahil |
+| Hata | İki yazar aynı öneriye aynı anda "Haber yaz" derse ikisi de yazmaya başlıyordu; özet sayfasındaki "Yaz" bağlantısı konuyu hiç üstlenmiyordu (AI Yazar da yazabiliyordu) | Tek adımlık üstlenme; başkası üstlendiyse uyarı |
+| Maliyet | Yapay zekâ ile yeniden yazımda kişi başı sınır yoktu | Saatte 10 |
+| Güvenlik | Yapay zekâ işlemlerinde iç hata mesajları (veritabanı ayrıntıları dahil) kullanıcıya gösterilebiliyordu | Güvenli hata metinleri (`actionError`) |
+| Tutarlılık | Yazar haberlerinin adresi rastgele ekli oluşuyordu (`baslik-x7k2`); AI haberleri kısa ve temiz adres alıyordu | Ortak `uniqueArticleSlug` |
+| Hata | Yorum silinince haber sayfası güncellenmiyordu | Düzeltildi |
+| Kullanılabilirlik | Ctrl+S tarayıcının "sayfayı kaydet" penceresini açıyordu | Haberi kaydeder |
+| Erişilebilirlik | Mobil menü Esc ile kapanmıyor, gizliyken klavye odağı içine girebiliyordu; analiz penceresi Esc ile kapanmıyor, arka plan kayıyordu; liste düğmelerinin adı yalnızca "Sil"/"Düzenle" idi | Düzeltildi |

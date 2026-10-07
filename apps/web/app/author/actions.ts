@@ -4,8 +4,9 @@ import { after } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireRole } from "@/lib/server/authz";
-import { slugify } from "@/lib/utils";
+import { actionError, requireRole } from "@/lib/server/authz";
+import type { ActionResult } from "@/lib/types";
+import { syncArticleTags, uniqueArticleSlug } from "@/lib/news/seo";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { rewriteArticleWithAI } from "@/lib/ai-writer";
 import { checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
@@ -22,10 +23,15 @@ const ArticleInputSchema = z.object({
   status: z.enum(["DRAFT", "PUBLISHED"]),
   /** Karar Merkezi önerisinden yazılıyorsa konu kimliği */
   storyId: z.string().trim().max(100).optional(),
+  tags: z.array(z.string().max(60)).max(10).optional(),
+  /** Editör açıldığında haberin son güncellenme zamanı: arada başka biri kaydettiyse üzerine yazılmaz */
+  expectedUpdatedAt: z.string().datetime().optional(),
 });
 
 export type ArticleInput = z.input<typeof ArticleInputSchema>;
-type SaveResult = { success: true; id: string; slug: string; status: "DRAFT" | "PUBLISHED" } | { success: false; error: string };
+type SaveResult =
+  | { success: true; id: string; slug: string; status: "DRAFT" | "PUBLISHED"; updatedAt: string; tags: string[] }
+  | { success: false; error: string; conflict?: boolean };
 
 function plainTextLength(html: string) {
   return html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ").trim().length;
@@ -58,10 +64,21 @@ export async function saveArticle(id: string | null, input: ArticleInput): Promi
   }
 
   try {
-    const existing = id ? await prisma.article.findUnique({ where: { id }, select: { id: true, authorId: true, slug: true, status: true, publishedAt: true } }) : null;
+    const existing = id
+      ? await prisma.article.findUnique({ where: { id }, select: { id: true, authorId: true, slug: true, status: true, publishedAt: true, updatedAt: true, lang: true } })
+      : null;
     if (id && !existing) return { success: false, error: "Haber bulunamadı." };
     if (existing && session.user.role !== "ADMIN" && existing.authorId !== session.user.id) {
       return { success: false, error: "Bu haberi düzenleme yetkiniz yok." };
+    }
+    // Eşzamanlı düzenleme: editör açıldıktan sonra haber başka bir yerde (başka sekme, yönetici,
+    // yapay zekâ özgünleştirmesi) değiştiyse sessizce üzerine yazılmaz
+    if (existing && data.expectedUpdatedAt && existing.updatedAt.getTime() > new Date(data.expectedUpdatedAt).getTime() + 1000) {
+      return {
+        success: false,
+        conflict: true,
+        error: "Bu haber siz düzenlerken başka bir yerde güncellendi. Değişikliklerinizi kopyalayıp sayfayı yenileyin; ardından tekrar kaydedin.",
+      };
     }
 
     const fields = {
@@ -82,12 +99,17 @@ export async function saveArticle(id: string | null, input: ArticleInput): Promi
       : await prisma.article.create({
           data: {
             ...fields,
-            slug: `${slugify(data.title)}-${Math.random().toString(36).slice(2, 6)}`,
+            // Kısa ve okunur adres (çakışırsa kısa ek alır)
+            slug: await uniqueArticleSlug(data.title),
             authorId: session.user.id,
             publishedAt: data.status === "PUBLISHED" ? new Date() : null,
           },
           select: { id: true, slug: true, status: true },
         });
+
+    const tags = data.tags ? await syncArticleTags(article.id, data.tags, existing?.lang ?? "tr") : [];
+    // Etiket değişikliği haberin güncellenme zamanını değiştirmez; editöre güncel zaman döner
+    const { updatedAt } = await prisma.article.findUniqueOrThrow({ where: { id: article.id }, select: { updatedAt: true } });
 
     // Öneriden yazıldıysa Karar Merkezi'ndeki konu bu habere bağlanır (AI Yazar tekrar yazmaz)
     if (data.storyId && data.status === "PUBLISHED") {
@@ -106,21 +128,18 @@ export async function saveArticle(id: string | null, input: ArticleInput): Promi
 
     revalidatePath("/author", "layout");
     await invalidateArticle(article.slug);
-    return { success: true, id: article.id, slug: article.slug, status: article.status as "DRAFT" | "PUBLISHED" };
+    return { success: true, id: article.id, slug: article.slug, status: article.status as "DRAFT" | "PUBLISHED", updatedAt: updatedAt.toISOString(), tags };
   } catch (err) {
     console.error("Haber kaydetme hatası:", err);
     return { success: false, error: "Haber kaydedilemedi. Lütfen tekrar deneyin." };
   }
 }
 
-export async function deleteArticle(id: string) {
+export async function deleteArticle(id: string): Promise<ActionResult> {
   try {
-    const session = await requireRole("AUTHOR", "ADMIN").catch(() => null);
-    if (!session) return { success: false, error: "Yetkisiz işlem." };
-
-    const article = await prisma.article.findUnique({
-      where: { id },
-    });
+    const session = await requireRole("AUTHOR", "ADMIN");
+    if (typeof id !== "string" || !id || id.length > 100) return { success: false, error: "Geçersiz haber." };
+    const article = await prisma.article.findUnique({ where: { id }, select: { authorId: true, status: true, slug: true } });
 
     if (!article) {
       return { success: false, error: "Makale bulunamadı." };
@@ -144,8 +163,7 @@ export async function deleteArticle(id: string) {
 
     return { success: true };
   } catch (err) {
-    console.error("Haber silme hatası:", err);
-    return { success: false, error: "Silme işlemi sırasında hata oluştu." };
+    return actionError(err, "Silme işlemi sırasında hata oluştu.");
   }
 }
 
@@ -191,14 +209,13 @@ export async function getAuthorComments() {
 }
 
 // Yazarın makalesine ait bir yorumu yazarın kendisinin silmesi
-export async function deleteCommentByAuthor(id: string) {
+export async function deleteCommentByAuthor(id: string): Promise<ActionResult> {
   try {
-    const session = await requireRole("AUTHOR", "ADMIN").catch(() => null);
-    if (!session) return { success: false, error: "Yetkisiz işlem." };
-
+    const session = await requireRole("AUTHOR", "ADMIN");
+    if (typeof id !== "string" || !id || id.length > 100) return { success: false, error: "Geçersiz yorum." };
     const comment = await prisma.comment.findUnique({
       where: { id },
-      include: { article: true },
+      select: { article: { select: { authorId: true, slug: true } } },
     });
 
     if (!comment) {
@@ -215,69 +232,69 @@ export async function deleteCommentByAuthor(id: string) {
     });
 
     revalidatePath("/author", "layout");
+    revalidatePath(`/article/${comment.article.slug}`);
     return { success: true };
-  } catch {
-    return { success: false, error: "Yorum silinirken bir hata oluştu." };
+  } catch (err) {
+    return actionError(err, "Yorum silinirken bir hata oluştu.");
   }
 }
 
-// Yazar veya Admin yetki doğrulama yardımcısı
-async function assertAuthorOrAdmin(articleId: string) {
+/** Yazar yalnızca kendi haberinde, yönetici her haberde yapay zekâ araçlarını kullanabilir */
+async function authorizeArticle(articleId: string) {
   const session = await requireRole("AUTHOR", "ADMIN");
-  const article = await prisma.article.findUnique({
-    where: { id: articleId },
-    select: { authorId: true }
-  });
-  if (!article) {
-    throw new Error("Makale bulunamadı.");
-  }
-  if (session.user.role !== "ADMIN" && article.authorId !== session.user.id) {
-    throw new Error("Bu makale üzerinde işlem yapma yetkiniz yok.");
-  }
-  return session;
+  if (typeof articleId !== "string" || !articleId || articleId.length > 100) return { session, error: "Geçersiz haber." };
+  const article = await prisma.article.findUnique({ where: { id: articleId }, select: { authorId: true } });
+  if (!article) return { session, error: "Haber bulunamadı." };
+  if (session.user.role !== "ADMIN" && article.authorId !== session.user.id) return { session, error: "Bu haber üzerinde işlem yapma yetkiniz yok." };
+  return { session, error: null };
 }
 
-// Makaleyi analiz et (yazar)
+/** Yapay zekâ maliyeti: kişi başına saatlik sınırlar */
+async function aiQuota(kind: string, userId: string, perHour: number) {
+  const rate = await checkRateLimitAsync(`${kind}:${userId}`, perHour, 60 * 60 * 1000);
+  return rate.allowed ? null : "Çok sık istendi. Lütfen biraz sonra tekrar deneyin.";
+}
+
 export async function analyzeArticleAction(articleId: string) {
   try {
-    const session = await assertAuthorOrAdmin(articleId);
-    // Yapay zekâ maliyeti: yazar başına saatte 20 analiz
-    const rate = await checkRateLimitAsync(`analyze:${session.user.id}`, 20, 60 * 60 * 1000);
-    if (!rate.allowed) return { success: false as const, error: "Çok sık analiz istendi. Lütfen biraz sonra tekrar deneyin." };
+    const { session, error } = await authorizeArticle(articleId);
+    if (error) return { success: false as const, error };
+    const quota = await aiQuota("analyze", session.user.id, 20);
+    if (quota) return { success: false as const, error: quota };
     const res = await analyzeArticle(articleId);
     revalidatePath("/author/articles");
     return res;
-  } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : "Bilinmeyen bir hata oluştu.";
-    return { success: false, error: errMsg };
+  } catch (err) {
+    return actionError(err, "Analiz yapılamadı.");
   }
 }
 
-// Makaleyi yapay zeka ile yeniden yaz (yazar)
 export async function rewriteArticleWithAIAction(articleId: string) {
   try {
-    await assertAuthorOrAdmin(articleId);
+    const { session, error } = await authorizeArticle(articleId);
+    if (error) return { success: false as const, error };
+    const quota = await aiQuota("rewrite", session.user.id, 10);
+    if (quota) return { success: false as const, error: quota };
     const res = await rewriteArticleWithAI(articleId);
     revalidatePath("/author/articles");
     return res;
-  } catch (error: unknown) {
-    const errMsg = error instanceof Error ? error.message : "Bilinmeyen bir hata oluştu.";
-    return { success: false, error: errMsg };
+  } catch (err) {
+    return actionError(err, "Yeniden yazım yapılamadı.");
   }
 }
 
-
-// Kaynaklardan aynen alınmış bölümleri özgünleştir (yazar)
+/** Kaynaklardan aynen alınmış bölümleri özgünleştirir */
 export async function fixCopiedPassagesAction(articleId: string) {
   try {
-    const session = await assertAuthorOrAdmin(articleId);
-    const rate = await checkRateLimitAsync(`fixcopies:${session.user.id}`, 10, 60 * 60 * 1000);
-    if (!rate.allowed) return { success: false as const, error: "Çok sık istendi. Lütfen biraz sonra tekrar deneyin." };
+    const { session, error } = await authorizeArticle(articleId);
+    if (error) return { success: false as const, error };
+    const quota = await aiQuota("fixcopies", session.user.id, 10);
+    if (quota) return { success: false as const, error: quota };
     const { fixCopiedPassages } = await import("@/lib/analysis/fix-copies");
     const res = await fixCopiedPassages(articleId);
     revalidatePath("/author/articles");
     return res;
-  } catch (error) {
-    return { success: false as const, error: error instanceof Error ? error.message : "Düzeltme yapılamadı." };
+  } catch (err) {
+    return actionError(err, "Düzeltme yapılamadı.");
   }
 }

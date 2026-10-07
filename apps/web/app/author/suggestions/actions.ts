@@ -2,7 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { requireRole } from "@/lib/server/authz";
+import { actionError, requireRole } from "@/lib/server/authz";
+import type { ActionResult } from "@/lib/types";
 
 /** Karar Merkezi'nde değerlendirilmiş, yazılmayı bekleyen konular (en yüksek puan önce). */
 export async function getAuthorSuggestions() {
@@ -48,23 +49,42 @@ function revalidate() {
   revalidatePath("/admin/karar-merkezi");
 }
 
-export async function dismissSuggestionByAuthor(id: string) {
-  await requireRole("AUTHOR", "ADMIN");
-  await prisma.newsStory.updateMany({
-    where: { id, status: { in: ["NEW", "READY"] } },
-    data: { status: "DISMISSED", pinned: false, score: 0, reason: "Yazar ilginç bulmadı" },
-  });
-  revalidate();
-  return { success: true };
+const validId = (id: unknown): id is string => typeof id === "string" && !!id && id.length <= 100;
+
+export async function dismissSuggestionByAuthor(id: string): Promise<ActionResult> {
+  try {
+    await requireRole("AUTHOR", "ADMIN");
+    if (!validId(id)) return { success: false, error: "Geçersiz konu." };
+    await prisma.newsStory.updateMany({
+      where: { id, status: { in: ["NEW", "READY"] } },
+      data: { status: "DISMISSED", pinned: false, score: 0, reason: "Yazar ilginç bulmadı" },
+    });
+    revalidate();
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "Öneri kaldırılamadı.");
+  }
 }
 
-/** Yazar konuyu üstlendi: AI Yazar'ın aynı konuyu yazmaması için sıradan çıkarılır. */
-export async function markSuggestionAsUsed(id: string) {
-  const session = await requireRole("AUTHOR", "ADMIN");
-  await prisma.newsStory.updateMany({
-    where: { id, status: { in: ["NEW", "READY"] } },
-    data: { status: "DISMISSED", pinned: false, score: 0, reason: `${session.user.name ?? "Bir yazar"} bu konuyu üstlendi` },
-  });
-  revalidate();
-  return { success: true };
+/**
+ * Yazar konuyu üstlenir: AI Yazar'ın ve diğer yazarların aynı konuyu yazmaması için sıradan çıkarılır.
+ * Tek adımlık koşullu güncelleme: iki yazar aynı anda tıklarsa yalnızca biri üstlenir.
+ * (Yazar vazgeçerse konu Karar Merkezi'nden geri alınabilir.)
+ */
+export async function markSuggestionAsUsed(id: string): Promise<ActionResult> {
+  try {
+    const session = await requireRole("AUTHOR", "ADMIN");
+    if (!validId(id)) return { success: false, error: "Geçersiz konu." };
+    const claimed = await prisma.newsStory.updateMany({
+      where: { id, status: { in: ["NEW", "READY"] } },
+      data: { status: "DISMISSED", pinned: false, score: 0, reason: `${session.user.name ?? "Bir yazar"} bu konuyu üstlendi` },
+    });
+    revalidate();
+    if (claimed.count !== 1) {
+      return { success: false, error: "Bu konu az önce başka bir yazar ya da AI Yazar tarafından üstlenildi." };
+    }
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "Konu üstlenilemedi.");
+  }
 }

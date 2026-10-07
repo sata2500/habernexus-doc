@@ -71,7 +71,7 @@ function walk(dir: string): string[] {
 
 test("privileged server actions always check the caller's role", () => {
   const root = _join(__dirname, "..");
-  const roleCheck = /requireRole\(|assertAdmin\(|checkAdmin\(|requireAuthor\(|assertAuthorOrAdmin\(/;
+  const roleCheck = /requireRole\(|assertAdmin\(|checkAdmin\(|requireAuthor\(|assertAuthorOrAdmin\(|authorizeArticle\(/;
   const missing: string[] = [];
   for (const dir of ["app/admin", "app/author", "app/actions"]) {
     for (const file of walk(_join(root, dir))) {

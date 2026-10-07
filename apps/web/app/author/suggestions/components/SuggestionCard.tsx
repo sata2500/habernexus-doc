@@ -28,21 +28,30 @@ function SuggestionRow({ item, onRemove }: { item: SuggestionItem; onRemove: (id
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const [action, setAction] = useState<"write" | "dismiss" | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const headline = item.aiAnalysis.suggestedTitles[0] || item.title;
   const score = item.aiScore ?? 0;
 
   const write = () => {
     setAction("write");
+    setError(null);
     start(async () => {
-      await markSuggestionAsUsed(item.id);
+      const r = await markSuggestionAsUsed(item.id);
+      if (!r.success) {
+        setError(r.error);
+        router.refresh();
+        return;
+      }
       router.push(`/author/articles/new?oneri=${item.id}`);
     });
   };
   const dismiss = () => {
     setAction("dismiss");
+    setError(null);
     start(async () => {
-      await dismissSuggestionByAuthor(item.id);
-      onRemove(item.id);
+      const r = await dismissSuggestionByAuthor(item.id);
+      if (r.success) onRemove(item.id);
+      else setError(r.error);
     });
   };
 
@@ -64,21 +73,22 @@ function SuggestionRow({ item, onRemove }: { item: SuggestionItem; onRemove: (id
             <div className="space-y-1.5 pt-1 text-xs">
               {item.aiAnalysis.reasoning && <p className="italic text-muted-foreground">{item.aiAnalysis.reasoning}</p>}
               {headline !== item.title && <p className="text-muted-foreground">Kaynak başlık: {item.title}</p>}
-              <a href={item.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 font-semibold text-primary-500">
+              <a href={item.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 font-semibold text-primary-500">
                 Kaynağı aç <ExternalLink className="h-3 w-3" />
               </a>
             </div>
           )}
         </div>
       </div>
+      {error && <p role="alert" className="mt-2 pl-[3.25rem] text-xs text-error">{error}</p>}
       <div className="mt-3 flex items-center gap-2 pl-[3.25rem]">
-        <button onClick={write} disabled={pending} className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold disabled:opacity-60">
+        <button type="button" onClick={write} disabled={pending} className="inline-flex items-center gap-1.5 h-9 px-3.5 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold disabled:opacity-60">
           {pending && action === "write" ? <Loader2 className="h-4 w-4 animate-spin" /> : <PenSquare className="h-4 w-4" />} Haber yaz
         </button>
-        <button onClick={() => setOpen(!open)} aria-expanded={open} className="inline-flex items-center gap-1 h-9 px-3 rounded-xl border border-border text-xs font-semibold hover:bg-muted">
+        <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} className="inline-flex items-center gap-1 h-9 px-3 rounded-xl border border-border text-xs font-semibold hover:bg-muted">
           Ayrıntı <ChevronDown className={cn("h-3.5 w-3.5 transition-transform", open && "rotate-180")} />
         </button>
-        <button onClick={dismiss} disabled={pending} aria-label="İlginç değil" title="İlginç değil" className="ml-auto h-9 w-9 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:bg-error/10 hover:text-error disabled:opacity-50">
+        <button type="button" onClick={dismiss} disabled={pending} aria-label="İlginç değil" title="İlginç değil" className="ml-auto h-9 w-9 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:bg-error/10 hover:text-error disabled:opacity-50">
           {pending && action === "dismiss" ? <Loader2 className="h-4 w-4 animate-spin" /> : <X className="h-4 w-4" />}
         </button>
       </div>

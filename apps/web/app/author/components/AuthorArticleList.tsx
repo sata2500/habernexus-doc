@@ -31,7 +31,7 @@ export function AuthorArticleList({ articles, filtered }: { articles: AuthorArti
     setBusyId(a.id);
     start(async () => {
       const r = await deleteArticle(a.id);
-      if (!r.success) alert(r.error ?? "Haber silinemedi.");
+      if (!r.success) alert(r.error);
       setBusyId(null);
       router.refresh();
     });
@@ -77,7 +77,7 @@ export function AuthorArticleList({ articles, filtered }: { articles: AuthorArti
                   {(() => {
                     const score = displayScore(a.analysisReport, a.qualityScore);
                     return score ? (
-                      <button onClick={() => setAnalysis(a)} className={cn("rounded px-1.5 py-0.5 font-bold cursor-pointer", scoreTone(score.value))} title="Analizi aç">
+                      <button type="button" onClick={() => setAnalysis(a)} className={cn("rounded px-1.5 py-0.5 font-bold cursor-pointer", scoreTone(score.value))} title="Analizi aç">
                         {score.label} {score.value}
                       </button>
                     ) : null;
@@ -89,7 +89,7 @@ export function AuthorArticleList({ articles, filtered }: { articles: AuthorArti
                   <Loader2 className="h-4 w-4 m-2 animate-spin text-muted-foreground" />
                 ) : (
                   <>
-                    <Link href={`/author/articles/${a.id}/edit`} aria-label="Düzenle" title="Düzenle" className="h-9 w-9 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
+                    <Link href={`/author/articles/${a.id}/edit`} aria-label={`${a.title || "Taslak"} haberini düzenle`} title="Düzenle" className="h-9 w-9 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
                       <Pencil className="h-4 w-4" />
                     </Link>
                     {published && (
@@ -97,10 +97,10 @@ export function AuthorArticleList({ articles, filtered }: { articles: AuthorArti
                         <ExternalLink className="h-4 w-4" />
                       </Link>
                     )}
-                    <button onClick={() => setAnalysis(a)} aria-label="Kalite analizi" title="Kalite analizi" className="h-9 w-9 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
+                    <button type="button" onClick={() => setAnalysis(a)} aria-label="Kalite analizi" title="Kalite analizi" className="h-9 w-9 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
                       <BarChart3 className="h-4 w-4" />
                     </button>
-                    <button onClick={() => remove(a)} aria-label="Sil" title="Sil" className="h-9 w-9 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-error/10 hover:text-error">
+                    <button type="button" onClick={() => remove(a)} aria-label={`${a.title || "Taslak"} haberini sil`} title="Sil" className="h-9 w-9 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-error/10 hover:text-error">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </>

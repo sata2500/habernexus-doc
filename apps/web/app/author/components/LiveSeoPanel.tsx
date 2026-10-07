@@ -12,14 +12,14 @@ const ICON: Record<CheckStatus, React.ReactNode> = {
 };
 const tone = (v: number) => (v >= 80 ? "text-success" : v >= 60 ? "text-warning" : "text-error");
 
-// Editörde yönetilmeyen alanların kontrolleri (etiket ve adres yayın sırasında oluşur)
-const HIDDEN = new Set(["tags", "slug"]);
+// Editörde yönetilmeyen alanın kontrolü (adres ilk kayıtta başlıktan oluşur)
+const HIDDEN = new Set(["slug"]);
 
 /**
  * Yazarken anlık SEO ve okunabilirlik kontrolü. Analizdeki ölçümlerle aynı kuralları kullanır;
  * yapay zekâ çağırmaz, tamamen tarayıcıda çalışır.
  */
-export function LiveSeoPanel({ title, excerpt, content, coverImage }: { title: string; excerpt: string; content: string; coverImage: string }) {
+export function LiveSeoPanel({ title, excerpt, content, coverImage, tags }: { title: string; excerpt: string; content: string; coverImage: string; tags: string[] }) {
   const [keyword, setKeyword] = useState("");
   const [open, setOpen] = useState(true);
   // Gövde her tuşta değişir; hesaplama yazmayı yavaşlatmasın diye ertelenir
@@ -27,16 +27,16 @@ export function LiveSeoPanel({ title, excerpt, content, coverImage }: { title: s
 
   const result = useMemo(() => {
     const stats = textStats(deferredContent);
-    const checks = seoChecks({ title, excerpt, content: deferredContent, coverImage, focusKeyword: keyword || null }, stats).filter((c) => !HIDDEN.has(c.id));
+    const checks = seoChecks({ title, excerpt, content: deferredContent, coverImage, tags, focusKeyword: keyword || null }, stats).filter((c) => !HIDDEN.has(c.id));
     return { stats, checks, seo: seoScore(checks), readability: readabilityScore(stats) };
-  }, [title, excerpt, deferredContent, coverImage, keyword]);
+  }, [title, excerpt, deferredContent, coverImage, tags, keyword]);
 
   const failing = result.checks.filter((c) => c.status !== "pass").length;
 
   return (
     <section className="rounded-2xl border border-border bg-card shadow-card">
       <button type="button" onClick={() => setOpen((v) => !v)} aria-expanded={open} className="w-full flex items-center gap-2 p-4 text-left cursor-pointer">
-        <Gauge className="h-4 w-4 text-muted-foreground" />
+        <Gauge className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
         <span className="flex-1 text-sm font-semibold">SEO ve okunabilirlik</span>
         <span className={cn("text-xs font-bold tabular-nums", tone(result.seo))}>SEO {result.seo}</span>
         {/* Çok kısa metinde okunabilirlik ölçümü anlamlı değil */}
