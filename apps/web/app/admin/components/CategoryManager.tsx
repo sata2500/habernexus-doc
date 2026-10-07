@@ -6,7 +6,8 @@ import { Loader2, Trash2, Edit2, Bookmark, CheckCircle2, AlertCircle } from "luc
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { IconPicker } from "@/components/ui/IconPicker";
 
-import { CategoryWithCount } from "@/lib/types";
+import type { CategoryWithCount } from "@/lib/types";
+import { slugify } from "@/lib/utils";
 
 type Category = CategoryWithCount;
 
@@ -50,7 +51,8 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
   const handleNameChange = (val: string) => {
     setName(val);
     if (!isEditing) {
-      setSlug(val.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, ""));
+      // Türkçe harfler sadeleştirilir: "Kültür & Sanat" → "kultur-sanat"
+      setSlug(slugify(val).replace(/-{2,}/g, "-"));
     }
   };
 
@@ -108,13 +110,13 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
     <div className="space-y-8">
       {/* Messages */}
       {errorMsg && (
-        <div className="p-4 bg-error/10 text-error border border-error/30 rounded-xl flex items-center gap-2">
+        <div role="alert" className="p-4 bg-error/10 text-error border border-error/30 rounded-xl flex items-center gap-2">
           <AlertCircle className="h-5 w-5" />
           <span className="text-sm font-medium">{errorMsg}</span>
         </div>
       )}
       {successMsg && (
-        <div className="p-4 bg-success/10 text-success border border-success/30 rounded-xl flex items-center gap-2">
+        <div role="status" className="p-4 bg-success/10 text-success border border-success/30 rounded-xl flex items-center gap-2">
           <CheckCircle2 className="h-5 w-5" />
           <span className="text-sm font-medium">{successMsg}</span>
         </div>
@@ -128,8 +130,9 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
           </h3>
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Kategori Adı</label>
+              <label htmlFor="cat-name" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Kategori Adı</label>
               <input
+                id="cat-name"
                 type="text"
                 value={name}
                 onChange={(e) => handleNameChange(e.target.value)}
@@ -140,8 +143,9 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">URL (Slug)</label>
+              <label htmlFor="cat-slug" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">URL (Slug)</label>
               <input
+                id="cat-slug"
                 type="text"
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
@@ -153,16 +157,17 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Kategori Simgesi</label>
+              <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Kategori simgesi</label>
               <IconPicker value={icon} onChange={setIcon} />
               <p className="text-[10px] text-muted-foreground mt-1">Sitede görünecek modern Lucide simgesini yukarıdan seçebilirsiniz.</p>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tema Rengi</label>
+                <label htmlFor="cat-color" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Tema Rengi</label>
                 <div className="flex bg-background/50 border border-border rounded-xl px-1 overflow-hidden h-10 items-center">
                     <input
+                id="cat-color"
                     type="color"
                     value={color}
                     onChange={(e) => setColor(e.target.value)}
@@ -172,8 +177,9 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Sıra (Order)</label>
+                <label htmlFor="cat-order" className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Sıra (Order)</label>
                 <input
+                id="cat-order"
                   type="number"
                   value={order}
                   onChange={(e) => setOrder(parseInt(e.target.value) || 0)}

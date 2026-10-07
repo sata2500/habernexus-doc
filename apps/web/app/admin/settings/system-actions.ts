@@ -1,12 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireRole, getSafeActionError } from "@/lib/server/authz";
+import { requireRole, getSafeActionError, adminOnly } from "@/lib/server/authz";
 import { applyPendingMigrations, getMigrationStatus } from "@/lib/server/db-migrations";
 import { invalidateArticle } from "@/lib/server/article-cache";
 
 export async function getMigrationStatusAction() {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   try {
     return { success: true as const, status: await getMigrationStatus() };
   } catch (error) {
@@ -15,7 +16,8 @@ export async function getMigrationStatusAction() {
 }
 
 export async function applyMigrationsAction() {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   try {
     const { results, status } = await applyPendingMigrations();
     revalidatePath("/admin/settings");
@@ -34,7 +36,8 @@ const SEO_BATCH = 10;
  * Google'daki mevcut bağlantılar bozulmaz. Her çalıştırmada en yeni 10 haber işlenir.
  */
 export async function runSeoMaintenanceAction() {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   try {
     const { prisma } = await import("@/lib/prisma");
     const { attachTags, buildSeoPackage } = await import("@/lib/news/seo");
@@ -64,7 +67,8 @@ export async function runSeoMaintenanceAction() {
 }
 
 export async function testIndexingAction() {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return { ok: false, message: denied.error };
   const { testIndexingAccess } = await import("@/lib/google-indexing");
   return testIndexingAccess();
 }

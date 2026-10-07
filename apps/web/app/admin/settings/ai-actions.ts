@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { requireRole, getSafeActionError } from "@/lib/server/authz";
+import { requireRole, getSafeActionError, adminOnly } from "@/lib/server/authz";
 import {
   configuredProviders, getModelCatalog, loadAiSettings, resolveModelChain, testModel, toAiError,
 } from "@/lib/ai/client";
@@ -69,7 +69,8 @@ export async function getAiOverview() {
 }
 
 export async function saveAiSettings(input: AiSettingsInput) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = AiSettingsSchema.safeParse(input);
   if (!parsed.success) return { success: false as const, error: parsed.error.issues[0]?.message ?? "Geçersiz ayar." };
   const d = parsed.data;
@@ -104,13 +105,15 @@ export async function saveAiSettings(input: AiSettingsInput) {
 }
 
 export async function testModelAction(task: AiTask, model: string) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   if (!TASKS.includes(task)) return { ok: false, detail: "Geçersiz görev.", ms: 0, task, model };
   return testModel(task, model);
 }
 
 export async function getModelCatalogAction(provider: AiProvider, refresh = false) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   if (provider !== "google" && provider !== "openrouter") return { success: false as const, error: "Geçersiz sağlayıcı." };
   try {
     return { success: true as const, models: await getModelCatalog(provider, refresh) };

@@ -4,7 +4,7 @@ import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { requireRole } from "@/lib/server/authz";
+import { requireRole, adminOnly } from "@/lib/server/authz";
 import { invalidateArticles } from "@/lib/server/article-cache";
 
 const IdsSchema = z.array(z.string().min(1).max(100)).min(1).max(200);
@@ -14,7 +14,8 @@ const IdsSchema = z.array(z.string().min(1).max(100)).min(1).max(200);
  * Slaytlar görsel olmadan çalışamadığı için o görseli kullanan slaytlar da silinir.
  */
 export async function deleteMediaItems(ids: string[]) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = IdsSchema.safeParse(ids);
   if (!parsed.success) return { success: false as const, error: "Geçersiz seçim." };
 

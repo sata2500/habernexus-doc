@@ -41,21 +41,23 @@ export function SupportChat({ ticket }: Props) {
   const [statusPending, startStatusTransition] = useTransition();
   const [deletePending, startDeleteTransition] = useTransition();
   const router = useRouter();
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const handleSend = async () => {
     if (!reply.trim() || isPending) return;
 
     startTransition(async () => {
+      setActionError(null);
       const result = await sendSupportReply(ticket.id, reply);
-      if (result.success) {
-        setReply("");
-      }
+      if (result.success) setReply("");
+      else setActionError(result.error);
     });
   };
 
   const handleStatusUpdate = (status: "OPEN" | "PENDING" | "CLOSED") => {
     startStatusTransition(async () => {
-      await updateTicketStatus(ticket.id, status);
+      const result = await updateTicketStatus(ticket.id, status);
+      setActionError(result.success ? null : result.error);
     });
   };
 
@@ -64,9 +66,8 @@ export function SupportChat({ ticket }: Props) {
 
     startDeleteTransition(async () => {
       const result = await deleteSupportTicket(ticket.id);
-      if (result.success) {
-        router.push("/admin/support");
-      }
+      if (result.success) router.push("/admin/support");
+      else setActionError(result.error);
     });
   };
 
@@ -189,8 +190,10 @@ export function SupportChat({ ticket }: Props) {
 
       {/* Reply Area */}
       <div className="p-4 md:p-6 border-t border-border bg-muted/20 shrink-0">
+        {actionError && <p role="alert" className="mb-2 text-sm text-error">{actionError}</p>}
         <div className="relative group">
           <textarea
+            aria-label="Yanıtınız"
             value={reply}
             onChange={(e) => setReply(e.target.value)}
             placeholder="Yanıtınızı buraya yazın..."

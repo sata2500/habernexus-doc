@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { requireRole, getSafeActionError } from "@/lib/server/authz";
+import { requireRole, getSafeActionError, adminOnly } from "@/lib/server/authz";
 import { scanRssSource } from "@/lib/rss-scanner";
 import { runAnalyzeJob, runScanJob } from "@/lib/server/jobs";
 import { clusterNewItems, getWritingQueue, rescoreStories } from "@/lib/news/stories";
@@ -22,7 +22,8 @@ const refresh = () => revalidatePath(BASE);
 
 /** Kaynakları tarar, konulara ayırır ve yeni konuları hemen analiz eder. */
 export async function runPipelineNow(): Promise<Result> {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   try {
     const { scan, cluster, trends } = await runScanJob();
     const { analysis } = await runAnalyzeJob({ budgetMs: 90_000, maxBatches: 3 });
@@ -40,7 +41,8 @@ export async function runPipelineNow(): Promise<Result> {
 
 /** Sıradaki en yüksek öncelikli konuları yazdırır. */
 export async function writeNextNow(count: number): Promise<Result> {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const n = z.number().int().min(1).max(5).safeParse(count);
   if (!n.success) return { success: false, error: "Geçersiz sayı." };
   try {
@@ -57,7 +59,8 @@ export async function writeNextNow(count: number): Promise<Result> {
 // ── Konu işlemleri ─────────────────────────────────────────
 
 export async function writeStoryNow(id: string): Promise<Result> {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = IdSchema.safeParse(id);
   if (!parsed.success) return { success: false, error: "Geçersiz konu." };
   // Elle seçilen konu eşiğin altında olsa da yazılabilir; tekrar ve süresi dolmuş kontrolleri yine uygulanır
@@ -69,7 +72,8 @@ export async function writeStoryNow(id: string): Promise<Result> {
 }
 
 export async function setStoryPinned(id: string, pinned: boolean): Promise<Result> {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = IdSchema.safeParse(id);
   if (!parsed.success) return { success: false, error: "Geçersiz konu." };
   await prisma.newsStory.updateMany({ where: { id: parsed.data, status: { in: ["NEW", "READY"] } }, data: { pinned, ...(pinned && { status: "READY" }) } });
@@ -78,7 +82,8 @@ export async function setStoryPinned(id: string, pinned: boolean): Promise<Resul
 }
 
 export async function dismissStory(id: string): Promise<Result> {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = IdSchema.safeParse(id);
   if (!parsed.success) return { success: false, error: "Geçersiz konu." };
   await prisma.newsStory.updateMany({
@@ -91,7 +96,8 @@ export async function dismissStory(id: string): Promise<Result> {
 
 /** Elenen bir konuyu yeniden değerlendirmeye alır (24 saat ek süre verilir). */
 export async function restoreStory(id: string): Promise<Result> {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = IdSchema.safeParse(id);
   if (!parsed.success) return { success: false, error: "Geçersiz konu." };
   await prisma.newsStory.updateMany({
@@ -104,7 +110,8 @@ export async function restoreStory(id: string): Promise<Result> {
 }
 
 export async function writeTrendNow(trendId: string): Promise<Result> {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = IdSchema.safeParse(trendId);
   if (!parsed.success) return { success: false, error: "Geçersiz trend." };
   const r = await writeTrendArticle(parsed.data);
@@ -121,7 +128,8 @@ export async function getRssSources() {
 }
 
 export async function createRssSource(data: { name: string; url: string; categoryHint?: string; language?: string }) {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = RssSourceSchema.safeParse(data);
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message || "Geçersiz RSS kaynağı." };
   try {
@@ -136,27 +144,32 @@ export async function createRssSource(data: { name: string; url: string; categor
 }
 
 export async function updateRssSource(id: string, data: { isActive?: boolean; name?: string; categoryHint?: string }) {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsedId = RssSourceIdSchema.safeParse(id);
   const parsedData = RssSourceUpdateSchema.safeParse(data);
   if (!parsedId.success || !parsedData.success) return { success: false, error: "Geçersiz RSS kaynağı verisi." };
-  await prisma.rssFeedSource.update({ where: { id: parsedId.data }, data: parsedData.data });
+  const res = await prisma.rssFeedSource.updateMany({ where: { id: parsedId.data }, data: parsedData.data });
+  if (res.count === 0) return { success: false, error: "Kaynak bulunamadı." };
   refresh();
   return { success: true };
 }
 
 export async function deleteRssSource(id: string) {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsedId = RssSourceIdSchema.safeParse(id);
   if (!parsedId.success) return { success: false, error: "Geçersiz RSS kaynağı." };
-  await prisma.rssFeedSource.delete({ where: { id: parsedId.data } });
+  const res = await prisma.rssFeedSource.deleteMany({ where: { id: parsedId.data } });
+  if (res.count === 0) return { success: false, error: "Kaynak bulunamadı." };
   refresh();
   return { success: true };
 }
 
 /** Tek kaynağı (ya da kaynak verilmezse hepsini) tarar ve yeni haberleri konulara ekler. */
 export async function triggerRssScan(sourceId?: string) {
-  await assertAdmin();
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsedId = sourceId ? RssSourceIdSchema.safeParse(sourceId) : null;
   if (parsedId && !parsedId.success) return { success: false, error: "Geçersiz RSS kaynağı." };
   try {

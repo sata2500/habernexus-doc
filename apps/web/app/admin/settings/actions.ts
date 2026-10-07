@@ -1,6 +1,7 @@
 "use server";
 
-import { requireRole } from "@/lib/server/authz";
+import { actionError, requireRole } from "@/lib/server/authz";
+import type { ActionResult } from "@/lib/types";
 
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
@@ -43,6 +44,12 @@ export interface SiteSettingsInput {
   footerCopyright: string;
 }
 
+const FIELD_LABELS: Record<string, string> = {
+  siteName: "Site adı", siteTagline: "Slogan", siteDescription: "SEO açıklaması", siteUrl: "Site adresi", logoText: "Logo harfi",
+  logoUrl: "Logo görseli", faviconUrl: "Site simgesi", keywords: "Anahtar kelimeler", footerCopyright: "Telif metni",
+  socialTwitter: "X (Twitter) adresi", socialInstagram: "Instagram adresi", socialYoutube: "YouTube adresi", socialGithub: "GitHub adresi",
+};
+
 /** Mevcut site ayarlarını getirir */
 export async function getAdminSiteSettings() {
   await assertAdmin();
@@ -55,12 +62,19 @@ export async function getAdminSiteSettings() {
 }
 
 /** Site ayarlarını günceller */
-export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
-  await assertAdmin();
+export async function updateSiteSettings(data: Partial<SiteSettingsInput>): Promise<ActionResult> {
+  try {
+    await assertAdmin();
+  } catch (err) {
+    return actionError(err);
+  }
 
   const parsed = SiteSettingsInputSchema.safeParse(data);
   if (!parsed.success) {
-    throw new Error("Geçersiz site ayarı.");
+    // Hangi alanın hatalı olduğu söylenir (ör. sosyal medya adresi https ile başlamıyor)
+    const field = String(parsed.error.issues[0]?.path[0] ?? "");
+    const label = FIELD_LABELS[field] ?? "Bir alan";
+    return { success: false, error: `${label} geçersiz. ${/^social|Url$/.test(field) ? "Tam adres yazın (https://…)." : /Light$|Dark$/.test(field) ? "Renk #RRGGBB biçiminde olmalı." : ""}`.trim() };
   }
   const input = parsed.data;
 
@@ -96,11 +110,15 @@ export async function updateSiteSettings(data: Partial<SiteSettingsInput>) {
     footerCopyright: input.footerCopyright?.trim() || null,
   };
 
-  await prisma.siteSettings.upsert({
-    where: { id: "global" },
-    create: { id: "global", ...sanitized },
-    update: sanitized,
-  });
+  try {
+    await prisma.siteSettings.upsert({
+      where: { id: "global" },
+      create: { id: "global", ...sanitized },
+      update: sanitized,
+    });
+  } catch (err) {
+    return actionError(err, "Ayarlar kaydedilemedi.");
+  }
 
   // Ayar önbelleği ve tüm herkese açık sayfalar yenilenir
   await appCache.invalidate(SITE_SETTINGS_CACHE_KEY);

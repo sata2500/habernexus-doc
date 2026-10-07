@@ -4,6 +4,7 @@ import { useState, useMemo, useTransition } from "react";
 import { Plus, Trash2, RefreshCw, Power, ExternalLink, Loader2, Rss, Search, Filter, CheckSquare, Square, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 
+import { useRouter } from "next/navigation";
 import {
   createRssSource,
   deleteRssSource,
@@ -28,7 +29,14 @@ interface Props {
 }
 
 export function FeedSourceManager({ sources: initialSources }: Props) {
+  const router = useRouter();
   const [sources, setSources] = useState(initialSources);
+  // Sunucudan yeni liste gelince (ekleme, tarama sonrası yenileme) yerel liste güncellenir
+  const [prevInitial, setPrevInitial] = useState(initialSources);
+  if (initialSources !== prevInitial) {
+    setPrevInitial(initialSources);
+    setSources(initialSources);
+  }
   const [isAdding, setIsAdding] = useState(false);
   const [scanning, setScanningId] = useState<string | null>(null);
 
@@ -71,7 +79,8 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
     if (res.success) {
       setForm({ name: "", url: "", categoryHint: "", language: "tr" });
       setIsAdding(false);
-      setSuccess("Kaynak eklendi! Etkili olması için sayfayı yenileyin veya bir süre bekleyin.");
+      setSuccess("Kaynak eklendi; bir sonraki taramada haberleri alınacak.");
+      router.refresh();
       setTimeout(() => setSuccess(""), 4000);
     } else {
       setError(res.error || "Bir hata oluştu.");
@@ -79,7 +88,11 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
   };
 
   const handleToggle = async (id: string, current: boolean) => {
-    await updateRssSource(id, { isActive: !current });
+    const res = await updateRssSource(id, { isActive: !current });
+    if (!res.success) {
+      setError(res.error || "Kaynak güncellenemedi.");
+      return;
+    }
     setSources((prev) =>
       prev.map((s) => (s.id === id ? { ...s, isActive: !current } : s))
     );
@@ -87,7 +100,11 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
 
   const handleDelete = async (id: string, name: string) => {
     if (!confirm(`"${name}" kaynağını ve tüm öğelerini silmek istediğinize emin misiniz?`)) return;
-    await deleteRssSource(id);
+    const res = await deleteRssSource(id);
+    if (!res.success) {
+      setError(res.error || "Kaynak silinemedi.");
+      return;
+    }
     setSources((prev) => prev.filter((s) => s.id !== id));
     setSelectedIds(prev => {
       const next = new Set(prev);

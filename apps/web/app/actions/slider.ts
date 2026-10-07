@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireRole } from "@/lib/server/authz";
+import { requireRole, adminOnly } from "@/lib/server/authz";
 
 const SliderSettingsSchema = z.object({
   autoPlay: z.boolean(),
@@ -57,7 +57,8 @@ export async function ensureSlider() {
 }
 
 export async function updateSliderSettings(input: z.input<typeof SliderSettingsSchema>) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = SliderSettingsSchema.safeParse(input);
   if (!parsed.success) return { success: false as const, error: "Geçersiz ayar." };
   await prisma.slider.update({ where: { id: SLIDER_ID }, data: parsed.data });
@@ -66,7 +67,8 @@ export async function updateSliderSettings(input: z.input<typeof SliderSettingsS
 }
 
 export async function saveSlide(input: SlideInput) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = SlideSchema.safeParse(input);
   if (!parsed.success) return { success: false as const, error: parsed.error.issues[0]?.message ?? "Geçersiz bilgi." };
   const { id, ...data } = parsed.data;
@@ -86,14 +88,16 @@ export async function saveSlide(input: SlideInput) {
 }
 
 export async function setSlideActive(id: string, isActive: boolean) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   await prisma.slide.update({ where: { id }, data: { isActive } });
   revalidate();
   return { success: true as const };
 }
 
 export async function deleteSlide(id: string) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   try {
     await prisma.slide.delete({ where: { id } });
     revalidate();
@@ -105,7 +109,8 @@ export async function deleteSlide(id: string) {
 }
 
 export async function reorderSlides(slideIds: string[]) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const ids = z.array(z.string().min(1)).max(100).parse(slideIds);
   await prisma.$transaction(ids.map((id, order) => prisma.slide.update({ where: { id }, data: { order } })));
   revalidate();

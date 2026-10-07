@@ -56,3 +56,17 @@ export function getSafeActionError(error: unknown, fallback = "İşlem gerçekle
 export function actionError(error: unknown, fallback?: string) {
   return { success: false as const, error: getSafeActionError(error, fallback) };
 }
+
+/**
+ * Değişiklik yapan yönetici işlemleri için: yetki yoksa (ör. oturum süresi dolmuş) istisna
+ * fırlatmak yerine gösterilebilir bir sonuç döner. Kullanım:
+ *   const denied = await adminOnly(); if (denied) return denied;
+ */
+export async function adminOnly(): Promise<{ success: false; error: string } | null> {
+  try {
+    await requireRole("ADMIN");
+    return null;
+  } catch (error) {
+    return { success: false, error: getSafeActionError(error, "Bu işlem için yetkiniz yok.") };
+  }
+}

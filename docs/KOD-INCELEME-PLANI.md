@@ -60,9 +60,10 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 - [x] Editör, haber listesi, istatistikler, öneriler, yorumlar, analiz ekranı okundu ve düzeltildi
 - [x] Yeni: etiket alanı, eşzamanlı düzenleme koruması, Ctrl/Cmd+S ile kaydetme
 
-### Aşama 6 — Admin paneli
-- [ ] Genel bakış, Karar Merkezi, yapay zekâ, içerik, topluluk, site ayarları
-- [ ] Büyük bileşenlerin bölünmesi (ör. 890 satırlık site ayarları formu)
+### Aşama 6 — Admin paneli ✅
+- [x] Genel bakış, Karar Merkezi, yapay zekâ, içerik, kullanıcılar, destek, site ayarları; tüm yönetici işlemleri
+- [x] 890 satırlık site ayarları formu bölündü (form ~200 satır + tema bölümü + ortak alanlar); tema CSS'i tek modülde (`lib/theme.ts`)
+- [x] Tüm değişiklik yapan yönetici işlemleri ortak `adminOnly()` korumasıyla; hatalar istisna yerine sonuç olarak döner
 
 ### Aşama 7 — Arka plan işleri, API ve e-posta
 - [ ] Cron uç noktaları, QStash, webhooks, yükleme/medya API'leri
@@ -168,3 +169,20 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 | Hata | Yorum silinince haber sayfası güncellenmiyordu | Düzeltildi |
 | Kullanılabilirlik | Ctrl+S tarayıcının "sayfayı kaydet" penceresini açıyordu | Haberi kaydeder |
 | Erişilebilirlik | Mobil menü Esc ile kapanmıyor, gizliyken klavye odağı içine girebiliyordu; analiz penceresi Esc ile kapanmıyor, arka plan kayıyordu; liste düğmelerinin adı yalnızca "Sil"/"Düzenle" idi | Düzeltildi |
+
+### Aşama 6
+| Tür | Bulgu | Durum |
+|---|---|---|
+| Hata | Yönetici işlemlerinde yetki kontrolü `try` dışındaydı: oturum süresi dolmuş yönetici bir düğmeye basınca Türkçe uyarı yerine **çökme ekranı** çıkıyordu (40+ işlem) | Ortak `adminOnly()` / `actionError`; her işlem sonuç döndürür |
+| Hata | Site ayarları kaydı başarısız olsa bile "başarıyla kaydedildi" yazıyordu; hangi alanın hatalı olduğu söylenmiyordu | Gerçek sonuç ve alan adıyla hata ("Instagram adresi geçersiz…") |
+| Hata | Tema CSS'i iki yerde farklı formüllerle üretiliyordu; yönetimdeki canlı önizleme sitedeki gerçek görünümle aynı değildi | Tek `buildThemeCss` (site + önizleme); test eklendi |
+| Hata | Destek yanıtı e-posta gönderilemese bile "gönderildi" kaydediliyor, talep "yanıt bekleniyor"a geçiyordu (okura hiçbir şey ulaşmıyordu) | Önce gönderim; başarısızsa kayıt yapılmaz ve uyarı verilir |
+| Hata | Kategori adından adres üretirken Türkçe harfler siliniyordu ("Kültür & Sanat" → `k-lt-r-sanat`) | `kultur-sanat` |
+| Güvenlik | Kategori adresi, rengi ve simgesi doğrulanmıyordu; toplu haber işlemlerinde kimlik sayısı sınırsızdı | Şema doğrulaması; toplu işlemde en fazla 200 |
+| Güvenlik | Rolü düşürülen kullanıcı (ör. yöneticilikten alınan) açık oturumuyla eski yetkisini kullanmaya devam edebiliyordu | Yetki düşürülünce oturumları kapatılır |
+| Güvenlik | Rol menüsünde yanlışlıkla "Admin" seçmek onaysız tam yetki veriyordu | Onay sorulur |
+| Maliyet | Yönetici panelindeki yapay zekâ araçlarında (analiz, yeniden yazım) sınır yoktu | Saatlik sınır |
+| Hata | Toplu yayınlamada durumu değişmeyen haberler de Google'a yeniden bildiriliyordu (günlük kota) | Yalnızca değişenler |
+| Hata | RSS kaynağı eklenince listede görünmüyordu ("sayfayı yenileyin"); açma/kapama ve silme hataları yok sayılıyordu | Liste sunucuyla eşitlenir; hatalar gösterilir |
+| Eksik | Tema renkleri yalnızca şablon/otomatik paletle değiştirilebiliyordu; ayarlar sayfasından kaydetmeden çıkınca uyarı yoktu | Renkleri tek tek düzenleme; kaydedilmemiş değişiklik uyarısı ve "Vazgeç" |
+| Erişilebilirlik | Ayar alanlarının etiketleri bağlı değildi; mobil yönetim menüsü Esc ile kapanmıyordu | Düzeltildi |

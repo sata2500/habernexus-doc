@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { requireRole, getSafeActionError } from "@/lib/server/authz";
+import { requireRole, getSafeActionError, adminOnly } from "@/lib/server/authz";
 import { configureJob, getAutomationStatus, getSettingsRow, isQStashConfigured, type AutomationJob } from "@/lib/server/automation";
 import { runAnalyzeJob, runScanJob } from "@/lib/server/jobs";
 import { getWritingQueue, rescoreStories } from "@/lib/news/stories";
@@ -38,7 +38,8 @@ export async function getAutomationOverview() {
 }
 
 export async function configureJobAction(job: AutomationJob, enabled: boolean, cron?: string) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsedJob = JobSchema.safeParse(job);
   if (!parsedJob.success) return { success: false as const, error: "Geçersiz iş." };
   if (cron !== undefined && !CronExpressionSchema.safeParse(cron).success) {
@@ -54,7 +55,8 @@ export async function configureJobAction(job: AutomationJob, enabled: boolean, c
 }
 
 export async function saveContentRules(input: ContentRules) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = ContentRulesSchema.safeParse(input);
   if (!parsed.success) return { success: false as const, error: parsed.error.issues[0]?.message ?? "Geçersiz değer." };
   try {
@@ -69,7 +71,8 @@ export async function saveContentRules(input: ContentRules) {
 
 /** İşi beklemeden hemen çalıştırır ve kısa bir özet döner. */
 export async function runJobNowAction(job: AutomationJob) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   try {
     if (job === "scan") {
       const { scan, cluster, trends } = await runScanJob();

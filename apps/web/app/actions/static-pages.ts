@@ -3,7 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { requireRole } from "@/lib/server/authz";
+import { requireRole, adminOnly } from "@/lib/server/authz";
 
 const REQUIRED_PAGES = [
   { slug: "about", title: "Hakkımızda" },
@@ -83,7 +83,8 @@ const StaticPageSchema = z.object({
 });
 
 export async function updateStaticPage(id: string, input: z.input<typeof StaticPageSchema>) {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = StaticPageSchema.safeParse(input);
   if (!parsed.success) return { success: false as const, error: parsed.error.issues[0]?.message ?? "Geçersiz bilgi." };
   try {

@@ -3,7 +3,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
-import { requireRole } from "@/lib/server/authz";
+import { requireRole, adminOnly } from "@/lib/server/authz";
 
 const PersonaSchema = z.object({
   name: z.string().trim().min(2, "Ad en az 2 karakter olmalı.").max(80),
@@ -50,7 +50,8 @@ function errorMessage(error: unknown, fallback: string) {
 }
 
 export async function createPersona(input: PersonaInput): Promise<Result> {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = PersonaSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Geçersiz bilgi." };
   const { data, categoryIds } = toData(parsed.data);
@@ -66,7 +67,8 @@ export async function createPersona(input: PersonaInput): Promise<Result> {
 }
 
 export async function updatePersona(id: string, input: PersonaInput): Promise<Result> {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   const parsed = PersonaSchema.safeParse(input);
   if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Geçersiz bilgi." };
   const { data, categoryIds } = toData(parsed.data);
@@ -88,7 +90,8 @@ export async function updatePersona(id: string, input: PersonaInput): Promise<Re
 }
 
 export async function setPersonaActive(id: string, isActive: boolean): Promise<Result> {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   try {
     await prisma.aiPersona.update({ where: { id }, data: { isActive } });
     revalidate();
@@ -100,7 +103,8 @@ export async function setPersonaActive(id: string, isActive: boolean): Promise<R
 
 /** Personanın yazdığı haberler silinmez; yazar olarak tekrar asıl kullanıcı görünür. */
 export async function deletePersona(id: string): Promise<Result> {
-  await requireRole("ADMIN");
+  const denied = await adminOnly();
+  if (denied) return denied;
   try {
     await prisma.aiPersona.delete({ where: { id } });
     revalidate();

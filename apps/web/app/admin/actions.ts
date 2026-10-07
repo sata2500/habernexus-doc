@@ -1,198 +1,186 @@
 "use server";
 
-import { requireRole } from "@/lib/server/authz";
-
 import { after } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
+import { prisma } from "@/lib/prisma";
+import { actionError, requireRole, ROLES, type Role } from "@/lib/server/authz";
+import type { ActionResult } from "@/lib/types";
 import { deleteAccountSafely } from "@/lib/server/account-deletion";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { rewriteArticleWithAI } from "@/lib/ai-writer";
-import { ROLES, type Role } from "@/lib/server/authz";
 import { invalidateArticle, invalidateArticles } from "@/lib/server/article-cache";
+import { checkRateLimitAsync } from "@/lib/server/rate-limit";
+import { categoryIcon } from "@/components/ui/category-icons";
 
-const ARTICLE_STATUSES = ["DRAFT", "PUBLISHED"] as const;
+/*
+ * Yönetim paneli işlemleri. Her işlem önce yönetici yetkisini doğrular; hatalar kullanıcıya
+ * gösterilebilir Türkçe metne çevrilir (iç ayrıntı sızmaz).
+ */
 
-function isArticleStatus(value: string): value is (typeof ARTICLE_STATUSES)[number] {
-  return (ARTICLE_STATUSES as readonly string[]).includes(value);
-}
-
-// Ortak yetki kontrolü (lib/server/authz)
 const assertAdmin = () => requireRole("ADMIN");
 
-// Kullanıcı rolü güncelle
-export async function updateUserRole(userId: string, role: string) {
-  const session = await assertAdmin();
+const Id = z.string().trim().min(1).max(100);
+const Ids = z.array(Id).min(1, "Haber seçilmedi.").max(200, "Tek seferde en fazla 200 haber işlenebilir.");
+const ArticleStatus = z.enum(["DRAFT", "PUBLISHED"]);
 
-  if (!ROLES.includes(role as Role)) {
-    return { success: false, error: "Geçersiz rol." };
-  }
+const firstIssue = (e: z.ZodError) => e.issues[0]?.message ?? "Geçersiz bilgi.";
 
-  // Adminin kendi yetkisini düşürüp panele erişimini kaybetmesini engelle
-  if (session.user.id === userId && role !== "ADMIN") {
-    return { success: false, error: "Kendi admin yetkinizi kaldıramazsınız." };
-  }
-
-  const target = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
-  if (!target) return { success: false, error: "Kullanıcı bulunamadı." };
-
-  await prisma.user.update({
-    where: { id: userId },
-    data: { role },
+/** Yayın durumu değişen haberleri Google'a bildirir (yanıt beklenmez) */
+async function notifyIndexing(changes: { slug: string; action: "URL_UPDATED" | "URL_DELETED" }[]) {
+  if (changes.length === 0) return;
+  const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
+  after(async () => {
+    for (const c of changes) {
+      await notifyGoogle(getArticleUrl(c.slug), c.action).catch((err) => console.error("Google Indexing Error:", err));
+    }
   });
-  console.warn(`[Admin] ${session.user.id} kullanıcısı ${userId} rolünü ${target.role} → ${role} yaptı.`);
-  revalidatePath("/admin/users");
-  return { success: true };
 }
 
-// Kullanıcıyı tamamen sil (Cascade delete devreye girer)
-export async function deleteUser(userId: string) {
-  const session = await assertAdmin();
-  if (typeof userId !== "string" || !userId) return { success: false, error: "Geçersiz kullanıcı." };
+/* ── Kullanıcılar ─────────────────────────────────────── */
 
-  if (session.user.id === userId) {
-    return { success: false, error: "Kendi hesabınızı bu panelden silemezsiniz. Lütfen tercihler sayfasını kullanın." };
+export async function updateUserRole(userId: string, role: string): Promise<ActionResult> {
+  try {
+    const session = await assertAdmin();
+    if (!Id.safeParse(userId).success || !ROLES.includes(role as Role)) return { success: false, error: "Geçersiz rol." };
+    // Yönetici kendi yetkisini düşürüp panele erişimini kaybedemez
+    if (session.user.id === userId && role !== "ADMIN") return { success: false, error: "Kendi yönetici yetkinizi kaldıramazsınız." };
+
+    const target = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } });
+    if (!target) return { success: false, error: "Kullanıcı bulunamadı." };
+    if (target.role === role) return { success: true };
+
+    await prisma.user.update({ where: { id: userId }, data: { role } });
+    // Yetkisi düşürülen kullanıcının açık oturumları kapatılır (eski yetkiyle işlem yapamasın)
+    if (target.role === "ADMIN" || (target.role === "AUTHOR" && role === "USER")) {
+      await prisma.session.deleteMany({ where: { userId } });
+    }
+    console.warn(`[Admin] ${session.user.id} kullanıcısı ${userId} rolünü ${target.role} → ${role} yaptı.`);
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "Rol güncellenemedi.");
   }
-
-  // Son yönetici korunur; kullanıcının haberleri silinmez, yöneticiye devredilir
-  const result = await deleteAccountSafely(userId);
-  if (!result.success) return result;
-  console.warn(`[Admin] ${session.user.id} kullanıcısı ${userId} hesabını sildi (${result.reassigned} haber devredildi).`);
-
-  revalidatePath("/admin/users");
-  return { success: true };
 }
 
-// E-posta adresini doğrulanmış say (doğrulama e-postası ulaşamayan, yönetici tarafından tanınan hesaplar için)
-export async function markEmailVerified(userId: string) {
-  const session = await assertAdmin();
-  if (typeof userId !== "string" || !userId) return { success: false, error: "Geçersiz kullanıcı." };
-  const res = await prisma.user.updateMany({ where: { id: userId }, data: { emailVerified: true } });
-  if (res.count === 0) return { success: false, error: "Kullanıcı bulunamadı." };
-  console.warn(`[Admin] ${session.user.id} kullanıcısı ${userId} e-postasını doğrulanmış saydı.`);
-  revalidatePath("/admin/users");
-  return { success: true };
+export async function deleteUser(userId: string): Promise<ActionResult> {
+  try {
+    const session = await assertAdmin();
+    if (!Id.safeParse(userId).success) return { success: false, error: "Geçersiz kullanıcı." };
+    if (session.user.id === userId) {
+      return { success: false, error: "Kendi hesabınızı bu panelden silemezsiniz. Tercihler sayfasını kullanın." };
+    }
+    // Son yönetici korunur; kullanıcının haberleri silinmez, yöneticiye devredilir
+    const result = await deleteAccountSafely(userId);
+    if (!result.success) return result;
+    console.warn(`[Admin] ${session.user.id} kullanıcısı ${userId} hesabını sildi (${result.reassigned} haber devredildi).`);
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "Kullanıcı silinemedi.");
+  }
 }
 
-// Makale durumunu güncelle
-export async function updateArticleStatus(articleId: string, status: string) {
-  await assertAdmin();
-  if (!isArticleStatus(status)) {
-    return { success: false, error: "Geçersiz makale durumu." };
+/** E-posta adresini doğrulanmış sayar (doğrulama e-postası ulaşmayan, yöneticinin tanıdığı hesaplar için) */
+export async function markEmailVerified(userId: string): Promise<ActionResult> {
+  try {
+    const session = await assertAdmin();
+    if (!Id.safeParse(userId).success) return { success: false, error: "Geçersiz kullanıcı." };
+    const res = await prisma.user.updateMany({ where: { id: userId }, data: { emailVerified: true } });
+    if (res.count === 0) return { success: false, error: "Kullanıcı bulunamadı." };
+    console.warn(`[Admin] ${session.user.id} kullanıcısı ${userId} e-postasını doğrulanmış saydı.`);
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "İşlem yapılamadı.");
   }
-
-  const articleBefore = await prisma.article.findUnique({ where: { id: articleId } });
-
-  const updatedArticle = await prisma.article.update({
-    where: { id: articleId },
-    data: {
-      status,
-      // Yayın tarihi korunur: yayından kaldırılıp yeniden yayımlanan haber "yeni haber" gibi görünmez
-      ...(status === "PUBLISHED" && !articleBefore?.publishedAt ? { publishedAt: new Date() } : {}),
-    },
-  });
-
-  if (updatedArticle.status === "PUBLISHED") {
-    const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-    after(() => notifyGoogle(getArticleUrl(updatedArticle.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
-  } else if (articleBefore?.status === "PUBLISHED" && updatedArticle.status !== "PUBLISHED") {
-    const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-    after(() => notifyGoogle(getArticleUrl(articleBefore.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
-  }
-
-  await invalidateArticle(updatedArticle.slug);
-  revalidatePath("/admin/articles");
-  return { success: true };
 }
 
-// Makaleyi sil
-export async function deleteArticle(articleId: string) {
-  await assertAdmin();
-  const article = await prisma.article.findUnique({ where: { id: articleId } });
+/* ── Haberler ─────────────────────────────────────────── */
 
-  await prisma.article.delete({ where: { id: articleId } });
-
-  if (article && article.status === "PUBLISHED") {
-    const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-    after(() => notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
+export async function updateArticleStatus(articleId: string, status: string): Promise<ActionResult> {
+  try {
+    await assertAdmin();
+    return await setArticleStatuses([articleId], status);
+  } catch (err) {
+    return actionError(err, "Haber durumu güncellenemedi.");
   }
-
-  await invalidateArticle(article?.slug);
-  revalidatePath("/admin/articles");
-  return { success: true };
 }
 
-// Toplu makale durum güncelleme
-export async function bulkUpdateArticleStatus(articleIds: string[], status: string) {
-  await assertAdmin();
-  if (!isArticleStatus(status)) {
-    return { success: false, error: "Geçersiz makale durumu." };
+export async function deleteArticle(articleId: string): Promise<ActionResult> {
+  try {
+    await assertAdmin();
+    return await removeArticles([articleId]);
+  } catch (err) {
+    return actionError(err, "Haber silinemedi.");
   }
+}
 
-  const articlesBefore = await prisma.article.findMany({
-    where: { id: { in: articleIds } },
-    select: { id: true, slug: true, status: true }
-  });
+export async function bulkUpdateArticleStatus(articleIds: string[], status: string): Promise<ActionResult> {
+  try {
+    await assertAdmin();
+    return await setArticleStatuses(articleIds, status);
+  } catch (err) {
+    return actionError(err, "Haber durumu güncellenemedi.");
+  }
+}
 
-  if (status === "PUBLISHED") {
-    // Daha önce yayın tarihi olanların tarihini koru, olmayanlara şimdiki zamanı ata
+export async function bulkDeleteArticles(articleIds: string[]): Promise<ActionResult> {
+  try {
+    await assertAdmin();
+    return await removeArticles(articleIds);
+  } catch (err) {
+    return actionError(err, "Haber silinemedi.");
+  }
+}
+
+/** (Yetki çağıran işlemde denetlenir) */
+async function setArticleStatuses(articleIds: string[], status: string): Promise<ActionResult> {
+  const ids = Ids.safeParse(articleIds);
+  const target = ArticleStatus.safeParse(status);
+  if (!ids.success) return { success: false, error: firstIssue(ids.error) };
+  if (!target.success) return { success: false, error: "Geçersiz haber durumu." };
+
+  const before = await prisma.article.findMany({ where: { id: { in: ids.data } }, select: { slug: true, status: true } });
+  if (before.length === 0) return { success: false, error: "Haber bulunamadı." };
+
+  if (target.data === "PUBLISHED") {
+    // Yayın tarihi korunur: yayından kaldırılıp yeniden yayımlanan haber "yeni haber" gibi görünmez
     await prisma.$transaction([
-      prisma.article.updateMany({
-        where: { id: { in: articleIds }, publishedAt: { not: null } },
-        data: { status },
-      }),
-      prisma.article.updateMany({
-        where: { id: { in: articleIds }, publishedAt: null },
-        data: { status, publishedAt: new Date() },
-      }),
+      prisma.article.updateMany({ where: { id: { in: ids.data }, publishedAt: { not: null } }, data: { status: "PUBLISHED" } }),
+      prisma.article.updateMany({ where: { id: { in: ids.data }, publishedAt: null }, data: { status: "PUBLISHED", publishedAt: new Date() } }),
     ]);
   } else {
-    await prisma.article.updateMany({
-      where: { id: { in: articleIds } },
-      data: { status },
-    });
+    await prisma.article.updateMany({ where: { id: { in: ids.data } }, data: { status: "DRAFT" } });
   }
 
-  const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-  for (const article of articlesBefore) {
-    if (status === "PUBLISHED") {
-      after(() => notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
-    } else if (article.status === "PUBLISHED") {
-      after(() => notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
-    }
-  }
-
+  // Yalnızca durumu gerçekten değişenler bildirilir (Google kotası)
+  await notifyIndexing(
+    before
+      .filter((a) => a.status !== target.data)
+      .map((a) => ({ slug: a.slug, action: target.data === "PUBLISHED" ? "URL_UPDATED" as const : "URL_DELETED" as const })),
+  );
   revalidatePath("/admin/articles");
-  await invalidateArticles(articlesBefore.map((a) => a.slug));
+  await invalidateArticles(before.map((a) => a.slug));
   return { success: true };
 }
 
-// Toplu makale silme
-export async function bulkDeleteArticles(articleIds: string[]) {
-  await assertAdmin();
+async function removeArticles(articleIds: string[]): Promise<ActionResult> {
+  const ids = Ids.safeParse(articleIds);
+  if (!ids.success) return { success: false, error: firstIssue(ids.error) };
 
-  const articlesBefore = await prisma.article.findMany({
-    where: { id: { in: articleIds } },
-    select: { slug: true, status: true }
-  });
+  const before = await prisma.article.findMany({ where: { id: { in: ids.data } }, select: { slug: true, status: true } });
+  if (before.length === 0) return { success: false, error: "Haber bulunamadı." };
+  await prisma.article.deleteMany({ where: { id: { in: ids.data } } });
 
-  await prisma.article.deleteMany({
-    where: { id: { in: articleIds } },
-  });
-
-  const { notifyGoogle, getArticleUrl } = await import("@/lib/google-indexing");
-  for (const article of articlesBefore) {
-    if (article.status === "PUBLISHED") {
-      after(() => notifyGoogle(getArticleUrl(article.slug), "URL_DELETED").catch(err => console.error("Google Indexing Error:", err)));
-    }
-  }
-
+  await notifyIndexing(before.filter((a) => a.status === "PUBLISHED").map((a) => ({ slug: a.slug, action: "URL_DELETED" as const })));
   revalidatePath("/admin/articles");
-  await invalidateArticles(articlesBefore.map((a) => a.slug));
+  await invalidateArticles(before.map((a) => a.slug));
   return { success: true };
 }
 
-// Tüm kategorileri admin görünümü için getir
+/* ── Kategoriler ──────────────────────────────────────── */
+
 export async function getAllCategoriesAdmin() {
   await assertAdmin();
   return prisma.category.findMany({
@@ -201,117 +189,143 @@ export async function getAllCategoriesAdmin() {
   });
 }
 
-// Yeni kategori ekle
-export async function createCategory(data: { name: string; slug: string; color: string; icon: string; order: number }) {
-  await assertAdmin();
-  const existing = await prisma.category.findUnique({ where: { slug: data.slug } });
-  if (existing) {
-    return { success: false, error: "Bu URL adresine (slug) sahip bir kategori zaten var." };
-  }
+const CategoryInput = z.object({
+  name: z.string().trim().min(2, "Kategori adı en az 2 karakter olmalı.").max(40, "Kategori adı en fazla 40 karakter olabilir."),
+  slug: z.string().trim().toLowerCase().min(2, "Adres en az 2 karakter olmalı.").max(60)
+    .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Adres yalnızca küçük harf (Türkçe karaktersiz), rakam ve tire içerebilir."),
+  color: z.string().trim().regex(/^(#[0-9a-fA-F]{3,8})?$/, "Renk #RRGGBB biçiminde olmalı.").optional().default(""),
+  icon: z.string().trim().max(40).optional().default("")
+    .refine((v) => !v || !!categoryIcon(v), "Seçilen simge listede yok."),
+  order: z.coerce.number().int().min(0).max(999).optional().default(0),
+});
+type CategoryData = z.input<typeof CategoryInput>;
 
-  await prisma.category.create({
-    data: {
-      name: data.name,
-      slug: data.slug,
-      color: data.color || null,
-      icon: data.icon || null,
-      order: data.order,
-    },
-  });
+async function afterCategoryChange() {
   revalidatePath("/admin/categories");
   await invalidateArticle(null);
   // Menüdeki kategori listesi tüm sayfalarda görünür
   revalidatePath("/", "layout");
-  return { success: true };
 }
 
-// Kategoriyi güncelle
-export async function updateCategory(id: string, data: { name: string; slug: string; color: string; icon: string; order: number }) {
-  await assertAdmin();
-  const existing = await prisma.category.findFirst({
-    where: { slug: data.slug, id: { not: id } }
-  });
-  if (existing) {
-    return { success: false, error: "Bu URL adresine (slug) sahip başka bir kategori var." };
-  }
-
-  await prisma.category.update({
-    where: { id },
-    data: {
-      name: data.name,
-      slug: data.slug,
-      color: data.color || null,
-      icon: data.icon || null,
-      order: data.order,
-    },
-  });
-  revalidatePath("/admin/categories");
-  await invalidateArticle(null);
-  // Menüdeki kategori listesi tüm sayfalarda görünür
-  revalidatePath("/", "layout");
-  return { success: true };
-}
-
-// Kategoriyi sil
-export async function deleteCategoryAdmin(id: string) {
-  await assertAdmin();
-  const category = await prisma.category.findUnique({
-    where: { id },
-    include: { _count: { select: { articles: true } } }
-  });
-
-  if (!category) return { success: false, error: "Kategori bulunamadı." };
-  if (category._count.articles > 0) {
-    return { success: false, error: "Bu kategoriye ait makaleler var. Silmeden önce makaleleri şuradan veya başka bir kategoriye taşıyın." };
-  }
-
-  await prisma.category.delete({ where: { id } });
-  revalidatePath("/admin/categories");
-  await invalidateArticle(null);
-  // Menüdeki kategori listesi tüm sayfalarda görünür
-  revalidatePath("/", "layout");
-  return { success: true };
-}
-
-export async function deleteCommentAdmin(id: string) {
-  await assertAdmin();
-  const comment = await prisma.comment.findUnique({
-    where: { id },
-    include: { article: { select: { slug: true } } },
-  });
-  await prisma.comment.delete({ where: { id } });
-  revalidatePath("/admin/comments");
-  if (comment?.article?.slug) {
-    revalidatePath(`/article/${comment.article.slug}`);
-  }
-  return { success: true };
-}
-
-// Makaleyi analiz et (admin)
-export async function analyzeArticleAction(articleId: string) {
-  await assertAdmin();
-  const res = await analyzeArticle(articleId);
-  revalidatePath("/admin/articles");
-  return res;
-}
-
-// Makaleyi yapay zeka ile yeniden yaz (admin)
-export async function rewriteArticleWithAIAction(articleId: string) {
-  await assertAdmin();
-  const res = await rewriteArticleWithAI(articleId);
-  revalidatePath("/admin/articles");
-  return res;
-}
-
-// Kaynaklardan aynen alınmış bölümleri özgünleştir (admin)
-export async function fixCopiedPassagesAction(articleId: string) {
-  await assertAdmin();
+export async function createCategory(data: CategoryData): Promise<ActionResult> {
   try {
+    await assertAdmin();
+    const parsed = CategoryInput.safeParse(data);
+    if (!parsed.success) return { success: false, error: firstIssue(parsed.error) };
+    const d = parsed.data;
+    const clash = await prisma.category.findFirst({ where: { OR: [{ slug: d.slug }, { name: { equals: d.name, mode: "insensitive" } }] }, select: { slug: true } });
+    if (clash) return { success: false, error: clash.slug === d.slug ? "Bu adrese sahip bir kategori zaten var." : "Bu adda bir kategori zaten var." };
+
+    await prisma.category.create({ data: { name: d.name, slug: d.slug, color: d.color || null, icon: d.icon || null, order: d.order } });
+    await afterCategoryChange();
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "Kategori eklenemedi.");
+  }
+}
+
+export async function updateCategory(id: string, data: CategoryData): Promise<ActionResult> {
+  try {
+    await assertAdmin();
+    if (!Id.safeParse(id).success) return { success: false, error: "Geçersiz kategori." };
+    const parsed = CategoryInput.safeParse(data);
+    if (!parsed.success) return { success: false, error: firstIssue(parsed.error) };
+    const d = parsed.data;
+    const clash = await prisma.category.findFirst({
+      where: { id: { not: id }, OR: [{ slug: d.slug }, { name: { equals: d.name, mode: "insensitive" } }] },
+      select: { slug: true },
+    });
+    if (clash) return { success: false, error: clash.slug === d.slug ? "Bu adrese sahip başka bir kategori var." : "Bu adda başka bir kategori var." };
+
+    const res = await prisma.category.updateMany({ where: { id }, data: { name: d.name, slug: d.slug, color: d.color || null, icon: d.icon || null, order: d.order } });
+    if (res.count === 0) return { success: false, error: "Kategori bulunamadı." };
+    await afterCategoryChange();
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "Kategori güncellenemedi.");
+  }
+}
+
+export async function deleteCategoryAdmin(id: string): Promise<ActionResult> {
+  try {
+    await assertAdmin();
+    if (!Id.safeParse(id).success) return { success: false, error: "Geçersiz kategori." };
+    const category = await prisma.category.findUnique({ where: { id }, include: { _count: { select: { articles: true } } } });
+    if (!category) return { success: false, error: "Kategori bulunamadı." };
+    if (category._count.articles > 0) {
+      return { success: false, error: `Bu kategoride ${category._count.articles} haber var. Silmeden önce haberleri başka bir kategoriye taşıyın.` };
+    }
+    await prisma.category.delete({ where: { id } });
+    await afterCategoryChange();
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "Kategori silinemedi.");
+  }
+}
+
+/* ── Yorumlar ─────────────────────────────────────────── */
+
+export async function deleteCommentAdmin(id: string): Promise<ActionResult> {
+  try {
+    await assertAdmin();
+    if (!Id.safeParse(id).success) return { success: false, error: "Geçersiz yorum." };
+    const comment = await prisma.comment.findUnique({ where: { id }, select: { article: { select: { slug: true } } } });
+    if (!comment) return { success: false, error: "Yorum bulunamadı." };
+    await prisma.comment.delete({ where: { id } });
+    revalidatePath("/admin/comments");
+    revalidatePath(`/article/${comment.article.slug}`);
+    return { success: true };
+  } catch (err) {
+    return actionError(err, "Yorum silinemedi.");
+  }
+}
+
+/* ── Yapay zekâ araçları (analiz penceresi) ───────────── */
+
+async function adminAiQuota(kind: string, userId: string, perHour: number) {
+  const rate = await checkRateLimitAsync(`admin-${kind}:${userId}`, perHour, 60 * 60 * 1000);
+  return rate.allowed ? null : "Çok sık istendi. Lütfen biraz sonra tekrar deneyin.";
+}
+
+export async function analyzeArticleAction(articleId: string) {
+  try {
+    const session = await assertAdmin();
+    if (!Id.safeParse(articleId).success) return { success: false as const, error: "Geçersiz haber." };
+    const quota = await adminAiQuota("analyze", session.user.id, 60);
+    if (quota) return { success: false as const, error: quota };
+    const res = await analyzeArticle(articleId);
+    revalidatePath("/admin/articles");
+    return res;
+  } catch (err) {
+    return actionError(err, "Analiz yapılamadı.");
+  }
+}
+
+export async function rewriteArticleWithAIAction(articleId: string) {
+  try {
+    const session = await assertAdmin();
+    if (!Id.safeParse(articleId).success) return { success: false as const, error: "Geçersiz haber." };
+    const quota = await adminAiQuota("rewrite", session.user.id, 30);
+    if (quota) return { success: false as const, error: quota };
+    const res = await rewriteArticleWithAI(articleId);
+    revalidatePath("/admin/articles");
+    return res;
+  } catch (err) {
+    return actionError(err, "Yeniden yazım yapılamadı.");
+  }
+}
+
+export async function fixCopiedPassagesAction(articleId: string) {
+  try {
+    const session = await assertAdmin();
+    if (!Id.safeParse(articleId).success) return { success: false as const, error: "Geçersiz haber." };
+    const quota = await adminAiQuota("fixcopies", session.user.id, 30);
+    if (quota) return { success: false as const, error: quota };
     const { fixCopiedPassages } = await import("@/lib/analysis/fix-copies");
     const res = await fixCopiedPassages(articleId);
     revalidatePath("/admin/articles");
     return res;
-  } catch (error) {
-    return { success: false as const, error: error instanceof Error ? error.message : "Düzeltme yapılamadı." };
+  } catch (err) {
+    return actionError(err, "Düzeltme yapılamadı.");
   }
 }

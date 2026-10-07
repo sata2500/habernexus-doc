@@ -58,7 +58,15 @@ export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[
                   <select
                     value={u.role}
                     disabled={isMe}
-                    onChange={(e) => run(u.id, () => updateUserRole(u.id, e.target.value))}
+                    onChange={(e) => {
+                      const next = e.target.value;
+                      // Yönetici yetkisi tüm paneli açar: yanlışlıkla verilmesin
+                      if (next === "ADMIN" && !confirm(`"${u.name}" yönetici yapılsın mı? Tüm içerik, kullanıcı ve site ayarlarını yönetebilecek.`)) {
+                        e.target.value = u.role;
+                        return;
+                      }
+                      run(u.id, () => updateUserRole(u.id, next));
+                    }}
                     aria-label={`${u.name} rolü`}
                     className="h-9 rounded-xl border border-border bg-background px-2.5 text-xs font-semibold outline-none focus:border-primary-500 disabled:opacity-60"
                   >
@@ -66,10 +74,11 @@ export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[
                   </select>
                   {!u.emailVerified && (
                     <button
+                      type="button"
                       onClick={() => {
                         if (confirm(`"${u.email}" adresi doğrulanmış sayılsın mı? Bu kişi doğrulama e-postası olmadan şifresiyle giriş yapabilecek. Yalnızca adresin bu kişiye ait olduğundan eminseniz onaylayın.`)) run(u.id, () => markEmailVerified(u.id));
                       }}
-                      aria-label="E-postayı doğrulanmış say"
+                      aria-label={`${u.email} adresini doğrulanmış say`}
                       title="E-postayı doğrulanmış say"
                       className="h-9 w-9 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:bg-success/10 hover:text-success"
                     >
@@ -78,10 +87,11 @@ export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[
                   )}
                   {!isMe && (
                     <button
+                      type="button"
                       onClick={() => {
-                        if (confirm(`"${u.name}" silinsin mi? Bu işlem geri alınamaz; yorumları silinir, yazdığı haberler size (yöneticiye) devredilir.`)) run(u.id, () => deleteUser(u.id));
+                        if (confirm(`"${u.name}" silinsin mi? Bu işlem geri alınamaz; yorumları ve okuma geçmişi silinir; yazdığı haberler silinmez, ilk yönetici hesabına devredilir.`)) run(u.id, () => deleteUser(u.id));
                       }}
-                      aria-label="Kullanıcıyı sil"
+                      aria-label={`${u.name} kullanıcısını sil`}
                       title="Kullanıcıyı sil"
                       className="h-9 w-9 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:bg-error/10 hover:text-error"
                     >

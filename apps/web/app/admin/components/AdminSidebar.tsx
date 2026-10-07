@@ -73,15 +73,16 @@ export function AdminSidebar({ session }: SessionProps) {
     setIsOpen(false);
   }
 
-  // Çekmece açıkken arka plan kaydırmasını engelle
+  // Çekmece açıkken arka plan kaymaz; Esc ile kapanır
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
+    if (!isOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setIsOpen(false); };
+    window.addEventListener("keydown", onKey);
     return () => {
-      document.body.style.overflow = "unset";
+      document.body.style.overflow = previous;
+      window.removeEventListener("keydown", onKey);
     };
   }, [isOpen]);
 
@@ -156,9 +157,12 @@ export function AdminSidebar({ session }: SessionProps) {
       <div className="w-full md:hidden flex items-center justify-between pb-4 border-b border-border/40 mb-2">
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setIsOpen(true)}
-            className="h-9 w-9 rounded-lg border border-border flex items-center justify-center hover:bg-muted transition-colors outline-none cursor-pointer"
-            aria-label="Menüyü Aç"
+            className="h-9 w-9 rounded-lg border border-border flex items-center justify-center hover:bg-muted transition-colors cursor-pointer focus-ring"
+            aria-label="Menüyü aç"
+            aria-expanded={isOpen}
+            aria-controls="admin-drawer"
           >
             <Menu className="h-5 w-5 text-foreground" />
           </button>
@@ -167,7 +171,7 @@ export function AdminSidebar({ session }: SessionProps) {
               <ShieldCheck className="h-4 w-4 text-error" />
             </div>
             <div>
-              <h2 className="font-bold font-display text-sm leading-none text-foreground">Admin Paneli</h2>
+              <p className="font-bold font-display text-sm leading-none text-foreground">Admin Paneli</p>
               <span className="text-[10px] text-muted-foreground">{userName}</span>
             </div>
           </div>
@@ -184,8 +188,12 @@ export function AdminSidebar({ session }: SessionProps) {
           isOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
         )}
         onClick={() => setIsOpen(false)}
+        aria-hidden="true"
       />
       <div
+        id="admin-drawer"
+        inert={!isOpen}
+        aria-label="Yönetim menüsü"
         className={cn(
           "fixed inset-y-0 left-0 w-72 max-w-[85vw] bg-card border-r border-border p-4 z-50 flex flex-col transition-[transform,visibility] duration-300 ease-in-out md:hidden",
           // Kapalıyken gölge ekranın sol kenarına taşmasın, odak da gizli menüye gitmesin
@@ -200,14 +208,14 @@ export function AdminSidebar({ session }: SessionProps) {
                 <ShieldCheck className="h-4.5 w-4.5 text-error" />
               </div>
               <div>
-                <h3 className="font-bold font-display text-sm leading-none text-foreground">Admin Paneli</h3>
+                <p className="font-bold font-display text-sm leading-none text-foreground">Admin Paneli</p>
                 <span className="text-[10px] text-muted-foreground opacity-85">Süper Yönetici</span>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
               className="p-1.5 hover:bg-muted rounded-lg border border-transparent hover:border-border/40 transition-all cursor-pointer outline-none"
-              aria-label="Menüyü Kapat"
+              aria-label="Menüyü kapat"
             >
               <X className="h-4 w-4 text-foreground" />
             </button>
@@ -233,7 +241,7 @@ export function AdminSidebar({ session }: SessionProps) {
                 <ShieldCheck className="h-5 w-5 text-error" />
               </div>
               <div>
-                <h2 className="font-bold font-display leading-none text-foreground text-sm">Admin Paneli</h2>
+                <p className="font-bold font-display leading-none text-foreground text-sm">Admin Paneli</p>
                 <span className="text-xs text-muted-foreground opacity-75">Süper Yönetici</span>
               </div>
             </div>
