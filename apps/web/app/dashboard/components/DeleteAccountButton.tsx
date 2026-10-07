@@ -17,6 +17,7 @@ export function DeleteAccountButton() {
 
     if (result.success) {
       // Oturum sunucuda silindi; tam sayfa yenilemesiyle tarayıcıdaki oturum bilgisi de temizlenir
+      // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- istemci yönlendirmesi oturum önbelleğini temizlemez
       window.location.assign("/");
     } else {
       alert(result.error);

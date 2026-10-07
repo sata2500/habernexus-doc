@@ -5,7 +5,7 @@ import {
   AlertCircle, AlertTriangle, BookOpen, CheckCircle2, CircleAlert, ExternalLink, FileSearch, ListChecks, PenLine,
   RefreshCw, Search, Sparkles, TrendingUp, Wand2, X, XCircle,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, SITE_TIME_ZONE } from "@/lib/utils";
 import { analyzeArticleAction as adminAnalyze, fixCopiedPassagesAction as adminFix, rewriteArticleWithAIAction as adminRewrite } from "@/app/admin/actions";
 import { analyzeArticleAction as authorAnalyze, fixCopiedPassagesAction as authorFix, rewriteArticleWithAIAction as authorRewrite } from "@/app/author/actions";
 
@@ -233,7 +233,7 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
                   <p className="hidden sm:block text-sm">
                     <span className={cn("font-bold", tone(report.overall ?? 0))}>{verdict(report.overall ?? 0)}</span>
                     <span className="text-muted-foreground"> · Genel puan
-                      {report.analyzedAt && ` · ${new Date(report.analyzedAt).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}`}
+                      {report.analyzedAt && ` · ${new Date(report.analyzedAt).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short", timeZone: SITE_TIME_ZONE })}`}
                     </span>
                   </p>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-3">

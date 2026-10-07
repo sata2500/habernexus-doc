@@ -1,5 +1,6 @@
 "use client";
 
+import { SITE_TIME_ZONE } from "@/lib/utils";
 import { useState, useTransition } from "react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Trash2, ExternalLink, MessageSquare, Loader2 } from "lucide-react";
@@ -95,7 +96,7 @@ export function CommentTable({ comments, onDelete, isAdmin }: Props) {
                   <div className="flex items-center md:block">
                     <span className="md:hidden text-xs font-semibold text-muted-foreground mr-2">Tarih:</span>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(comment.createdAt).toLocaleDateString("tr-TR")}
+                      {new Date(comment.createdAt).toLocaleDateString("tr-TR", { timeZone: SITE_TIME_ZONE })}
                     </span>
                   </div>
                 </td>

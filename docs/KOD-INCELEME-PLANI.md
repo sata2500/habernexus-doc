@@ -70,10 +70,11 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 - [x] RSS akışları, site haritaları, e-posta gönderimi ve şablonları
 - [x] Ortak atomik kilit (`appCache.claim`): mükerrer bülten ve webhook işlemine karşı
 
-### Aşama 8 — Test, dokümantasyon ve kapanış
-- [ ] Sunucu işlemleri için yetki testleri, kritik akışlar için uçtan uca (Playwright) duman testleri
-- [ ] README ve geliştirici belgeleri
-- [ ] Son ölçüm ve özet rapor
+### Aşama 8 — Test, dokümantasyon ve kapanış ✅
+- [x] Uçtan uca (Playwright) duman testleri: telefon ve masaüstünde 14 senaryo (herkese açık site, giriş, okur, yazar, yönetici); sayfa/hidrasyon hatası testi düşürür. CI'da Postgres hizmetiyle ayrı iş olarak çalışır
+- [x] Yetki testleri: tüm sunucu işlemlerinin oturum/rol koruması birim testinde denetleniyor (Aşama 5–6'da genişletildi)
+- [x] README yeniden yazıldı: kurulum, ortam değişkenleri, komutlar, mimari ve kurallar, testler, migration, yayına alma
+- [x] Son ölçüm ve özet (aşağıda)
 
 ## Bulgular günlüğü
 
@@ -199,3 +200,39 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 | Hata | "Mesajınız alındı" yanıtı her göndericiye (kendi alan adımız, mailer-daemon, no-reply dahil) gidiyordu: e-posta döngüsü riski | Otomatik göndericiler atlanır; adres başına saatte bir |
 | Gizlilik | Yönetici bildirim e-postası koda gömülüydü | Doğrulanmış yönetici hesaplarından alınır |
 | Hata | Yalnızca HTML gövdeli e-postalar yönetimde etiket yığını olarak görünüyordu; okur yanıt verince talep "yanıt bekleniyor"da kalıyordu | Düz metne çevrilir; okur yanıtında talep yeniden "açık" |
+
+### Aşama 8
+| Tür | Bulgu | Durum |
+|---|---|---|
+| Hata | Yönetim panelinde (ayarlar → sistem, otomasyon; Karar Merkezi kaynakları; slayt; yorumlar; analiz penceresi) tarihler saat dilimi belirtilmeden biçimlendiriliyordu: sunucu (UTC) ile tarayıcının (TR) çıktısı farklı olunca React hidrasyon hatası (#418) veriyor, sayfa istemcide yeniden çiziliyordu. Uçtan uca testler yakaladı | Tümünde `timeZone: Europe/Istanbul` |
+| Hata | Site ayarları formunda tarayıcının yerleşik adres doğrulaması sunucunun alan adlı Türkçe hata mesajlarının önüne geçiyor, kaydetme sessizce engelleniyordu | Form `noValidate`; doğrulama sunucuda, hata alanın adıyla gösteriliyor |
+| Eksik | README varsayılan Next.js şablonuydu; ortam değişkenleri ve test yöntemi belgelenmemişti | Yeniden yazıldı |
+
+## Son ölçüm ve özet
+
+| Ölçüt | Başlangıç | Son |
+|---|---|---|
+| Tip / lint hatası | 0 / 0 | 0 / 0 |
+| `any`, uyarı bastırma | 9 | 9, hiç `any` yok (5'i yönetimde `<img>`, 4'ü gerekçeli kural istisnası) |
+| Lint uyarısı | — | 0 |
+| Hata ve 404 ekranları | Yok | Bölüm başına hata ekranı, gerçek 404 durum kodu |
+| Birim testleri | 41 | 54 |
+| Uçtan uca testler | Yok | 14 senaryo × 2 görünüm (27 koşu) |
+| CI | Tip + lint + test + audit | + üretim derlemesi + uçtan uca testler |
+| Ana sayfa JavaScript'i | 1.699 KB | 725 KB |
+| Kod | 244 dosya, ~27.000 satır | 279 dosya, ~28.300 satır (testler ve bölünen bileşenler dahil) |
+
+Dokuz aşamada (`Aşama 0`–`Aşama 8` commit'leri) `apps/web`'in tamamı okundu; ~180 dosyada değişiklik yapıldı.
+Öne çıkanlar:
+
+- **Güvenlik:** tüm yönetici işlemleri tek korumada (`adminOnly`); RSS'te XML enjeksiyonu, açık yönlendirme
+  (`/\`), kötüye kullanılabilir `/api/og` ucu, HTML süzgecindeki boşluklar kapatıldı; giriş hız sınırı Redis'e
+  taşındı; CSP sıkılaştırıldı; rol düşürülünce oturumlar kapanıyor.
+- **Veri bütünlüğü:** bülten ve webhook'ta atomik kilit (mükerrer gönderim yok); öneri kullanımı, yazar kaydı
+  (eşzamanlı düzenleme koruması) ve trend yazımı tek işlemde; kalite düzeltmesi iyileşme yoksa geri alınıyor.
+- **Arayüz ve erişilebilirlik:** framer-motion kaldırıldı, menü/çekmece/pencerelerde klavye ve odak yönetimi,
+  tek h1, içeriğe geç bağlantısı, etiketli form alanları, uydurma iletişim bilgileri kaldırıldı.
+- **Bakım:** ortak `ActionResult`/`actionError` düzeni, tema tek modülde, büyük formlar bölündü, ölü kod silindi.
+
+Ertelenenler: TypeScript 7 ve ESLint 10 (eklenti desteği bekleniyor), `use cache` geçişi, çerez/KVKK
+metinlerinin hukuki gözden geçirmesi (sizin kararınızla).

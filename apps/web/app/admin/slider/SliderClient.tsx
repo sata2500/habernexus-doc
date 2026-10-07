@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowDown, ArrowUp, ExternalLink, Images, Loader2, Newspaper, Pencil, Plus, Search, Trash2, X } from "lucide-react";
 import { ImageUploader } from "@/components/ui/ImageUploader";
-import { cn } from "@/lib/utils";
+import { cn, SITE_TIME_ZONE } from "@/lib/utils";
 import {
   deleteSlide, reorderSlides, saveSlide, searchArticlesForSlide, setSlideActive, updateSliderSettings,
 } from "@/app/actions/slider";
@@ -42,9 +42,9 @@ function toLocalInput(d: Date | null) {
 
 function slideState(s: SlideRow, now: number) {
   if (!s.isActive) return { label: "Gizli", cls: "bg-muted text-muted-foreground" };
-  if (s.startTime && new Date(s.startTime).getTime() > now) return { label: `Planlandı · ${new Date(s.startTime).toLocaleDateString("tr-TR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}`, cls: "bg-primary-500/10 text-primary-500" };
+  if (s.startTime && new Date(s.startTime).getTime() > now) return { label: `Planlandı · ${new Date(s.startTime).toLocaleDateString("tr-TR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: SITE_TIME_ZONE })}`, cls: "bg-primary-500/10 text-primary-500" };
   if (s.endTime && new Date(s.endTime).getTime() <= now) return { label: "Süresi doldu", cls: "bg-warning/10 text-warning" };
-  return { label: s.endTime ? `Yayında · ${new Date(s.endTime).toLocaleDateString("tr-TR", { day: "numeric", month: "short" })} tarihine kadar` : "Yayında", cls: "bg-success/10 text-success" };
+  return { label: s.endTime ? `Yayında · ${new Date(s.endTime).toLocaleDateString("tr-TR", { day: "numeric", month: "short", timeZone: SITE_TIME_ZONE })} tarihine kadar` : "Yayında", cls: "bg-success/10 text-success" };
 }
 
 export function SliderClient({ slider }: { slider: SliderData }) {

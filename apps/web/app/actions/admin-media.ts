@@ -4,7 +4,7 @@ import { del } from "@vercel/blob";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
-import { requireRole, adminOnly } from "@/lib/server/authz";
+import { adminOnly } from "@/lib/server/authz";
 import { invalidateArticles } from "@/lib/server/article-cache";
 
 const IdsSchema = z.array(z.string().min(1).max(100)).min(1).max(200);

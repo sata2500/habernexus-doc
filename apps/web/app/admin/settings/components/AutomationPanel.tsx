@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { AlertTriangle, CheckCircle2, Clock, Loader2, Play, Save, XCircle } from "lucide-react";
-import { cn, formatRelativeTime } from "@/lib/utils";
+import { cn, formatRelativeTime, SITE_TIME_ZONE } from "@/lib/utils";
 import type { AutomationJob, JobStatus } from "@/lib/server/automation";
 import { configureJobAction, runJobNowAction, saveContentRules, type ContentRules } from "../automation-actions";
 
@@ -72,7 +72,7 @@ function StatusLine({ s }: { s: JobStatus }) {
           {s.lastResult === "success" && <CheckCircle2 className="h-3.5 w-3.5 text-success" aria-label="başarılı" />}
         </span>
       )}
-      {s.nextRunAt && <span>· sonraki: {new Date(s.nextRunAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}</span>}
+      {s.nextRunAt && <span>· sonraki: {new Date(s.nextRunAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", timeZone: SITE_TIME_ZONE })}</span>}
     </span>
   );
 }

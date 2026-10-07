@@ -59,3 +59,7 @@ experiment_results.md
 # Görsel üreten rota klasörü (dosya değil): yayıncı logosu
 !apps/web/app/logo.png/
 *.webp
+
+# Uçtan uca test çıktıları
+apps/web/playwright-report/
+apps/web/test-results/

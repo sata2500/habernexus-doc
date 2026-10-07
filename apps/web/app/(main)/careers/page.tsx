@@ -8,9 +8,6 @@ export const revalidate = 86400;
 
 export async function generateMetadata() {
   const page = await getStaticPageBySlug("careers");
-  // Başvuru adresi admin panelinden (Sayfalar → Kariyer) girilir; yoksa başvuru kutusu gösterilmez
-  const extra = (page?.extraData && typeof page.extraData === "object" ? page.extraData : {}) as Record<string, unknown>;
-  const applyEmail = typeof extra.email === "string" && extra.email.trim() ? extra.email.trim() : null;
   return {
     alternates: { canonical: "/careers" },
     title: page?.title || "Kariyer",

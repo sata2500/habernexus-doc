@@ -17,7 +17,9 @@
     "db:seed": "prisma db seed",
     "db:reset": "prisma migrate reset",
     "db:studio": "prisma studio",
-    "admin:make": "tsx scripts/make-admin.ts"
+    "admin:make": "tsx scripts/make-admin.ts",
+    "test:e2e": "playwright test",
+    "e2e:seed": "NODE_OPTIONS=--conditions=react-server node ../../node_modules/tsx/dist/cli.mjs e2e/seed.ts"
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
@@ -58,6 +60,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "@prisma/config": "^7.10.0",
     "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^22",

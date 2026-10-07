@@ -84,7 +84,7 @@ export function SiteSettingsForm({ initialSettings }: { initialSettings: Setting
   const logoLetter = form.logoText?.charAt(0)?.toUpperCase() || "N";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit} noValidate className="space-y-8">
       <style dangerouslySetInnerHTML={{ __html: previewCss }} />
 
       <div className="bg-muted/30 border border-border rounded-2xl p-5 space-y-3" aria-label="Canlı önizleme">

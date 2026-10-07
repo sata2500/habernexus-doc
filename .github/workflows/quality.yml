@@ -65,3 +65,72 @@ jobs:
         working-directory: .
         continue-on-error: true
         run: npm audit --audit-level=high
+
+  # Uçtan uca duman testleri: boş bir Postgres'e göçler + örnek veri, üretim derlemesi, Playwright (Chromium)
+  web-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://postgres:postgres@localhost:5432/e2e
+      # Yalnızca test için sahte değer; gerçek anahtar Vercel ortamındadır
+      BETTER_AUTH_SECRET: ci-e2e-only-not-a-real-secret-0000000000
+      BETTER_AUTH_URL: http://localhost:3000
+      NEXT_PUBLIC_APP_URL: http://localhost:3000
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install dependencies
+        working-directory: .
+        run: npm ci
+
+      - name: Prepare database
+        working-directory: apps/web
+        run: |
+          npm run prisma:generate
+          npx prisma migrate deploy
+          npx tsx prisma/seed.ts
+          npm run e2e:seed
+
+      - name: Production build
+        working-directory: apps/web
+        env:
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run build
+
+      - name: Install Playwright Chromium
+        working-directory: apps/web
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        working-directory: apps/web
+        run: npm run test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report
+          retention-days: 7

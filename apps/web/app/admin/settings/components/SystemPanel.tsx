@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import {
   AlertTriangle, CheckCircle2, Database, Globe, Loader2, PlayCircle, RefreshCw, XCircle, CircleDashed, Search,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, SITE_TIME_ZONE } from "@/lib/utils";
 import { applyMigrationsAction, getMigrationStatusAction, runSeoMaintenanceAction, testIndexingAction } from "../system-actions";
 import type { MigrationRunResult, MigrationStatus } from "@/lib/server/db-migrations";
 import type { IndexingLogEntry } from "@/lib/google-indexing";
@@ -90,7 +90,7 @@ function GoogleIndexing({ configured, log }: Props["indexing"]) {
                     {l.type === "URL_DELETED" ? "Dizinden kaldır" : "Dizine ekle"}
                   </span>
                   <span className="min-w-0 flex-1 truncate text-muted-foreground" title={l.url}>{l.url.replace(/^https?:\/\/[^/]+/, "")}</span>
-                  <span className="text-muted-foreground tabular-nums">{new Date(l.at).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" })}</span>
+                  <span className="text-muted-foreground tabular-nums">{new Date(l.at).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short", timeZone: SITE_TIME_ZONE })}</span>
                   {l.error && <span className="w-full text-error">{l.error}</span>}
                 </li>
               ))}
@@ -251,7 +251,7 @@ export function SystemPanel({ initialStatus, dbError, services, indexing }: Prop
                       <p className="text-sm font-medium text-foreground first-letter:uppercase truncate">{title}</p>
                       <p className="text-xs text-muted-foreground">
                         {date}
-                        {row.appliedAt && ` · uygulandı ${new Date(row.appliedAt).toLocaleString("tr-TR")}`}
+                        {row.appliedAt && ` · uygulandı ${new Date(row.appliedAt).toLocaleString("tr-TR", { timeZone: SITE_TIME_ZONE })}`}
                         {row.error && <span className="block text-error break-words">{row.error}</span>}
                       </p>
                     </div>

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireRole, getSafeActionError, adminOnly } from "@/lib/server/authz";
+import { getSafeActionError, adminOnly } from "@/lib/server/authz";
 import { applyPendingMigrations, getMigrationStatus } from "@/lib/server/db-migrations";
 import { invalidateArticle } from "@/lib/server/article-cache";
 

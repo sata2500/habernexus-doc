@@ -1,5 +1,6 @@
 "use client";
 
+import { SITE_TIME_ZONE } from "@/lib/utils";
 import { useState, useMemo, useTransition } from "react";
 import { Plus, Trash2, RefreshCw, Power, ExternalLink, Loader2, Rss, Search, Filter, CheckSquare, Square, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
@@ -367,7 +368,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
                   )}
                   {source.lastFetchedAt && !source.fetchError && (
                     <p className="text-[10px] text-muted-foreground mt-0.5">
-                      Son tarama: {new Date(source.lastFetchedAt).toLocaleString("tr-TR")}
+                      Son tarama: {new Date(source.lastFetchedAt).toLocaleString("tr-TR", { timeZone: SITE_TIME_ZONE })}
                     </p>
                   )}
                 </div>
