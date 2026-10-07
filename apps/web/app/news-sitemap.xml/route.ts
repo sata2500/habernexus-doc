@@ -46,7 +46,7 @@ export async function GET() {
     <loc>${BASE_URL}/article/${article.slug}</loc>
     <news:news>
       <news:publication>
-        <news:name>${SITE_NAME}</news:name>
+        <news:name>${SITE_NAME.replace(/&/g, "&amp;").replace(/</g, "&lt;")}</news:name>
         <news:language>${article.lang === "en" ? "en" : "tr"}</news:language>
       </news:publication>
       <news:publication_date>${article.publishedAt?.toISOString() || new Date().toISOString()}</news:publication_date>
@@ -59,7 +59,7 @@ export async function GET() {
 
     return new Response(xml, {
       headers: {
-        "Content-Type": "application/xml",
+        "Content-Type": "application/xml; charset=utf-8",
         "Cache-Control": "public, s-maxage=1200, stale-while-revalidate=600",
       },
     });

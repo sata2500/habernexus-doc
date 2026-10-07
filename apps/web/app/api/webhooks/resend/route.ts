@@ -1,30 +1,20 @@
-import { getAppUrl } from "@/lib/utils";
+import * as React from "react";
+import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 import { Webhook } from "svix";
 import { prisma } from "@/lib/prisma";
-import { NextRequest, NextResponse } from "next/server";
+import { appCache } from "@/lib/cache";
 import { sendEmail } from "@/lib/mail";
+import { getAppUrl } from "@/lib/utils";
+import { decodeEntities } from "@/lib/news/text";
+import { checkRateLimitAsync } from "@/lib/server/rate-limit";
 import { SupportReceiptTemplate } from "@/components/mail/SupportReceiptTemplate";
 import { AdminNotificationTemplate } from "@/components/mail/AdminNotificationTemplate";
-import * as React from "react";
 
 // İstemci ilk kullanımda oluşturulur: dosya yüklenirken oluşturmak anahtar yoksa derlemeyi çökertiyordu
 let resendClient: Resend | null = null;
 const getResend = () => (resendClient ??= new Resend(process.env.RESEND_API_KEY));
 
-/**
- * E-posta ekinin metadata'sını temsil eden tip.
- */
-interface AttachmentMetadata {
-  name: string;
-  contentType: string;
-  size: number;
-  status: "METADATA_ONLY";
-}
-
-/**
- * Resend API'sinden gelen ham ek nesnesi.
- */
 interface RawAttachment {
   name?: string;
   filename?: string;
@@ -32,142 +22,148 @@ interface RawAttachment {
   size?: number;
 }
 
+const MAX_CONTENT = 50_000;
+
+/** Yalnızca HTML gövdeli e-postalar yönetimde etiket yığını olarak görünmesin */
+function htmlToText(html: string) {
+  return decodeEntities(
+    html
+      .replace(/<(script|style|head)\b[\s\S]*?<\/\1>/gi, " ")
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/(p|div|li|tr|h[1-6])>/gi, "\n")
+      .replace(/<[^>]*>/g, " "),
+  )
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n\s*\n\s*/g, "\n\n")
+    .trim();
+}
+
 /**
- * Resend Inbound Email Webhook Handler
- * support@habernexus.com gibi adreslere gelen mailleri yakalar.
+ * Otomatik yanıt verilmeyecek göndericiler: kendi alan adımız (döngü), sistem/teslim
+ * edilemedi bildirimleri ve "yanıt vermeyin" adresleri.
+ */
+function isAutomatedSender(email: string) {
+  const own = (() => { try { return new URL(getAppUrl()).hostname.replace(/^www\./, ""); } catch { return "habernexus.com"; } })();
+  const [local = "", domain = ""] = email.toLowerCase().split("@");
+  return domain === own || /^(mailer-daemon|postmaster|no-?reply|do-?not-?reply|bounce|notifications?)\b/.test(local);
+}
+
+/**
+ * Resend gelen e-posta webhook'u: support@ adresine gelen mesajları destek taleplerine dönüştürür.
+ * İmza (svix) doğrulanır; aynı olay yeniden gönderilirse bir kez işlenir.
  */
 export async function POST(req: NextRequest) {
-  console.log("Resend Webhook tetiklendi...");
-  const payload = await req.text();
-  const svixHeaders = {
-    "svix-id": req.headers.get("svix-id") || "",
-    "svix-timestamp": req.headers.get("svix-timestamp") || "",
-    "svix-signature": req.headers.get("svix-signature") || "",
-  };
-
   const secret = process.env.RESEND_WEBHOOK_SECRET;
-
   if (!secret) {
-    console.error("RESEND_WEBHOOK_SECRET eksik!");
+    console.error("[Resend Webhook] RESEND_WEBHOOK_SECRET tanımlı değil.");
     return NextResponse.json({ error: "Configuration error" }, { status: 500 });
   }
 
-  const wh = new Webhook(secret);
-  let event: Record<string, unknown>;
-
+  const payload = await req.text();
+  const svixId = req.headers.get("svix-id") || "";
+  let event: { type?: string; data?: { email_id?: string } };
   try {
     // svix v2: verify() yalnızca imzayı doğrular, gövdeyi parse etmez
-    wh.verify(payload, svixHeaders);
-    event = JSON.parse(payload) as Record<string, unknown>;
+    new Webhook(secret).verify(payload, {
+      "svix-id": svixId,
+      "svix-timestamp": req.headers.get("svix-timestamp") || "",
+      "svix-signature": req.headers.get("svix-signature") || "",
+    });
+    event = JSON.parse(payload);
   } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
-  if (event.type === "email.received") {
-    const eventData = event.data as Record<string, unknown>;
-    const emailId = eventData.email_id as string;
+  if (event.type !== "email.received" || typeof event.data?.email_id !== "string") {
+    return NextResponse.json({ received: true });
+  }
 
-    try {
-      const { data: fullEmail, error: fetchError } =
-        await getResend().emails.receiving.get(emailId);
+  // Yinelenen teslimat (Resend yeniden denemesi) aynı mesajı ikinci kez kaydetmesin
+  const dedupeKey = `webhook:resend:${svixId || event.data.email_id}`;
+  if (!(await appCache.claim(dedupeKey, 3 * 24 * 3600))) return NextResponse.json({ received: true, duplicate: true });
 
-      if (fetchError || !fullEmail) {
-        console.error("Email fetch error:", fetchError);
-        return NextResponse.json({ error: "Failed to fetch email" }, { status: 500 });
-      }
+  try {
+    const { data: fullEmail, error: fetchError } = await getResend().emails.receiving.get(event.data.email_id);
+    if (fetchError || !fullEmail) {
+      console.error("[Resend Webhook] E-posta alınamadı:", fetchError);
+      await appCache.invalidate(dedupeKey); // Resend yeniden denediğinde tekrar işlenebilsin
+      return NextResponse.json({ error: "Failed to fetch email" }, { status: 500 });
+    }
 
-      const from = fullEmail.from || "";
-      const subject = fullEmail.subject || "";
-      const text = fullEmail.text || "";
-      const html = fullEmail.html || "";
-      const rawAttachmentsField = (fullEmail as unknown as Record<string, unknown>).attachments;
-      const content = text || html || "(İçerik yok)";
-      const emailMatch = from.match(/<([^>]+)>/) || [null, from];
-      const userEmail = (emailMatch[1] || from).trim();
+    const from = fullEmail.from || "";
+    const userEmail = ((from.match(/<([^>]+)>/)?.[1] ?? from).trim()).toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userEmail)) {
+      console.warn("[Resend Webhook] Geçersiz gönderici atlandı:", from.slice(0, 100));
+      return NextResponse.json({ received: true });
+    }
+    const subject = (fullEmail.subject || "").replace(/[\r\n]+/g, " ").trim().slice(0, 300);
+    const text = (fullEmail.text || "").trim() || htmlToText(fullEmail.html || "");
+    const content = (text || "(İçerik yok)").slice(0, MAX_CONTENT);
 
-      // Bilet bul veya oluştur
-      let ticket = await prisma.supportTicket.findFirst({
+    const rawAttachmentsField = (fullEmail as unknown as Record<string, unknown>).attachments;
+    const attachments = (Array.isArray(rawAttachmentsField) ? rawAttachmentsField as RawAttachment[] : []).map((att) => ({
+      name: String(att.name || att.filename || "dosya").slice(0, 200),
+      contentType: String(att.content_type || "application/octet-stream").slice(0, 100),
+      size: Number(att.size) || 0,
+      status: "METADATA_ONLY" as const,
+    }));
+
+    // Açık talebe eklenir ya da yeni talep açılır (tek işlemde)
+    const { ticket, isNewTicket } = await prisma.$transaction(async (tx) => {
+      const open = await tx.supportTicket.findFirst({
         where: { userEmail, status: { in: ["OPEN", "PENDING"] } },
         orderBy: { updatedAt: "desc" },
       });
-
-      // Yeni bilet mi açılıyor? DB öncesi belirle.
-      const isNewTicket = !ticket;
-
-      if (!ticket) {
-        ticket = await prisma.supportTicket.create({
-          data: {
-            subject: subject || "Konusuz Mesaj",
-            userEmail,
-            status: "OPEN",
-            priority: "NORMAL",
-          },
-        });
-      }
-
-      // Ekleri metadata olarak kaydet
-      const rawAttachments = (Array.isArray(rawAttachmentsField) ? rawAttachmentsField : []) as RawAttachment[];
-      const attachmentsMetadata: AttachmentMetadata[] = rawAttachments.map((att) => ({
-        name: att.name || att.filename || "dosya",
-        contentType: att.content_type || "application/octet-stream",
-        size: att.size || 0,
-        status: "METADATA_ONLY",
-      }));
-
-      // Mesajı kaydet
-      await prisma.supportMessage.create({
+      const t = open ?? await tx.supportTicket.create({
+        data: { subject: subject || "Konusuz mesaj", userEmail, status: "OPEN", priority: "NORMAL" },
+      });
+      await tx.supportMessage.create({
         data: {
-          ticketId: ticket.id,
+          ticketId: t.id,
           sender: userEmail,
           direction: "INBOUND",
-          content: content,
-          attachments: attachmentsMetadata.length > 0
-            ? JSON.parse(JSON.stringify(attachmentsMetadata))
-            : undefined,
+          content,
+          attachments: attachments.length ? JSON.parse(JSON.stringify(attachments)) : undefined,
         },
       });
+      // Okur yanıt verdiyse talep yeniden "açık" olur
+      await tx.supportTicket.update({ where: { id: t.id }, data: { status: "OPEN", updatedAt: new Date() } });
+      return { ticket: t, isNewTicket: !open };
+    });
 
-      // Bileti güncelle
-      await prisma.supportTicket.update({
-        where: { id: ticket.id },
-        data: { updatedAt: new Date() },
-      });
-
-      // Bildirimler — try-catch ayrıldı (ana işlemi etkilemez)
-      try {
-        const appUrl = getAppUrl();
-
-        if (isNewTicket) {
+    // Bildirimler ana işlemi etkilemez
+    try {
+      // Alındı bildirimi: yalnızca yeni talepte, otomatik göndericilere değil, adres başına saatte bir
+      if (isNewTicket && !isAutomatedSender(userEmail)) {
+        const rate = await checkRateLimitAsync(`support-receipt:${userEmail}`, 1, 60 * 60 * 1000);
+        if (rate.allowed) {
           await sendEmail({
             to: userEmail,
             from: "Haber Nexus Destek <support@habernexus.com>",
-            subject: "Mesajınız Alındı - #" + ticket.id,
-            react: React.createElement(SupportReceiptTemplate, {
-              ticketId: ticket.id,
-              subject,
-            }),
+            subject: `Mesajınız alındı - #${ticket.id}`,
+            react: React.createElement(SupportReceiptTemplate, { ticketId: ticket.id, subject }),
           });
         }
-
-        await sendEmail({
-          to: "salihtanriseven25@gmail.com",
-          from: "Haber Nexus Sistem <system@habernexus.com>",
-          subject: "Yeni Destek Mesajı: " + (subject || "Konusuz"),
-          react: React.createElement(AdminNotificationTemplate, {
-            ticketId: ticket.id,
-            subject,
-            userEmail,
-            messageText: text,
-            appUrl,
-          }),
-        });
-      } catch (mailErr) {
-        console.error("Notification Error:", mailErr);
       }
-    } catch (error) {
-      console.error("Webhook Processing Error:", error);
-      return NextResponse.json({ error: "Internal error" }, { status: 500 });
+
+      // Yöneticilere bildirim: adres koda gömülmez, yönetici hesaplarından alınır
+      const admins = await prisma.user.findMany({ where: { role: "ADMIN", emailVerified: true }, select: { email: true }, take: 5 });
+      const appUrl = getAppUrl();
+      for (const admin of admins) {
+        await sendEmail({
+          to: admin.email,
+          from: "Haber Nexus Sistem <system@habernexus.com>",
+          subject: `Yeni destek mesajı: ${subject || "Konusuz"}`,
+          react: React.createElement(AdminNotificationTemplate, { ticketId: ticket.id, subject, userEmail, messageText: content.slice(0, 2000), appUrl }),
+        });
+      }
+    } catch (mailErr) {
+      console.error("[Resend Webhook] Bildirim hatası:", mailErr);
     }
+  } catch (error) {
+    console.error("[Resend Webhook] İşleme hatası:", error);
+    await appCache.invalidate(dedupeKey);
+    return NextResponse.json({ error: "Internal error" }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });

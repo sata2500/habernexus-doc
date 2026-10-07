@@ -7,6 +7,9 @@ import { newsletterDateLabel, newsletterLink, newsletterSubject, newsletterText,
 import { appCache } from "@/lib/cache";
 import { verifyQStashRequest } from "@/lib/server/qstash-verify";
 
+// Büyük abone listelerinde toplu gönderim (100'lük partiler) zaman alabilir
+export const maxDuration = 300;
+
 /**
  * Dinamik Saatli Haber Bülteni Otomasyonu (QStash Webhook)
  */
@@ -51,11 +54,10 @@ export async function POST(req: NextRequest) {
 
     // Aynı saat diliminin bülteni iki kez gönderilmesin (QStash yeniden denemesi vb.)
     const dayKey = new Date().toLocaleDateString("sv-SE", { timeZone: "Europe/Istanbul" });
-    const guardKey = `newsletter:sent:${dayKey}:${currentHourString}`;
-    if (await appCache.get(guardKey)) {
+    // Tek adımlık kilit: eşzamanlı iki teslimattan yalnızca biri gönderir
+    if (!(await appCache.claim(`newsletter:sent:${dayKey}:${currentHourString}`, 3 * 3600))) {
       return NextResponse.json({ message: `Newsletter for ${dayKey} ${currentHourString} already sent. Skipping.` });
     }
-    await appCache.set(guardKey, true, 3 * 3600);
 
     // 4. Alıcıları birleştir: aynı adres hem kayıtlı kullanıcı hem misafir aboneyse kullanıcı kaydı esas alınır.
     // Her alıcıya kendi tek tıklık abonelikten çıkış bağlantısı verilir (kayıtlı kullanıcılar için oturum gerekmez).

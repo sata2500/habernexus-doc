@@ -141,6 +141,32 @@ class DistributedCache {
     return freshData;
   }
 
+  /**
+   * Anahtar yoksa yazar ve true döner; varsa dokunmaz ve false döner (Redis SET NX, tek adım).
+   * Mükerrer işlem kilidi için: aynı anda gelen iki istekten yalnızca biri true alır.
+   */
+  async claim(key: string, ttlSeconds: number): Promise<boolean> {
+    if (this.isRedisConfigured()) {
+      try {
+        const res = await fetch(`${this.redisUrl}/set/cache:${key}/1/EX/${ttlSeconds}/NX`, {
+          headers: { Authorization: `Bearer ${this.redisToken}` },
+          signal: AbortSignal.timeout(1500),
+        });
+        if (res.ok) return ((await res.json()) as { result: string | null }).result === "OK";
+      } catch {
+        // Redis'e ulaşılamadı: bellek içi kilide dönülür
+      }
+    }
+    // Eşzamanlı çağrılarda da tek sonuç: kontrol ve yazma arada bekleme olmadan yapılır
+    const now = Date.now();
+    const until = this.claims.get(key);
+    if (until && until > now) return false;
+    this.claims.set(key, now + ttlSeconds * 1000);
+    return true;
+  }
+
+  private claims = new Map<string, number>();
+
   async invalidate(key: string): Promise<void> {
     this.memory.invalidate(key);
 

@@ -65,9 +65,10 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 - [x] 890 satırlık site ayarları formu bölündü (form ~200 satır + tema bölümü + ortak alanlar); tema CSS'i tek modülde (`lib/theme.ts`)
 - [x] Tüm değişiklik yapan yönetici işlemleri ortak `adminOnly()` korumasıyla; hatalar istisna yerine sonuç olarak döner
 
-### Aşama 7 — Arka plan işleri, API ve e-posta
-- [ ] Cron uç noktaları, QStash, webhooks, yükleme/medya API'leri
-- [ ] E-posta şablonları ve gönderim
+### Aşama 7 — Arka plan işleri, API ve e-posta ✅
+- [x] Cron uç noktaları, QStash imza doğrulaması, Resend webhook'u, yükleme/medya, özet, seslendirme, okuma kaydı, akış API'leri
+- [x] RSS akışları, site haritaları, e-posta gönderimi ve şablonları
+- [x] Ortak atomik kilit (`appCache.claim`): mükerrer bülten ve webhook işlemine karşı
 
 ### Aşama 8 — Test, dokümantasyon ve kapanış
 - [ ] Sunucu işlemleri için yetki testleri, kritik akışlar için uçtan uca (Playwright) duman testleri
@@ -186,3 +187,15 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 | Hata | RSS kaynağı eklenince listede görünmüyordu ("sayfayı yenileyin"); açma/kapama ve silme hataları yok sayılıyordu | Liste sunucuyla eşitlenir; hatalar gösterilir |
 | Eksik | Tema renkleri yalnızca şablon/otomatik paletle değiştirilebiliyordu; ayarlar sayfasından kaydetmeden çıkınca uyarı yoktu | Renkleri tek tek düzenleme; kaydedilmemiş değişiklik uyarısı ve "Vazgeç" |
 | Erişilebilirlik | Ayar alanlarının etiketleri bağlı değildi; mobil yönetim menüsü Esc ile kapanmıyordu | Düzeltildi |
+
+### Aşama 7
+| Tür | Bulgu | Durum |
+|---|---|---|
+| Güvenlik | RSS adresindeki dil ve kategori değeri XML'e kaçışsız yazılıyordu (`/rss/<...>` ile akışa içerik eklenebiliyordu); haber metni süzülmeden veriliyordu | Doğrulama + kaçış; geçersizse 404; metin süzülüyor |
+| Hata | RSS'teki site içi bağlantılar göreliydi (okuyucularda çalışmıyordu); "]]>" içeren metin XML'i bozabiliyordu; kategori akışlarında "self" adresi yanlıştı | Tam adresler, güvenli CDATA, doğru self adresi, kategori adı başlıkta |
+| Güvenlik | Kullanılmayan `/api/og` ucu herkesin istediği yazıyla site logolu görsel üretmesine izin veriyordu | Kaldırıldı |
+| Hata | Bülten mükerrer gönderim koruması "oku-sonra-yaz" idi; QStash eşzamanlı iki teslimat yaparsa herkese bülten iki kez gidebiliyordu | Redis `SET NX` ile tek adımlık kilit; bülten işine 300 sn süre |
+| Hata | Resend webhook'u yeniden denendiğinde aynı destek mesajı iki kez kaydediliyordu | Olay kimliğiyle tek kez işleme |
+| Hata | "Mesajınız alındı" yanıtı her göndericiye (kendi alan adımız, mailer-daemon, no-reply dahil) gidiyordu: e-posta döngüsü riski | Otomatik göndericiler atlanır; adres başına saatte bir |
+| Gizlilik | Yönetici bildirim e-postası koda gömülüydü | Doğrulanmış yönetici hesaplarından alınır |
+| Hata | Yalnızca HTML gövdeli e-postalar yönetimde etiket yığını olarak görünüyordu; okur yanıt verince talep "yanıt bekleniyor"da kalıyordu | Düz metne çevrilir; okur yanıtında talep yeniden "açık" |

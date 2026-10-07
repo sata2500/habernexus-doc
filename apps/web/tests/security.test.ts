@@ -93,3 +93,10 @@ test("giriş sonrası yönlendirme yalnızca site içi yollara izin verir", asyn
   assert.equal(safeCallbackPath("/article/x#yorumlar"), "/article/x#yorumlar");
   for (const bad of ["//evil.com", "/\\evil.com", "https://evil.com", "/a\nb", null]) assert.equal(safeCallbackPath(bad), "/");
 });
+
+test("tek adımlık kilit aynı anahtarı yalnızca bir kez verir (bellek içi)", async () => {
+  const { appCache } = await import("../lib/cache");
+  const key = `test-claim-${Date.now()}`;
+  const results = await Promise.all([appCache.claim(key, 60), appCache.claim(key, 60)]);
+  assert.equal(results.filter(Boolean).length, 1);
+});
