@@ -1,62 +1,69 @@
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { requireSession } from "@/lib/server/authz";
 import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { NewsletterToggle } from "../components/NewsletterToggle";
 import { DeleteAccountButton } from "../components/DeleteAccountButton";
-import { redirect } from "next/navigation";
+import { ChangePasswordForm } from "../components/ChangePasswordForm";
+
+export const metadata = { title: "Tercihler" };
 
 export default async function SettingsPage() {
-  const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
+  const session = await requireSession().catch(() => null);
+  if (!session) redirect("/login?callbackUrl=/dashboard/settings");
 
-  if (!session?.user) {
-    redirect("/login");
-  }
-
-  // Fetch current database state to ensure accuracy
-  const user = await prisma.user.findUnique({
-    where: { id: session.user.id },
-    select: { newsletterSubscribed: true, newsletterTime: true }
-  });
-
-  const isSubscribed = user?.newsletterSubscribed ?? true;
-  const newsletterTime = user?.newsletterTime ?? "08:00";
+  const [user, credential] = await Promise.all([
+    prisma.user.findUnique({ where: { id: session.user.id }, select: { newsletterSubscribed: true, newsletterTime: true } }),
+    // Şifre değiştirme yalnızca e-posta/şifre ile kayıtlı hesaplarda (Google hesaplarının şifresi yok)
+    prisma.account.findFirst({ where: { userId: session.user.id, providerId: "credential" }, select: { id: true } }),
+  ]);
 
   return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+    <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold font-(family-name:--font-outfit)">Tercihler</h1>
-        <p className="text-muted-foreground text-sm">Haber Nexus okuma deneyiminizi kişiselleştirin.</p>
+        <h1 className="text-2xl font-bold font-display">Tercihler</h1>
+        <p className="text-muted-foreground text-sm">Görünüm, bülten ve hesap ayarlarınız.</p>
       </div>
 
       <Card className="p-6 md:p-8">
         <div className="space-y-8">
-
-          {/* Theme Selection */}
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-6 border-b border-border">
+          <section className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-6 border-b border-border">
             <div>
-              <h3 className="font-semibold text-foreground">Tema Seçimi</h3>
-              <p className="text-sm text-muted-foreground mt-1">Uygulama arayüzünün karanlık veya aydınlık olmasını seçin.</p>
+              <h2 className="font-semibold text-foreground">Tema</h2>
+              <p className="text-sm text-muted-foreground mt-1">Açık, koyu ya da cihazınızın ayarına göre.</p>
             </div>
             <div className="w-full lg:w-auto lg:min-w-72">
               <ThemeToggle variant="segmented" />
             </div>
-          </div>
+          </section>
 
-          {/* Newsletter Toggle */}
-          <NewsletterToggle initialSubscribed={isSubscribed} initialTime={newsletterTime} />
+          {/* Bülten yalnızca açık onayla: kayıt yoksa kapalı sayılır */}
+          <NewsletterToggle initialSubscribed={user?.newsletterSubscribed ?? false} initialTime={user?.newsletterTime ?? "08:00"} />
 
-          {/* Danger Zone */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-             <div>
-              <h3 className="font-semibold text-error ">Hesabı Sil</h3>
-              <p className="text-sm text-muted-foreground mt-1">Tüm verilerinizi, yorumlarınızı ve kaydedilenlerinizi kalıcı olarak siler.</p>
+          <section className="flex flex-col sm:flex-row items-start justify-between gap-4 pb-6 border-b border-border">
+            <div>
+              <h2 className="font-semibold text-foreground">Şifre</h2>
+              <p className="text-sm text-muted-foreground mt-1 max-w-xs">
+                {credential
+                  ? "Şifrenizi değiştirdiğinizde diğer cihazlardaki oturumlar kapatılır."
+                  : "Bu hesap Google ile açıldı; giriş Google hesabınızla yapılır."}
+              </p>
+            </div>
+            {credential ? <ChangePasswordForm /> : null}
+          </section>
+
+          <section className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="font-semibold text-error">Hesabı sil</h2>
+              <p className="text-sm text-muted-foreground mt-1">
+                Hesabınız, yorumlarınız, kaydettikleriniz ve okuma geçmişiniz kalıcı olarak silinir.{" "}
+                <Link href="/privacy" className="underline hover:text-foreground">Gizlilik</Link>
+              </p>
             </div>
             <DeleteAccountButton />
-          </div>
-
+          </section>
         </div>
       </Card>
     </div>

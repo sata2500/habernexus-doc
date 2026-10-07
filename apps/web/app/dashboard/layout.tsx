@@ -30,7 +30,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <LayoutDashboard className="h-4 w-4 text-primary-500" />
           </div>
           <div>
-            <h2 className="font-bold font-display text-sm leading-none text-foreground">Panelim</h2>
+            <p className="font-bold font-display text-sm leading-none text-foreground">Panelim</p>
             <span className="text-[10px] text-muted-foreground">{session.user.name}</span>
           </div>
         </div>
@@ -45,7 +45,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <LayoutDashboard className="h-5 w-5 text-primary-500" />
             </div>
             <div>
-              <h2 className="font-bold font-display leading-none text-foreground">Panelim</h2>
+              <p className="font-bold font-display leading-none text-foreground">Panelim</p>
               <span className="text-xs text-muted-foreground">{session.user.name}</span>
             </div>
           </div>

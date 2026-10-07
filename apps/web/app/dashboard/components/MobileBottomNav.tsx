@@ -37,7 +37,7 @@ export function MobileBottomNav() {
               )}
             >
               <span className={cn("flex items-center justify-center h-7 w-11 rounded-full transition-colors", isActive && "bg-primary-500/12")}>
-                <Icon className="h-5 w-5" />
+                <Icon className="h-5 w-5" aria-hidden="true" />
               </span>
               <span className="text-[10px] font-semibold leading-none whitespace-nowrap">{item.name}</span>
             </Link>

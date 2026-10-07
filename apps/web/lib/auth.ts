@@ -4,6 +4,9 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 import { sendEmail } from "./mail";
 import { AuthEmailTemplate } from "@/components/mail/AuthEmailTemplate";
+import { checkRateLimitAsync } from "./server/rate-limit";
+
+const googleConfigured = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
 
 /** Profil fotoğrafı yalnızca kendi depolamamızdan ya da Google hesap fotoğrafından olabilir */
 function isAllowedAvatar(url: string) {
@@ -64,11 +67,13 @@ export const auth = betterAuth({
       });
     },
   },
-  socialProviders: {
-    google: {
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }
+  // Google ile giriş yalnızca anahtarlar tanımlıysa açılır
+  socialProviders: googleConfigured
+    ? { google: { clientId: process.env.GOOGLE_CLIENT_ID!, clientSecret: process.env.GOOGLE_CLIENT_SECRET! } }
+    : {},
+  advanced: {
+    // Hız sınırı ve oturum kaydı için gerçek istemci adresi (Vercel başlıkları öncelikli)
+    ipAddress: { ipAddressHeaders: ["x-vercel-forwarded-for", "x-real-ip", "x-forwarded-for"] },
   },
   user: {
     additionalFields: {
@@ -88,11 +93,18 @@ export const auth = betterAuth({
       },
     },
   },
-  // Kaba kuvvet denemelerine karşı istek sınırları (üretimde etkin)
+  // Kaba kuvvet denemelerine karşı istek sınırları (üretimde etkin). Sayaçlar Redis'te tutulur:
+  // sunucusuz ortamda her istek başka bir örneğe düşebildiğinden bellek içi sayaç sınırı fiilen uygulamaz.
   rateLimit: {
     enabled: process.env.NODE_ENV === "production",
     window: 60,
     max: 100,
+    customStorage: {
+      consume: async (key, rule) => {
+        const r = await checkRateLimitAsync(`auth:${key}`, rule.max, rule.window * 1000);
+        return { allowed: r.allowed, retryAfter: r.allowed ? null : r.retryAfterSeconds };
+      },
+    },
     customRules: {
       "/sign-in/email": { window: 60, max: 5 },
       "/sign-up/email": { window: 600, max: 5 },

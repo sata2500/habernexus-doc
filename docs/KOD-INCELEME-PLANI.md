@@ -51,9 +51,10 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 - [x] Performans: ana sayfa JavaScript'i **1.699 KB → 725 KB** (framer-motion ve tüm lucide ikon kütüphanesi paketten çıktı); kategori/arama kartlarında haber gövdesi yüklenmiyor; aşağıdaki görsellere öncelik verilmiyor
 - [x] CSP: dış kaynaklı betik ve üretimde `eval` kapalı; `object-src`, `base-uri`, `form-action`, `frame-src` kısıtlandı (nonce, ISR'yi bozacağı için kullanılmadı)
 
-### Aşama 4 — Kimlik doğrulama ve okur paneli
-- [ ] Giriş, kayıt, doğrulama, şifre sıfırlama ekranları
-- [ ] Profil, okuduklarım, kaydedilenler, yorumlar, tercihler
+### Aşama 4 — Kimlik doğrulama ve okur paneli ✅
+- [x] Giriş, kayıt, doğrulama, şifre sıfırlama ekranları (ortak kart, etiketli alanlar, şifre göster/gizle, Türkçe hata metinleri)
+- [x] Profil, okuduklarım, kaydedilenler, yorumlar, tercihler; panel işlemleri `ActionResult` + `actionError` düzeninde
+- [x] Yeni: oturum içinden şifre değiştirme (diğer oturumlar kapanır)
 
 ### Aşama 5 — Yazar masası
 - [ ] Editör, haber listesi, istatistikler, öneriler, yorumlar, analiz ekranı
@@ -137,3 +138,19 @@ Başlangıç: 6 Ekim 2026 · Kapsam: `apps/web` (244 dosya, ~27.000 satır)
 | Erişilebilirlik | Menü/arama düğmelerinde durum bilgisi yoktu, mobil menü Esc ile kapanmıyor ve arka plan kayıyordu; bağlantı içinde düğme (geçersiz HTML); X paylaşımında "kapat" ikonu | Düzeltildi |
 | Erişilebilirlik | iOS'ta e-posta ve arama kutularına dokununca sayfa yakınlaşıyordu (16 px altı yazı) | Mobilde 16 px |
 | Hata | Kaydet düğmesi giriş yapmamış kullanıcıya `alert` gösterip haberi kaybettiriyordu | Girişten sonra aynı habere döner |
+
+### Aşama 4
+| Tür | Bulgu | Durum |
+|---|---|---|
+| Güvenlik | Giriş/kayıt/şifre sıfırlama hız sınırı bellekte tutuluyordu; Vercel'de istekler farklı örneklere düştüğü için **şifre deneme sınırı fiilen çalışmıyordu** | Sayaçlar Redis'te (better-auth `customStorage`); gerçek istemci IP'si Vercel başlığından |
+| Hata | Profil kaydında hata (ör. geçersiz ad) olsa bile "başarıyla güncellendi" yazıyordu; fotoğraf kaldırılamıyordu | Hata gösteriliyor; fotoğraf silinebiliyor; sayfa sunucuda hazır geliyor (boş ekran yok) |
+| Hata | Tercihlerde kayıt bulunamazsa bülten "açık" görünüyordu (açık onay kuralına aykırı) | Varsayılan kapalı |
+| Eksik | Giriş yapmış kullanıcı şifresini değiştiremiyordu (yalnızca "şifremi unuttum") | Şifre değiştirme eklendi (Google hesaplarında açıklama) |
+| Gizlilik | Hesap silinince aynı adresin misafir bülten kaydı kalıyordu | O da siliniyor |
+| Hata | Kaydedilenlerde yayından kaldırılmış haberler de listeleniyor, her haberin tam metni yükleniyordu; listeden çıkarma yoktu | Yalnızca yayındakiler, ortak kart, listeden çıkarma düğmesi |
+| Hata | Geçmiş temizleme işlemleri oturum yoksa yakalanmamış hata fırlatıyordu; yorum silinince haber sayfası güncellenmiyordu | Düzeltildi |
+| Hata | Anahtarı tanımlı değilken de "Google ile giriş" düğmesi görünüyordu (tıklanınca hata) | Yalnızca yapılandırılmışsa |
+| Hata | Giriş yapmış kullanıcı /login'de formu görüyordu; Google hatasında geri dönüş adresi kayboluyordu | Doğrudan hedef sayfaya |
+| Güvenlik | Adres çubuğundaki `?error=` metni giriş ekranına olduğu gibi yazılıyordu (sahte uyarı gösterilebilirdi) | Yalnızca bilinen biçimdeki kodlar |
+| Erişilebilirlik | Giriş/kayıt alanlarının etiketleri bağlı değildi, başlık h2'ydi; bülten anahtarının adı yoktu | Düzeltildi |
+| Hata | Hesap silme tek tıkla onaylanıyor, silindikten sonra tarayıcı oturumu açık görünüyordu | "SİL" yazarak onay; tam yenileme |

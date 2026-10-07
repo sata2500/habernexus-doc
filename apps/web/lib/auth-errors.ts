@@ -16,7 +16,8 @@ const MESSAGES: Record<string, string> = {
 
 export function authErrorMessage(code: string | null | undefined) {
   if (!code) return null;
-  return MESSAGES[code] ?? `Giriş yapılamadı (${code}). Lütfen tekrar dene.`;
+  // Adres çubuğundan gelen kod ekrana yalnızca bilinen biçimdeyse yazılır (sahte mesaj enjekte edilemesin)
+  return MESSAGES[code] ?? (/^[a-z_]{1,40}$/i.test(code) ? `Giriş yapılamadı (${code}). Lütfen tekrar dene.` : "Giriş yapılamadı. Lütfen tekrar dene.");
 }
 
 /** Yalnızca site içi yollara yönlendir (açık yönlendirme açığını önler) */

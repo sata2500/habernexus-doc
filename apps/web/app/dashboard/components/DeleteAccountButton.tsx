@@ -1,39 +1,37 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 
 import { deleteAccount } from "../actions";
 import { Loader2 } from "lucide-react";
 
 export function DeleteAccountButton() {
   const [isDeleting, setIsDeleting] = useState(false);
-  const router = useRouter();
 
   const handleDeleteAccount = async () => {
-    if (!confirm("Hesabınızı kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz (makaleler, yorumlar, kaydedilenler) silinecektir.")) {
-      return;
-    }
+    const answer = window.prompt("Hesabınız ve yorumlarınız, kaydettikleriniz, okuma geçmişiniz kalıcı olarak silinecek. Bu işlem geri alınamaz.\n\nOnaylamak için SİL yazın:");
+    if (answer?.trim().toLocaleUpperCase("tr") !== "SİL") return;
 
     setIsDeleting(true);
-    const result = await deleteAccount();
+    const result = await deleteAccount().catch(() => ({ success: false as const, error: "Bağlantı kurulamadı." }));
 
     if (result.success) {
-            router.push("/");
-
+      // Oturum sunucuda silindi; tam sayfa yenilemesiyle tarayıcıdaki oturum bilgisi de temizlenir
+      window.location.assign("/");
     } else {
-      alert(result.error || "Hesap silinirken bir hata oluştu.");
+      alert(result.error);
       setIsDeleting(false);
     }
   };
 
   return (
     <button
+      type="button"
       onClick={handleDeleteAccount}
       disabled={isDeleting}
       className="px-4 py-2 rounded-xl text-error border border-error/30 hover:bg-error/10 transition-colors text-sm font-medium cursor-pointer disabled:opacity-50 flex items-center gap-2"
     >
-      {isDeleting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Hesabımı Kalıcı Olarak Sil"}
+      {isDeleting ? <><Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" /> Siliniyor…</> : "Hesabımı kalıcı olarak sil"}
     </button>
   );
 }
