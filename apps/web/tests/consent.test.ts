@@ -54,3 +54,19 @@ test("saklama süreleri: kesim tarihleri doğru gün sayısıyla geriye gider", 
   assert.equal(days(c.inactiveSubscribersBefore), RETENTION.inactiveSubscriberDays);
   assert.equal(days(c.unverifiedUsersBefore), RETENTION.unverifiedUserDays);
 });
+
+test("görüntülenme: aynı kişi aynı gün aynı özeti üretir, gün ya da kişi değişince özet değişir", async () => {
+  const { viewMarkId, isBotUserAgent } = await import("../lib/server/views");
+  const day1 = new Date("2026-10-08T09:00:00Z");
+  const sameDay = new Date("2026-10-08T20:59:00Z"); // İstanbul'da hâlâ 8 Ekim
+  const nextDay = new Date("2026-10-08T21:01:00Z"); // İstanbul'da 9 Ekim
+  const a = viewMarkId("art1", "g:1.2.3.4|Mozilla", day1);
+  assert.equal(a, viewMarkId("art1", "g:1.2.3.4|Mozilla", sameDay));
+  assert.notEqual(a, viewMarkId("art1", "g:1.2.3.4|Mozilla", nextDay));
+  assert.notEqual(a, viewMarkId("art1", "g:5.6.7.8|Mozilla", day1));
+  assert.notEqual(a, viewMarkId("art2", "g:1.2.3.4|Mozilla", day1));
+  assert.ok(!a.includes("1.2.3.4"));
+  assert.equal(isBotUserAgent("Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)"), true);
+  assert.equal(isBotUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Safari/604.1"), false);
+  assert.equal(isBotUserAgent(null), true);
+});

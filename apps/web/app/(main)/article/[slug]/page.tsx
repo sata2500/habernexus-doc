@@ -18,6 +18,7 @@ import { getStoredSummary } from "@/lib/tldr";
 import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { firstParagraphText, normalizeMetaDescription } from "@/lib/news/seo-text";
 import { ReadingProgressBar } from "../components/ReadingProgressBar";
+import { ResumePosition } from "../components/ResumePosition";
 import { ArticleReactions } from "../components/ArticleReactions";
 import { ReadingProgressTracker } from "../components/ReadingProgressTracker";
 import { NewsletterInline } from "@/components/article/NewsletterInline";
@@ -121,7 +122,8 @@ export default async function ArticlePage({ params }: { params: Params }) {
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* ── Canlı Okuma İlerleme Çubuğu ────────────────────────── */}
-      <ReadingProgressBar estimatedMinutes={readTime} />
+      <ReadingProgressBar />
+      <ResumePosition />
 
       {/* ── SEO: Structured Data ────────────────────────── */}
       <NewsArticleJsonLd
@@ -241,7 +243,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
       )}
 
       {/* ── Ana İçerik Gövdesi (Typography Plugin) ────────────────────────── */}
-      <ReadingProgressTracker articleId={article.id} slug={article.slug} title={article.title} coverImage={article.coverImage} category={article.category?.name ?? null} />
+      <ReadingProgressTracker articleId={article.id} slug={article.slug} title={article.title} coverImage={article.coverImage} category={article.category?.name ?? null} estimatedMinutes={readTime} />
       <article id="article-body" className="prose prose-lg dark:prose-invert prose-blue mx-auto w-full mb-12">
         <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(body) }} />
       </article>

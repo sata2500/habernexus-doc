@@ -1,12 +1,15 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { incrementViewCount } from "@/app/author/actions";
+import { useEffect } from "react";
+import { recordArticleView } from "../view-actions";
 import { hasPersonalizationConsent, READ_HISTORY_COOKIE, READ_HISTORY_MAX } from "@/lib/consent";
 
 interface Props {
   articleId: string;
 }
+
+/** Sayfa en az bu kadar süre ekranda (sekme açık ve görünür) kalınca görüntülenme sayılır */
+const VISIBLE_MS = 5000;
 
 /** "Sizin İçin" önerileri için son okunan haberler; yalnızca çerez onayı verilmişse */
 function rememberRead(articleId: string) {
@@ -24,28 +27,40 @@ function rememberRead(articleId: string) {
   }
 }
 
+/**
+ * Görüntülenme: sayfa arka planda açılıp bırakılınca ya da önceden yüklenince (prerender) sayılmaz;
+ * sekme görünürken toplam 5 saniye geçince bir kez bildirilir. Aynı kişinin aynı gün içindeki
+ * tekrar ziyaretleri sunucuda ayıklanır (lib/server/views.ts).
+ */
 export function ViewTracker({ articleId }: Props) {
-  const tracked = useRef(false);
-
   useEffect(() => {
-    if (tracked.current) return;
-    rememberRead(articleId);
+    let visibleMs = 0;
+    let since = document.visibilityState === "visible" ? performance.now() : null;
+    let done = false;
 
-    // Haberi görüntülemeyi bir kez artır
-    const track = async () => {
-      try {
-        await incrementViewCount(articleId);
-        tracked.current = true;
-      } catch {
-        // Sessiz hata - uygulama akışını bozma
+    const tick = () => {
+      if (done) return;
+      const now = performance.now();
+      if (since !== null) { visibleMs += now - since; since = now; }
+      if (visibleMs >= VISIBLE_MS) {
+        done = true;
+        clearInterval(timer);
+        rememberRead(articleId);
+        void recordArticleView(articleId).catch(() => {});
       }
     };
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") since = performance.now();
+      else { tick(); since = null; }
+    };
 
-    // Sayfa tamamen yüklendikten sonra (reaksiyon süresini etkilememesi için)
-    const timeout = setTimeout(track, 2000);
-
-    return () => clearTimeout(timeout);
+    const timer = setInterval(tick, 1000);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [articleId]);
 
-  return null; // Görsel bir bileşen değil
+  return null;
 }

@@ -29,7 +29,7 @@ export function retentionCutoffs(now: Date) {
 /** Süresi dolan kayıtları siler; silinen kayıt sayılarını döndürür */
 export async function runRetentionCleanup(now = new Date()) {
   const c = retentionCutoffs(now);
-  const [tickets, subscribers, users, sessions, verifications] = await prisma.$transaction([
+  const [tickets, subscribers, users, sessions, verifications, viewMarks] = await prisma.$transaction([
     // Mesajlar ilişkiyle birlikte silinir
     prisma.supportTicket.deleteMany({ where: { status: "CLOSED", updatedAt: { lt: c.closedTicketsBefore } } }),
     prisma.subscriber.deleteMany({ where: { isActive: false, updatedAt: { lt: c.inactiveSubscribersBefore } } }),
@@ -37,6 +37,8 @@ export async function runRetentionCleanup(now = new Date()) {
     prisma.user.deleteMany({ where: { emailVerified: false, role: "USER", createdAt: { lt: c.unverifiedUsersBefore } } }),
     prisma.session.deleteMany({ where: { expiresAt: { lt: now } } }),
     prisma.verification.deleteMany({ where: { expiresAt: { lt: now } } }),
+    // Görüntülenme tekilleştirme özetleri yalnızca o gün için gerekir
+    prisma.articleViewMark.deleteMany({ where: { createdAt: { lt: new Date(now.getTime() - 2 * DAY) } } }),
   ]);
   return {
     supportTickets: tickets.count,
@@ -44,5 +46,6 @@ export async function runRetentionCleanup(now = new Date()) {
     unverifiedUsers: users.count,
     expiredSessions: sessions.count,
     expiredVerifications: verifications.count,
+    viewMarks: viewMarks.count,
   };
 }

@@ -16,6 +16,8 @@ export interface ReadingEntry {
   progress: number;
   /** Son okuma zamanı (ms) */
   at: number;
+  /** Haber bitirildi (bir daha "yarım kaldı" listesine düşmez) */
+  done?: boolean;
 }
 
 const KEY = "hn:reading-progress";
@@ -45,11 +47,25 @@ function write(entries: ReadingEntry[]) {
   } catch { /* depolama kapalı olabilir */ }
 }
 
+/**
+ * İlerlemeyi kaydeder. İlerleme geriye düşmez (en ileri nokta "kaldığın yer"dir); bitirilmiş haber
+ * bitirilmiş kalır ve yeniden açılması onu listenin başına taşımaz.
+ */
 export function saveProgress(entry: Omit<ReadingEntry, "at">) {
   // Bu cihazda tutulan ilerleme kişiselleştirme onayına bağlıdır (hesaptaki kayıt ayrıca tutulur)
   if (!hasPersonalizationConsent()) return;
-  const rest = read().filter((e) => e.slug !== entry.slug);
-  write([{ ...entry, progress: Math.round(entry.progress), at: Date.now() }, ...rest]);
+  const all = read();
+  const prev = all.find((e) => e.slug === entry.slug);
+  if (prev?.done) return;
+  const rest = all.filter((e) => e.slug !== entry.slug);
+  const done = !!entry.done;
+  const progress = done ? 100 : Math.max(prev?.progress ?? 0, Math.round(entry.progress));
+  write([{ ...entry, progress, done, at: Date.now() }, ...rest]);
+}
+
+/** Bu cihazda bu haber için kayıt (yoksa null) */
+export function getProgress(slug: string): ReadingEntry | null {
+  return read().find((e) => e.slug === slug) ?? null;
 }
 
 /** Çerez onayı geri alınınca bu cihazdaki ilerleme silinir */
@@ -69,7 +85,7 @@ export const READ_COMPLETE_AT = 97;
 
 /** Yarım kalmış (okunmaya başlanmış ama bitmemiş) ve yakın zamanda açılmış haberler */
 export function unfinished(entries: ReadingEntry[], now: number, limit = 3) {
-  return entries.filter((e) => e.progress >= 10 && e.progress < READ_COMPLETE_AT && now - e.at < MAX_AGE_MS).slice(0, limit);
+  return entries.filter((e) => !e.done && e.progress >= 10 && e.progress < READ_COMPLETE_AT && now - e.at < MAX_AGE_MS).slice(0, limit);
 }
 
 /**

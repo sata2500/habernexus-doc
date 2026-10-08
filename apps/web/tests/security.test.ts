@@ -59,7 +59,6 @@ const PUBLIC_ACTIONS = new Set([
   "app/actions/newsletter.ts:unsubscribeSignedUser",
   "app/actions/slider.ts:getSlider",
   "app/actions/static-pages.ts:getStaticPageBySlug",
-  "app/author/actions.ts:incrementViewCount",
 ]);
 
 function walk(dir: string): string[] {

@@ -1,28 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { CheckCircle2, Clock } from "lucide-react";
-import { ARTICLE_READ_EVENT, measureArticleProgress, READ_COMPLETE_AT } from "@/lib/reading-progress";
+import { useEffect, useState, useSyncExternalStore } from "react";
+import { CheckCircle2, Clock, Headphones } from "lucide-react";
+import { ARTICLE_READ_EVENT, measureArticleProgress } from "@/lib/reading-progress";
+import { getSessionServerSnapshot, getSessionSnapshot, subscribeSession } from "@/lib/article-session";
 
-interface ReadingProgressBarProps {
-  estimatedMinutes: number;
-}
-
-/** Üstte okuma çubuğu ve kalan süre rozeti. İlerleme haber metni + tepkiler bölümüne göre ölçülür. */
-export function ReadingProgressBar({ estimatedMinutes }: ReadingProgressBarProps) {
-  const [progress, setProgress] = useState(0);
-  const [isVisible, setIsVisible] = useState(false);
-  const [done, setDone] = useState(false);
+/**
+ * Üstte ilerleme çubuğu ve sağ altta durum rozeti. Kaydırma ile sesli dinlemeden hangisi daha
+ * ilerideyse o gösterilir; "Okundu" kararını okuma oturumu verir (lib/article-session.ts).
+ */
+export function ReadingProgressBar() {
+  const session = useSyncExternalStore(subscribeSession, getSessionSnapshot, getSessionServerSnapshot);
+  // Çubuk o anki konumu gösterir (yukarı kaydırınca geri gelir); kayıt en ileri noktayı tutar
+  const [position, setPosition] = useState(0);
+  const [scrolled, setScrolled] = useState(false);
   const [savedNote, setSavedNote] = useState(false);
 
   useEffect(() => {
     let frame = 0;
     const update = () => {
       frame = 0;
-      const p = measureArticleProgress() ?? 0;
-      setProgress(p);
-      setIsVisible(window.scrollY > 150);
-      if (p >= READ_COMPLETE_AT) setDone(true);
+      setPosition(measureArticleProgress() ?? 0);
+      setScrolled(window.scrollY > 150);
     };
     const onScroll = () => { if (!frame) frame = requestAnimationFrame(update); };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -45,8 +44,11 @@ export function ReadingProgressBar({ estimatedMinutes }: ReadingProgressBarProps
     };
   }, []);
 
-  const shown = done ? 100 : progress;
-  const remainingMinutes = Math.max(1, Math.ceil(estimatedMinutes * (1 - shown / 100)));
+  const { completed, listening, listen, listenRemaining, estimatedMinutes } = session;
+  const shown = completed ? 100 : Math.max(position, listening ? listen : 0);
+  const readingLeft = Math.max(1, Math.ceil(estimatedMinutes * (1 - shown / 100)));
+  const listenLeft = listenRemaining !== null ? Math.max(1, Math.ceil(listenRemaining / 60)) : null;
+  const visible = scrolled || savedNote || listening || completed;
 
   return (
     <>
@@ -59,17 +61,22 @@ export function ReadingProgressBar({ estimatedMinutes }: ReadingProgressBarProps
 
       <div
         className={`fixed bottom-6 right-6 z-40 transition-all duration-300 transform ${
-          isVisible || savedNote ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
+          visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4 pointer-events-none"
         }`}
         aria-live="polite"
       >
         <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full border shadow-lg backdrop-blur-md text-xs font-semibold ${
-          done ? "bg-emerald-600 border-emerald-500 text-white" : "bg-background/90 border-border/80 text-foreground"
+          completed ? "bg-emerald-600 border-emerald-500 text-white" : "bg-background/90 border-border/80 text-foreground"
         }`}>
-          {done ? (
+          {completed ? (
             <>
               <CheckCircle2 className="h-4 w-4" />
-              <span>{savedNote ? "Okundu · Okuduklarım'a eklendi" : "Okundu"}</span>
+              <span>{savedNote ? "Okundu · Okuduklarım'a eklendi" : session.completedBy === "listen" ? "Dinlendi" : "Okundu"}</span>
+            </>
+          ) : listening ? (
+            <>
+              <Headphones className="h-4 w-4 text-primary-500" />
+              <span>Dinleniyor{listenLeft ? ` · kalan ~${listenLeft} dk` : ""}</span>
             </>
           ) : (
             <>
@@ -88,7 +95,7 @@ export function ReadingProgressBar({ estimatedMinutes }: ReadingProgressBarProps
                 </svg>
                 <Clock className="h-2.5 w-2.5 text-primary-500 absolute" />
               </span>
-              <span>Kalan: ~{remainingMinutes} dk</span>
+              <span>{shown >= 97 ? "Neredeyse bitti" : `Kalan: ~${readingLeft} dk`}</span>
             </>
           )}
         </div>

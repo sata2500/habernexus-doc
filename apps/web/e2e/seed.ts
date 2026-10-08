@@ -45,6 +45,24 @@ async function main() {
     },
   });
 
+  // Okuma takibi testleri için uzun haber (birkaç ekran boyu)
+  const longBody = Array.from({ length: 40 }, (_, i) =>
+    `<p>${i + 1}. paragraf: uzun haber metni okuma ilerlemesini, kaldığın yerden devam etmeyi ve okundu işaretini sınamak için yazıldı. Her paragraf birkaç satır sürer ki sayfa yeterince uzun olsun.</p>`).join("");
+  await prisma.article.upsert({
+    where: { slug: "e2e-uzun-haber" },
+    update: { status: "PUBLISHED", content: longBody },
+    create: {
+      title: "E2E uzun haber: okuma takibi denemesi",
+      slug: "e2e-uzun-haber",
+      excerpt: "Okuma ilerlemesi testlerinde kullanılan uzun haber.",
+      content: longBody,
+      status: "PUBLISHED",
+      publishedAt: new Date(Date.now() - 3600_000),
+      authorId: users.author.id,
+      categoryId: category.id,
+    },
+  });
+
   // Reklam sistemi: haber metninin sonunda yalnızca sponsor reklamı (Google betikleri kapalı)
   await prisma.monetizationSettings.upsert({
     where: { id: "global" },

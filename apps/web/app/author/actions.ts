@@ -9,7 +9,7 @@ import type { ActionResult } from "@/lib/types";
 import { syncArticleTags, uniqueArticleSlug } from "@/lib/news/seo";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { rewriteArticleWithAI } from "@/lib/ai-writer";
-import { checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
+import { checkRateLimitAsync } from "@/lib/server/rate-limit";
 import { invalidateArticle } from "@/lib/server/article-cache";
 
 
@@ -164,23 +164,6 @@ export async function deleteArticle(id: string): Promise<ActionResult> {
     return { success: true };
   } catch (err) {
     return actionError(err, "Silme işlemi sırasında hata oluştu.");
-  }
-}
-
-export async function incrementViewCount(id: string) {
-  try {
-    if (typeof id !== "string" || id.length === 0 || id.length > 100) return { success: false };
-
-    // Aynı IP'nin aynı haberi tekrar tekrar sayması (görüntülenme şişirme) engellenir
-    const rate = await checkRateLimitAsync(`view:${await getActionIdentity()}:${id}`, 1, 30 * 60 * 1000);
-    if (!rate.allowed) return { success: true };
-
-    // Ham SQL: Prisma'nın @updatedAt alanını değiştirmemesi için. Aksi halde her görüntülenme haberin
-    // "güncellenme tarihini" (Google'a bildirilen dateModified ve site haritası lastmod) bozuyordu.
-    await prisma.$executeRaw`UPDATE "Article" SET "viewCount" = "viewCount" + 1 WHERE "id" = ${id} AND "status" = 'PUBLISHED'`;
-    return { success: true };
-  } catch {
-    return { success: false };
   }
 }
 

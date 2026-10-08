@@ -168,6 +168,12 @@ export type MonetizationSettings = $Result.DefaultSelection<Prisma.$Monetization
  * Doğrudan satılan (sponsor) reklamlar
  */
 export type SponsorAd = $Result.DefaultSelection<Prisma.$SponsorAdPayload>
+/**
+ * Model ArticleViewMark
+ * Görüntülenme tekilleştirme: aynı kişi aynı haberi günde bir kez sayılır. id, kişi + haber + günden
+ * türetilen tek yönlü özettir (IP veya kullanıcı kimliği saklanmaz); 2 günden eski kayıtlar silinir.
+ */
+export type ArticleViewMark = $Result.DefaultSelection<Prisma.$ArticleViewMarkPayload>
 
 /**
  * Enums
@@ -696,6 +702,16 @@ export class PrismaClient<
     * ```
     */
   get sponsorAd(): Prisma.SponsorAdDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.articleViewMark`: Exposes CRUD operations for the **ArticleViewMark** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more ArticleViewMarks
+    * const articleViewMarks = await prisma.articleViewMark.findMany()
+    * ```
+    */
+  get articleViewMark(): Prisma.ArticleViewMarkDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1173,7 +1189,8 @@ export namespace Prisma {
     Slider: 'Slider',
     Slide: 'Slide',
     MonetizationSettings: 'MonetizationSettings',
-    SponsorAd: 'SponsorAd'
+    SponsorAd: 'SponsorAd',
+    ArticleViewMark: 'ArticleViewMark'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1189,7 +1206,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "articleRead" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "newsStory" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide" | "monetizationSettings" | "sponsorAd"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "articleRead" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "newsStory" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide" | "monetizationSettings" | "sponsorAd" | "articleViewMark"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3487,6 +3504,80 @@ export namespace Prisma {
           }
         }
       }
+      ArticleViewMark: {
+        payload: Prisma.$ArticleViewMarkPayload<ExtArgs>
+        fields: Prisma.ArticleViewMarkFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.ArticleViewMarkFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.ArticleViewMarkFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload>
+          }
+          findFirst: {
+            args: Prisma.ArticleViewMarkFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.ArticleViewMarkFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload>
+          }
+          findMany: {
+            args: Prisma.ArticleViewMarkFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload>[]
+          }
+          create: {
+            args: Prisma.ArticleViewMarkCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload>
+          }
+          createMany: {
+            args: Prisma.ArticleViewMarkCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.ArticleViewMarkCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload>[]
+          }
+          delete: {
+            args: Prisma.ArticleViewMarkDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload>
+          }
+          update: {
+            args: Prisma.ArticleViewMarkUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload>
+          }
+          deleteMany: {
+            args: Prisma.ArticleViewMarkDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.ArticleViewMarkUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.ArticleViewMarkUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload>[]
+          }
+          upsert: {
+            args: Prisma.ArticleViewMarkUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$ArticleViewMarkPayload>
+          }
+          aggregate: {
+            args: Prisma.ArticleViewMarkAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateArticleViewMark>
+          }
+          groupBy: {
+            args: Prisma.ArticleViewMarkGroupByArgs<ExtArgs>
+            result: $Utils.Optional<ArticleViewMarkGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.ArticleViewMarkCountArgs<ExtArgs>
+            result: $Utils.Optional<ArticleViewMarkCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3641,6 +3732,7 @@ export namespace Prisma {
     slide?: SlideOmit
     monetizationSettings?: MonetizationSettingsOmit
     sponsorAd?: SponsorAdOmit
+    articleViewMark?: ArticleViewMarkOmit
   }
 
   /* Types for Logging */
@@ -40589,6 +40681,967 @@ export namespace Prisma {
 
 
   /**
+   * Model ArticleViewMark
+   */
+
+  export type AggregateArticleViewMark = {
+    _count: ArticleViewMarkCountAggregateOutputType | null
+    _min: ArticleViewMarkMinAggregateOutputType | null
+    _max: ArticleViewMarkMaxAggregateOutputType | null
+  }
+
+  export type ArticleViewMarkMinAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+  }
+
+  export type ArticleViewMarkMaxAggregateOutputType = {
+    id: string | null
+    createdAt: Date | null
+  }
+
+  export type ArticleViewMarkCountAggregateOutputType = {
+    id: number
+    createdAt: number
+    _all: number
+  }
+
+
+  export type ArticleViewMarkMinAggregateInputType = {
+    id?: true
+    createdAt?: true
+  }
+
+  export type ArticleViewMarkMaxAggregateInputType = {
+    id?: true
+    createdAt?: true
+  }
+
+  export type ArticleViewMarkCountAggregateInputType = {
+    id?: true
+    createdAt?: true
+    _all?: true
+  }
+
+  export type ArticleViewMarkAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArticleViewMark to aggregate.
+     */
+    where?: ArticleViewMarkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleViewMarks to fetch.
+     */
+    orderBy?: ArticleViewMarkOrderByWithRelationInput | ArticleViewMarkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: ArticleViewMarkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleViewMarks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleViewMarks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned ArticleViewMarks
+    **/
+    _count?: true | ArticleViewMarkCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: ArticleViewMarkMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: ArticleViewMarkMaxAggregateInputType
+  }
+
+  export type GetArticleViewMarkAggregateType<T extends ArticleViewMarkAggregateArgs> = {
+        [P in keyof T & keyof AggregateArticleViewMark]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateArticleViewMark[P]>
+      : GetScalarType<T[P], AggregateArticleViewMark[P]>
+  }
+
+
+
+
+  export type ArticleViewMarkGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: ArticleViewMarkWhereInput
+    orderBy?: ArticleViewMarkOrderByWithAggregationInput | ArticleViewMarkOrderByWithAggregationInput[]
+    by: ArticleViewMarkScalarFieldEnum[] | ArticleViewMarkScalarFieldEnum
+    having?: ArticleViewMarkScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: ArticleViewMarkCountAggregateInputType | true
+    _min?: ArticleViewMarkMinAggregateInputType
+    _max?: ArticleViewMarkMaxAggregateInputType
+  }
+
+  export type ArticleViewMarkGroupByOutputType = {
+    id: string
+    createdAt: Date
+    _count: ArticleViewMarkCountAggregateOutputType | null
+    _min: ArticleViewMarkMinAggregateOutputType | null
+    _max: ArticleViewMarkMaxAggregateOutputType | null
+  }
+
+  type GetArticleViewMarkGroupByPayload<T extends ArticleViewMarkGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<ArticleViewMarkGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof ArticleViewMarkGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], ArticleViewMarkGroupByOutputType[P]>
+            : GetScalarType<T[P], ArticleViewMarkGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type ArticleViewMarkSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["articleViewMark"]>
+
+  export type ArticleViewMarkSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["articleViewMark"]>
+
+  export type ArticleViewMarkSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    createdAt?: boolean
+  }, ExtArgs["result"]["articleViewMark"]>
+
+  export type ArticleViewMarkSelectScalar = {
+    id?: boolean
+    createdAt?: boolean
+  }
+
+  export type ArticleViewMarkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "createdAt", ExtArgs["result"]["articleViewMark"]>
+
+  export type $ArticleViewMarkPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "ArticleViewMark"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      createdAt: Date
+    }, ExtArgs["result"]["articleViewMark"]>
+    composites: {}
+  }
+
+  type ArticleViewMarkGetPayload<S extends boolean | null | undefined | ArticleViewMarkDefaultArgs> = $Result.GetResult<Prisma.$ArticleViewMarkPayload, S>
+
+  type ArticleViewMarkCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<ArticleViewMarkFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: ArticleViewMarkCountAggregateInputType | true
+    }
+
+  export interface ArticleViewMarkDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['ArticleViewMark'], meta: { name: 'ArticleViewMark' } }
+    /**
+     * Find zero or one ArticleViewMark that matches the filter.
+     * @param {ArticleViewMarkFindUniqueArgs} args - Arguments to find a ArticleViewMark
+     * @example
+     * // Get one ArticleViewMark
+     * const articleViewMark = await prisma.articleViewMark.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends ArticleViewMarkFindUniqueArgs>(args: SelectSubset<T, ArticleViewMarkFindUniqueArgs<ExtArgs>>): Prisma__ArticleViewMarkClient<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one ArticleViewMark that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {ArticleViewMarkFindUniqueOrThrowArgs} args - Arguments to find a ArticleViewMark
+     * @example
+     * // Get one ArticleViewMark
+     * const articleViewMark = await prisma.articleViewMark.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends ArticleViewMarkFindUniqueOrThrowArgs>(args: SelectSubset<T, ArticleViewMarkFindUniqueOrThrowArgs<ExtArgs>>): Prisma__ArticleViewMarkClient<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArticleViewMark that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleViewMarkFindFirstArgs} args - Arguments to find a ArticleViewMark
+     * @example
+     * // Get one ArticleViewMark
+     * const articleViewMark = await prisma.articleViewMark.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends ArticleViewMarkFindFirstArgs>(args?: SelectSubset<T, ArticleViewMarkFindFirstArgs<ExtArgs>>): Prisma__ArticleViewMarkClient<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first ArticleViewMark that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleViewMarkFindFirstOrThrowArgs} args - Arguments to find a ArticleViewMark
+     * @example
+     * // Get one ArticleViewMark
+     * const articleViewMark = await prisma.articleViewMark.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends ArticleViewMarkFindFirstOrThrowArgs>(args?: SelectSubset<T, ArticleViewMarkFindFirstOrThrowArgs<ExtArgs>>): Prisma__ArticleViewMarkClient<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more ArticleViewMarks that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleViewMarkFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all ArticleViewMarks
+     * const articleViewMarks = await prisma.articleViewMark.findMany()
+     * 
+     * // Get first 10 ArticleViewMarks
+     * const articleViewMarks = await prisma.articleViewMark.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const articleViewMarkWithIdOnly = await prisma.articleViewMark.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends ArticleViewMarkFindManyArgs>(args?: SelectSubset<T, ArticleViewMarkFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a ArticleViewMark.
+     * @param {ArticleViewMarkCreateArgs} args - Arguments to create a ArticleViewMark.
+     * @example
+     * // Create one ArticleViewMark
+     * const ArticleViewMark = await prisma.articleViewMark.create({
+     *   data: {
+     *     // ... data to create a ArticleViewMark
+     *   }
+     * })
+     * 
+     */
+    create<T extends ArticleViewMarkCreateArgs>(args: SelectSubset<T, ArticleViewMarkCreateArgs<ExtArgs>>): Prisma__ArticleViewMarkClient<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many ArticleViewMarks.
+     * @param {ArticleViewMarkCreateManyArgs} args - Arguments to create many ArticleViewMarks.
+     * @example
+     * // Create many ArticleViewMarks
+     * const articleViewMark = await prisma.articleViewMark.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends ArticleViewMarkCreateManyArgs>(args?: SelectSubset<T, ArticleViewMarkCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many ArticleViewMarks and returns the data saved in the database.
+     * @param {ArticleViewMarkCreateManyAndReturnArgs} args - Arguments to create many ArticleViewMarks.
+     * @example
+     * // Create many ArticleViewMarks
+     * const articleViewMark = await prisma.articleViewMark.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many ArticleViewMarks and only return the `id`
+     * const articleViewMarkWithIdOnly = await prisma.articleViewMark.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends ArticleViewMarkCreateManyAndReturnArgs>(args?: SelectSubset<T, ArticleViewMarkCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a ArticleViewMark.
+     * @param {ArticleViewMarkDeleteArgs} args - Arguments to delete one ArticleViewMark.
+     * @example
+     * // Delete one ArticleViewMark
+     * const ArticleViewMark = await prisma.articleViewMark.delete({
+     *   where: {
+     *     // ... filter to delete one ArticleViewMark
+     *   }
+     * })
+     * 
+     */
+    delete<T extends ArticleViewMarkDeleteArgs>(args: SelectSubset<T, ArticleViewMarkDeleteArgs<ExtArgs>>): Prisma__ArticleViewMarkClient<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one ArticleViewMark.
+     * @param {ArticleViewMarkUpdateArgs} args - Arguments to update one ArticleViewMark.
+     * @example
+     * // Update one ArticleViewMark
+     * const articleViewMark = await prisma.articleViewMark.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends ArticleViewMarkUpdateArgs>(args: SelectSubset<T, ArticleViewMarkUpdateArgs<ExtArgs>>): Prisma__ArticleViewMarkClient<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more ArticleViewMarks.
+     * @param {ArticleViewMarkDeleteManyArgs} args - Arguments to filter ArticleViewMarks to delete.
+     * @example
+     * // Delete a few ArticleViewMarks
+     * const { count } = await prisma.articleViewMark.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends ArticleViewMarkDeleteManyArgs>(args?: SelectSubset<T, ArticleViewMarkDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArticleViewMarks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleViewMarkUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many ArticleViewMarks
+     * const articleViewMark = await prisma.articleViewMark.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends ArticleViewMarkUpdateManyArgs>(args: SelectSubset<T, ArticleViewMarkUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more ArticleViewMarks and returns the data updated in the database.
+     * @param {ArticleViewMarkUpdateManyAndReturnArgs} args - Arguments to update many ArticleViewMarks.
+     * @example
+     * // Update many ArticleViewMarks
+     * const articleViewMark = await prisma.articleViewMark.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more ArticleViewMarks and only return the `id`
+     * const articleViewMarkWithIdOnly = await prisma.articleViewMark.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends ArticleViewMarkUpdateManyAndReturnArgs>(args: SelectSubset<T, ArticleViewMarkUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one ArticleViewMark.
+     * @param {ArticleViewMarkUpsertArgs} args - Arguments to update or create a ArticleViewMark.
+     * @example
+     * // Update or create a ArticleViewMark
+     * const articleViewMark = await prisma.articleViewMark.upsert({
+     *   create: {
+     *     // ... data to create a ArticleViewMark
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the ArticleViewMark we want to update
+     *   }
+     * })
+     */
+    upsert<T extends ArticleViewMarkUpsertArgs>(args: SelectSubset<T, ArticleViewMarkUpsertArgs<ExtArgs>>): Prisma__ArticleViewMarkClient<$Result.GetResult<Prisma.$ArticleViewMarkPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of ArticleViewMarks.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleViewMarkCountArgs} args - Arguments to filter ArticleViewMarks to count.
+     * @example
+     * // Count the number of ArticleViewMarks
+     * const count = await prisma.articleViewMark.count({
+     *   where: {
+     *     // ... the filter for the ArticleViewMarks we want to count
+     *   }
+     * })
+    **/
+    count<T extends ArticleViewMarkCountArgs>(
+      args?: Subset<T, ArticleViewMarkCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], ArticleViewMarkCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a ArticleViewMark.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleViewMarkAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends ArticleViewMarkAggregateArgs>(args: Subset<T, ArticleViewMarkAggregateArgs>): Prisma.PrismaPromise<GetArticleViewMarkAggregateType<T>>
+
+    /**
+     * Group by ArticleViewMark.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {ArticleViewMarkGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends ArticleViewMarkGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: ArticleViewMarkGroupByArgs['orderBy'] }
+        : { orderBy?: ArticleViewMarkGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, ArticleViewMarkGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetArticleViewMarkGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the ArticleViewMark model
+   */
+  readonly fields: ArticleViewMarkFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for ArticleViewMark.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__ArticleViewMarkClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the ArticleViewMark model
+   */
+  interface ArticleViewMarkFieldRefs {
+    readonly id: FieldRef<"ArticleViewMark", 'String'>
+    readonly createdAt: FieldRef<"ArticleViewMark", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * ArticleViewMark findUnique
+   */
+  export type ArticleViewMarkFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * Filter, which ArticleViewMark to fetch.
+     */
+    where: ArticleViewMarkWhereUniqueInput
+  }
+
+  /**
+   * ArticleViewMark findUniqueOrThrow
+   */
+  export type ArticleViewMarkFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * Filter, which ArticleViewMark to fetch.
+     */
+    where: ArticleViewMarkWhereUniqueInput
+  }
+
+  /**
+   * ArticleViewMark findFirst
+   */
+  export type ArticleViewMarkFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * Filter, which ArticleViewMark to fetch.
+     */
+    where?: ArticleViewMarkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleViewMarks to fetch.
+     */
+    orderBy?: ArticleViewMarkOrderByWithRelationInput | ArticleViewMarkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArticleViewMarks.
+     */
+    cursor?: ArticleViewMarkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleViewMarks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleViewMarks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArticleViewMarks.
+     */
+    distinct?: ArticleViewMarkScalarFieldEnum | ArticleViewMarkScalarFieldEnum[]
+  }
+
+  /**
+   * ArticleViewMark findFirstOrThrow
+   */
+  export type ArticleViewMarkFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * Filter, which ArticleViewMark to fetch.
+     */
+    where?: ArticleViewMarkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleViewMarks to fetch.
+     */
+    orderBy?: ArticleViewMarkOrderByWithRelationInput | ArticleViewMarkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for ArticleViewMarks.
+     */
+    cursor?: ArticleViewMarkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleViewMarks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleViewMarks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArticleViewMarks.
+     */
+    distinct?: ArticleViewMarkScalarFieldEnum | ArticleViewMarkScalarFieldEnum[]
+  }
+
+  /**
+   * ArticleViewMark findMany
+   */
+  export type ArticleViewMarkFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * Filter, which ArticleViewMarks to fetch.
+     */
+    where?: ArticleViewMarkWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of ArticleViewMarks to fetch.
+     */
+    orderBy?: ArticleViewMarkOrderByWithRelationInput | ArticleViewMarkOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing ArticleViewMarks.
+     */
+    cursor?: ArticleViewMarkWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` ArticleViewMarks from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` ArticleViewMarks.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of ArticleViewMarks.
+     */
+    distinct?: ArticleViewMarkScalarFieldEnum | ArticleViewMarkScalarFieldEnum[]
+  }
+
+  /**
+   * ArticleViewMark create
+   */
+  export type ArticleViewMarkCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * The data needed to create a ArticleViewMark.
+     */
+    data: XOR<ArticleViewMarkCreateInput, ArticleViewMarkUncheckedCreateInput>
+  }
+
+  /**
+   * ArticleViewMark createMany
+   */
+  export type ArticleViewMarkCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many ArticleViewMarks.
+     */
+    data: ArticleViewMarkCreateManyInput | ArticleViewMarkCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ArticleViewMark createManyAndReturn
+   */
+  export type ArticleViewMarkCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * The data used to create many ArticleViewMarks.
+     */
+    data: ArticleViewMarkCreateManyInput | ArticleViewMarkCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * ArticleViewMark update
+   */
+  export type ArticleViewMarkUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * The data needed to update a ArticleViewMark.
+     */
+    data: XOR<ArticleViewMarkUpdateInput, ArticleViewMarkUncheckedUpdateInput>
+    /**
+     * Choose, which ArticleViewMark to update.
+     */
+    where: ArticleViewMarkWhereUniqueInput
+  }
+
+  /**
+   * ArticleViewMark updateMany
+   */
+  export type ArticleViewMarkUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update ArticleViewMarks.
+     */
+    data: XOR<ArticleViewMarkUpdateManyMutationInput, ArticleViewMarkUncheckedUpdateManyInput>
+    /**
+     * Filter which ArticleViewMarks to update
+     */
+    where?: ArticleViewMarkWhereInput
+    /**
+     * Limit how many ArticleViewMarks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArticleViewMark updateManyAndReturn
+   */
+  export type ArticleViewMarkUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * The data used to update ArticleViewMarks.
+     */
+    data: XOR<ArticleViewMarkUpdateManyMutationInput, ArticleViewMarkUncheckedUpdateManyInput>
+    /**
+     * Filter which ArticleViewMarks to update
+     */
+    where?: ArticleViewMarkWhereInput
+    /**
+     * Limit how many ArticleViewMarks to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArticleViewMark upsert
+   */
+  export type ArticleViewMarkUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * The filter to search for the ArticleViewMark to update in case it exists.
+     */
+    where: ArticleViewMarkWhereUniqueInput
+    /**
+     * In case the ArticleViewMark found by the `where` argument doesn't exist, create a new ArticleViewMark with this data.
+     */
+    create: XOR<ArticleViewMarkCreateInput, ArticleViewMarkUncheckedCreateInput>
+    /**
+     * In case the ArticleViewMark was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<ArticleViewMarkUpdateInput, ArticleViewMarkUncheckedUpdateInput>
+  }
+
+  /**
+   * ArticleViewMark delete
+   */
+  export type ArticleViewMarkDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+    /**
+     * Filter which ArticleViewMark to delete.
+     */
+    where: ArticleViewMarkWhereUniqueInput
+  }
+
+  /**
+   * ArticleViewMark deleteMany
+   */
+  export type ArticleViewMarkDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which ArticleViewMarks to delete
+     */
+    where?: ArticleViewMarkWhereInput
+    /**
+     * Limit how many ArticleViewMarks to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * ArticleViewMark without action
+   */
+  export type ArticleViewMarkDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the ArticleViewMark
+     */
+    select?: ArticleViewMarkSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the ArticleViewMark
+     */
+    omit?: ArticleViewMarkOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -41138,6 +42191,14 @@ export namespace Prisma {
   };
 
   export type SponsorAdScalarFieldEnum = (typeof SponsorAdScalarFieldEnum)[keyof typeof SponsorAdScalarFieldEnum]
+
+
+  export const ArticleViewMarkScalarFieldEnum: {
+    id: 'id',
+    createdAt: 'createdAt'
+  };
+
+  export type ArticleViewMarkScalarFieldEnum = (typeof ArticleViewMarkScalarFieldEnum)[keyof typeof ArticleViewMarkScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -44145,6 +45206,43 @@ export namespace Prisma {
     clicks?: IntWithAggregatesFilter<"SponsorAd"> | number
     createdAt?: DateTimeWithAggregatesFilter<"SponsorAd"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"SponsorAd"> | Date | string
+  }
+
+  export type ArticleViewMarkWhereInput = {
+    AND?: ArticleViewMarkWhereInput | ArticleViewMarkWhereInput[]
+    OR?: ArticleViewMarkWhereInput[]
+    NOT?: ArticleViewMarkWhereInput | ArticleViewMarkWhereInput[]
+    id?: StringFilter<"ArticleViewMark"> | string
+    createdAt?: DateTimeFilter<"ArticleViewMark"> | Date | string
+  }
+
+  export type ArticleViewMarkOrderByWithRelationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ArticleViewMarkWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: ArticleViewMarkWhereInput | ArticleViewMarkWhereInput[]
+    OR?: ArticleViewMarkWhereInput[]
+    NOT?: ArticleViewMarkWhereInput | ArticleViewMarkWhereInput[]
+    createdAt?: DateTimeFilter<"ArticleViewMark"> | Date | string
+  }, "id">
+
+  export type ArticleViewMarkOrderByWithAggregationInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+    _count?: ArticleViewMarkCountOrderByAggregateInput
+    _max?: ArticleViewMarkMaxOrderByAggregateInput
+    _min?: ArticleViewMarkMinOrderByAggregateInput
+  }
+
+  export type ArticleViewMarkScalarWhereWithAggregatesInput = {
+    AND?: ArticleViewMarkScalarWhereWithAggregatesInput | ArticleViewMarkScalarWhereWithAggregatesInput[]
+    OR?: ArticleViewMarkScalarWhereWithAggregatesInput[]
+    NOT?: ArticleViewMarkScalarWhereWithAggregatesInput | ArticleViewMarkScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"ArticleViewMark"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"ArticleViewMark"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -47344,6 +48442,41 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type ArticleViewMarkCreateInput = {
+    id: string
+    createdAt?: Date | string
+  }
+
+  export type ArticleViewMarkUncheckedCreateInput = {
+    id: string
+    createdAt?: Date | string
+  }
+
+  export type ArticleViewMarkUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleViewMarkUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleViewMarkCreateManyInput = {
+    id: string
+    createdAt?: Date | string
+  }
+
+  export type ArticleViewMarkUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type ArticleViewMarkUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -49436,6 +50569,21 @@ export namespace Prisma {
     weight?: SortOrder
     impressions?: SortOrder
     clicks?: SortOrder
+  }
+
+  export type ArticleViewMarkCountOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ArticleViewMarkMaxOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
+  }
+
+  export type ArticleViewMarkMinOrderByAggregateInput = {
+    id?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type AccountCreateNestedManyWithoutUserInput = {

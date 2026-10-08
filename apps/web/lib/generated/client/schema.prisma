@@ -677,3 +677,12 @@ model SponsorAd {
 
   @@index([isActive, startsAt])
 }
+
+/// Görüntülenme tekilleştirme: aynı kişi aynı haberi günde bir kez sayılır. id, kişi + haber + günden
+/// türetilen tek yönlü özettir (IP veya kullanıcı kimliği saklanmaz); 2 günden eski kayıtlar silinir.
+model ArticleViewMark {
+  id        String   @id
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

@@ -565,6 +565,11 @@ exports.Prisma.SponsorAdScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ArticleViewMarkScalarFieldEnum = {
+  id: 'id',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -675,7 +680,8 @@ exports.Prisma.ModelName = {
   Slider: 'Slider',
   Slide: 'Slide',
   MonetizationSettings: 'MonetizationSettings',
-  SponsorAd: 'SponsorAd'
+  SponsorAd: 'SponsorAd',
+  ArticleViewMark: 'ArticleViewMark'
 };
 
 /**

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { BookOpen, X } from "lucide-react";
 import { removeReadingHistoryItem } from "@/app/dashboard/actions";
 import { getServerSnapshot, getSnapshot, removeProgress, subscribe, unfinished, type ReadingEntry } from "@/lib/reading-progress";
+import { resumeHref } from "@/app/(main)/article/components/ResumePosition";
 
 /**
  * Yarım bırakılan haberler: bu cihazdakiler + (giriş yapılmışsa) hesaptakiler, yani diğer cihazlarda
@@ -16,9 +17,13 @@ export function ContinueReading({ accountEntries = [] }: { accountEntries?: Read
   const [now] = useState(() => Date.now());
   const [hidden, setHidden] = useState<string[]>([]);
   const merged = new Map<string, ReadingEntry>();
+  // Bu cihazda bitirilen haber, hesapta yarım görünse de (başka cihazda kalan eski kayıt) listelenmez
+  const doneHere = new Set(local.filter((e) => e.done).map((e) => e.slug));
   for (const e of [...local, ...accountEntries]) {
+    if (doneHere.has(e.slug)) continue;
     const prev = merged.get(e.slug);
-    if (!prev || e.at > prev.at) merged.set(e.slug, e);
+    // En ileri nokta esas alınır; eşitse en son okunan
+    if (!prev || e.progress > prev.progress || (e.progress === prev.progress && e.at > prev.at)) merged.set(e.slug, { ...e, at: Math.max(e.at, prev?.at ?? 0) });
   }
   const entries = [...merged.values()].filter((e) => !hidden.includes(e.slug)).sort((a, b) => b.at - a.at);
   const items = unfinished(entries, now);
@@ -32,7 +37,7 @@ export function ContinueReading({ accountEntries = [] }: { accountEntries?: Read
       <ul className="flex gap-3 overflow-x-auto no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 sm:grid sm:grid-cols-3">
         {items.map((e) => (
           <li key={e.slug} className="relative shrink-0 w-[78%] sm:w-auto">
-            <Link href={`/article/${e.slug}`} className="flex gap-3 rounded-2xl border border-border bg-card p-2.5 pr-9 shadow-card hover:border-primary-500/40 transition-colors">
+            <Link href={resumeHref(e.slug, e.progress)} className="flex gap-3 rounded-2xl border border-border bg-card p-2.5 pr-9 shadow-card hover:border-primary-500/40 transition-colors">
               <span className="relative h-16 w-20 shrink-0 overflow-hidden rounded-xl bg-muted">
                 {e.coverImage && <Image src={e.coverImage} alt="" fill sizes="80px" className="object-cover" />}
               </span>

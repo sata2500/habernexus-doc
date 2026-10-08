@@ -1,21 +1,35 @@
 "use client";
 
 import { useEffect } from "react";
-import { ARTICLE_READ_EVENT, measureArticleProgress, READ_COMPLETE_AT, saveProgress } from "@/lib/reading-progress";
+import { ARTICLE_READ_EVENT, getProgress, measureArticleProgress, saveProgress } from "@/lib/reading-progress";
+import {
+  endArticleSession,
+  getSessionSnapshot,
+  reportScroll,
+  sessionProgress,
+  startArticleSession,
+  subscribeSession,
+} from "@/lib/article-session";
 
 const SYNC_STEP = 20;
 
 /**
- * Haberin ne kadarının okunduğunu bu cihazda saklar ("kaldığın yerden devam et" için);
- * giriş yapmış okurlarda hesaba da kaydeder (profilde "Okuduklarım", önerilerde sinyal).
+ * Okuma oturumunu başlatır ve kaydeder (lib/article-session.ts):
+ * - bu cihazda "kaldığın yerden devam" kaydı (yalnızca okur gerçekten okumaya başladıysa),
+ * - giriş yapmış okurda hesaba ilerleme ve "okundu" (profilde "Okuduklarım", önerilerde sinyal).
+ * İlerleme hem kaydırmadan hem sesli dinlemeden gelir.
  */
-export function ReadingProgressTracker({ articleId, slug, title, coverImage, category }: { articleId: string; slug: string; title: string; coverImage: string | null; category: string | null }) {
+export function ReadingProgressTracker({ articleId, slug, title, coverImage, category, estimatedMinutes }: {
+  articleId: string; slug: string; title: string; coverImage: string | null; category: string | null; estimatedMinutes: number;
+}) {
   useEffect(() => {
-    let last = -1;
+    startArticleSession(articleId, estimatedMinutes, !!getProgress(slug)?.done);
+
+    let savedLocal = -1;
     let sent = 0;
     let signedOut = false;
-    let completed = false;
-    let timer: ReturnType<typeof setTimeout> | null = null;
+    let completedSent = false;
+    let scrollTimer: ReturnType<typeof setTimeout> | null = null;
 
     const send = (progress: number, beacon = false) => {
       if (signedOut) return;
@@ -29,43 +43,55 @@ export function ReadingProgressTracker({ articleId, slug, title, coverImage, cat
         .then((r) => r.json())
         .then((data: { saved?: boolean }) => {
           if (!data.saved) signedOut = true;
-          if (progress >= READ_COMPLETE_AT) window.dispatchEvent(new CustomEvent(ARTICLE_READ_EVENT, { detail: { saved: !!data.saved } }));
+          if (progress >= 100) window.dispatchEvent(new CustomEvent(ARTICLE_READ_EVENT, { detail: { saved: !!data.saved } }));
         })
         .catch(() => {});
     };
 
-    const flush = (final = false) => {
-      const progress = measureArticleProgress();
-      if (progress === null) return;
-      // Okunmaya başlanmamış haberi kaydetme
-      if (last < 0 && progress < 5) return;
-      if (Math.abs(progress - last) >= 5) {
-        last = progress;
+    const persist = (final = false) => {
+      const s = getSessionSnapshot();
+      if (s.articleId !== articleId || !s.engaged) return;
+      const progress = sessionProgress(s);
+      if (s.completed) {
+        if (!completedSent) {
+          completedSent = true;
+          saveProgress({ slug, title, coverImage, category, progress: 100, done: true });
+          send(100);
+        }
+        return;
+      }
+      if (Math.abs(progress - savedLocal) >= 5 || (final && progress !== savedLocal)) {
+        savedLocal = progress;
         saveProgress({ slug, title, coverImage, category, progress });
       }
-      if (progress >= READ_COMPLETE_AT && !completed) {
-        completed = true;
-        send(100);
-      } else if (progress >= 10 && progress >= sent + (final ? 5 : SYNC_STEP) && !completed) {
-        send(progress, final);
-      }
+      if (progress >= 10 && progress >= sent + (final ? 5 : SYNC_STEP)) send(progress, final);
     };
 
+    const measure = () => {
+      const p = measureArticleProgress();
+      if (p !== null) reportScroll(p);
+    };
     const onScroll = () => {
-      if (timer) return;
-      timer = setTimeout(() => { timer = null; flush(); }, 600);
+      if (scrollTimer) return;
+      scrollTimer = setTimeout(() => { scrollTimer = null; measure(); }, 300);
     };
-    const onHide = () => flush(true);
+    const onHide = () => persist(true);
 
+    measure();
+    const unsubscribe = subscribeSession(() => persist());
     window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     window.addEventListener("pagehide", onHide);
     return () => {
-      if (timer) clearTimeout(timer);
-      flush(true);
+      if (scrollTimer) clearTimeout(scrollTimer);
+      persist(true);
+      unsubscribe();
+      endArticleSession(articleId);
       window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
       window.removeEventListener("pagehide", onHide);
     };
-  }, [articleId, slug, title, coverImage, category]);
+  }, [articleId, slug, title, coverImage, category, estimatedMinutes]);
 
   return null;
 }

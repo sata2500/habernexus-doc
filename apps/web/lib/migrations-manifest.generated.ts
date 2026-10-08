@@ -62,5 +62,10 @@ export const MIGRATIONS: MigrationManifestEntry[] = [
     "name": "20261012090000_monetization",
     "checksum": "54665a7d0d6d49a9e3632026eb8708d7f86f60815e58db6c8914d5b18aff12be",
     "sql": "-- Reklam ve ölçüm ayarları ile sponsor reklamları. Idempotent.\nCREATE TABLE IF NOT EXISTS \"MonetizationSettings\" (\n    \"id\" TEXT NOT NULL DEFAULT 'global',\n    \"gaEnabled\" BOOLEAN NOT NULL DEFAULT false,\n    \"gaMeasurementId\" TEXT,\n    \"vercelAnalyticsEnabled\" BOOLEAN NOT NULL DEFAULT false,\n    \"adsenseEnabled\" BOOLEAN NOT NULL DEFAULT false,\n    \"adsensePublisherId\" TEXT,\n    \"adsTxtExtra\" TEXT,\n    \"placements\" JSONB NOT NULL DEFAULT '{}',\n    \"updatedAt\" TIMESTAMP(3) NOT NULL,\n    CONSTRAINT \"MonetizationSettings_pkey\" PRIMARY KEY (\"id\")\n);\n\nCREATE TABLE IF NOT EXISTS \"SponsorAd\" (\n    \"id\" TEXT NOT NULL,\n    \"name\" TEXT NOT NULL,\n    \"advertiser\" TEXT,\n    \"imageUrl\" TEXT NOT NULL,\n    \"imageUrlMobile\" TEXT,\n    \"linkUrl\" TEXT NOT NULL,\n    \"altText\" TEXT NOT NULL,\n    \"placements\" TEXT[],\n    \"isActive\" BOOLEAN NOT NULL DEFAULT true,\n    \"startsAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    \"endsAt\" TIMESTAMP(3),\n    \"weight\" INTEGER NOT NULL DEFAULT 1,\n    \"impressions\" INTEGER NOT NULL DEFAULT 0,\n    \"clicks\" INTEGER NOT NULL DEFAULT 0,\n    \"createdAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    \"updatedAt\" TIMESTAMP(3) NOT NULL,\n    CONSTRAINT \"SponsorAd_pkey\" PRIMARY KEY (\"id\")\n);\n\nCREATE INDEX IF NOT EXISTS \"SponsorAd_isActive_startsAt_idx\" ON \"SponsorAd\"(\"isActive\", \"startsAt\");\n"
+  },
+  {
+    "name": "20261013090000_article_view_marks",
+    "checksum": "bba09b58d761d49a8425d2243f97236e6892bd35e5e07d7a1849c147e4d9ffca",
+    "sql": "-- Görüntülenme tekilleştirme kayıtları. Idempotent.\nCREATE TABLE IF NOT EXISTS \"ArticleViewMark\" (\n    \"id\" TEXT NOT NULL,\n    \"createdAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,\n    CONSTRAINT \"ArticleViewMark_pkey\" PRIMARY KEY (\"id\")\n);\nCREATE INDEX IF NOT EXISTS \"ArticleViewMark_createdAt_idx\" ON \"ArticleViewMark\"(\"createdAt\");\n"
   }
 ];
