@@ -70,3 +70,13 @@ test("görüntülenme: aynı kişi aynı gün aynı özeti üretir, gün ya da k
   assert.equal(isBotUserAgent("Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 Safari/604.1"), false);
   assert.equal(isBotUserAgent(null), true);
 });
+
+test("arama: ifade güvenli bir tam metin sorgusuna çevrilir", async () => {
+  const { toSearchQuery } = await import("../lib/data");
+  assert.equal(toSearchQuery("İSTANBUL"), "(istanbul:* | istan:*)");
+  assert.equal(toSearchQuery("Faiz kararı"), "faiz:* & (kararı:* | kara:*)");
+  // Sorgu sözdizimi karakterleri ve tek harfler atılır
+  assert.equal(toSearchQuery("a & b | ! ( ) :* 'x'"), null);
+  assert.equal(toSearchQuery("son-dakika!"), "son:* & (dakika:* | daki:*)");
+  assert.equal(toSearchQuery("1 2 3 4 5 6 7 8 9 10 11 12".replace(/ /g, "0 ")), toSearchQuery("10 20 30 40 50 60 70 80"));
+});

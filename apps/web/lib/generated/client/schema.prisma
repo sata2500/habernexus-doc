@@ -97,18 +97,21 @@ model Article {
   qualityScore     Int?
   analysisReport   Json?
 
-  createdAt     DateTime          @default(now())
-  updatedAt     DateTime          @updatedAt
-  author        User              @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  category      Category?         @relation(fields: [categoryId], references: [id])
-  aiPersona     AiPersona?        @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
-  sourceRssItem RssFeedItem?      @relation(fields: [sourceRssItemId], references: [id], onDelete: SetNull)
-  story         NewsStory?        @relation("StoryArticle")
+  createdAt     DateTime                 @default(now())
+  updatedAt     DateTime                 @updatedAt
+  author        User                     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category      Category?                @relation(fields: [categoryId], references: [id])
+  aiPersona     AiPersona?               @relation(fields: [aiPersonaId], references: [id], onDelete: SetNull)
+  sourceRssItem RssFeedItem?             @relation(fields: [sourceRssItemId], references: [id], onDelete: SetNull)
+  story         NewsStory?               @relation("StoryArticle")
   bookmarks     Bookmark[]
   comments      Comment[]
   reactions     ArticleReaction[]
   reads         ArticleRead[]
   tags          TagOnArticle[]
+  /// Türkçe tam metin arama dizini. Veritabanı tetikleyicisi doldurur (migration 20261014090000_article_search);
+  /// uygulama kodu bu alana yazmaz.
+  searchVector  Unsupported("tsvector")?
 
   @@index([authorId])
   @@index([categoryId])
@@ -117,6 +120,7 @@ model Article {
   @@index([slug])
   @@index([lang])
   @@index([aiPersonaId])
+  @@index([searchVector], type: Gin)
 }
 
 model Category {
