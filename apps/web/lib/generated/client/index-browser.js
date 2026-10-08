@@ -570,6 +570,40 @@ exports.Prisma.ArticleViewMarkScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  lastSuccessAt: 'lastSuccessAt',
+  failureCount: 'failureCount'
+};
+
+exports.Prisma.NotificationSettingsScalarFieldEnum = {
+  id: 'id',
+  enabled: 'enabled',
+  autoBreaking: 'autoBreaking',
+  dailyLimit: 'dailyLimit',
+  quietStartHour: 'quietStartHour',
+  quietEndHour: 'quietEndHour',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PushLogScalarFieldEnum = {
+  id: 'id',
+  articleId: 'articleId',
+  title: 'title',
+  body: 'body',
+  url: 'url',
+  automatic: 'automatic',
+  recipients: 'recipients',
+  delivered: 'delivered',
+  failed: 'failed',
+  sentAt: 'sentAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -681,7 +715,10 @@ exports.Prisma.ModelName = {
   Slide: 'Slide',
   MonetizationSettings: 'MonetizationSettings',
   SponsorAd: 'SponsorAd',
-  ArticleViewMark: 'ArticleViewMark'
+  ArticleViewMark: 'ArticleViewMark',
+  PushSubscription: 'PushSubscription',
+  NotificationSettings: 'NotificationSettings',
+  PushLog: 'PushLog'
 };
 
 /**

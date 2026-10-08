@@ -41,6 +41,7 @@ Gerçek anahtarlar yalnızca Vercel proje ayarlarında tutulur; depoya ve sohbet
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | önerilir | Önbellek, hız sınırı, atomik kilitler. Yoksa bellek içi yedek (tek sunucu için) |
 | `NEXT_PUBLIC_SENTRY_DSN` | önerilir | Sentry hata takibi (tarayıcı ve sunucu). Yoksa Sentry hiç başlamaz |
 | `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | isteğe bağlı | Derlemede kaynak haritalarını Sentry'ye yükler (hata satırları okunur olur) |
+| `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY` | isteğe bağlı | Tarayıcı bildirimleri. Anahtar çifti yönetim → Ayarlar → Bildirimler'den üretilir; bir kez belirlenince değiştirilmez (`VAPID_SUBJECT` isteğe bağlı) |
 | `CRON_SECRET` | önerilir | Günlük kişisel veri temizliği (`/api/cron/cleanup`, `vercel.json`). Vercel bu anahtarı cron isteğine ekler; yoksa temizlik çalışmaz |
 | `BLOB_READ_WRITE_TOKEN` | yükleme için | Görsel ve ses dosyaları (Vercel Blob) |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | isteğe bağlı | Google ile giriş; yoksa düğme gizlenir |
@@ -109,6 +110,20 @@ Yönetim → Ayarlar → **Reklam ve Analitik** sekmesinden yönetilir; kod değ
   Google Consent Mode v2 varsayılanları kök yerleşimde kurulur (`lib/google-consent.ts`); Analytics yalnızca onayla yüklenir,
   AdSense onay yoksa kişiselleştirilmemiş reklam gösterir.
 - Analytics veya AdSense açılmadan önce Gizlilik ve Çerez Politikası metinleri güncellenmelidir.
+
+## Okuma, görüntülenme, arama ve bildirimler
+
+- **Görüntülenme** (`lib/server/views.ts`): aynı kişi aynı haberi Türkiye saatine göre günde bir kez sayılır
+  (kişi + haber + gün HMAC özeti `ArticleViewMark` tablosunda; IP saklanmaz). Sayfa en az 5 sn görünür kalmalı;
+  botlar ve haberin yazarı sayılmaz.
+- **Okuma oturumu** (`lib/article-session.ts`): kaydırma ve sesli dinleme birlikte izlenir. "Okundu": metnin sonuna
+  kaydırıp haberin uzunluğuna göre en az süre (15–90 sn) geçirmek ya da sesi %95 dinlemek. Açıp çıkmak "yarım kaldı"
+  kaydı oluşturmaz; "Kaldığın yerden devam" haberi `#devam-<yüzde>` ile kalınan konumda açar.
+- **Arama**: `Article.searchVector` (Türkçe tam metin, veritabanı tetikleyicisi doldurur, GIN indeksi). Bu sütun
+  Prisma'da `Unsupported` tanımlıdır; uygulama koduyla yazılmaz.
+- **Bildirimler** (`lib/server/push.ts`): Web Push. Davet yalnızca okur bir haberi bitirince gösterilir; günlük sınır,
+  sessiz saatler ve haber başına tek bildirim kuralı vardır. Yönetim → Ayarlar → Bildirimler'den elle gönderim ya da
+  "son dakika" haberleri için otomatik gönderim.
 
 ## Testler
 

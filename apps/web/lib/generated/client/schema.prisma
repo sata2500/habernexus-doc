@@ -10,17 +10,17 @@ datasource db {
 }
 
 model User {
-  id                   String            @id @default(cuid())
+  id                   String             @id @default(cuid())
   name                 String
-  email                String            @unique
-  emailVerified        Boolean           @default(false)
+  email                String             @unique
+  emailVerified        Boolean            @default(false)
   image                String?
-  role                 String            @default("USER")
+  role                 String             @default("USER")
   bio                  String?
-  newsletterSubscribed Boolean           @default(false)
-  newsletterTime       String            @default("08:00")
-  createdAt            DateTime          @default(now())
-  updatedAt            DateTime          @updatedAt
+  newsletterSubscribed Boolean            @default(false)
+  newsletterTime       String             @default("08:00")
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
   accounts             Account[]
   articles             Article[]
   bookmarks            Bookmark[]
@@ -29,6 +29,7 @@ model User {
   reactions            ArticleReaction[]
   reads                ArticleRead[]
   sessions             Session[]
+  pushSubscriptions    PushSubscription[]
 }
 
 model Session {
@@ -689,4 +690,49 @@ model ArticleViewMark {
   createdAt DateTime @default(now())
 
   @@index([createdAt])
+}
+
+/// Tarayıcı bildirimi aboneliği (Web Push). Okur tarayıcıda izin verince oluşur; geçersizleşince silinir.
+model PushSubscription {
+  id            String    @id @default(cuid())
+  endpoint      String    @unique
+  p256dh        String
+  auth          String
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  lastSuccessAt DateTime?
+  failureCount  Int       @default(0)
+
+  @@index([userId])
+}
+
+/// Bildirim ayarları (tek satır, id="global")
+model NotificationSettings {
+  id             String   @id @default("global")
+  enabled        Boolean  @default(false)
+  /// Yapay zekâ hattında "son dakika" olarak değerlendirilen haberler otomatik bildirilsin mi
+  autoBreaking   Boolean  @default(false)
+  /// Günde en fazla gönderilecek bildirim (otomatik + elle)
+  dailyLimit     Int      @default(3)
+  /// Sessiz saatler (Türkiye saati, 0-23); başlangıç = bitiş ise kapalı
+  quietStartHour Int      @default(23)
+  quietEndHour   Int      @default(7)
+  updatedAt      DateTime @updatedAt
+}
+
+/// Gönderilen bildirimler (günlük sınır ve geçmiş)
+model PushLog {
+  id         String   @id @default(cuid())
+  articleId  String?
+  title      String
+  body       String
+  url        String
+  automatic  Boolean  @default(false)
+  recipients Int      @default(0)
+  delivered  Int      @default(0)
+  failed     Int      @default(0)
+  sentAt     DateTime @default(now())
+
+  @@index([sentAt])
 }

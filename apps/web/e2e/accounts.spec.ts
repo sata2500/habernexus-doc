@@ -76,12 +76,19 @@ test.describe("yönetici", () => {
   test.use({ storageState: session("admin") });
   test("yönetim sayfaları açılır", async ({ page }) => {
     const errors = trackPageErrors(page);
-    for (const path of ["/admin", "/admin/articles", "/admin/users", "/admin/categories", "/admin/karar-merkezi", "/admin/settings", "/admin/settings?tab=sistem", "/admin/settings?tab=reklam"]) {
+    for (const path of ["/admin", "/admin/articles", "/admin/users", "/admin/categories", "/admin/karar-merkezi", "/admin/settings", "/admin/settings?tab=sistem", "/admin/settings?tab=reklam", "/admin/settings?tab=bildirimler"]) {
       const res = await page.goto(path);
       expect(res?.status(), path).toBe(200);
       await expect(page.locator("h1").first()).toBeVisible();
     }
     expect(errors).toEqual([]);
+  });
+
+  test("bildirim anahtarı üretilir ve gösterilir (kaydedilmez)", async ({ page }) => {
+    await page.goto("/admin/settings?tab=bildirimler");
+    await page.getByRole("button", { name: "Anahtar çifti üret" }).click();
+    await expect(page.getByText("Anahtarlar kaydedilmedi; sayfadan çıkınca kaybolur.")).toBeVisible();
+    await expect(page.locator("code").filter({ hasText: /^[A-Za-z0-9_-]{80,}$/ }).first()).toBeVisible();
   });
 
   test("reklam ayarlarında kimliksiz Google Analytics açılamaz", async ({ page }) => {

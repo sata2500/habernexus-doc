@@ -19,6 +19,8 @@ import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { firstParagraphText, normalizeMetaDescription } from "@/lib/news/seo-text";
 import { ReadingProgressBar } from "../components/ReadingProgressBar";
 import { ResumePosition } from "../components/ResumePosition";
+import { PushPrompt } from "../components/PushPrompt";
+import { getNotificationSettings, isPushConfigured } from "@/lib/server/push";
 import { ArticleReactions } from "../components/ArticleReactions";
 import { ReadingProgressTracker } from "../components/ReadingProgressTracker";
 import { NewsletterInline } from "@/components/article/NewsletterInline";
@@ -106,6 +108,10 @@ export default async function ArticlePage({ params }: { params: Params }) {
   // Gövdenin başında başlığın tekrarı varsa gösterme (eski yapay zekâ haberleri)
   const body = stripLeadingTitleHeading(article.title, article.content);
   const readTime = readingMinutes(article.content);
+  // Bildirim daveti yalnızca bildirimler kurulu ve açıksa
+  const push = isPushConfigured()
+    ? await getNotificationSettings().then((n) => (n.enabled ? { dailyLimit: n.dailyLimit } : null)).catch(() => null)
+    : null;
   const [related, storedSummary] = await Promise.all([
     getRelatedArticles({
       id: article.id,
@@ -255,6 +261,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
       <div id="article-end">
         <ArticleReactions articleId={article.id} />
       </div>
+      {push && <PushPrompt dailyLimit={push.dailyLimit} />}
 
       {/* ── Yazar Bilgi Kartı ────────────────────────── */}
       <section className="bg-muted/30 rounded-2xl p-6 md:p-8 mb-12 border border-border" aria-label="Yazar hakkında">

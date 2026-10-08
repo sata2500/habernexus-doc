@@ -257,6 +257,9 @@ export async function afterPublish(article: { id: string; title: string; slug: s
     after(() => notifyGoogle(getArticleUrl(article.slug), "URL_UPDATED").catch(err => console.error("Google Indexing Error:", err)));
     const { publishToTelegram } = await import("./social-publisher");
     after(() => publishToTelegram({ title: article.title, excerpt: article.excerpt, slug: article.slug, coverImage: article.coverImage }).catch(err => console.error("Telegram publish error:", err)));
+    // "Son dakika" haberleri (ayar açıksa ve sınırlar uygunsa) tarayıcı bildirimiyle duyurulur
+    const { maybeAutoPushArticle } = await import("./server/push");
+    after(() => maybeAutoPushArticle(article.id));
   } catch (e) {
     console.error("Yayın sonrası bildirimler yüklenemedi:", e);
   }

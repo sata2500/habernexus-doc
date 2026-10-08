@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { Card } from "@/components/ui/Card";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { NewsletterToggle } from "../components/NewsletterToggle";
+import { PushToggle } from "../components/PushToggle";
 import { DeleteAccountButton } from "../components/DeleteAccountButton";
 import { ChangePasswordForm } from "../components/ChangePasswordForm";
 
@@ -41,6 +42,8 @@ export default async function SettingsPage() {
 
           {/* Bülten yalnızca açık onayla: kayıt yoksa kapalı sayılır */}
           <NewsletterToggle initialSubscribed={user?.newsletterSubscribed ?? false} initialTime={user?.newsletterTime ?? "08:00"} />
+
+          <PushToggle />
 
           <section className="flex flex-col sm:flex-row items-start justify-between gap-4 pb-6 border-b border-border">
             <div>

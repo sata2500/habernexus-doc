@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Megaphone, Settings2, Sparkles, ServerCog, SlidersHorizontal, Timer } from "lucide-react";
+import { BellRing, Megaphone, Settings2, Sparkles, ServerCog, SlidersHorizontal, Timer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAdminSiteSettings } from "./actions";
 import { getAiOverview } from "./ai-actions";
@@ -13,6 +13,8 @@ import { getMigrationStatus, type MigrationStatus } from "@/lib/server/db-migrat
 import { getMonetizationOverview } from "./monetization-actions";
 import { MonetizationPanel } from "./components/MonetizationPanel";
 import { SponsorManager } from "./components/SponsorManager";
+import { getNotificationOverview } from "./notification-actions";
+import { NotificationPanel } from "./components/NotificationPanel";
 
 export const dynamic = "force-dynamic";
 // Veritabanı güncellemeleri ve model testleri için yeterli süre
@@ -31,6 +33,7 @@ const SERVICES = [
   { key: "TELEGRAM_BOT_TOKEN", label: "Telegram paylaşımı" },
   { key: "NEXT_PUBLIC_SENTRY_DSN", label: "Sentry (hata takibi)" },
   { key: "CRON_SECRET", label: "Gece temizliği (Vercel Cron)" },
+  { key: "VAPID_PRIVATE_KEY", label: "Tarayıcı bildirimleri (VAPID)" },
 ] as const;
 
 const TABS = [
@@ -38,6 +41,7 @@ const TABS = [
   { id: "yapay-zeka", label: "Yapay Zekâ", icon: Sparkles, description: "Modeller, sağlayıcılar ve yapay zekâ talimatları." },
   { id: "otomasyon", label: "Otomasyon", icon: Timer, description: "Zamanlanmış işler (tarama, analiz, AI Yazar, bülten) ve içerik kuralları." },
   { id: "reklam", label: "Reklam ve Analitik", icon: Megaphone, description: "Google Analytics, AdSense, sponsor reklamları ve reklam alanları." },
+  { id: "bildirimler", label: "Bildirimler", icon: BellRing, description: "Tarayıcı bildirimleri: ayarlar, haber bildirimi ve gönderim geçmişi." },
   { id: "sistem", label: "Sistem", icon: ServerCog, description: "Veritabanı güncellemeleri ve servis yapılandırması." },
 ] as const;
 
@@ -81,6 +85,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
       {tab === "yapay-zeka" && <AiTab />}
       {tab === "otomasyon" && <AutomationTab />}
       {tab === "reklam" && <MonetizationTab />}
+      {tab === "bildirimler" && <NotificationTab />}
       {tab === "sistem" && <SystemTab />}
     </div>
   );
@@ -116,6 +121,15 @@ async function MonetizationTab() {
         <h3 className="text-base font-bold font-display">Sponsor reklamları</h3>
         <SponsorManager sponsors={sponsors} />
       </div>
+    </div>
+  );
+}
+
+async function NotificationTab() {
+  const overview = await getNotificationOverview();
+  return (
+    <div className="bg-card rounded-3xl border border-border shadow-soft p-4 sm:p-6 md:p-8">
+      <NotificationPanel {...overview} />
     </div>
   );
 }

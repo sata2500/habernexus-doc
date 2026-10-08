@@ -80,3 +80,14 @@ test("arama: ifade güvenli bir tam metin sorgusuna çevrilir", async () => {
   assert.equal(toSearchQuery("son-dakika!"), "son:* & (dakika:* | daki:*)");
   assert.equal(toSearchQuery("1 2 3 4 5 6 7 8 9 10 11 12".replace(/ /g, "0 ")), toSearchQuery("10 20 30 40 50 60 70 80"));
 });
+
+test("bildirim: sessiz saatler gece yarısını geçebilir", async () => {
+  const { inQuietHours } = await import("../lib/server/push");
+  assert.equal(inQuietHours(23, 23, 7), true);
+  assert.equal(inQuietHours(3, 23, 7), true);
+  assert.equal(inQuietHours(7, 23, 7), false);
+  assert.equal(inQuietHours(12, 23, 7), false);
+  assert.equal(inQuietHours(13, 12, 14), true);
+  assert.equal(inQuietHours(14, 12, 14), false);
+  assert.equal(inQuietHours(5, 0, 0), false); // başlangıç = bitiş: sessiz saat yok
+});
