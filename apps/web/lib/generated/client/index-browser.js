@@ -534,6 +534,37 @@ exports.Prisma.SlideScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.MonetizationSettingsScalarFieldEnum = {
+  id: 'id',
+  gaEnabled: 'gaEnabled',
+  gaMeasurementId: 'gaMeasurementId',
+  vercelAnalyticsEnabled: 'vercelAnalyticsEnabled',
+  adsenseEnabled: 'adsenseEnabled',
+  adsensePublisherId: 'adsensePublisherId',
+  adsTxtExtra: 'adsTxtExtra',
+  placements: 'placements',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SponsorAdScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  advertiser: 'advertiser',
+  imageUrl: 'imageUrl',
+  imageUrlMobile: 'imageUrlMobile',
+  linkUrl: 'linkUrl',
+  altText: 'altText',
+  placements: 'placements',
+  isActive: 'isActive',
+  startsAt: 'startsAt',
+  endsAt: 'endsAt',
+  weight: 'weight',
+  impressions: 'impressions',
+  clicks: 'clicks',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -541,6 +572,10 @@ exports.Prisma.SortOrder = {
 
 exports.Prisma.NullableJsonNullValueInput = {
   DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
@@ -638,7 +673,9 @@ exports.Prisma.ModelName = {
   SiteSettings: 'SiteSettings',
   AiModel: 'AiModel',
   Slider: 'Slider',
-  Slide: 'Slide'
+  Slide: 'Slide',
+  MonetizationSettings: 'MonetizationSettings',
+  SponsorAd: 'SponsorAd'
 };
 
 /**

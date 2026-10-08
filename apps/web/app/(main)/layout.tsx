@@ -4,6 +4,8 @@ import { getCategoriesWithCount } from "@/lib/data";
 import { getSiteSettings } from "@/lib/site-settings";
 import { PwaRegister } from "@/components/PwaRegister";
 import { CookieConsent } from "@/components/layout/CookieConsent";
+import { ThirdPartyScripts } from "@/components/layout/ThirdPartyScripts";
+import { getPublicMonetization } from "@/lib/server/monetization";
 
 // Not: Burada genel bir revalidate tanımlanmaz. Yerleşimdeki süre, altındaki tüm sayfaların süresini
 // ezer (önceden 60 sn, haber sayfalarının 1 saatlik ayarını geçersiz kılıyordu). Her sayfa kendi süresini
@@ -14,7 +16,7 @@ export default async function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [categories, settings] = await Promise.all([getCategoriesWithCount(), getSiteSettings()]);
+  const [categories, settings, monetization] = await Promise.all([getCategoriesWithCount(), getSiteSettings(), getPublicMonetization()]);
 
   return (
     <>
@@ -29,7 +31,12 @@ export default async function MainLayout({
       <Navbar categories={categories} settings={settings} />
       <main id="main-content" tabIndex={-1} className="flex-1 outline-none">{children}</main>
       <Footer categories={categories} settings={settings} />
-      <CookieConsent />
+      <CookieConsent analytics={!!monetization.gaMeasurementId} ads={!!monetization.adsensePublisherId} />
+      <ThirdPartyScripts
+        gaMeasurementId={monetization.gaMeasurementId}
+        adsensePublisherId={monetization.adsensePublisherId}
+        vercelAnalytics={monetization.vercelAnalytics}
+      />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AdSlot } from "@/components/ads/AdSlot";
 import {
   TrendingUp,
   Clock,
@@ -182,8 +183,8 @@ export default async function HomePage() {
         </div>
 
         {/* Trending Sidebar */}
-        <div className="lg:col-span-1">
-          <Card className="h-full border border-border/40 bg-card/60 backdrop-blur-xs flex flex-col justify-between">
+        <div className="lg:col-span-1 flex flex-col">
+          <Card className="flex-1 border border-border/40 bg-card/60 backdrop-blur-xs flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-2.5 mb-6">
                 <div className="h-9 w-9 rounded-xl bg-accent-500/10 flex items-center justify-center">
@@ -243,8 +244,11 @@ export default async function HomePage() {
               )}
             </div>
           </Card>
+          <AdSlot placement="home_sidebar" className="mb-0" />
         </div>
       </section>
+
+      <AdSlot placement="home_top" />
 
       {/* ── Sizin İçin (kişiselleştirilmiş öneriler) ────────────────────────── */}
       {forYou.items.length > 0 && (
@@ -313,6 +317,8 @@ export default async function HomePage() {
           })}
         </div>
       </section>
+
+      <AdSlot placement="home_feed" />
 
       {/* ── Tüm Haberler (yayın tarihine göre, daha fazla yükle) ────────────────────────── */}
       <section id="latest-articles-section" aria-label="Son Haberler">

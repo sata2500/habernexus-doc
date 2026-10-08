@@ -1,16 +1,37 @@
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs/config";
 
 const isDev = process.env.NODE_ENV !== "production";
 
 /**
- * İçerik Güvenlik Politikası. Betikler yalnızca sitenin kendisinden yüklenir (dış kaynaklı betik yok).
+ * Yönetim panelinden açılabilen Google Analytics ve AdSense'in betik ve çerçeve adresleri.
+ * Özellik kapalıyken bu adreslerden hiçbir şey yüklenmez; izin listesi yalnızca açıldığında çalışmalarını sağlar.
+ */
+const googleScriptHosts = [
+  "https://www.googletagmanager.com",
+  "https://*.googlesyndication.com",
+  "https://*.googleadservices.com",
+  "https://*.doubleclick.net",
+  "https://*.adtrafficquality.google",
+  "https://*.google.com",
+  "https://*.gstatic.com",
+].join(" ");
+const googleFrameHosts = [
+  "https://*.googlesyndication.com",
+  "https://*.doubleclick.net",
+  "https://*.adtrafficquality.google",
+  "https://*.google.com",
+].join(" ");
+
+/**
+ * İçerik Güvenlik Politikası. Betikler sitenin kendisinden ve (açılırsa) Google ölçüm/reklam adreslerinden yüklenir.
  * 'unsafe-inline': Next.js'in sayfa içi başlatma betikleri için gerekli; nonce kullanmak her sayfayı
  * dinamik yapar (ISR/önbellek kaybolur). 'unsafe-eval' yalnızca geliştirmede (hızlı yenileme).
  * Görseller ve sesler haber kaynaklarından / Vercel Blob'dan geldiği için https: açık.
  */
 const contentSecurityPolicy = [
   "default-src 'self'",
-  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ""}`,
+  `script-src 'self' 'unsafe-inline' ${googleScriptHosts}${isDev ? " 'unsafe-eval'" : ""}`,
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https:",
   "font-src 'self' data:",
@@ -22,7 +43,8 @@ const contentSecurityPolicy = [
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
-  "frame-src 'none'",
+  // Yalnızca AdSense reklam çerçeveleri
+  `frame-src ${googleFrameHosts}`,
   "frame-ancestors 'self'",
   ...(isDev ? [] : ["upgrade-insecure-requests"]),
 ].join("; ");
@@ -79,4 +101,17 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+/**
+ * Sentry: kaynak haritaları yalnızca SENTRY_AUTH_TOKEN (ve SENTRY_ORG, SENTRY_PROJECT) tanımlıysa
+ * yüklenir; anahtar yoksa derleme aynen devam eder. Çalışma anındaki hata gönderimi DSN'e bağlıdır.
+ */
+const sentryUpload = !!(process.env.SENTRY_AUTH_TOKEN && process.env.SENTRY_ORG && process.env.SENTRY_PROJECT);
+
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+  silent: !process.env.CI,
+  telemetry: false,
+  sourcemaps: { disable: !sentryUpload, deleteSourcemapsAfterUpload: true },
+});

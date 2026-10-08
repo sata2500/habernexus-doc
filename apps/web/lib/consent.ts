@@ -1,12 +1,14 @@
 /**
- * Çerez onayı (KVKK Çerez Rehberi). Zorunlu çerezler onay gerektirmez; onaya bağlı tek grup
- * "kişiselleştirme": okunan haberleri hatırlayan `hn_reads` çerezi ve tarayıcıdaki okuma ilerlemesi
- * ("Sizin İçin" ve "Okumaya devam et"). Reklam/izleme çerezi kullanılmadığı için başka grup yok.
+ * Çerez onayı (KVKK Çerez Rehberi). Zorunlu çerezler onay gerektirmez. Onaya bağlı gruplar:
+ * - personalization: okunan haberleri hatırlayan `hn_reads` ve tarayıcıdaki okuma ilerlemesi
+ * - analytics: Google Analytics (yalnızca yönetim panelinde açıksa sorulur)
+ * - ads: kişiselleştirilmiş Google AdSense reklamları (yalnızca AdSense açıksa sorulur)
  *
- * Değer biçimi: `<sürüm>.<p0|p1>`; sürüm artırılırsa herkese yeniden sorulur.
+ * Değer biçimi: `2.p1a0d-` (p: kişiselleştirme, a: analitik, d: reklam; 1 kabul, 0 ret, - sorulmadı).
+ * Yeni bir grup devreye girdiğinde yalnızca o grup için yeniden sorulur.
  */
 export const CONSENT_COOKIE = "hn_consent";
-export const CONSENT_VERSION = "1";
+export const CONSENT_VERSION = "2";
 /** Kurul rehberine uygun olarak tercih süresiz tutulmaz: 6 ay sonra yeniden sorulur */
 export const CONSENT_MAX_AGE = 60 * 60 * 24 * 180;
 /** Alt bilgideki "Çerez tercihleri" bağlantısı bandı bu olayla yeniden açar */
@@ -17,22 +19,43 @@ export const CONSENT_CHANGE_EVENT = "hn:consent-change";
 export const READ_HISTORY_COOKIE = "hn_reads";
 export const READ_HISTORY_MAX = 30;
 
-export type ConsentState = { personalization: boolean } | null;
+export const CONSENT_GROUPS = ["personalization", "analytics", "ads"] as const;
+export type ConsentGroup = (typeof CONSENT_GROUPS)[number];
 
-/** Çerez değerini çözer; geçersiz ya da eski sürüm "henüz seçilmedi" (null) sayılır */
-export function parseConsent(value: string | undefined | null): ConsentState {
-  const match = value?.match(/^(\d+)\.p([01])$/);
-  if (!match || match[1] !== CONSENT_VERSION) return null;
-  return { personalization: match[2] === "1" };
+/** true: kabul · false: ret · null: henüz sorulmadı */
+export type ConsentChoices = Record<ConsentGroup, boolean | null>;
+
+const LETTERS: Record<ConsentGroup, string> = { personalization: "p", analytics: "a", ads: "d" };
+
+/** Çerez değerini çözer; geçersiz değer null (hiç seçim yapılmamış) sayılır */
+export function parseConsent(value: string | undefined | null): ConsentChoices | null {
+  if (!value) return null;
+  // 1. sürüm yalnızca kişiselleştirmeyi soruyordu; o tercih korunur
+  const v1 = value.match(/^1\.p([01])$/);
+  if (v1) return { personalization: v1[1] === "1", analytics: null, ads: null };
+  const v2 = value.match(/^2\.p([01-])a([01-])d([01-])$/);
+  if (!v2) return null;
+  const read = (c: string) => (c === "-" ? null : c === "1");
+  return { personalization: read(v2[1]), analytics: read(v2[2]), ads: read(v2[3]) };
 }
 
-export function serializeConsent(personalization: boolean) {
-  return `${CONSENT_VERSION}.p${personalization ? 1 : 0}`;
+export function serializeConsent(choices: Partial<ConsentChoices>) {
+  const c = (v: boolean | null | undefined) => (v == null ? "-" : v ? "1" : "0");
+  return `${CONSENT_VERSION}.${CONSENT_GROUPS.map((g) => LETTERS[g] + c(choices[g])).join("")}`;
+}
+
+/** Sitede etkin gruplar içinde henüz karar verilmemiş olan var mı? */
+export function needsConsent(choices: ConsentChoices | null, active: Record<ConsentGroup, boolean>) {
+  return CONSENT_GROUPS.some((g) => active[g] && (choices?.[g] ?? null) === null);
+}
+
+export function readConsentCookie(): ConsentChoices | null {
+  if (typeof document === "undefined") return null;
+  const raw = document.cookie.split("; ").find((c) => c.startsWith(`${CONSENT_COOKIE}=`))?.slice(CONSENT_COOKIE.length + 1);
+  return parseConsent(raw ? decodeURIComponent(raw) : null);
 }
 
 /** Tarayıcıda: kişiselleştirmeye onay verilmiş mi? */
 export function hasPersonalizationConsent(): boolean {
-  if (typeof document === "undefined") return false;
-  const raw = document.cookie.split("; ").find((c) => c.startsWith(`${CONSENT_COOKIE}=`))?.slice(CONSENT_COOKIE.length + 1);
-  return parseConsent(raw ? decodeURIComponent(raw) : null)?.personalization === true;
+  return readConsentCookie()?.personalization === true;
 }

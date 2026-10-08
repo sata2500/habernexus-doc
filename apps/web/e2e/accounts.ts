@@ -5,3 +5,6 @@ export const E2E_USERS = {
   author: "e2e-author@example.com",
   admin: "e2e-admin@example.com",
 } as const;
+
+/** e2e/seed.ts'in oluşturduğu sponsor reklamı */
+export const E2E_SPONSOR_ID = "e2esponsorreklam01";

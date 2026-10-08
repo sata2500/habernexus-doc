@@ -76,12 +76,19 @@ test.describe("yönetici", () => {
   test.use({ storageState: session("admin") });
   test("yönetim sayfaları açılır", async ({ page }) => {
     const errors = trackPageErrors(page);
-    for (const path of ["/admin", "/admin/articles", "/admin/users", "/admin/categories", "/admin/karar-merkezi", "/admin/settings", "/admin/settings?tab=sistem"]) {
+    for (const path of ["/admin", "/admin/articles", "/admin/users", "/admin/categories", "/admin/karar-merkezi", "/admin/settings", "/admin/settings?tab=sistem", "/admin/settings?tab=reklam"]) {
       const res = await page.goto(path);
       expect(res?.status(), path).toBe(200);
       await expect(page.locator("h1").first()).toBeVisible();
     }
     expect(errors).toEqual([]);
+  });
+
+  test("reklam ayarlarında kimliksiz Google Analytics açılamaz", async ({ page }) => {
+    await page.goto("/admin/settings?tab=reklam");
+    await page.getByLabel("Google Analytics").check();
+    await page.getByRole("button", { name: "Ayarları kaydet" }).click();
+    await expect(page.getByRole("status")).toContainText("ölçüm kimliğini girin");
   });
 
   test("site ayarlarında geçersiz adres alan adıyla bildirilir", async ({ page }) => {

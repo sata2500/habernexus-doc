@@ -637,3 +637,43 @@ model Slide {
   @@index([sliderId])
   @@index([order])
 }
+
+/// Reklam ve ölçüm ayarları (tek satır, id="global"). Kimlikler herkese açık değerlerdir; gizli anahtar tutulmaz.
+model MonetizationSettings {
+  id                     String   @id @default("global")
+  gaEnabled              Boolean  @default(false)
+  gaMeasurementId        String?
+  vercelAnalyticsEnabled Boolean  @default(false)
+  adsenseEnabled         Boolean  @default(false)
+  adsensePublisherId     String?
+  /// ads.txt'ye eklenecek ek satırlar (başka reklam ağları)
+  adsTxtExtra            String?
+  /// Reklam alanı → { mode: off | sponsor | adsense | auto, adsenseSlot?: string }
+  placements             Json     @default("{}")
+  updatedAt              DateTime @updatedAt
+}
+
+/// Doğrudan satılan (sponsor) reklamlar
+model SponsorAd {
+  id             String    @id @default(cuid())
+  name           String
+  advertiser     String?
+  imageUrl       String
+  /// Geniş alanlarda telefon için ayrı görsel (isteğe bağlı)
+  imageUrlMobile String?
+  linkUrl        String
+  altText        String
+  /// Gösterileceği reklam alanları (lib/monetization.ts → PLACEMENTS)
+  placements     String[]
+  isActive       Boolean   @default(true)
+  startsAt       DateTime  @default(now())
+  endsAt         DateTime?
+  /// Aynı alanda birden çok sponsor varsa gösterim payı
+  weight         Int       @default(1)
+  impressions    Int       @default(0)
+  clicks         Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@index([isActive, startsAt])
+}

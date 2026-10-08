@@ -23,8 +23,11 @@ test.describe("çerez onayı", () => {
 
     // Alt bilgiden yeniden açılır ve kabul edilir
     await page.getByRole("button", { name: "Çerez tercihleri" }).click();
-    await expect(band(page)).toContainText("ret");
-    await band(page).getByRole("button", { name: "Kabul et" }).click();
+    // Yeniden açılan bant ayrıntılı seçimle gelir; önceki ret işaretsiz görünür
+    const personalization = band(page).getByRole("checkbox", { name: /Kişiselleştirme/ });
+    await expect(personalization).not.toBeChecked();
+    await personalization.check();
+    await band(page).getByRole("button", { name: "Seçimi kaydet" }).click();
     await expect(band(page)).toBeHidden();
     await page.reload();
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();

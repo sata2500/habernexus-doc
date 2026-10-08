@@ -158,6 +158,16 @@ export type Slider = $Result.DefaultSelection<Prisma.$SliderPayload>
  * 
  */
 export type Slide = $Result.DefaultSelection<Prisma.$SlidePayload>
+/**
+ * Model MonetizationSettings
+ * Reklam ve ölçüm ayarları (tek satır, id="global"). Kimlikler herkese açık değerlerdir; gizli anahtar tutulmaz.
+ */
+export type MonetizationSettings = $Result.DefaultSelection<Prisma.$MonetizationSettingsPayload>
+/**
+ * Model SponsorAd
+ * Doğrudan satılan (sponsor) reklamlar
+ */
+export type SponsorAd = $Result.DefaultSelection<Prisma.$SponsorAdPayload>
 
 /**
  * Enums
@@ -666,6 +676,26 @@ export class PrismaClient<
     * ```
     */
   get slide(): Prisma.SlideDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.monetizationSettings`: Exposes CRUD operations for the **MonetizationSettings** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more MonetizationSettings
+    * const monetizationSettings = await prisma.monetizationSettings.findMany()
+    * ```
+    */
+  get monetizationSettings(): Prisma.MonetizationSettingsDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.sponsorAd`: Exposes CRUD operations for the **SponsorAd** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more SponsorAds
+    * const sponsorAds = await prisma.sponsorAd.findMany()
+    * ```
+    */
+  get sponsorAd(): Prisma.SponsorAdDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -1141,7 +1171,9 @@ export namespace Prisma {
     SiteSettings: 'SiteSettings',
     AiModel: 'AiModel',
     Slider: 'Slider',
-    Slide: 'Slide'
+    Slide: 'Slide',
+    MonetizationSettings: 'MonetizationSettings',
+    SponsorAd: 'SponsorAd'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1157,7 +1189,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "articleRead" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "newsStory" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "articleRead" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "newsStory" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide" | "monetizationSettings" | "sponsorAd"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -3307,6 +3339,154 @@ export namespace Prisma {
           }
         }
       }
+      MonetizationSettings: {
+        payload: Prisma.$MonetizationSettingsPayload<ExtArgs>
+        fields: Prisma.MonetizationSettingsFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.MonetizationSettingsFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.MonetizationSettingsFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload>
+          }
+          findFirst: {
+            args: Prisma.MonetizationSettingsFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.MonetizationSettingsFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload>
+          }
+          findMany: {
+            args: Prisma.MonetizationSettingsFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload>[]
+          }
+          create: {
+            args: Prisma.MonetizationSettingsCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload>
+          }
+          createMany: {
+            args: Prisma.MonetizationSettingsCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.MonetizationSettingsCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload>[]
+          }
+          delete: {
+            args: Prisma.MonetizationSettingsDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload>
+          }
+          update: {
+            args: Prisma.MonetizationSettingsUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload>
+          }
+          deleteMany: {
+            args: Prisma.MonetizationSettingsDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.MonetizationSettingsUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.MonetizationSettingsUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload>[]
+          }
+          upsert: {
+            args: Prisma.MonetizationSettingsUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$MonetizationSettingsPayload>
+          }
+          aggregate: {
+            args: Prisma.MonetizationSettingsAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateMonetizationSettings>
+          }
+          groupBy: {
+            args: Prisma.MonetizationSettingsGroupByArgs<ExtArgs>
+            result: $Utils.Optional<MonetizationSettingsGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.MonetizationSettingsCountArgs<ExtArgs>
+            result: $Utils.Optional<MonetizationSettingsCountAggregateOutputType> | number
+          }
+        }
+      }
+      SponsorAd: {
+        payload: Prisma.$SponsorAdPayload<ExtArgs>
+        fields: Prisma.SponsorAdFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.SponsorAdFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.SponsorAdFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload>
+          }
+          findFirst: {
+            args: Prisma.SponsorAdFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.SponsorAdFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload>
+          }
+          findMany: {
+            args: Prisma.SponsorAdFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload>[]
+          }
+          create: {
+            args: Prisma.SponsorAdCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload>
+          }
+          createMany: {
+            args: Prisma.SponsorAdCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.SponsorAdCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload>[]
+          }
+          delete: {
+            args: Prisma.SponsorAdDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload>
+          }
+          update: {
+            args: Prisma.SponsorAdUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload>
+          }
+          deleteMany: {
+            args: Prisma.SponsorAdDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.SponsorAdUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.SponsorAdUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload>[]
+          }
+          upsert: {
+            args: Prisma.SponsorAdUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$SponsorAdPayload>
+          }
+          aggregate: {
+            args: Prisma.SponsorAdAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateSponsorAd>
+          }
+          groupBy: {
+            args: Prisma.SponsorAdGroupByArgs<ExtArgs>
+            result: $Utils.Optional<SponsorAdGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.SponsorAdCountArgs<ExtArgs>
+            result: $Utils.Optional<SponsorAdCountAggregateOutputType> | number
+          }
+        }
+      }
     }
   } & {
     other: {
@@ -3459,6 +3639,8 @@ export namespace Prisma {
     aiModel?: AiModelOmit
     slider?: SliderOmit
     slide?: SlideOmit
+    monetizationSettings?: MonetizationSettingsOmit
+    sponsorAd?: SponsorAdOmit
   }
 
   /* Types for Logging */
@@ -38163,6 +38345,2250 @@ export namespace Prisma {
 
 
   /**
+   * Model MonetizationSettings
+   */
+
+  export type AggregateMonetizationSettings = {
+    _count: MonetizationSettingsCountAggregateOutputType | null
+    _min: MonetizationSettingsMinAggregateOutputType | null
+    _max: MonetizationSettingsMaxAggregateOutputType | null
+  }
+
+  export type MonetizationSettingsMinAggregateOutputType = {
+    id: string | null
+    gaEnabled: boolean | null
+    gaMeasurementId: string | null
+    vercelAnalyticsEnabled: boolean | null
+    adsenseEnabled: boolean | null
+    adsensePublisherId: string | null
+    adsTxtExtra: string | null
+    updatedAt: Date | null
+  }
+
+  export type MonetizationSettingsMaxAggregateOutputType = {
+    id: string | null
+    gaEnabled: boolean | null
+    gaMeasurementId: string | null
+    vercelAnalyticsEnabled: boolean | null
+    adsenseEnabled: boolean | null
+    adsensePublisherId: string | null
+    adsTxtExtra: string | null
+    updatedAt: Date | null
+  }
+
+  export type MonetizationSettingsCountAggregateOutputType = {
+    id: number
+    gaEnabled: number
+    gaMeasurementId: number
+    vercelAnalyticsEnabled: number
+    adsenseEnabled: number
+    adsensePublisherId: number
+    adsTxtExtra: number
+    placements: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type MonetizationSettingsMinAggregateInputType = {
+    id?: true
+    gaEnabled?: true
+    gaMeasurementId?: true
+    vercelAnalyticsEnabled?: true
+    adsenseEnabled?: true
+    adsensePublisherId?: true
+    adsTxtExtra?: true
+    updatedAt?: true
+  }
+
+  export type MonetizationSettingsMaxAggregateInputType = {
+    id?: true
+    gaEnabled?: true
+    gaMeasurementId?: true
+    vercelAnalyticsEnabled?: true
+    adsenseEnabled?: true
+    adsensePublisherId?: true
+    adsTxtExtra?: true
+    updatedAt?: true
+  }
+
+  export type MonetizationSettingsCountAggregateInputType = {
+    id?: true
+    gaEnabled?: true
+    gaMeasurementId?: true
+    vercelAnalyticsEnabled?: true
+    adsenseEnabled?: true
+    adsensePublisherId?: true
+    adsTxtExtra?: true
+    placements?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type MonetizationSettingsAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MonetizationSettings to aggregate.
+     */
+    where?: MonetizationSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonetizationSettings to fetch.
+     */
+    orderBy?: MonetizationSettingsOrderByWithRelationInput | MonetizationSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: MonetizationSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonetizationSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonetizationSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned MonetizationSettings
+    **/
+    _count?: true | MonetizationSettingsCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: MonetizationSettingsMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: MonetizationSettingsMaxAggregateInputType
+  }
+
+  export type GetMonetizationSettingsAggregateType<T extends MonetizationSettingsAggregateArgs> = {
+        [P in keyof T & keyof AggregateMonetizationSettings]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateMonetizationSettings[P]>
+      : GetScalarType<T[P], AggregateMonetizationSettings[P]>
+  }
+
+
+
+
+  export type MonetizationSettingsGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MonetizationSettingsWhereInput
+    orderBy?: MonetizationSettingsOrderByWithAggregationInput | MonetizationSettingsOrderByWithAggregationInput[]
+    by: MonetizationSettingsScalarFieldEnum[] | MonetizationSettingsScalarFieldEnum
+    having?: MonetizationSettingsScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: MonetizationSettingsCountAggregateInputType | true
+    _min?: MonetizationSettingsMinAggregateInputType
+    _max?: MonetizationSettingsMaxAggregateInputType
+  }
+
+  export type MonetizationSettingsGroupByOutputType = {
+    id: string
+    gaEnabled: boolean
+    gaMeasurementId: string | null
+    vercelAnalyticsEnabled: boolean
+    adsenseEnabled: boolean
+    adsensePublisherId: string | null
+    adsTxtExtra: string | null
+    placements: JsonValue
+    updatedAt: Date
+    _count: MonetizationSettingsCountAggregateOutputType | null
+    _min: MonetizationSettingsMinAggregateOutputType | null
+    _max: MonetizationSettingsMaxAggregateOutputType | null
+  }
+
+  type GetMonetizationSettingsGroupByPayload<T extends MonetizationSettingsGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<MonetizationSettingsGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof MonetizationSettingsGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], MonetizationSettingsGroupByOutputType[P]>
+            : GetScalarType<T[P], MonetizationSettingsGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type MonetizationSettingsSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    gaEnabled?: boolean
+    gaMeasurementId?: boolean
+    vercelAnalyticsEnabled?: boolean
+    adsenseEnabled?: boolean
+    adsensePublisherId?: boolean
+    adsTxtExtra?: boolean
+    placements?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["monetizationSettings"]>
+
+  export type MonetizationSettingsSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    gaEnabled?: boolean
+    gaMeasurementId?: boolean
+    vercelAnalyticsEnabled?: boolean
+    adsenseEnabled?: boolean
+    adsensePublisherId?: boolean
+    adsTxtExtra?: boolean
+    placements?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["monetizationSettings"]>
+
+  export type MonetizationSettingsSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    gaEnabled?: boolean
+    gaMeasurementId?: boolean
+    vercelAnalyticsEnabled?: boolean
+    adsenseEnabled?: boolean
+    adsensePublisherId?: boolean
+    adsTxtExtra?: boolean
+    placements?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["monetizationSettings"]>
+
+  export type MonetizationSettingsSelectScalar = {
+    id?: boolean
+    gaEnabled?: boolean
+    gaMeasurementId?: boolean
+    vercelAnalyticsEnabled?: boolean
+    adsenseEnabled?: boolean
+    adsensePublisherId?: boolean
+    adsTxtExtra?: boolean
+    placements?: boolean
+    updatedAt?: boolean
+  }
+
+  export type MonetizationSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "gaEnabled" | "gaMeasurementId" | "vercelAnalyticsEnabled" | "adsenseEnabled" | "adsensePublisherId" | "adsTxtExtra" | "placements" | "updatedAt", ExtArgs["result"]["monetizationSettings"]>
+
+  export type $MonetizationSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "MonetizationSettings"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      gaEnabled: boolean
+      gaMeasurementId: string | null
+      vercelAnalyticsEnabled: boolean
+      adsenseEnabled: boolean
+      adsensePublisherId: string | null
+      /**
+       * ads.txt'ye eklenecek ek satırlar (başka reklam ağları)
+       */
+      adsTxtExtra: string | null
+      /**
+       * Reklam alanı → { mode: off | sponsor | adsense | auto, adsenseSlot?: string }
+       */
+      placements: Prisma.JsonValue
+      updatedAt: Date
+    }, ExtArgs["result"]["monetizationSettings"]>
+    composites: {}
+  }
+
+  type MonetizationSettingsGetPayload<S extends boolean | null | undefined | MonetizationSettingsDefaultArgs> = $Result.GetResult<Prisma.$MonetizationSettingsPayload, S>
+
+  type MonetizationSettingsCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<MonetizationSettingsFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: MonetizationSettingsCountAggregateInputType | true
+    }
+
+  export interface MonetizationSettingsDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['MonetizationSettings'], meta: { name: 'MonetizationSettings' } }
+    /**
+     * Find zero or one MonetizationSettings that matches the filter.
+     * @param {MonetizationSettingsFindUniqueArgs} args - Arguments to find a MonetizationSettings
+     * @example
+     * // Get one MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends MonetizationSettingsFindUniqueArgs>(args: SelectSubset<T, MonetizationSettingsFindUniqueArgs<ExtArgs>>): Prisma__MonetizationSettingsClient<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one MonetizationSettings that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {MonetizationSettingsFindUniqueOrThrowArgs} args - Arguments to find a MonetizationSettings
+     * @example
+     * // Get one MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends MonetizationSettingsFindUniqueOrThrowArgs>(args: SelectSubset<T, MonetizationSettingsFindUniqueOrThrowArgs<ExtArgs>>): Prisma__MonetizationSettingsClient<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MonetizationSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonetizationSettingsFindFirstArgs} args - Arguments to find a MonetizationSettings
+     * @example
+     * // Get one MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends MonetizationSettingsFindFirstArgs>(args?: SelectSubset<T, MonetizationSettingsFindFirstArgs<ExtArgs>>): Prisma__MonetizationSettingsClient<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first MonetizationSettings that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonetizationSettingsFindFirstOrThrowArgs} args - Arguments to find a MonetizationSettings
+     * @example
+     * // Get one MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends MonetizationSettingsFindFirstOrThrowArgs>(args?: SelectSubset<T, MonetizationSettingsFindFirstOrThrowArgs<ExtArgs>>): Prisma__MonetizationSettingsClient<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more MonetizationSettings that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonetizationSettingsFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.findMany()
+     * 
+     * // Get first 10 MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const monetizationSettingsWithIdOnly = await prisma.monetizationSettings.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends MonetizationSettingsFindManyArgs>(args?: SelectSubset<T, MonetizationSettingsFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a MonetizationSettings.
+     * @param {MonetizationSettingsCreateArgs} args - Arguments to create a MonetizationSettings.
+     * @example
+     * // Create one MonetizationSettings
+     * const MonetizationSettings = await prisma.monetizationSettings.create({
+     *   data: {
+     *     // ... data to create a MonetizationSettings
+     *   }
+     * })
+     * 
+     */
+    create<T extends MonetizationSettingsCreateArgs>(args: SelectSubset<T, MonetizationSettingsCreateArgs<ExtArgs>>): Prisma__MonetizationSettingsClient<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many MonetizationSettings.
+     * @param {MonetizationSettingsCreateManyArgs} args - Arguments to create many MonetizationSettings.
+     * @example
+     * // Create many MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends MonetizationSettingsCreateManyArgs>(args?: SelectSubset<T, MonetizationSettingsCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many MonetizationSettings and returns the data saved in the database.
+     * @param {MonetizationSettingsCreateManyAndReturnArgs} args - Arguments to create many MonetizationSettings.
+     * @example
+     * // Create many MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many MonetizationSettings and only return the `id`
+     * const monetizationSettingsWithIdOnly = await prisma.monetizationSettings.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends MonetizationSettingsCreateManyAndReturnArgs>(args?: SelectSubset<T, MonetizationSettingsCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a MonetizationSettings.
+     * @param {MonetizationSettingsDeleteArgs} args - Arguments to delete one MonetizationSettings.
+     * @example
+     * // Delete one MonetizationSettings
+     * const MonetizationSettings = await prisma.monetizationSettings.delete({
+     *   where: {
+     *     // ... filter to delete one MonetizationSettings
+     *   }
+     * })
+     * 
+     */
+    delete<T extends MonetizationSettingsDeleteArgs>(args: SelectSubset<T, MonetizationSettingsDeleteArgs<ExtArgs>>): Prisma__MonetizationSettingsClient<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one MonetizationSettings.
+     * @param {MonetizationSettingsUpdateArgs} args - Arguments to update one MonetizationSettings.
+     * @example
+     * // Update one MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends MonetizationSettingsUpdateArgs>(args: SelectSubset<T, MonetizationSettingsUpdateArgs<ExtArgs>>): Prisma__MonetizationSettingsClient<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more MonetizationSettings.
+     * @param {MonetizationSettingsDeleteManyArgs} args - Arguments to filter MonetizationSettings to delete.
+     * @example
+     * // Delete a few MonetizationSettings
+     * const { count } = await prisma.monetizationSettings.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends MonetizationSettingsDeleteManyArgs>(args?: SelectSubset<T, MonetizationSettingsDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MonetizationSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonetizationSettingsUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends MonetizationSettingsUpdateManyArgs>(args: SelectSubset<T, MonetizationSettingsUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more MonetizationSettings and returns the data updated in the database.
+     * @param {MonetizationSettingsUpdateManyAndReturnArgs} args - Arguments to update many MonetizationSettings.
+     * @example
+     * // Update many MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more MonetizationSettings and only return the `id`
+     * const monetizationSettingsWithIdOnly = await prisma.monetizationSettings.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends MonetizationSettingsUpdateManyAndReturnArgs>(args: SelectSubset<T, MonetizationSettingsUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one MonetizationSettings.
+     * @param {MonetizationSettingsUpsertArgs} args - Arguments to update or create a MonetizationSettings.
+     * @example
+     * // Update or create a MonetizationSettings
+     * const monetizationSettings = await prisma.monetizationSettings.upsert({
+     *   create: {
+     *     // ... data to create a MonetizationSettings
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the MonetizationSettings we want to update
+     *   }
+     * })
+     */
+    upsert<T extends MonetizationSettingsUpsertArgs>(args: SelectSubset<T, MonetizationSettingsUpsertArgs<ExtArgs>>): Prisma__MonetizationSettingsClient<$Result.GetResult<Prisma.$MonetizationSettingsPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of MonetizationSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonetizationSettingsCountArgs} args - Arguments to filter MonetizationSettings to count.
+     * @example
+     * // Count the number of MonetizationSettings
+     * const count = await prisma.monetizationSettings.count({
+     *   where: {
+     *     // ... the filter for the MonetizationSettings we want to count
+     *   }
+     * })
+    **/
+    count<T extends MonetizationSettingsCountArgs>(
+      args?: Subset<T, MonetizationSettingsCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], MonetizationSettingsCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a MonetizationSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonetizationSettingsAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends MonetizationSettingsAggregateArgs>(args: Subset<T, MonetizationSettingsAggregateArgs>): Prisma.PrismaPromise<GetMonetizationSettingsAggregateType<T>>
+
+    /**
+     * Group by MonetizationSettings.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {MonetizationSettingsGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends MonetizationSettingsGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: MonetizationSettingsGroupByArgs['orderBy'] }
+        : { orderBy?: MonetizationSettingsGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, MonetizationSettingsGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetMonetizationSettingsGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the MonetizationSettings model
+   */
+  readonly fields: MonetizationSettingsFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for MonetizationSettings.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__MonetizationSettingsClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the MonetizationSettings model
+   */
+  interface MonetizationSettingsFieldRefs {
+    readonly id: FieldRef<"MonetizationSettings", 'String'>
+    readonly gaEnabled: FieldRef<"MonetizationSettings", 'Boolean'>
+    readonly gaMeasurementId: FieldRef<"MonetizationSettings", 'String'>
+    readonly vercelAnalyticsEnabled: FieldRef<"MonetizationSettings", 'Boolean'>
+    readonly adsenseEnabled: FieldRef<"MonetizationSettings", 'Boolean'>
+    readonly adsensePublisherId: FieldRef<"MonetizationSettings", 'String'>
+    readonly adsTxtExtra: FieldRef<"MonetizationSettings", 'String'>
+    readonly placements: FieldRef<"MonetizationSettings", 'Json'>
+    readonly updatedAt: FieldRef<"MonetizationSettings", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * MonetizationSettings findUnique
+   */
+  export type MonetizationSettingsFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which MonetizationSettings to fetch.
+     */
+    where: MonetizationSettingsWhereUniqueInput
+  }
+
+  /**
+   * MonetizationSettings findUniqueOrThrow
+   */
+  export type MonetizationSettingsFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which MonetizationSettings to fetch.
+     */
+    where: MonetizationSettingsWhereUniqueInput
+  }
+
+  /**
+   * MonetizationSettings findFirst
+   */
+  export type MonetizationSettingsFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which MonetizationSettings to fetch.
+     */
+    where?: MonetizationSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonetizationSettings to fetch.
+     */
+    orderBy?: MonetizationSettingsOrderByWithRelationInput | MonetizationSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MonetizationSettings.
+     */
+    cursor?: MonetizationSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonetizationSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonetizationSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MonetizationSettings.
+     */
+    distinct?: MonetizationSettingsScalarFieldEnum | MonetizationSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * MonetizationSettings findFirstOrThrow
+   */
+  export type MonetizationSettingsFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which MonetizationSettings to fetch.
+     */
+    where?: MonetizationSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonetizationSettings to fetch.
+     */
+    orderBy?: MonetizationSettingsOrderByWithRelationInput | MonetizationSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for MonetizationSettings.
+     */
+    cursor?: MonetizationSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonetizationSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonetizationSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MonetizationSettings.
+     */
+    distinct?: MonetizationSettingsScalarFieldEnum | MonetizationSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * MonetizationSettings findMany
+   */
+  export type MonetizationSettingsFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * Filter, which MonetizationSettings to fetch.
+     */
+    where?: MonetizationSettingsWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of MonetizationSettings to fetch.
+     */
+    orderBy?: MonetizationSettingsOrderByWithRelationInput | MonetizationSettingsOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing MonetizationSettings.
+     */
+    cursor?: MonetizationSettingsWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` MonetizationSettings from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` MonetizationSettings.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of MonetizationSettings.
+     */
+    distinct?: MonetizationSettingsScalarFieldEnum | MonetizationSettingsScalarFieldEnum[]
+  }
+
+  /**
+   * MonetizationSettings create
+   */
+  export type MonetizationSettingsCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to create a MonetizationSettings.
+     */
+    data: XOR<MonetizationSettingsCreateInput, MonetizationSettingsUncheckedCreateInput>
+  }
+
+  /**
+   * MonetizationSettings createMany
+   */
+  export type MonetizationSettingsCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many MonetizationSettings.
+     */
+    data: MonetizationSettingsCreateManyInput | MonetizationSettingsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MonetizationSettings createManyAndReturn
+   */
+  export type MonetizationSettingsCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to create many MonetizationSettings.
+     */
+    data: MonetizationSettingsCreateManyInput | MonetizationSettingsCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * MonetizationSettings update
+   */
+  export type MonetizationSettingsUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * The data needed to update a MonetizationSettings.
+     */
+    data: XOR<MonetizationSettingsUpdateInput, MonetizationSettingsUncheckedUpdateInput>
+    /**
+     * Choose, which MonetizationSettings to update.
+     */
+    where: MonetizationSettingsWhereUniqueInput
+  }
+
+  /**
+   * MonetizationSettings updateMany
+   */
+  export type MonetizationSettingsUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update MonetizationSettings.
+     */
+    data: XOR<MonetizationSettingsUpdateManyMutationInput, MonetizationSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which MonetizationSettings to update
+     */
+    where?: MonetizationSettingsWhereInput
+    /**
+     * Limit how many MonetizationSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonetizationSettings updateManyAndReturn
+   */
+  export type MonetizationSettingsUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * The data used to update MonetizationSettings.
+     */
+    data: XOR<MonetizationSettingsUpdateManyMutationInput, MonetizationSettingsUncheckedUpdateManyInput>
+    /**
+     * Filter which MonetizationSettings to update
+     */
+    where?: MonetizationSettingsWhereInput
+    /**
+     * Limit how many MonetizationSettings to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonetizationSettings upsert
+   */
+  export type MonetizationSettingsUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * The filter to search for the MonetizationSettings to update in case it exists.
+     */
+    where: MonetizationSettingsWhereUniqueInput
+    /**
+     * In case the MonetizationSettings found by the `where` argument doesn't exist, create a new MonetizationSettings with this data.
+     */
+    create: XOR<MonetizationSettingsCreateInput, MonetizationSettingsUncheckedCreateInput>
+    /**
+     * In case the MonetizationSettings was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<MonetizationSettingsUpdateInput, MonetizationSettingsUncheckedUpdateInput>
+  }
+
+  /**
+   * MonetizationSettings delete
+   */
+  export type MonetizationSettingsDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+    /**
+     * Filter which MonetizationSettings to delete.
+     */
+    where: MonetizationSettingsWhereUniqueInput
+  }
+
+  /**
+   * MonetizationSettings deleteMany
+   */
+  export type MonetizationSettingsDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which MonetizationSettings to delete
+     */
+    where?: MonetizationSettingsWhereInput
+    /**
+     * Limit how many MonetizationSettings to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * MonetizationSettings without action
+   */
+  export type MonetizationSettingsDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MonetizationSettings
+     */
+    select?: MonetizationSettingsSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the MonetizationSettings
+     */
+    omit?: MonetizationSettingsOmit<ExtArgs> | null
+  }
+
+
+  /**
+   * Model SponsorAd
+   */
+
+  export type AggregateSponsorAd = {
+    _count: SponsorAdCountAggregateOutputType | null
+    _avg: SponsorAdAvgAggregateOutputType | null
+    _sum: SponsorAdSumAggregateOutputType | null
+    _min: SponsorAdMinAggregateOutputType | null
+    _max: SponsorAdMaxAggregateOutputType | null
+  }
+
+  export type SponsorAdAvgAggregateOutputType = {
+    weight: number | null
+    impressions: number | null
+    clicks: number | null
+  }
+
+  export type SponsorAdSumAggregateOutputType = {
+    weight: number | null
+    impressions: number | null
+    clicks: number | null
+  }
+
+  export type SponsorAdMinAggregateOutputType = {
+    id: string | null
+    name: string | null
+    advertiser: string | null
+    imageUrl: string | null
+    imageUrlMobile: string | null
+    linkUrl: string | null
+    altText: string | null
+    isActive: boolean | null
+    startsAt: Date | null
+    endsAt: Date | null
+    weight: number | null
+    impressions: number | null
+    clicks: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SponsorAdMaxAggregateOutputType = {
+    id: string | null
+    name: string | null
+    advertiser: string | null
+    imageUrl: string | null
+    imageUrlMobile: string | null
+    linkUrl: string | null
+    altText: string | null
+    isActive: boolean | null
+    startsAt: Date | null
+    endsAt: Date | null
+    weight: number | null
+    impressions: number | null
+    clicks: number | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type SponsorAdCountAggregateOutputType = {
+    id: number
+    name: number
+    advertiser: number
+    imageUrl: number
+    imageUrlMobile: number
+    linkUrl: number
+    altText: number
+    placements: number
+    isActive: number
+    startsAt: number
+    endsAt: number
+    weight: number
+    impressions: number
+    clicks: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type SponsorAdAvgAggregateInputType = {
+    weight?: true
+    impressions?: true
+    clicks?: true
+  }
+
+  export type SponsorAdSumAggregateInputType = {
+    weight?: true
+    impressions?: true
+    clicks?: true
+  }
+
+  export type SponsorAdMinAggregateInputType = {
+    id?: true
+    name?: true
+    advertiser?: true
+    imageUrl?: true
+    imageUrlMobile?: true
+    linkUrl?: true
+    altText?: true
+    isActive?: true
+    startsAt?: true
+    endsAt?: true
+    weight?: true
+    impressions?: true
+    clicks?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SponsorAdMaxAggregateInputType = {
+    id?: true
+    name?: true
+    advertiser?: true
+    imageUrl?: true
+    imageUrlMobile?: true
+    linkUrl?: true
+    altText?: true
+    isActive?: true
+    startsAt?: true
+    endsAt?: true
+    weight?: true
+    impressions?: true
+    clicks?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type SponsorAdCountAggregateInputType = {
+    id?: true
+    name?: true
+    advertiser?: true
+    imageUrl?: true
+    imageUrlMobile?: true
+    linkUrl?: true
+    altText?: true
+    placements?: true
+    isActive?: true
+    startsAt?: true
+    endsAt?: true
+    weight?: true
+    impressions?: true
+    clicks?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type SponsorAdAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SponsorAd to aggregate.
+     */
+    where?: SponsorAdWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SponsorAds to fetch.
+     */
+    orderBy?: SponsorAdOrderByWithRelationInput | SponsorAdOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: SponsorAdWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SponsorAds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SponsorAds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned SponsorAds
+    **/
+    _count?: true | SponsorAdCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to average
+    **/
+    _avg?: SponsorAdAvgAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to sum
+    **/
+    _sum?: SponsorAdSumAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: SponsorAdMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: SponsorAdMaxAggregateInputType
+  }
+
+  export type GetSponsorAdAggregateType<T extends SponsorAdAggregateArgs> = {
+        [P in keyof T & keyof AggregateSponsorAd]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateSponsorAd[P]>
+      : GetScalarType<T[P], AggregateSponsorAd[P]>
+  }
+
+
+
+
+  export type SponsorAdGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: SponsorAdWhereInput
+    orderBy?: SponsorAdOrderByWithAggregationInput | SponsorAdOrderByWithAggregationInput[]
+    by: SponsorAdScalarFieldEnum[] | SponsorAdScalarFieldEnum
+    having?: SponsorAdScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: SponsorAdCountAggregateInputType | true
+    _avg?: SponsorAdAvgAggregateInputType
+    _sum?: SponsorAdSumAggregateInputType
+    _min?: SponsorAdMinAggregateInputType
+    _max?: SponsorAdMaxAggregateInputType
+  }
+
+  export type SponsorAdGroupByOutputType = {
+    id: string
+    name: string
+    advertiser: string | null
+    imageUrl: string
+    imageUrlMobile: string | null
+    linkUrl: string
+    altText: string
+    placements: string[]
+    isActive: boolean
+    startsAt: Date
+    endsAt: Date | null
+    weight: number
+    impressions: number
+    clicks: number
+    createdAt: Date
+    updatedAt: Date
+    _count: SponsorAdCountAggregateOutputType | null
+    _avg: SponsorAdAvgAggregateOutputType | null
+    _sum: SponsorAdSumAggregateOutputType | null
+    _min: SponsorAdMinAggregateOutputType | null
+    _max: SponsorAdMaxAggregateOutputType | null
+  }
+
+  type GetSponsorAdGroupByPayload<T extends SponsorAdGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<SponsorAdGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof SponsorAdGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], SponsorAdGroupByOutputType[P]>
+            : GetScalarType<T[P], SponsorAdGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type SponsorAdSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    advertiser?: boolean
+    imageUrl?: boolean
+    imageUrlMobile?: boolean
+    linkUrl?: boolean
+    altText?: boolean
+    placements?: boolean
+    isActive?: boolean
+    startsAt?: boolean
+    endsAt?: boolean
+    weight?: boolean
+    impressions?: boolean
+    clicks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["sponsorAd"]>
+
+  export type SponsorAdSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    advertiser?: boolean
+    imageUrl?: boolean
+    imageUrlMobile?: boolean
+    linkUrl?: boolean
+    altText?: boolean
+    placements?: boolean
+    isActive?: boolean
+    startsAt?: boolean
+    endsAt?: boolean
+    weight?: boolean
+    impressions?: boolean
+    clicks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["sponsorAd"]>
+
+  export type SponsorAdSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    name?: boolean
+    advertiser?: boolean
+    imageUrl?: boolean
+    imageUrlMobile?: boolean
+    linkUrl?: boolean
+    altText?: boolean
+    placements?: boolean
+    isActive?: boolean
+    startsAt?: boolean
+    endsAt?: boolean
+    weight?: boolean
+    impressions?: boolean
+    clicks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }, ExtArgs["result"]["sponsorAd"]>
+
+  export type SponsorAdSelectScalar = {
+    id?: boolean
+    name?: boolean
+    advertiser?: boolean
+    imageUrl?: boolean
+    imageUrlMobile?: boolean
+    linkUrl?: boolean
+    altText?: boolean
+    placements?: boolean
+    isActive?: boolean
+    startsAt?: boolean
+    endsAt?: boolean
+    weight?: boolean
+    impressions?: boolean
+    clicks?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type SponsorAdOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "advertiser" | "imageUrl" | "imageUrlMobile" | "linkUrl" | "altText" | "placements" | "isActive" | "startsAt" | "endsAt" | "weight" | "impressions" | "clicks" | "createdAt" | "updatedAt", ExtArgs["result"]["sponsorAd"]>
+
+  export type $SponsorAdPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "SponsorAd"
+    objects: {}
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      name: string
+      advertiser: string | null
+      imageUrl: string
+      /**
+       * Geniş alanlarda telefon için ayrı görsel (isteğe bağlı)
+       */
+      imageUrlMobile: string | null
+      linkUrl: string
+      altText: string
+      /**
+       * Gösterileceği reklam alanları (lib/monetization.ts → PLACEMENTS)
+       */
+      placements: string[]
+      isActive: boolean
+      startsAt: Date
+      endsAt: Date | null
+      /**
+       * Aynı alanda birden çok sponsor varsa gösterim payı
+       */
+      weight: number
+      impressions: number
+      clicks: number
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["sponsorAd"]>
+    composites: {}
+  }
+
+  type SponsorAdGetPayload<S extends boolean | null | undefined | SponsorAdDefaultArgs> = $Result.GetResult<Prisma.$SponsorAdPayload, S>
+
+  type SponsorAdCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<SponsorAdFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: SponsorAdCountAggregateInputType | true
+    }
+
+  export interface SponsorAdDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['SponsorAd'], meta: { name: 'SponsorAd' } }
+    /**
+     * Find zero or one SponsorAd that matches the filter.
+     * @param {SponsorAdFindUniqueArgs} args - Arguments to find a SponsorAd
+     * @example
+     * // Get one SponsorAd
+     * const sponsorAd = await prisma.sponsorAd.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends SponsorAdFindUniqueArgs>(args: SelectSubset<T, SponsorAdFindUniqueArgs<ExtArgs>>): Prisma__SponsorAdClient<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one SponsorAd that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {SponsorAdFindUniqueOrThrowArgs} args - Arguments to find a SponsorAd
+     * @example
+     * // Get one SponsorAd
+     * const sponsorAd = await prisma.sponsorAd.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends SponsorAdFindUniqueOrThrowArgs>(args: SelectSubset<T, SponsorAdFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SponsorAdClient<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SponsorAd that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SponsorAdFindFirstArgs} args - Arguments to find a SponsorAd
+     * @example
+     * // Get one SponsorAd
+     * const sponsorAd = await prisma.sponsorAd.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends SponsorAdFindFirstArgs>(args?: SelectSubset<T, SponsorAdFindFirstArgs<ExtArgs>>): Prisma__SponsorAdClient<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first SponsorAd that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SponsorAdFindFirstOrThrowArgs} args - Arguments to find a SponsorAd
+     * @example
+     * // Get one SponsorAd
+     * const sponsorAd = await prisma.sponsorAd.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends SponsorAdFindFirstOrThrowArgs>(args?: SelectSubset<T, SponsorAdFindFirstOrThrowArgs<ExtArgs>>): Prisma__SponsorAdClient<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more SponsorAds that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SponsorAdFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all SponsorAds
+     * const sponsorAds = await prisma.sponsorAd.findMany()
+     * 
+     * // Get first 10 SponsorAds
+     * const sponsorAds = await prisma.sponsorAd.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const sponsorAdWithIdOnly = await prisma.sponsorAd.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends SponsorAdFindManyArgs>(args?: SelectSubset<T, SponsorAdFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a SponsorAd.
+     * @param {SponsorAdCreateArgs} args - Arguments to create a SponsorAd.
+     * @example
+     * // Create one SponsorAd
+     * const SponsorAd = await prisma.sponsorAd.create({
+     *   data: {
+     *     // ... data to create a SponsorAd
+     *   }
+     * })
+     * 
+     */
+    create<T extends SponsorAdCreateArgs>(args: SelectSubset<T, SponsorAdCreateArgs<ExtArgs>>): Prisma__SponsorAdClient<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many SponsorAds.
+     * @param {SponsorAdCreateManyArgs} args - Arguments to create many SponsorAds.
+     * @example
+     * // Create many SponsorAds
+     * const sponsorAd = await prisma.sponsorAd.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends SponsorAdCreateManyArgs>(args?: SelectSubset<T, SponsorAdCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many SponsorAds and returns the data saved in the database.
+     * @param {SponsorAdCreateManyAndReturnArgs} args - Arguments to create many SponsorAds.
+     * @example
+     * // Create many SponsorAds
+     * const sponsorAd = await prisma.sponsorAd.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many SponsorAds and only return the `id`
+     * const sponsorAdWithIdOnly = await prisma.sponsorAd.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends SponsorAdCreateManyAndReturnArgs>(args?: SelectSubset<T, SponsorAdCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a SponsorAd.
+     * @param {SponsorAdDeleteArgs} args - Arguments to delete one SponsorAd.
+     * @example
+     * // Delete one SponsorAd
+     * const SponsorAd = await prisma.sponsorAd.delete({
+     *   where: {
+     *     // ... filter to delete one SponsorAd
+     *   }
+     * })
+     * 
+     */
+    delete<T extends SponsorAdDeleteArgs>(args: SelectSubset<T, SponsorAdDeleteArgs<ExtArgs>>): Prisma__SponsorAdClient<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one SponsorAd.
+     * @param {SponsorAdUpdateArgs} args - Arguments to update one SponsorAd.
+     * @example
+     * // Update one SponsorAd
+     * const sponsorAd = await prisma.sponsorAd.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends SponsorAdUpdateArgs>(args: SelectSubset<T, SponsorAdUpdateArgs<ExtArgs>>): Prisma__SponsorAdClient<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more SponsorAds.
+     * @param {SponsorAdDeleteManyArgs} args - Arguments to filter SponsorAds to delete.
+     * @example
+     * // Delete a few SponsorAds
+     * const { count } = await prisma.sponsorAd.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends SponsorAdDeleteManyArgs>(args?: SelectSubset<T, SponsorAdDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SponsorAds.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SponsorAdUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many SponsorAds
+     * const sponsorAd = await prisma.sponsorAd.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends SponsorAdUpdateManyArgs>(args: SelectSubset<T, SponsorAdUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more SponsorAds and returns the data updated in the database.
+     * @param {SponsorAdUpdateManyAndReturnArgs} args - Arguments to update many SponsorAds.
+     * @example
+     * // Update many SponsorAds
+     * const sponsorAd = await prisma.sponsorAd.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more SponsorAds and only return the `id`
+     * const sponsorAdWithIdOnly = await prisma.sponsorAd.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends SponsorAdUpdateManyAndReturnArgs>(args: SelectSubset<T, SponsorAdUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one SponsorAd.
+     * @param {SponsorAdUpsertArgs} args - Arguments to update or create a SponsorAd.
+     * @example
+     * // Update or create a SponsorAd
+     * const sponsorAd = await prisma.sponsorAd.upsert({
+     *   create: {
+     *     // ... data to create a SponsorAd
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the SponsorAd we want to update
+     *   }
+     * })
+     */
+    upsert<T extends SponsorAdUpsertArgs>(args: SelectSubset<T, SponsorAdUpsertArgs<ExtArgs>>): Prisma__SponsorAdClient<$Result.GetResult<Prisma.$SponsorAdPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of SponsorAds.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SponsorAdCountArgs} args - Arguments to filter SponsorAds to count.
+     * @example
+     * // Count the number of SponsorAds
+     * const count = await prisma.sponsorAd.count({
+     *   where: {
+     *     // ... the filter for the SponsorAds we want to count
+     *   }
+     * })
+    **/
+    count<T extends SponsorAdCountArgs>(
+      args?: Subset<T, SponsorAdCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], SponsorAdCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a SponsorAd.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SponsorAdAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends SponsorAdAggregateArgs>(args: Subset<T, SponsorAdAggregateArgs>): Prisma.PrismaPromise<GetSponsorAdAggregateType<T>>
+
+    /**
+     * Group by SponsorAd.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {SponsorAdGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends SponsorAdGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: SponsorAdGroupByArgs['orderBy'] }
+        : { orderBy?: SponsorAdGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, SponsorAdGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSponsorAdGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the SponsorAd model
+   */
+  readonly fields: SponsorAdFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for SponsorAd.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__SponsorAdClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the SponsorAd model
+   */
+  interface SponsorAdFieldRefs {
+    readonly id: FieldRef<"SponsorAd", 'String'>
+    readonly name: FieldRef<"SponsorAd", 'String'>
+    readonly advertiser: FieldRef<"SponsorAd", 'String'>
+    readonly imageUrl: FieldRef<"SponsorAd", 'String'>
+    readonly imageUrlMobile: FieldRef<"SponsorAd", 'String'>
+    readonly linkUrl: FieldRef<"SponsorAd", 'String'>
+    readonly altText: FieldRef<"SponsorAd", 'String'>
+    readonly placements: FieldRef<"SponsorAd", 'String[]'>
+    readonly isActive: FieldRef<"SponsorAd", 'Boolean'>
+    readonly startsAt: FieldRef<"SponsorAd", 'DateTime'>
+    readonly endsAt: FieldRef<"SponsorAd", 'DateTime'>
+    readonly weight: FieldRef<"SponsorAd", 'Int'>
+    readonly impressions: FieldRef<"SponsorAd", 'Int'>
+    readonly clicks: FieldRef<"SponsorAd", 'Int'>
+    readonly createdAt: FieldRef<"SponsorAd", 'DateTime'>
+    readonly updatedAt: FieldRef<"SponsorAd", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * SponsorAd findUnique
+   */
+  export type SponsorAdFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * Filter, which SponsorAd to fetch.
+     */
+    where: SponsorAdWhereUniqueInput
+  }
+
+  /**
+   * SponsorAd findUniqueOrThrow
+   */
+  export type SponsorAdFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * Filter, which SponsorAd to fetch.
+     */
+    where: SponsorAdWhereUniqueInput
+  }
+
+  /**
+   * SponsorAd findFirst
+   */
+  export type SponsorAdFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * Filter, which SponsorAd to fetch.
+     */
+    where?: SponsorAdWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SponsorAds to fetch.
+     */
+    orderBy?: SponsorAdOrderByWithRelationInput | SponsorAdOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SponsorAds.
+     */
+    cursor?: SponsorAdWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SponsorAds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SponsorAds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SponsorAds.
+     */
+    distinct?: SponsorAdScalarFieldEnum | SponsorAdScalarFieldEnum[]
+  }
+
+  /**
+   * SponsorAd findFirstOrThrow
+   */
+  export type SponsorAdFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * Filter, which SponsorAd to fetch.
+     */
+    where?: SponsorAdWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SponsorAds to fetch.
+     */
+    orderBy?: SponsorAdOrderByWithRelationInput | SponsorAdOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for SponsorAds.
+     */
+    cursor?: SponsorAdWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SponsorAds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SponsorAds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SponsorAds.
+     */
+    distinct?: SponsorAdScalarFieldEnum | SponsorAdScalarFieldEnum[]
+  }
+
+  /**
+   * SponsorAd findMany
+   */
+  export type SponsorAdFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * Filter, which SponsorAds to fetch.
+     */
+    where?: SponsorAdWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of SponsorAds to fetch.
+     */
+    orderBy?: SponsorAdOrderByWithRelationInput | SponsorAdOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing SponsorAds.
+     */
+    cursor?: SponsorAdWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` SponsorAds from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` SponsorAds.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of SponsorAds.
+     */
+    distinct?: SponsorAdScalarFieldEnum | SponsorAdScalarFieldEnum[]
+  }
+
+  /**
+   * SponsorAd create
+   */
+  export type SponsorAdCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * The data needed to create a SponsorAd.
+     */
+    data: XOR<SponsorAdCreateInput, SponsorAdUncheckedCreateInput>
+  }
+
+  /**
+   * SponsorAd createMany
+   */
+  export type SponsorAdCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many SponsorAds.
+     */
+    data: SponsorAdCreateManyInput | SponsorAdCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SponsorAd createManyAndReturn
+   */
+  export type SponsorAdCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * The data used to create many SponsorAds.
+     */
+    data: SponsorAdCreateManyInput | SponsorAdCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * SponsorAd update
+   */
+  export type SponsorAdUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * The data needed to update a SponsorAd.
+     */
+    data: XOR<SponsorAdUpdateInput, SponsorAdUncheckedUpdateInput>
+    /**
+     * Choose, which SponsorAd to update.
+     */
+    where: SponsorAdWhereUniqueInput
+  }
+
+  /**
+   * SponsorAd updateMany
+   */
+  export type SponsorAdUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update SponsorAds.
+     */
+    data: XOR<SponsorAdUpdateManyMutationInput, SponsorAdUncheckedUpdateManyInput>
+    /**
+     * Filter which SponsorAds to update
+     */
+    where?: SponsorAdWhereInput
+    /**
+     * Limit how many SponsorAds to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SponsorAd updateManyAndReturn
+   */
+  export type SponsorAdUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * The data used to update SponsorAds.
+     */
+    data: XOR<SponsorAdUpdateManyMutationInput, SponsorAdUncheckedUpdateManyInput>
+    /**
+     * Filter which SponsorAds to update
+     */
+    where?: SponsorAdWhereInput
+    /**
+     * Limit how many SponsorAds to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * SponsorAd upsert
+   */
+  export type SponsorAdUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * The filter to search for the SponsorAd to update in case it exists.
+     */
+    where: SponsorAdWhereUniqueInput
+    /**
+     * In case the SponsorAd found by the `where` argument doesn't exist, create a new SponsorAd with this data.
+     */
+    create: XOR<SponsorAdCreateInput, SponsorAdUncheckedCreateInput>
+    /**
+     * In case the SponsorAd was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<SponsorAdUpdateInput, SponsorAdUncheckedUpdateInput>
+  }
+
+  /**
+   * SponsorAd delete
+   */
+  export type SponsorAdDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+    /**
+     * Filter which SponsorAd to delete.
+     */
+    where: SponsorAdWhereUniqueInput
+  }
+
+  /**
+   * SponsorAd deleteMany
+   */
+  export type SponsorAdDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which SponsorAds to delete
+     */
+    where?: SponsorAdWhereInput
+    /**
+     * Limit how many SponsorAds to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * SponsorAd without action
+   */
+  export type SponsorAdDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the SponsorAd
+     */
+    select?: SponsorAdSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the SponsorAd
+     */
+    omit?: SponsorAdOmit<ExtArgs> | null
+  }
+
+
+  /**
    * Enums
    */
 
@@ -38677,6 +41103,43 @@ export namespace Prisma {
   export type SlideScalarFieldEnum = (typeof SlideScalarFieldEnum)[keyof typeof SlideScalarFieldEnum]
 
 
+  export const MonetizationSettingsScalarFieldEnum: {
+    id: 'id',
+    gaEnabled: 'gaEnabled',
+    gaMeasurementId: 'gaMeasurementId',
+    vercelAnalyticsEnabled: 'vercelAnalyticsEnabled',
+    adsenseEnabled: 'adsenseEnabled',
+    adsensePublisherId: 'adsensePublisherId',
+    adsTxtExtra: 'adsTxtExtra',
+    placements: 'placements',
+    updatedAt: 'updatedAt'
+  };
+
+  export type MonetizationSettingsScalarFieldEnum = (typeof MonetizationSettingsScalarFieldEnum)[keyof typeof MonetizationSettingsScalarFieldEnum]
+
+
+  export const SponsorAdScalarFieldEnum: {
+    id: 'id',
+    name: 'name',
+    advertiser: 'advertiser',
+    imageUrl: 'imageUrl',
+    imageUrlMobile: 'imageUrlMobile',
+    linkUrl: 'linkUrl',
+    altText: 'altText',
+    placements: 'placements',
+    isActive: 'isActive',
+    startsAt: 'startsAt',
+    endsAt: 'endsAt',
+    weight: 'weight',
+    impressions: 'impressions',
+    clicks: 'clicks',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type SponsorAdScalarFieldEnum = (typeof SponsorAdScalarFieldEnum)[keyof typeof SponsorAdScalarFieldEnum]
+
+
   export const SortOrder: {
     asc: 'asc',
     desc: 'desc'
@@ -38691,6 +41154,13 @@ export namespace Prisma {
   };
 
   export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
+
+
+  export const JsonNullValueInput: {
+    JsonNull: typeof JsonNull
+  };
+
+  export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
   export const QueryMode: {
@@ -41494,6 +43964,187 @@ export namespace Prisma {
     sliderId?: StringWithAggregatesFilter<"Slide"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Slide"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Slide"> | Date | string
+  }
+
+  export type MonetizationSettingsWhereInput = {
+    AND?: MonetizationSettingsWhereInput | MonetizationSettingsWhereInput[]
+    OR?: MonetizationSettingsWhereInput[]
+    NOT?: MonetizationSettingsWhereInput | MonetizationSettingsWhereInput[]
+    id?: StringFilter<"MonetizationSettings"> | string
+    gaEnabled?: BoolFilter<"MonetizationSettings"> | boolean
+    gaMeasurementId?: StringNullableFilter<"MonetizationSettings"> | string | null
+    vercelAnalyticsEnabled?: BoolFilter<"MonetizationSettings"> | boolean
+    adsenseEnabled?: BoolFilter<"MonetizationSettings"> | boolean
+    adsensePublisherId?: StringNullableFilter<"MonetizationSettings"> | string | null
+    adsTxtExtra?: StringNullableFilter<"MonetizationSettings"> | string | null
+    placements?: JsonFilter<"MonetizationSettings">
+    updatedAt?: DateTimeFilter<"MonetizationSettings"> | Date | string
+  }
+
+  export type MonetizationSettingsOrderByWithRelationInput = {
+    id?: SortOrder
+    gaEnabled?: SortOrder
+    gaMeasurementId?: SortOrderInput | SortOrder
+    vercelAnalyticsEnabled?: SortOrder
+    adsenseEnabled?: SortOrder
+    adsensePublisherId?: SortOrderInput | SortOrder
+    adsTxtExtra?: SortOrderInput | SortOrder
+    placements?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonetizationSettingsWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: MonetizationSettingsWhereInput | MonetizationSettingsWhereInput[]
+    OR?: MonetizationSettingsWhereInput[]
+    NOT?: MonetizationSettingsWhereInput | MonetizationSettingsWhereInput[]
+    gaEnabled?: BoolFilter<"MonetizationSettings"> | boolean
+    gaMeasurementId?: StringNullableFilter<"MonetizationSettings"> | string | null
+    vercelAnalyticsEnabled?: BoolFilter<"MonetizationSettings"> | boolean
+    adsenseEnabled?: BoolFilter<"MonetizationSettings"> | boolean
+    adsensePublisherId?: StringNullableFilter<"MonetizationSettings"> | string | null
+    adsTxtExtra?: StringNullableFilter<"MonetizationSettings"> | string | null
+    placements?: JsonFilter<"MonetizationSettings">
+    updatedAt?: DateTimeFilter<"MonetizationSettings"> | Date | string
+  }, "id">
+
+  export type MonetizationSettingsOrderByWithAggregationInput = {
+    id?: SortOrder
+    gaEnabled?: SortOrder
+    gaMeasurementId?: SortOrderInput | SortOrder
+    vercelAnalyticsEnabled?: SortOrder
+    adsenseEnabled?: SortOrder
+    adsensePublisherId?: SortOrderInput | SortOrder
+    adsTxtExtra?: SortOrderInput | SortOrder
+    placements?: SortOrder
+    updatedAt?: SortOrder
+    _count?: MonetizationSettingsCountOrderByAggregateInput
+    _max?: MonetizationSettingsMaxOrderByAggregateInput
+    _min?: MonetizationSettingsMinOrderByAggregateInput
+  }
+
+  export type MonetizationSettingsScalarWhereWithAggregatesInput = {
+    AND?: MonetizationSettingsScalarWhereWithAggregatesInput | MonetizationSettingsScalarWhereWithAggregatesInput[]
+    OR?: MonetizationSettingsScalarWhereWithAggregatesInput[]
+    NOT?: MonetizationSettingsScalarWhereWithAggregatesInput | MonetizationSettingsScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"MonetizationSettings"> | string
+    gaEnabled?: BoolWithAggregatesFilter<"MonetizationSettings"> | boolean
+    gaMeasurementId?: StringNullableWithAggregatesFilter<"MonetizationSettings"> | string | null
+    vercelAnalyticsEnabled?: BoolWithAggregatesFilter<"MonetizationSettings"> | boolean
+    adsenseEnabled?: BoolWithAggregatesFilter<"MonetizationSettings"> | boolean
+    adsensePublisherId?: StringNullableWithAggregatesFilter<"MonetizationSettings"> | string | null
+    adsTxtExtra?: StringNullableWithAggregatesFilter<"MonetizationSettings"> | string | null
+    placements?: JsonWithAggregatesFilter<"MonetizationSettings">
+    updatedAt?: DateTimeWithAggregatesFilter<"MonetizationSettings"> | Date | string
+  }
+
+  export type SponsorAdWhereInput = {
+    AND?: SponsorAdWhereInput | SponsorAdWhereInput[]
+    OR?: SponsorAdWhereInput[]
+    NOT?: SponsorAdWhereInput | SponsorAdWhereInput[]
+    id?: StringFilter<"SponsorAd"> | string
+    name?: StringFilter<"SponsorAd"> | string
+    advertiser?: StringNullableFilter<"SponsorAd"> | string | null
+    imageUrl?: StringFilter<"SponsorAd"> | string
+    imageUrlMobile?: StringNullableFilter<"SponsorAd"> | string | null
+    linkUrl?: StringFilter<"SponsorAd"> | string
+    altText?: StringFilter<"SponsorAd"> | string
+    placements?: StringNullableListFilter<"SponsorAd">
+    isActive?: BoolFilter<"SponsorAd"> | boolean
+    startsAt?: DateTimeFilter<"SponsorAd"> | Date | string
+    endsAt?: DateTimeNullableFilter<"SponsorAd"> | Date | string | null
+    weight?: IntFilter<"SponsorAd"> | number
+    impressions?: IntFilter<"SponsorAd"> | number
+    clicks?: IntFilter<"SponsorAd"> | number
+    createdAt?: DateTimeFilter<"SponsorAd"> | Date | string
+    updatedAt?: DateTimeFilter<"SponsorAd"> | Date | string
+  }
+
+  export type SponsorAdOrderByWithRelationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    advertiser?: SortOrderInput | SortOrder
+    imageUrl?: SortOrder
+    imageUrlMobile?: SortOrderInput | SortOrder
+    linkUrl?: SortOrder
+    altText?: SortOrder
+    placements?: SortOrder
+    isActive?: SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrderInput | SortOrder
+    weight?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SponsorAdWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    AND?: SponsorAdWhereInput | SponsorAdWhereInput[]
+    OR?: SponsorAdWhereInput[]
+    NOT?: SponsorAdWhereInput | SponsorAdWhereInput[]
+    name?: StringFilter<"SponsorAd"> | string
+    advertiser?: StringNullableFilter<"SponsorAd"> | string | null
+    imageUrl?: StringFilter<"SponsorAd"> | string
+    imageUrlMobile?: StringNullableFilter<"SponsorAd"> | string | null
+    linkUrl?: StringFilter<"SponsorAd"> | string
+    altText?: StringFilter<"SponsorAd"> | string
+    placements?: StringNullableListFilter<"SponsorAd">
+    isActive?: BoolFilter<"SponsorAd"> | boolean
+    startsAt?: DateTimeFilter<"SponsorAd"> | Date | string
+    endsAt?: DateTimeNullableFilter<"SponsorAd"> | Date | string | null
+    weight?: IntFilter<"SponsorAd"> | number
+    impressions?: IntFilter<"SponsorAd"> | number
+    clicks?: IntFilter<"SponsorAd"> | number
+    createdAt?: DateTimeFilter<"SponsorAd"> | Date | string
+    updatedAt?: DateTimeFilter<"SponsorAd"> | Date | string
+  }, "id">
+
+  export type SponsorAdOrderByWithAggregationInput = {
+    id?: SortOrder
+    name?: SortOrder
+    advertiser?: SortOrderInput | SortOrder
+    imageUrl?: SortOrder
+    imageUrlMobile?: SortOrderInput | SortOrder
+    linkUrl?: SortOrder
+    altText?: SortOrder
+    placements?: SortOrder
+    isActive?: SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrderInput | SortOrder
+    weight?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: SponsorAdCountOrderByAggregateInput
+    _avg?: SponsorAdAvgOrderByAggregateInput
+    _max?: SponsorAdMaxOrderByAggregateInput
+    _min?: SponsorAdMinOrderByAggregateInput
+    _sum?: SponsorAdSumOrderByAggregateInput
+  }
+
+  export type SponsorAdScalarWhereWithAggregatesInput = {
+    AND?: SponsorAdScalarWhereWithAggregatesInput | SponsorAdScalarWhereWithAggregatesInput[]
+    OR?: SponsorAdScalarWhereWithAggregatesInput[]
+    NOT?: SponsorAdScalarWhereWithAggregatesInput | SponsorAdScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"SponsorAd"> | string
+    name?: StringWithAggregatesFilter<"SponsorAd"> | string
+    advertiser?: StringNullableWithAggregatesFilter<"SponsorAd"> | string | null
+    imageUrl?: StringWithAggregatesFilter<"SponsorAd"> | string
+    imageUrlMobile?: StringNullableWithAggregatesFilter<"SponsorAd"> | string | null
+    linkUrl?: StringWithAggregatesFilter<"SponsorAd"> | string
+    altText?: StringWithAggregatesFilter<"SponsorAd"> | string
+    placements?: StringNullableListFilter<"SponsorAd">
+    isActive?: BoolWithAggregatesFilter<"SponsorAd"> | boolean
+    startsAt?: DateTimeWithAggregatesFilter<"SponsorAd"> | Date | string
+    endsAt?: DateTimeNullableWithAggregatesFilter<"SponsorAd"> | Date | string | null
+    weight?: IntWithAggregatesFilter<"SponsorAd"> | number
+    impressions?: IntWithAggregatesFilter<"SponsorAd"> | number
+    clicks?: IntWithAggregatesFilter<"SponsorAd"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"SponsorAd"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"SponsorAd"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -44476,6 +47127,223 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type MonetizationSettingsCreateInput = {
+    id?: string
+    gaEnabled?: boolean
+    gaMeasurementId?: string | null
+    vercelAnalyticsEnabled?: boolean
+    adsenseEnabled?: boolean
+    adsensePublisherId?: string | null
+    adsTxtExtra?: string | null
+    placements?: JsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+  }
+
+  export type MonetizationSettingsUncheckedCreateInput = {
+    id?: string
+    gaEnabled?: boolean
+    gaMeasurementId?: string | null
+    vercelAnalyticsEnabled?: boolean
+    adsenseEnabled?: boolean
+    adsensePublisherId?: string | null
+    adsTxtExtra?: string | null
+    placements?: JsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+  }
+
+  export type MonetizationSettingsUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    gaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    gaMeasurementId?: NullableStringFieldUpdateOperationsInput | string | null
+    vercelAnalyticsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adsenseEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adsensePublisherId?: NullableStringFieldUpdateOperationsInput | string | null
+    adsTxtExtra?: NullableStringFieldUpdateOperationsInput | string | null
+    placements?: JsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonetizationSettingsUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    gaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    gaMeasurementId?: NullableStringFieldUpdateOperationsInput | string | null
+    vercelAnalyticsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adsenseEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adsensePublisherId?: NullableStringFieldUpdateOperationsInput | string | null
+    adsTxtExtra?: NullableStringFieldUpdateOperationsInput | string | null
+    placements?: JsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonetizationSettingsCreateManyInput = {
+    id?: string
+    gaEnabled?: boolean
+    gaMeasurementId?: string | null
+    vercelAnalyticsEnabled?: boolean
+    adsenseEnabled?: boolean
+    adsensePublisherId?: string | null
+    adsTxtExtra?: string | null
+    placements?: JsonNullValueInput | InputJsonValue
+    updatedAt?: Date | string
+  }
+
+  export type MonetizationSettingsUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    gaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    gaMeasurementId?: NullableStringFieldUpdateOperationsInput | string | null
+    vercelAnalyticsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adsenseEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adsensePublisherId?: NullableStringFieldUpdateOperationsInput | string | null
+    adsTxtExtra?: NullableStringFieldUpdateOperationsInput | string | null
+    placements?: JsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type MonetizationSettingsUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    gaEnabled?: BoolFieldUpdateOperationsInput | boolean
+    gaMeasurementId?: NullableStringFieldUpdateOperationsInput | string | null
+    vercelAnalyticsEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adsenseEnabled?: BoolFieldUpdateOperationsInput | boolean
+    adsensePublisherId?: NullableStringFieldUpdateOperationsInput | string | null
+    adsTxtExtra?: NullableStringFieldUpdateOperationsInput | string | null
+    placements?: JsonNullValueInput | InputJsonValue
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SponsorAdCreateInput = {
+    id?: string
+    name: string
+    advertiser?: string | null
+    imageUrl: string
+    imageUrlMobile?: string | null
+    linkUrl: string
+    altText: string
+    placements?: SponsorAdCreateplacementsInput | string[]
+    isActive?: boolean
+    startsAt?: Date | string
+    endsAt?: Date | string | null
+    weight?: number
+    impressions?: number
+    clicks?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SponsorAdUncheckedCreateInput = {
+    id?: string
+    name: string
+    advertiser?: string | null
+    imageUrl: string
+    imageUrlMobile?: string | null
+    linkUrl: string
+    altText: string
+    placements?: SponsorAdCreateplacementsInput | string[]
+    isActive?: boolean
+    startsAt?: Date | string
+    endsAt?: Date | string | null
+    weight?: number
+    impressions?: number
+    clicks?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SponsorAdUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    advertiser?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    imageUrlMobile?: NullableStringFieldUpdateOperationsInput | string | null
+    linkUrl?: StringFieldUpdateOperationsInput | string
+    altText?: StringFieldUpdateOperationsInput | string
+    placements?: SponsorAdUpdateplacementsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    weight?: IntFieldUpdateOperationsInput | number
+    impressions?: IntFieldUpdateOperationsInput | number
+    clicks?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SponsorAdUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    advertiser?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    imageUrlMobile?: NullableStringFieldUpdateOperationsInput | string | null
+    linkUrl?: StringFieldUpdateOperationsInput | string
+    altText?: StringFieldUpdateOperationsInput | string
+    placements?: SponsorAdUpdateplacementsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    weight?: IntFieldUpdateOperationsInput | number
+    impressions?: IntFieldUpdateOperationsInput | number
+    clicks?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SponsorAdCreateManyInput = {
+    id?: string
+    name: string
+    advertiser?: string | null
+    imageUrl: string
+    imageUrlMobile?: string | null
+    linkUrl: string
+    altText: string
+    placements?: SponsorAdCreateplacementsInput | string[]
+    isActive?: boolean
+    startsAt?: Date | string
+    endsAt?: Date | string | null
+    weight?: number
+    impressions?: number
+    clicks?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type SponsorAdUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    advertiser?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    imageUrlMobile?: NullableStringFieldUpdateOperationsInput | string | null
+    linkUrl?: StringFieldUpdateOperationsInput | string
+    altText?: StringFieldUpdateOperationsInput | string
+    placements?: SponsorAdUpdateplacementsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    weight?: IntFieldUpdateOperationsInput | number
+    impressions?: IntFieldUpdateOperationsInput | number
+    clicks?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type SponsorAdUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    advertiser?: NullableStringFieldUpdateOperationsInput | string | null
+    imageUrl?: StringFieldUpdateOperationsInput | string
+    imageUrlMobile?: NullableStringFieldUpdateOperationsInput | string | null
+    linkUrl?: StringFieldUpdateOperationsInput | string
+    altText?: StringFieldUpdateOperationsInput | string
+    placements?: SponsorAdUpdateplacementsInput | string[]
+    isActive?: BoolFieldUpdateOperationsInput | boolean
+    startsAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    endsAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    weight?: IntFieldUpdateOperationsInput | number
+    impressions?: IntFieldUpdateOperationsInput | number
+    clicks?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type StringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -46419,6 +49287,156 @@ export namespace Prisma {
   export type SlideSumOrderByAggregateInput = {
     order?: SortOrder
   }
+  export type JsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+  }
+
+  export type MonetizationSettingsCountOrderByAggregateInput = {
+    id?: SortOrder
+    gaEnabled?: SortOrder
+    gaMeasurementId?: SortOrder
+    vercelAnalyticsEnabled?: SortOrder
+    adsenseEnabled?: SortOrder
+    adsensePublisherId?: SortOrder
+    adsTxtExtra?: SortOrder
+    placements?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonetizationSettingsMaxOrderByAggregateInput = {
+    id?: SortOrder
+    gaEnabled?: SortOrder
+    gaMeasurementId?: SortOrder
+    vercelAnalyticsEnabled?: SortOrder
+    adsenseEnabled?: SortOrder
+    adsensePublisherId?: SortOrder
+    adsTxtExtra?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type MonetizationSettingsMinOrderByAggregateInput = {
+    id?: SortOrder
+    gaEnabled?: SortOrder
+    gaMeasurementId?: SortOrder
+    vercelAnalyticsEnabled?: SortOrder
+    adsenseEnabled?: SortOrder
+    adsensePublisherId?: SortOrder
+    adsTxtExtra?: SortOrder
+    updatedAt?: SortOrder
+  }
+  export type JsonWithAggregatesFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>,
+        Required<JsonWithAggregatesFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<JsonWithAggregatesFilterBase<$PrismaModel>>, 'path'>>
+
+  export type JsonWithAggregatesFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedJsonFilter<$PrismaModel>
+    _max?: NestedJsonFilter<$PrismaModel>
+  }
+
+  export type SponsorAdCountOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    advertiser?: SortOrder
+    imageUrl?: SortOrder
+    imageUrlMobile?: SortOrder
+    linkUrl?: SortOrder
+    altText?: SortOrder
+    placements?: SortOrder
+    isActive?: SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrder
+    weight?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SponsorAdAvgOrderByAggregateInput = {
+    weight?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+  }
+
+  export type SponsorAdMaxOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    advertiser?: SortOrder
+    imageUrl?: SortOrder
+    imageUrlMobile?: SortOrder
+    linkUrl?: SortOrder
+    altText?: SortOrder
+    isActive?: SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrder
+    weight?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SponsorAdMinOrderByAggregateInput = {
+    id?: SortOrder
+    name?: SortOrder
+    advertiser?: SortOrder
+    imageUrl?: SortOrder
+    imageUrlMobile?: SortOrder
+    linkUrl?: SortOrder
+    altText?: SortOrder
+    isActive?: SortOrder
+    startsAt?: SortOrder
+    endsAt?: SortOrder
+    weight?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type SponsorAdSumOrderByAggregateInput = {
+    weight?: SortOrder
+    impressions?: SortOrder
+    clicks?: SortOrder
+  }
 
   export type AccountCreateNestedManyWithoutUserInput = {
     create?: XOR<AccountCreateWithoutUserInput, AccountUncheckedCreateWithoutUserInput> | AccountCreateWithoutUserInput[] | AccountUncheckedCreateWithoutUserInput[]
@@ -48006,6 +51024,15 @@ export namespace Prisma {
     update?: XOR<XOR<SliderUpdateToOneWithWhereWithoutSlidesInput, SliderUpdateWithoutSlidesInput>, SliderUncheckedUpdateWithoutSlidesInput>
   }
 
+  export type SponsorAdCreateplacementsInput = {
+    set: string[]
+  }
+
+  export type SponsorAdUpdateplacementsInput = {
+    set?: string[]
+    push?: string | string[]
+  }
+
   export type NestedStringFilter<$PrismaModel = never> = {
     equals?: string | StringFieldRefInput<$PrismaModel>
     in?: string[] | ListStringFieldRefInput<$PrismaModel>
@@ -48330,6 +51357,29 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumAiModelTypeFilter<$PrismaModel>
     _max?: NestedEnumAiModelTypeFilter<$PrismaModel>
+  }
+  export type NestedJsonFilter<$PrismaModel = never> =
+    | PatchUndefined<
+        Either<Required<NestedJsonFilterBase<$PrismaModel>>, Exclude<keyof Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>,
+        Required<NestedJsonFilterBase<$PrismaModel>>
+      >
+    | OptionalFlat<Omit<Required<NestedJsonFilterBase<$PrismaModel>>, 'path'>>
+
+  export type NestedJsonFilterBase<$PrismaModel = never> = {
+    equals?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
+    path?: string[]
+    mode?: QueryMode | EnumQueryModeFieldRefInput<$PrismaModel>
+    string_contains?: string | StringFieldRefInput<$PrismaModel>
+    string_starts_with?: string | StringFieldRefInput<$PrismaModel>
+    string_ends_with?: string | StringFieldRefInput<$PrismaModel>
+    array_starts_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_ends_with?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    array_contains?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | null
+    lt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    lte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gt?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    gte?: InputJsonValue | JsonFieldRefInput<$PrismaModel>
+    not?: InputJsonValue | JsonFieldRefInput<$PrismaModel> | JsonNullValueFilter
   }
 
   export type AccountCreateWithoutUserInput = {

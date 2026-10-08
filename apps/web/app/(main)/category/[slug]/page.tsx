@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { AdSlot } from "@/components/ads/AdSlot";
 import Link from "next/link";
 import { Newspaper } from "lucide-react";
 import { getCategoryWithArticles } from "@/lib/data";
@@ -47,6 +48,8 @@ export default async function CategoryPage({ params }: { params: Params }) {
           {category.description || `${category.name} ile ilgili son gelişmeleri ve analizleri takip edin.`}
         </p>
       </header>
+
+      <AdSlot placement="category_top" className="my-0" />
 
       {category.articles.length > 0 ? (
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">

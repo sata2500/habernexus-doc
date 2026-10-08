@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { AdSlot } from "@/components/ads/AdSlot";
 import Image from "next/image";
 import { getArticleBySlug } from "@/lib/data";
 import { formatDateTime, formatViewCount, getAppUrl, readingMinutes } from "@/lib/utils";
@@ -245,6 +246,8 @@ export default async function ArticlePage({ params }: { params: Params }) {
         <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(body) }} />
       </article>
 
+      <AdSlot placement="article_content" className="mt-0 mb-12" />
+
       {/* ── Okuyucu Reaksiyon & Düşünce Modülü ────────────────── */}
       {/* Okuma ölçümünde haberin sonu: tepkiler bölümü görününce haber "okundu" sayılır */}
       <div id="article-end">
@@ -328,6 +331,8 @@ export default async function ArticlePage({ params }: { params: Params }) {
       )}
 
       <NewsletterInline />
+
+      <AdSlot placement="article_bottom" />
 
       {/* ── Yorum Sistemi ────────────────────────── */}
       <CommentSection articleId={article.id} />

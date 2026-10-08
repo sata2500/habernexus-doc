@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Settings2, Sparkles, ServerCog, SlidersHorizontal, Timer } from "lucide-react";
+import { Megaphone, Settings2, Sparkles, ServerCog, SlidersHorizontal, Timer } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { getAdminSiteSettings } from "./actions";
 import { getAiOverview } from "./ai-actions";
@@ -10,6 +10,9 @@ import { getIndexingLog, isIndexingConfigured } from "@/lib/google-indexing";
 import { AutomationPanel } from "./components/AutomationPanel";
 import { getAutomationOverview } from "./automation-actions";
 import { getMigrationStatus, type MigrationStatus } from "@/lib/server/db-migrations";
+import { getMonetizationOverview } from "./monetization-actions";
+import { MonetizationPanel } from "./components/MonetizationPanel";
+import { SponsorManager } from "./components/SponsorManager";
 
 export const dynamic = "force-dynamic";
 // Veritabanı güncellemeleri ve model testleri için yeterli süre
@@ -26,12 +29,15 @@ const SERVICES = [
   { key: "RESEND_API_KEY", label: "Resend (e-posta)" },
   { key: "GOOGLE_CLIENT_EMAIL", label: "Google Indexing API" },
   { key: "TELEGRAM_BOT_TOKEN", label: "Telegram paylaşımı" },
+  { key: "NEXT_PUBLIC_SENTRY_DSN", label: "Sentry (hata takibi)" },
+  { key: "CRON_SECRET", label: "Gece temizliği (Vercel Cron)" },
 ] as const;
 
 const TABS = [
   { id: "genel", label: "Genel", icon: SlidersHorizontal, description: "Site adı, logo, SEO, sosyal medya ve tema renkleri." },
   { id: "yapay-zeka", label: "Yapay Zekâ", icon: Sparkles, description: "Modeller, sağlayıcılar ve yapay zekâ talimatları." },
   { id: "otomasyon", label: "Otomasyon", icon: Timer, description: "Zamanlanmış işler (tarama, analiz, AI Yazar, bülten) ve içerik kuralları." },
+  { id: "reklam", label: "Reklam ve Analitik", icon: Megaphone, description: "Google Analytics, AdSense, sponsor reklamları ve reklam alanları." },
   { id: "sistem", label: "Sistem", icon: ServerCog, description: "Veritabanı güncellemeleri ve servis yapılandırması." },
 ] as const;
 
@@ -74,6 +80,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
       {tab === "genel" && <GeneralTab />}
       {tab === "yapay-zeka" && <AiTab />}
       {tab === "otomasyon" && <AutomationTab />}
+      {tab === "reklam" && <MonetizationTab />}
       {tab === "sistem" && <SystemTab />}
     </div>
   );
@@ -96,6 +103,21 @@ async function AiTab() {
 async function AutomationTab() {
   const overview = await getAutomationOverview();
   return <AutomationPanel {...overview} />;
+}
+
+async function MonetizationTab() {
+  const { settings, sponsors, sentryConfigured, onVercel } = await getMonetizationOverview();
+  return (
+    <div className="space-y-6">
+      <div className="bg-card rounded-3xl border border-border shadow-soft p-4 sm:p-6 md:p-8">
+        <MonetizationPanel initial={settings} sentryConfigured={sentryConfigured} onVercel={onVercel} />
+      </div>
+      <div className="bg-card rounded-3xl border border-border shadow-soft p-4 sm:p-6 md:p-8 space-y-4">
+        <h3 className="text-base font-bold font-display">Sponsor reklamları</h3>
+        <SponsorManager sponsors={sponsors} />
+      </div>
+    </div>
+  );
 }
 
 async function SystemTab() {

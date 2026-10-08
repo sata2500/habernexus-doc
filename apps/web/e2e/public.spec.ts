@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { trackPageErrors } from "./helpers";
+import { E2E_SPONSOR_ID } from "./accounts";
 
 test.describe("herkese açık site", () => {
   test("ana sayfa açılır, tek h1 vardır ve yatay taşma olmaz", async ({ page }) => {
@@ -56,5 +57,28 @@ test.describe("herkese açık site", () => {
   test("yönetim paneli girişsiz açılmaz", async ({ page }) => {
     await page.goto("/admin");
     await expect(page).toHaveURL(/\/login\?callbackUrl=%2Fadmin/);
+  });
+
+  test("sponsor reklamı etiketli görünür, tıklama sayılıp reklam verene yönlendirilir", async ({ page, request }) => {
+    const errors = trackPageErrors(page);
+    await page.goto("/article/e2e-deneme-haberi");
+    const slot = page.locator('[data-ad-placement="article_content"]');
+    await expect(slot).toContainText("Sponsorlu · E2E Reklamveren");
+    const link = slot.getByRole("link", { name: "E2E sponsor reklamı" });
+    await expect(link).toHaveAttribute("rel", /sponsored/);
+    const href = await link.getAttribute("href");
+    expect(href).toBe(`/api/ads/${E2E_SPONSOR_ID}/click`);
+    const res = await request.get(href!, { maxRedirects: 0 });
+    expect(res.status()).toBe(302);
+    expect(res.headers()["location"]).toBe("https://example.com/e2e-sponsor");
+    // Kapalı alanlar hiç çizilmez
+    await expect(page.locator('[data-ad-placement="article_bottom"]')).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
+
+  test("ads.txt düz metin olarak sunulur", async ({ request }) => {
+    const res = await request.get("/ads.txt");
+    expect(res.status()).toBe(200);
+    expect(res.headers()["content-type"]).toContain("text/plain");
   });
 });

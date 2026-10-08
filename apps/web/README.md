@@ -39,6 +39,8 @@ Gerçek anahtarlar yalnızca Vercel proje ayarlarında tutulur; depoya ve sohbet
 | `GEMINI_API_KEY`, `OPENROUTER_API_KEY` | yapay zekâ için | En az biri; sağlayıcı/model seçimi yönetim panelinden |
 | `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, `QSTASH_NEXT_SIGNING_KEY` | önerilir | Arka plan işleri ve zamanlanmış görevler. Yoksa işler istek sonrasında (`after()`) çalışır |
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | önerilir | Önbellek, hız sınırı, atomik kilitler. Yoksa bellek içi yedek (tek sunucu için) |
+| `NEXT_PUBLIC_SENTRY_DSN` | önerilir | Sentry hata takibi (tarayıcı ve sunucu). Yoksa Sentry hiç başlamaz |
+| `SENTRY_AUTH_TOKEN`, `SENTRY_ORG`, `SENTRY_PROJECT` | isteğe bağlı | Derlemede kaynak haritalarını Sentry'ye yükler (hata satırları okunur olur) |
 | `CRON_SECRET` | önerilir | Günlük kişisel veri temizliği (`/api/cron/cleanup`, `vercel.json`). Vercel bu anahtarı cron isteğine ekler; yoksa temizlik çalışmaz |
 | `BLOB_READ_WRITE_TOKEN` | yükleme için | Görsel ve ses dosyaları (Vercel Blob) |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | isteğe bağlı | Google ile giriş; yoksa düğme gizlenir |
@@ -92,6 +94,21 @@ Kurallar:
   temizlenir.
 - **Arka plan işleri:** uzun işler (yayın sonrası kalite kontrolü, haber yazımı) QStash kuyruğuna
   (`lib/server/queue.ts`) gönderilir; mükerrer çalışmayı `appCache.claim()` önler.
+
+## Reklam ve analitik
+
+Yönetim → Ayarlar → **Reklam ve Analitik** sekmesinden yönetilir; kod değişikliği gerekmez.
+
+- **Google Analytics** (ölçüm kimliği), **Vercel Web Analytics** (aç/kapa), **Google AdSense** (yayıncı kimliği, `ads.txt`).
+  Kapalı özelliğin betiği hiç yüklenmez.
+- **Reklam alanları** (`lib/monetization.ts → PLACEMENTS`): her alan için Kapalı / Sponsor / AdSense / Otomatik.
+  Sayfaya `<AdSlot placement="..." />` ile eklenir; reklam yoksa alan çizilmez. Yeni alan için `PLACEMENTS`'a ekleyin.
+- **Sponsor reklamları**: görsel, bağlantı, tarih aralığı, alanlar ve ağırlık; gösterim/tıklama sayılır
+  (`/api/ads`, `/api/ads/[id]/view|click`). Sayfalar önbellekte olsa da sponsorlar 1 dakikalık önbellekle sunulur.
+- **Çerez onayı** (`lib/consent.ts`): kişiselleştirme her zaman, analitik ve reklam yalnızca ilgili özellik açıksa sorulur.
+  Google Consent Mode v2 varsayılanları kök yerleşimde kurulur (`lib/google-consent.ts`); Analytics yalnızca onayla yüklenir,
+  AdSense onay yoksa kişiselleştirilmemiş reklam gösterir.
+- Analytics veya AdSense açılmadan önce Gizlilik ve Çerez Politikası metinleri güncellenmelidir.
 
 ## Testler
 

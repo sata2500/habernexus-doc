@@ -4,7 +4,7 @@ import { CONSENT_COOKIE, serializeConsent } from "../lib/consent";
 
 const baseURL = process.env.E2E_BASE_URL || "http://localhost:3000";
 /** Çerez bandı seçimi yapılmış sayılır; bant içeriğin üstüne binip tıklamaları engellemesin */
-const consentCookie = { name: CONSENT_COOKIE, value: serializeConsent(true), url: baseURL };
+const consentCookie = { name: CONSENT_COOKIE, value: serializeConsent({ personalization: true, analytics: false, ads: false }), url: baseURL };
 
 setup("misafir (çerez tercihi seçilmiş)", async ({ context }) => {
   await context.addCookies([consentCookie]);

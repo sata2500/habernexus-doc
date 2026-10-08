@@ -1,10 +1,17 @@
 "use client";
 
+import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
+
 /**
  * Kök yerleşimde oluşan hatalar için son çare ekranı. Kendi <html>/<body> etiketlerini
  * tanımlar ve site stillerine güvenmez; bu yüzden satır içi stil kullanır.
  */
 export default function GlobalError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
+  useEffect(() => {
+    Sentry.captureException(error);
+  }, [error]);
+
   return (
     <html lang="tr">
       <body style={{ margin: 0, fontFamily: "system-ui, -apple-system, Segoe UI, Roboto, sans-serif", background: "#f9fafb", color: "#111827" }}>

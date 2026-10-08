@@ -6,7 +6,7 @@
  */
 import { auth } from "../lib/auth";
 import { prisma } from "../lib/prisma";
-import { E2E_PASSWORD, E2E_USERS } from "./accounts";
+import { E2E_PASSWORD, E2E_SPONSOR_ID, E2E_USERS } from "./accounts";
 
 async function ensureUser(email: string, name: string, role: "USER" | "AUTHOR" | "ADMIN") {
   const existing = await prisma.user.findUnique({ where: { email }, select: { id: true } });
@@ -42,6 +42,27 @@ async function main() {
       publishedAt: new Date(),
       authorId: users.author.id,
       categoryId: category.id,
+    },
+  });
+
+  // Reklam sistemi: haber metninin sonunda yalnızca sponsor reklamı (Google betikleri kapalı)
+  await prisma.monetizationSettings.upsert({
+    where: { id: "global" },
+    update: { placements: { article_content: { mode: "sponsor" } } },
+    create: { id: "global", placements: { article_content: { mode: "sponsor" } } },
+  });
+  await prisma.sponsorAd.upsert({
+    where: { id: E2E_SPONSOR_ID },
+    update: { isActive: true, endsAt: null },
+    create: {
+      id: E2E_SPONSOR_ID,
+      name: "E2E sponsor",
+      advertiser: "E2E Reklamveren",
+      imageUrl: "/vercel.svg",
+      linkUrl: "https://example.com/e2e-sponsor",
+      altText: "E2E sponsor reklamı",
+      placements: ["article_content"],
+      startsAt: new Date(Date.now() - 60_000),
     },
   });
 
