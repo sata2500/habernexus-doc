@@ -63,3 +63,6 @@ experiment_results.md
 # Uçtan uca test çıktıları
 apps/web/playwright-report/
 apps/web/test-results/
+
+# Bildirim ve PWA simgeleri (genel *.png kuralının istisnası)
+!apps/web/public/icons/*.png
