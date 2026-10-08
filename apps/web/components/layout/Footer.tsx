@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { subscribeToNewsletter } from "@/app/(main)/newsletter-actions";
+import { CookiePreferencesButton } from "@/components/layout/CookieConsent";
 import {
   Mail,
   CheckCircle2,
@@ -231,6 +232,9 @@ export function Footer({ categories = [], settings }: { categories?: Category[],
                   </Link>
                 </li>
               ))}
+              <li>
+                <CookiePreferencesButton className="inline-block py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors cursor-pointer" />
+              </li>
             </ul>
           </nav>
         </div>

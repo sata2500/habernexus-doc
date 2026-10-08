@@ -227,6 +227,8 @@ model Subscriber {
   newsletterTime   String   @default("08:00")
   unsubscribeToken String   @unique @default(cuid())
   createdAt        DateTime @default(now())
+  /// Son durum değişikliği (onay / abonelikten çıkma); pasif kayıtların saklama süresi buradan sayılır
+  updatedAt        DateTime @default(now()) @updatedAt
 }
 
 model Media {

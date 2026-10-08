@@ -18031,6 +18031,7 @@ export namespace Prisma {
     newsletterTime: string | null
     unsubscribeToken: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type SubscriberMaxAggregateOutputType = {
@@ -18040,6 +18041,7 @@ export namespace Prisma {
     newsletterTime: string | null
     unsubscribeToken: string | null
     createdAt: Date | null
+    updatedAt: Date | null
   }
 
   export type SubscriberCountAggregateOutputType = {
@@ -18049,6 +18051,7 @@ export namespace Prisma {
     newsletterTime: number
     unsubscribeToken: number
     createdAt: number
+    updatedAt: number
     _all: number
   }
 
@@ -18060,6 +18063,7 @@ export namespace Prisma {
     newsletterTime?: true
     unsubscribeToken?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type SubscriberMaxAggregateInputType = {
@@ -18069,6 +18073,7 @@ export namespace Prisma {
     newsletterTime?: true
     unsubscribeToken?: true
     createdAt?: true
+    updatedAt?: true
   }
 
   export type SubscriberCountAggregateInputType = {
@@ -18078,6 +18083,7 @@ export namespace Prisma {
     newsletterTime?: true
     unsubscribeToken?: true
     createdAt?: true
+    updatedAt?: true
     _all?: true
   }
 
@@ -18160,6 +18166,7 @@ export namespace Prisma {
     newsletterTime: string
     unsubscribeToken: string
     createdAt: Date
+    updatedAt: Date
     _count: SubscriberCountAggregateOutputType | null
     _min: SubscriberMinAggregateOutputType | null
     _max: SubscriberMaxAggregateOutputType | null
@@ -18186,6 +18193,7 @@ export namespace Prisma {
     newsletterTime?: boolean
     unsubscribeToken?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["subscriber"]>
 
   export type SubscriberSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -18195,6 +18203,7 @@ export namespace Prisma {
     newsletterTime?: boolean
     unsubscribeToken?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["subscriber"]>
 
   export type SubscriberSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -18204,6 +18213,7 @@ export namespace Prisma {
     newsletterTime?: boolean
     unsubscribeToken?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }, ExtArgs["result"]["subscriber"]>
 
   export type SubscriberSelectScalar = {
@@ -18213,9 +18223,10 @@ export namespace Prisma {
     newsletterTime?: boolean
     unsubscribeToken?: boolean
     createdAt?: boolean
+    updatedAt?: boolean
   }
 
-  export type SubscriberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "isActive" | "newsletterTime" | "unsubscribeToken" | "createdAt", ExtArgs["result"]["subscriber"]>
+  export type SubscriberOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "isActive" | "newsletterTime" | "unsubscribeToken" | "createdAt" | "updatedAt", ExtArgs["result"]["subscriber"]>
 
   export type $SubscriberPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Subscriber"
@@ -18227,6 +18238,10 @@ export namespace Prisma {
       newsletterTime: string
       unsubscribeToken: string
       createdAt: Date
+      /**
+       * Son durum değişikliği (onay / abonelikten çıkma); pasif kayıtların saklama süresi buradan sayılır
+       */
+      updatedAt: Date
     }, ExtArgs["result"]["subscriber"]>
     composites: {}
   }
@@ -18656,6 +18671,7 @@ export namespace Prisma {
     readonly newsletterTime: FieldRef<"Subscriber", 'String'>
     readonly unsubscribeToken: FieldRef<"Subscriber", 'String'>
     readonly createdAt: FieldRef<"Subscriber", 'DateTime'>
+    readonly updatedAt: FieldRef<"Subscriber", 'DateTime'>
   }
     
 
@@ -38340,7 +38356,8 @@ export namespace Prisma {
     isActive: 'isActive',
     newsletterTime: 'newsletterTime',
     unsubscribeToken: 'unsubscribeToken',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
   };
 
   export type SubscriberScalarFieldEnum = (typeof SubscriberScalarFieldEnum)[keyof typeof SubscriberScalarFieldEnum]
@@ -39831,6 +39848,7 @@ export namespace Prisma {
     newsletterTime?: StringFilter<"Subscriber"> | string
     unsubscribeToken?: StringFilter<"Subscriber"> | string
     createdAt?: DateTimeFilter<"Subscriber"> | Date | string
+    updatedAt?: DateTimeFilter<"Subscriber"> | Date | string
   }
 
   export type SubscriberOrderByWithRelationInput = {
@@ -39840,6 +39858,7 @@ export namespace Prisma {
     newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SubscriberWhereUniqueInput = Prisma.AtLeast<{
@@ -39852,6 +39871,7 @@ export namespace Prisma {
     isActive?: BoolFilter<"Subscriber"> | boolean
     newsletterTime?: StringFilter<"Subscriber"> | string
     createdAt?: DateTimeFilter<"Subscriber"> | Date | string
+    updatedAt?: DateTimeFilter<"Subscriber"> | Date | string
   }, "id" | "email" | "unsubscribeToken">
 
   export type SubscriberOrderByWithAggregationInput = {
@@ -39861,6 +39881,7 @@ export namespace Prisma {
     newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
     _count?: SubscriberCountOrderByAggregateInput
     _max?: SubscriberMaxOrderByAggregateInput
     _min?: SubscriberMinOrderByAggregateInput
@@ -39876,6 +39897,7 @@ export namespace Prisma {
     newsletterTime?: StringWithAggregatesFilter<"Subscriber"> | string
     unsubscribeToken?: StringWithAggregatesFilter<"Subscriber"> | string
     createdAt?: DateTimeWithAggregatesFilter<"Subscriber"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"Subscriber"> | Date | string
   }
 
   export type MediaWhereInput = {
@@ -42503,6 +42525,7 @@ export namespace Prisma {
     newsletterTime?: string
     unsubscribeToken?: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SubscriberUncheckedCreateInput = {
@@ -42512,6 +42535,7 @@ export namespace Prisma {
     newsletterTime?: string
     unsubscribeToken?: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SubscriberUpdateInput = {
@@ -42521,6 +42545,7 @@ export namespace Prisma {
     newsletterTime?: StringFieldUpdateOperationsInput | string
     unsubscribeToken?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SubscriberUncheckedUpdateInput = {
@@ -42530,6 +42555,7 @@ export namespace Prisma {
     newsletterTime?: StringFieldUpdateOperationsInput | string
     unsubscribeToken?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SubscriberCreateManyInput = {
@@ -42539,6 +42565,7 @@ export namespace Prisma {
     newsletterTime?: string
     unsubscribeToken?: string
     createdAt?: Date | string
+    updatedAt?: Date | string
   }
 
   export type SubscriberUpdateManyMutationInput = {
@@ -42548,6 +42575,7 @@ export namespace Prisma {
     newsletterTime?: StringFieldUpdateOperationsInput | string
     unsubscribeToken?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SubscriberUncheckedUpdateManyInput = {
@@ -42557,6 +42585,7 @@ export namespace Prisma {
     newsletterTime?: StringFieldUpdateOperationsInput | string
     unsubscribeToken?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type MediaCreateInput = {
@@ -45310,6 +45339,7 @@ export namespace Prisma {
     newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SubscriberMaxOrderByAggregateInput = {
@@ -45319,6 +45349,7 @@ export namespace Prisma {
     newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type SubscriberMinOrderByAggregateInput = {
@@ -45328,6 +45359,7 @@ export namespace Prisma {
     newsletterTime?: SortOrder
     unsubscribeToken?: SortOrder
     createdAt?: SortOrder
+    updatedAt?: SortOrder
   }
 
   export type EnumMediaStatusFilter<$PrismaModel = never> = {

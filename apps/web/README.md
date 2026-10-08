@@ -39,6 +39,7 @@ Gerçek anahtarlar yalnızca Vercel proje ayarlarında tutulur; depoya ve sohbet
 | `GEMINI_API_KEY`, `OPENROUTER_API_KEY` | yapay zekâ için | En az biri; sağlayıcı/model seçimi yönetim panelinden |
 | `QSTASH_TOKEN`, `QSTASH_CURRENT_SIGNING_KEY`, `QSTASH_NEXT_SIGNING_KEY` | önerilir | Arka plan işleri ve zamanlanmış görevler. Yoksa işler istek sonrasında (`after()`) çalışır |
 | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` | önerilir | Önbellek, hız sınırı, atomik kilitler. Yoksa bellek içi yedek (tek sunucu için) |
+| `CRON_SECRET` | önerilir | Günlük kişisel veri temizliği (`/api/cron/cleanup`, `vercel.json`). Vercel bu anahtarı cron isteğine ekler; yoksa temizlik çalışmaz |
 | `BLOB_READ_WRITE_TOKEN` | yükleme için | Görsel ve ses dosyaları (Vercel Blob) |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | isteğe bağlı | Google ile giriş; yoksa düğme gizlenir |
 | `GOOGLE_CLIENT_EMAIL`, `GOOGLE_PRIVATE_KEY` | isteğe bağlı | Google Indexing API bildirimi |
@@ -143,6 +144,6 @@ Sonraki migration'lar idempotenttir (`IF NOT EXISTS`); var olan tablo ve veriler
 
 ## Yayına alma
 
-`main` dalına gönderilen her commit Vercel'de otomatik yayına alınır. Zamanlanmış bülten `vercel.json`
-içindeki cron ile, RSS tarama, analiz ve otomatik yazım QStash zamanlamalarıyla çalışır (yönetim → Ayarlar → Otomasyon). Kod incelemesi ve yenileme
+`main` dalına gönderilen her commit Vercel'de otomatik yayına alınır. Saklama süresi dolan kişisel veriler (kapanmış destek talepleri 2 yıl, pasif bülten kayıtları 1 yıl,
+doğrulanmamış hesaplar 30 gün; `lib/server/retention.ts`) her gece `vercel.json` içindeki cron ile silinir. Bülten, RSS tarama, analiz ve otomatik yazım QStash zamanlamalarıyla çalışır (yönetim → Ayarlar → Otomasyon). Kod incelemesi ve yenileme
 geçmişi: [`docs/KOD-INCELEME-PLANI.md`](../../docs/KOD-INCELEME-PLANI.md).

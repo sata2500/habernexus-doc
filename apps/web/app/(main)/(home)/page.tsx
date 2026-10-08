@@ -23,6 +23,7 @@ import { auth } from "@/lib/auth";
 import { cookies, headers } from "next/headers";
 import { getFeedPage } from "@/lib/feed";
 import { getPersonalizedFeed, parseReadHistory, READ_HISTORY_COOKIE } from "@/lib/recommendations";
+import { CONSENT_COOKIE, parseConsent } from "@/lib/consent";
 import { ArticleFeed } from "@/components/article/ArticleFeed";
 import { FeedArticleCard } from "@/components/article/FeedArticleCard";
 import { DynamicIcon } from "@/components/ui/DynamicIcon";
@@ -73,7 +74,9 @@ export default async function HomePage() {
     : [];
 
   // Giriş yapmış kullanıcılara her zaman, ziyaretçilere okuma geçmişi varsa göster
-  const readIds = parseReadHistory(cookieStore.get(READ_HISTORY_COOKIE)?.value);
+  // Okuma geçmişi çerezi yalnızca kişiselleştirme onayı varken kullanılır (onay geri alınmışsa eski çerez yok sayılır)
+  const personalization = parseConsent(cookieStore.get(CONSENT_COOKIE)?.value)?.personalization === true;
+  const readIds = personalization ? parseReadHistory(cookieStore.get(READ_HISTORY_COOKIE)?.value) : [];
   const forYou = userId || readIds.length > 0
     ? await getPersonalizedFeed({
         userId,

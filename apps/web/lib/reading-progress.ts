@@ -3,6 +3,8 @@
  * Bu cihazda saklanır; giriş yapmış okurlarda ayrıca hesaba da kaydedilir (/api/reading).
  */
 
+import { hasPersonalizationConsent } from "./consent";
+
 export interface ReadingEntry {
   /** Yalnızca hesaptan gelen kayıtlarda: haber kimliği */
   id?: string;
@@ -44,8 +46,18 @@ function write(entries: ReadingEntry[]) {
 }
 
 export function saveProgress(entry: Omit<ReadingEntry, "at">) {
+  // Bu cihazda tutulan ilerleme kişiselleştirme onayına bağlıdır (hesaptaki kayıt ayrıca tutulur)
+  if (!hasPersonalizationConsent()) return;
   const rest = read().filter((e) => e.slug !== entry.slug);
   write([{ ...entry, progress: Math.round(entry.progress), at: Date.now() }, ...rest]);
+}
+
+/** Çerez onayı geri alınınca bu cihazdaki ilerleme silinir */
+export function clearProgress() {
+  try {
+    localStorage.removeItem(KEY);
+    window.dispatchEvent(new Event(EVENT));
+  } catch { /* depolama kapalı olabilir */ }
 }
 
 export function removeProgress(slug: string) {

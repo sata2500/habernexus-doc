@@ -5,9 +5,9 @@ import { feedSelect, toFeedArticle } from "./feed";
 import type { FeedArticle } from "./feed-types";
 import { getReadSignals } from "./server/reading-history";
 
-/** Okuma geçmişi çerezi: en yeni okunan başta, virgülle ayrılmış haber id'leri */
-export const READ_HISTORY_COOKIE = "hn_reads";
-export const READ_HISTORY_MAX = 30;
+import { READ_HISTORY_COOKIE, READ_HISTORY_MAX } from "./consent";
+
+export { READ_HISTORY_COOKIE };
 
 const SIGNAL_WEIGHT = { bookmark: 3, comment: 2, finished: 2, read: 1.5, partial: 0.75 } as const;
 const FRESHNESS_HALF_LIFE_HOURS = 36;

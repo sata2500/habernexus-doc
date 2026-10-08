@@ -264,7 +264,8 @@ exports.Prisma.SubscriberScalarFieldEnum = {
   isActive: 'isActive',
   newsletterTime: 'newsletterTime',
   unsubscribeToken: 'unsubscribeToken',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.MediaScalarFieldEnum = {

@@ -25,8 +25,9 @@ export default defineConfig({
   projects: [
     // Her rol için bir kez giriş (oturum dosyaları e2e/.auth altında)
     { name: "kurulum", testMatch: /auth\.setup\.ts/ },
-    { name: "mobil", use: { ...devices["Pixel 7"] }, dependencies: ["kurulum"] },
-    { name: "masaustu", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 900 } }, dependencies: ["kurulum"] },
+    // Varsayılan: çerez tercihi seçilmiş misafir (bandın kendisi e2e/consent.spec.ts'de sınanır)
+    { name: "mobil", use: { ...devices["Pixel 7"], storageState: "e2e/.auth/guest.json" }, dependencies: ["kurulum"] },
+    { name: "masaustu", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 900 }, storageState: "e2e/.auth/guest.json" }, dependencies: ["kurulum"] },
   ],
   webServer: process.env.E2E_BASE_URL
     ? undefined

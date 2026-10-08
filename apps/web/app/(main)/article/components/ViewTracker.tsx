@@ -2,16 +2,15 @@
 
 import { useEffect, useRef } from "react";
 import { incrementViewCount } from "@/app/author/actions";
+import { hasPersonalizationConsent, READ_HISTORY_COOKIE, READ_HISTORY_MAX } from "@/lib/consent";
 
 interface Props {
   articleId: string;
 }
 
-// "Sizin İçin" önerileri için son okunan haberler (lib/recommendations.ts ile aynı ad ve sınır)
-const READ_HISTORY_COOKIE = "hn_reads";
-const READ_HISTORY_MAX = 30;
-
+/** "Sizin İçin" önerileri için son okunan haberler; yalnızca çerez onayı verilmişse */
 function rememberRead(articleId: string) {
+  if (!hasPersonalizationConsent()) return;
   try {
     const current = document.cookie
       .split("; ")

@@ -52,5 +52,10 @@ export const MIGRATIONS: MigrationManifestEntry[] = [
     "name": "20261010090000_newsletter_opt_in",
     "checksum": "5025cf1afea36c8237d6cb77af341e548a514698fdf89b383ed08115a0a2188f",
     "sql": "-- Bülten yalnızca açık onayla: yeni kullanıcılar varsayılan olarak abone değildir. Idempotent.\nALTER TABLE \"User\" ALTER COLUMN \"newsletterSubscribed\" SET DEFAULT false;\n"
+  },
+  {
+    "name": "20261011090000_subscriber_updated_at",
+    "checksum": "cdd77de643bff09e7d898b4a7774c7a1c382e985a69a5e697dfe2933670dc9fe",
+    "sql": "-- Bülten kayıtlarının saklama süresi için son değişiklik zamanı. Idempotent.\nALTER TABLE \"Subscriber\" ADD COLUMN IF NOT EXISTS \"updatedAt\" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;\n"
   }
 ];

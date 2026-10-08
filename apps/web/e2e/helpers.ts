@@ -8,4 +8,4 @@ export function trackPageErrors(page: Page) {
 }
 
 /** auth.setup.ts'in kaydettiği oturum dosyası */
-export const session = (role: "reader" | "author" | "admin") => `e2e/.auth/${role}.json`;
+export const session = (role: "guest" | "reader" | "author" | "admin") => `e2e/.auth/${role}.json`;
