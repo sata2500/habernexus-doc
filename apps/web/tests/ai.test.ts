@@ -84,6 +84,15 @@ test("yazım talimatı: panel talimatı en başta ve en yüksek öncelikte; yaza
   assert.ok(!empty.includes("ÇIKTI BİÇİMİ") && !empty.includes("VARSAYILAN YAZIM"));
 });
 
+test("yazım talimatı: arama kapalıyken model araç çağırmaması için açıkça uyarılır", async () => {
+  const { buildWriterSystemPrompt } = await import("../lib/news/writing-guide");
+  const off = buildWriterSystemPrompt({ publication: "Konuyu Google Arama kullanarak araştır." });
+  assert.match(off, /araç YOK/);
+  assert.match(off, /araç\/fonksiyon çağırmaya çalışma/);
+  const on = buildWriterSystemPrompt({ publication: "x", webSearch: true });
+  assert.ok(!on.includes("araç YOK") && /Web araması \(Google\) aracın var/.test(on));
+});
+
 test("görsel istemi: panel ve yazar profili talimatları birlikte, sabit stil dayatılmaz", async () => {
   const { buildImagePrompt } = await import("../lib/news/writing-guide");
   const p = buildImagePrompt({ publication: "Sade çizim (illüstrasyon) tarzı.", persona: "Soğuk tonlar.", title: "Deneme" });

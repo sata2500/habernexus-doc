@@ -483,7 +483,7 @@ export function AiSettingsPanel(props: Props) {
 
             <div className="space-y-2">
               {[
-                { label: "Yazarken web/Google araması yap", help: "Daha güncel ve doğru bilgi; biraz daha yavaş ve maliyetli.", value: searchEnabled, set: setSearchEnabled },
+                { label: "Yazarken web/Google araması yap", help: "Açıkken haber yazımı, kopya analizindeki internet taraması ve kaynaksız trend haberleri Google aramasını kullanır (ücretsiz planda çalışmayabilir). Kapalıyken hiçbir yerde arama yapılmaz.", value: searchEnabled, set: setSearchEnabled },
                 { label: "RSS görselini görsel üretiminde referans al", help: "Kapak görseli kaynak haberin görseline benzer üretilir.", value: useRssImage, set: setUseRssImage },
               ].map((o) => (
                 <label key={o.label} className="flex items-start gap-3 rounded-xl border border-border p-3 cursor-pointer">

@@ -36,10 +36,16 @@ export interface WriterInstructions {
   output?: "html" | "none";
   /** Varsayılan yazım kuralları eklensin mi (paragraf düzeltme gibi dar işlerde gereksiz) */
   withDefaultRules?: boolean;
+  /** Bu istekte web araması aracı veriliyor mu (admin panelindeki "Yazarken web/Google araması yap") */
+  webSearch?: boolean;
 }
 
+/** Yayın talimatı "Google'da araştır" dese bile, arama kapalıyken model araç çağırmaya kalkmasın */
+const NO_TOOLS = `ARAÇLAR: Bu istekte web araması veya başka bir araç YOK. Talimatlarda "Google'da ara", "araştır", "doğrula" gibi ifadeler olsa bile arama yapmaya ya da araç/fonksiyon çağırmaya çalışma; yalnızca bu istemde verilen bilgilerle yaz.`;
+const WITH_SEARCH = "ARAÇLAR: Web araması (Google) aracın var; bilgileri doğrulamak ve güncellemek için kullanabilirsin.";
+
 /** Yazım isteklerinin sistem talimatı: yayın talimatı > yazar profili > varsayılan kurallar */
-export function buildWriterSystemPrompt({ publication, persona, output = "html", withDefaultRules = true }: WriterInstructions) {
+export function buildWriterSystemPrompt({ publication, persona, output = "html", withDefaultRules = true, webSearch = false }: WriterInstructions) {
   const parts = [`YAYIN TALİMATLARI (en yüksek öncelik; her zaman uygula):\n${publication?.trim() || DEFAULT_PUBLICATION_PROMPT}`];
   if (persona?.trim()) {
     parts.push(`YAZAR PROFİLİ TALİMATLARI (yayın talimatlarıyla çelişmedikçe uygula):\n${persona.trim()}`);
@@ -48,6 +54,7 @@ export function buildWriterSystemPrompt({ publication, persona, output = "html",
     parts.push(`VARSAYILAN YAZIM KURALLARI (yalnızca yukarıdaki talimatlar aksini söylemiyorsa uygula; uzunluk, yapı, üslup veya biçim konusunda yukarıda farklı bir şey istenmişse onu uygula):\n${DEFAULT_WRITING_RULES}`);
   }
   if (output === "html") parts.push(HTML_OUTPUT);
+  parts.push(webSearch ? WITH_SEARCH : NO_TOOLS);
   parts.push("ÖNCELİK SIRASI: 1) Yayın talimatları 2) Yazar profili talimatları 3) Varsayılan yazım kuralları. Çıktı biçimi kuralları her zaman geçerlidir.");
   return parts.join("\n\n");
 }

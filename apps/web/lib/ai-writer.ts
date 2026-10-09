@@ -146,8 +146,8 @@ export async function writeStory(storyId: string): Promise<WriteResult> {
     const categoryId = await findCategoryId(story.categoryName);
     const persona = await pickPersona(categoryId);
     // Talimatlar: admin paneli (yayın) > yazar profili > varsayılan kurallar (lib/news/writing-guide.ts)
-    const systemPrompt = buildWriterSystemPrompt({ publication: settings.aiWriterPrompt, persona: persona?.prompt });
     const useGoogleSearch = settings.aiWriterSearchEnabled || false;
+    const systemPrompt = buildWriterSystemPrompt({ publication: settings.aiWriterPrompt, persona: persona?.prompt, webSearch: useGoogleSearch });
 
     const related = story.relatedArticleId
       ? await prisma.article.findUnique({ where: { id: story.relatedArticleId }, select: { title: true, slug: true, excerpt: true, publishedAt: true, status: true } })
@@ -361,8 +361,9 @@ export async function rewriteArticleWithAI(articleId: string, options: RewriteOp
     if (!article) throw new Error("Makale bulunamadı.");
 
     const settings = await prisma.systemSettings.findFirst();
-    const finalPrompt = buildWriterSystemPrompt({ publication: settings?.aiWriterPrompt, persona: article.aiPersona?.prompt });
     const auto = options.originalityRate !== undefined;
+    const useSearch = !auto && (settings?.aiWriterSearchEnabled ?? false);
+    const finalPrompt = buildWriterSystemPrompt({ publication: settings?.aiWriterPrompt, persona: article.aiPersona?.prompt, webSearch: useSearch });
     const task = auto
       ? `Bu haberin metninin %${options.originalityRate}'i başka haber sitelerindeki cümlelerle aynı. Aynı bilgileri (isim, rakam, tarih, yer, doğrudan alıntılar) koruyarak metni kelime seçimi ve cümle yapısı tamamen farklı, özgün ve tarafsız bir dille yeniden yaz. Bağlantıları (<a href>) koru; yeni bilgi ekleme.`
       : "Aşağıdaki haberi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz. Anlatım bozukluklarını düzelt, bilgileri ve bağlantıları koru.";
@@ -377,7 +378,7 @@ Başlık: ${article.title}
 
 Mevcut metin:
 ${article.content.slice(0, 20000)}`,
-      search: !auto && (settings?.aiWriterSearchEnabled ?? false),
+      search: useSearch,
       searchOptional: true,
       temperature: auto ? 0.8 : 0.7,
     });

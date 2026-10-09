@@ -10,6 +10,7 @@ import { invalidateArticle } from "@/lib/server/article-cache";
 import { addToMediaLibrary, afterPublish, pickPersona, produceCoverImage } from "@/lib/ai-writer";
 
 const HOUR = 3_600_000;
+export const SEARCH_OFF_ERROR = "Web araması kapalı (Ayarlar → Yapay Zekâ → \"Yazarken web/Google araması yap\"). Kaynaklarda karşılığı olmayan trendler yalnızca aramayla yazılabilir.";
 
 /** Trend kelimesi son 2 günde yazdığımız bir haberin başlığında tamamen geçiyor mu? */
 export async function findTrendCoverage(keyword: string) {
@@ -49,12 +50,14 @@ export async function writeTrendArticle(trendId: string) {
       prisma.category.findMany({ select: { id: true, name: true } }),
     ]);
     if (!adminUser) return { success: false as const, error: "Admin kullanıcı bulunamadı." };
+    // RSS'te kaynağı olmayan trend yalnızca web aramasıyla yazılabilir; arama kapalıysa hiç denenmez
+    if (!settings?.aiWriterSearchEnabled) return { success: false as const, error: SEARCH_OFF_ERROR };
 
     // Kategori yazımdan sonra belli olduğu için kategorisiz (genel) yazar profili kullanılır
     const persona = await pickPersona(null);
     const { text } = await generateText("writer", {
       // Çıktı biçimini (JSON) istem tanımlar; içerik HTML kuralları JSON şablonunda
-      system: buildWriterSystemPrompt({ publication: settings?.aiWriterPrompt, persona: persona?.prompt, output: "none" }),
+      system: buildWriterSystemPrompt({ publication: settings?.aiWriterPrompt, persona: persona?.prompt, output: "none", webSearch: true }),
       prompt: `Bugün: ${new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul", dateStyle: "long", timeStyle: "short" })}
 Türkiye'de şu an çok aranan konu: "${trend.keyword}"
 Bu konuyu web/Google araması ile araştır; insanların neden aradığını ve son gelişmeyi doğru, tarafsız ve özgün bir haberle anlat.

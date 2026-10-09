@@ -171,6 +171,10 @@ export async function analyzeArticle(articleId: string, options: { webSearch?: b
       : article.sourceRssItem ? [{ title: article.sourceRssItem.title, url: article.sourceRssItem.url, excerpt: article.sourceRssItem.excerpt }] : [];
     const since = new Date(Date.now() - SITE_COMPARE_DAYS * 86_400_000);
 
+    // İnternet taraması web araması kullanır: admin panelinde arama kapalıysa yapılmaz
+    const useWebSearch = options.webSearch !== false
+      && !!(await prisma.systemSettings.findFirst({ select: { aiWriterSearchEnabled: true } }))?.aiWriterSearchEnabled;
+
     const [fullTexts, siteArticles, review, web] = await Promise.all([
       Promise.all(sourceItems.slice(0, SOURCE_FETCH_LIMIT).map((s) => fetchPageText(s.url).then((p) => p?.text ?? null))),
       prisma.article.findMany({
@@ -184,7 +188,7 @@ export async function analyzeArticle(articleId: string, options: { webSearch?: b
         text,
         `${stats.words} kelime, ${stats.sentences} cümle (ort. ${stats.avgSentenceWords} kelime), ${stats.h2} ara başlık, Ateşman ${stats.atesman}`,
       ),
-      options.webSearch === false
+      !useWebSearch
         ? Promise.resolve({ sources: [] as OverlapSource[], info: { enabled: false, queries: 0, candidates: 0, verified: 0 } as WebCheck })
         : webCheck(body, sourceItems.map((s) => s.url)),
     ]);

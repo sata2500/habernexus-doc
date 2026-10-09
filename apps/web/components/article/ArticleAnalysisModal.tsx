@@ -362,7 +362,7 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
                       <li>• Haberin kaynakları: {report.originality.sourcesChecked} haber ({report.originality.fullTextChecked} tanesinin tam metni okundu)</li>
                       <li>
                         • İnternet taraması:{" "}
-                        {!report.originality.web?.enabled ? "yapılmadı" : report.originality.web.error ? <span className="text-warning">{report.originality.web.error}</span>
+                        {!report.originality.web?.enabled ? "yapılmadı (web araması kapalı)" : report.originality.web.error ? <span className="text-warning">{report.originality.web.error}</span>
                           : `${report.originality.web.queries} ayırt edici cümle arandı, ${report.originality.web.candidates} sayfa bulundu, ${report.originality.web.verified} sayfanın metni indirilip karşılaştırıldı`}
                       </li>
                       <li>• Sitedeki son {report.originality.siteArticlesChecked} haber</li>
