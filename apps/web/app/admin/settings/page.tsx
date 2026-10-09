@@ -30,7 +30,7 @@ const SERVICES = [
   { key: "UPSTASH_REDIS_REST_URL", label: "Upstash Redis (önbellek, hız sınırı)" },
   { key: "RESEND_API_KEY", label: "Resend (e-posta)" },
   { key: "GOOGLE_CLIENT_EMAIL", label: "Google Indexing API" },
-  { key: "TELEGRAM_BOT_TOKEN", label: "Telegram paylaşımı" },
+  { key: ["TELEGRAM_BOT_TOKEN", "TELEGRAM_CHANNEL_ID"], label: "Telegram paylaşımı" },
   { key: "NEXT_PUBLIC_SENTRY_DSN", label: "Sentry (hata takibi)" },
   { key: "CRON_SECRET", label: "Gece temizliği (Vercel Cron)" },
   { key: "VAPID_PRIVATE_KEY", label: "Tarayıcı bildirimleri (VAPID)" },
@@ -144,7 +144,7 @@ async function SystemTab() {
     dbError = "Veritabanına bağlanılamadı veya durum okunamadı.";
   }
   // Değerlerin kendisi asla istemciye gönderilmez, yalnızca tanımlı olup olmadıkları
-  const services = SERVICES.map((s) => ({ label: s.label, configured: !!process.env[s.key] }));
+  const services = SERVICES.map((s) => ({ label: s.label, configured: [s.key].flat().every((k) => !!process.env[k]) }));
   const indexing = { configured: isIndexingConfigured(), log: await getIndexingLog() };
   return <SystemPanel initialStatus={status} dbError={dbError} services={services} indexing={indexing} />;
 }
