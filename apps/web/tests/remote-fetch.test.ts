@@ -13,7 +13,7 @@ test("özel ve ayrılmış IP adresleri engellenir", () => {
 
 test("yerel ve özel adresli bağlantılar reddedilir", async () => {
   for (const url of ["http://127.0.0.1/rss", "http://[::1]/", "http://localhost:3000/", "http://servis.internal/", "http://10.0.0.5/feed", "ftp://example.com/x"]) {
-    await assert.rejects(assertPublicHttpUrl(url), undefined, url);
+    await assert.rejects(assertPublicHttpUrl(url), Error, url);
   }
 });
 
