@@ -18,7 +18,7 @@ function isBlockedIpv4(value: string) {
     || a >= 224;
 }
 
-function isBlockedIp(value: string) {
+export function isBlockedIp(value: string) {
   if (isIP(value) === 4) return isBlockedIpv4(value);
   if (isIP(value) !== 6) return true;
 
@@ -31,24 +31,29 @@ function isBlockedIp(value: string) {
   return mappedIpv4 ? isBlockedIpv4(mappedIpv4) : false;
 }
 
-async function assertPublicHttpUrl(rawUrl: string) {
+export async function assertPublicHttpUrl(rawUrl: string) {
   const url = new URL(rawUrl);
   if (url.protocol !== "https:" && url.protocol !== "http:") {
-    throw new Error("Only HTTP(S) resources are allowed.");
+    throw new Error("Yalnızca http ve https adresleri kullanılabilir.");
   }
 
-  const hostname = url.hostname.toLowerCase();
+  // IPv6 adresleri URL'de köşeli parantezle yazılır ([::1])
+  const hostname = url.hostname.toLowerCase().replace(/^\[|\]$/g, "");
   if (!hostname || hostname === "localhost" || hostname.endsWith(".localhost") || hostname.endsWith(".local") || hostname.endsWith(".internal")) {
-    throw new Error("Private host is not allowed.");
+    throw new Error("Yerel ağ adreslerine erişilemez.");
   }
 
-  if (isBlockedIp(hostname)) {
-    throw new Error("Private IP address is not allowed.");
+  // Doğrudan IP adresi yazılmışsa kontrol edilir; alan adları aşağıda DNS çözümlemesiyle denetlenir.
+  // (Önceden alan adları da "IP değil" diye engelleniyordu: tüm RSS kaynakları bu yüzden çalışmıyordu.)
+  if (isIP(hostname) !== 0 && isBlockedIp(hostname)) {
+    throw new Error("Özel ağ adresine erişilemez.");
   }
 
-  const addresses = await lookup(hostname, { all: true, verbatim: true });
+  const addresses = await lookup(hostname, { all: true, verbatim: true }).catch(() => {
+    throw new Error("Alan adı bulunamadı.");
+  });
   if (addresses.length === 0 || addresses.some((address) => isBlockedIp(address.address))) {
-    throw new Error("URL resolves to a private or non-public address.");
+    throw new Error("Adres özel ya da herkese açık olmayan bir ağa çıkıyor.");
   }
 
   return url;
@@ -67,15 +72,15 @@ export async function fetchPublicResource(rawUrl: string, options: { maxBytes: n
     });
 
     if (response.status >= 300 && response.status < 400) {
-      throw new Error("Redirected resources are not allowed.");
+      throw new Error("Adres başka bir yere yönlendiriyor.");
     }
     if (!response.ok || !response.body) {
-      throw new Error(`Remote resource request failed with status ${response.status}.`);
+      throw new Error(`Sunucu yanıt vermedi (HTTP ${response.status}).`);
     }
 
     const contentLength = Number(response.headers.get("content-length") || 0);
     if (contentLength > options.maxBytes) {
-      throw new Error("Remote resource exceeds the maximum allowed size.");
+      throw new Error("Dosya izin verilen boyuttan büyük.");
     }
 
     const reader = response.body.getReader();
@@ -88,7 +93,7 @@ export async function fetchPublicResource(rawUrl: string, options: { maxBytes: n
       total += value.byteLength;
       if (total > options.maxBytes) {
         await reader.cancel();
-        throw new Error("Remote resource exceeds the maximum allowed size.");
+        throw new Error("Dosya izin verilen boyuttan büyük.");
       }
       chunks.push(value);
     }
@@ -141,13 +146,13 @@ export async function fetchPublicPage(rawUrl: string, options: { maxBytes?: numb
       });
       if (response.status >= 300 && response.status < 400) {
         const location = response.headers.get("location");
-        if (!location) throw new Error("Redirect without location.");
+        if (!location) throw new Error("Yönlendirme adresi eksik.");
         current = new URL(location, url).toString();
         continue;
       }
-      if (!response.ok || !response.body) throw new Error(`Page request failed with status ${response.status}.`);
+      if (!response.ok || !response.body) throw new Error(`Sunucu yanıt vermedi (HTTP ${response.status}).`);
       const type = response.headers.get("content-type") ?? "";
-      if (type && !/html|xml|text\/plain/i.test(type)) throw new Error("Not an HTML page.");
+      if (type && !/html|xml|text\/plain/i.test(type)) throw new Error("Adres bir web sayfası ya da akış değil.");
 
       const reader = response.body.getReader();
       const chunks: Uint8Array[] = [];
@@ -165,5 +170,5 @@ export async function fetchPublicPage(rawUrl: string, options: { maxBytes?: numb
       clearTimeout(timeout);
     }
   }
-  throw new Error("Too many redirects.");
+  throw new Error("Çok fazla yönlendirme.");
 }
