@@ -26,7 +26,6 @@ const FOLLOW_UP_AFTER_HOURS = 6;
 const LOW_VALUE = 35;
 const ANALYZE_BATCH = 12;
 /** Kural tabanlı değerlendirilen konular bu süre boyunca yapay zekâyla yeniden denenir */
-const FALLBACK_RETRY_HOURS = 12;
 
 
 type StoryRow = {
@@ -210,17 +209,18 @@ export async function analyzeStories(
 ) {
   const now = new Date();
   const hasKeys = !!(options.complete || process.env.GEMINI_API_KEY || process.env.OPENROUTER_API_KEY);
-  // Yapay zekâ yokken değerlendirme ucuzdur; bekleyen tüm konular tek seferde işlenir
-  if (!hasKeys) limit = Math.max(limit, 300);
   const settings = await prisma.systemSettings.findUnique({ where: { id: "global" } });
+
+  // Yapay zekâ analizi olmadan haber yazılmaz. Önceki sürümde yapay zekâ başarısız olunca kural
+  // tabanlı puanla sıraya alınmış konular yeniden "analiz bekliyor" durumuna döner.
+  await prisma.newsStory.updateMany({
+    where: { status: "READY", analysis: { path: ["fallback"], equals: true } },
+    data: { status: "NEW", score: 0, reason: "Yapay zekâ analizi bekleniyor" },
+  });
 
   const stories = await prisma.newsStory.findMany({
     where: {
-      OR: [
-        { status: "NEW" },
-        // Yapay zekâ yokken kural tabanlı değerlendirilenler, sonra tekrar denenir
-        { status: "READY", analysis: { path: ["fallback"], equals: true }, analyzedAt: { lt: new Date(now.getTime() - HOUR) }, firstSeenAt: { gte: new Date(now.getTime() - FALLBACK_RETRY_HOURS * HOUR) } },
-      ],
+      status: "NEW",
     },
     orderBy: [{ sourceCount: "desc" }, { firstSeenAt: "desc" }],
     take: limit,
@@ -325,8 +325,12 @@ Yanıt (yalnızca JSON): { "items": [ { "id": "...", "newsworthiness": 0, "categ
       console.error("[Stories] Yapay zekâ analizi başarısız, kural tabanlı devam ediliyor:", error);
     }
   } else {
-    error = "Yapay zekâ anahtarı tanımlı değil; kural tabanlı değerlendirildi.";
+    error = "Yapay zekâ anahtarı tanımlı değil; konular analiz edilemedi.";
   }
+
+  // Analiz başarısızsa (ya da bazı konular yanıtta yoksa) o konulara dokunulmaz: "yeni" olarak kalır,
+  // bir sonraki turda yeniden analiz edilir. Önceden analiz edilip sıraya girmiş konular yazılmaya devam eder.
+  let waiting = 0;
 
   // Durum korumalı güncelleme: analiz sürerken AI Yazar konuyu üstlenmiş (WRITING) olabilir;
   // o durumda konuya dokunulmaz (aksi halde aynı haber iki kez yazılabilirdi)
@@ -337,8 +341,12 @@ Yanıt (yalnızca JSON): { "items": [ { "id": "...", "newsworthiness": 0, "categ
   const mergedAway = new Set<string>();
   for (const { story, candidates, siblings } of context) {
     if (mergedAway.has(story.id)) continue;
-    analyzed++;
     const ai = results.get(story.id);
+    if (!ai) {
+      waiting++;
+      continue;
+    }
+    analyzed++;
     const articleIds = new Set(candidates.map((c) => c.a.id));
     const siblingIds = new Set(siblings.map((s) => s.s.id).filter((id) => !mergedAway.has(id)));
     const topArticle = candidates[0];
@@ -413,6 +421,8 @@ Yanıt (yalnızca JSON): { "items": [ { "id": "...", "newsworthiness": 0, "categ
     ready++;
   }
 
+  if (waiting > 0 && !error) error = `${waiting} konu yapay zekâ yanıtında yoktu; bir sonraki turda yeniden analiz edilecek.`;
+  else if (waiting > 0) error = `${error} ${waiting} konu bir sonraki turda yeniden analiz edilecek.`;
   return { analyzed, duplicates, merged, ready, aiUsed, error };
 }
 

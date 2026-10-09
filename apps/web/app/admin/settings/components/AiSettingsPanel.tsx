@@ -5,7 +5,7 @@ import {
   AlertTriangle, AudioLines, BrainCircuit, CheckCircle2, ChevronDown, ImageIcon, KeyRound, Loader2,
   PenLine, PlayCircle, RotateCcw, Save, Search, X, XCircle,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, SITE_TIME_ZONE } from "@/lib/utils";
 import {
   AI_TASKS, DEFAULT_MODELS, PROVIDER_LABELS, parseModelRef, type AiProvider, type AiTask,
 } from "@/lib/ai/models";
@@ -50,6 +50,11 @@ function ModelChip({ value }: { value: string }) {
 
 /* ───────────── Model seçici ───────────── */
 
+const NEW_DAYS = 14;
+const isNew = (m: CatalogModel, now: number) => !!m.created && now - m.created < NEW_DAYS * 86_400_000;
+const shortDate = (d: number | string) =>
+  new Date(d).toLocaleDateString("tr-TR", { day: "numeric", month: "short", year: "numeric", timeZone: SITE_TIME_ZONE });
+
 function ModelPicker({
   task, value, providers, onSelect, onClose,
 }: {
@@ -64,6 +69,8 @@ function ModelPicker({
   const [errors, setErrors] = useState<Partial<Record<AiProvider, string>>>({});
   const [manual, setManual] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [sort, setSort] = useState<"new" | "name">("new");
+  const [now] = useState(() => Date.now());
   const error = errors[provider] ?? null;
   const isLoading = refreshing || (!catalog[provider] && !error);
 
@@ -96,14 +103,17 @@ function ModelPicker({
     setRefreshing(false);
   };
 
-  const recommended = DEFAULT_MODELS[task][provider];
+  const all = useMemo(() => (catalog[provider] ?? []).filter((m) => m.outputs.includes(output)), [catalog, provider, output]);
+  // Önerilen model yalnızca sağlayıcının güncel listesinde hâlâ varsa gösterilir
+  const recommendedId = DEFAULT_MODELS[task][provider];
+  const recommended = recommendedId && all.some((m) => m.id === recommendedId) ? recommendedId : null;
+  const newCount = all.filter((m) => isNew(m, now)).length;
   const list = useMemo(() => {
     const q = query.trim().toLowerCase();
-    return (catalog[provider] ?? [])
-      .filter((m) => m.outputs.includes(output))
-      .filter((m) => !q || m.id.toLowerCase().includes(q) || m.name.toLowerCase().includes(q))
-      .slice(0, 150);
-  }, [catalog, provider, query, output]);
+    const filtered = all.filter((m) => !q || m.id.toLowerCase().includes(q) || m.name.toLowerCase().includes(q));
+    // Katalog sunucuda yeniden eskiye sıralı gelir (OpenRouter: eklenme tarihi, Google: sürüm)
+    return sort === "name" ? [...filtered].sort((a, b) => a.name.localeCompare(b.name, "tr")) : filtered;
+  }, [all, query, sort]);
 
   return (
     <div className="fixed inset-0 z-(--z-modal) flex items-end sm:items-center justify-center bg-black/50 p-0 sm:p-4" role="dialog" aria-modal="true" aria-label="Model seç">
@@ -136,6 +146,20 @@ function ModelPicker({
               ))}
             </div>
           )}
+          <div className="flex items-center justify-between gap-2 text-xs">
+            <span className="text-muted-foreground">
+              {catalog[provider] ? `${all.length} model` : ""}
+              {newCount > 0 && <span className="ml-1.5 font-semibold text-success">· son {NEW_DAYS} günde {newCount} yeni</span>}
+            </span>
+            <div role="radiogroup" aria-label="Sıralama" className="flex rounded-lg border border-border p-0.5">
+              {([["new", "En yeni"], ["name", "Ada göre"]] as const).map(([k, label]) => (
+                <button key={k} type="button" role="radio" aria-checked={sort === k} onClick={() => setSort(k)}
+                  className={cn("px-2 py-1 rounded-md font-semibold cursor-pointer", sort === k ? "bg-primary-500 text-white" : "text-muted-foreground")}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <input
@@ -181,8 +205,17 @@ function ModelPicker({
                 )}
               >
                 <span className="min-w-0">
-                  <span className="block text-sm font-medium truncate">{m.name}</span>
+                  <span className="flex items-center gap-1.5 text-sm font-medium">
+                    <span className="truncate">{m.name}</span>
+                    {isNew(m, now) && <span className="shrink-0 rounded-full bg-success/15 text-success px-1.5 py-px text-[10px] font-bold uppercase">Yeni</span>}
+                  </span>
                   <span className="block font-mono text-xs text-muted-foreground truncate">{m.id}</span>
+                  {(m.created || m.expiresAt) && (
+                    <span className="block text-[11px] text-muted-foreground">
+                      {m.created && `Eklendi: ${shortDate(m.created)}`}
+                      {m.expiresAt && <span className="text-warning font-semibold">{m.created ? " · " : ""}Kaldırılacak: {shortDate(m.expiresAt)}</span>}
+                    </span>
+                  )}
                 </span>
                 <span className="shrink-0 text-[11px] text-muted-foreground text-right">
                   {m.free ? <span className="text-success font-bold">Ücretsiz</span> : m.price ? `$${m.price.input} / $${m.price.output}` : ""}
@@ -222,6 +255,37 @@ function ModelPicker({
   );
 }
 
+/**
+ * Seçili modellerin sağlayıcının güncel listesindeki durumu: listeden kalkmışsa ya da kaldırılma
+ * tarihi açıklanmışsa uyarı metni (görev başına). Liste alınamazsa sessiz kalır.
+ */
+function useModelHealth(models: Record<AiTask, string>, providers: Record<AiProvider, boolean>) {
+  const [catalogs, setCatalogs] = useState<Partial<Record<AiProvider, CatalogModel[]>>>({});
+  useEffect(() => {
+    let active = true;
+    for (const p of ["google", "openrouter"] as AiProvider[]) {
+      if (!providers[p]) continue;
+      getModelCatalogAction(p, false).then((res) => {
+        if (active && res.success) setCatalogs((c) => ({ ...c, [p]: res.models }));
+      }).catch(() => {});
+    }
+    return () => { active = false; };
+  }, [providers]);
+
+  const out: Partial<Record<AiTask, string>> = {};
+  for (const task of TASK_ORDER) {
+    const ref = parseModelRef(models[task]);
+    const list = ref ? catalogs[ref.provider] : undefined;
+    if (!ref || !list) continue;
+    const found = list.find((m) => m.id === ref.model);
+    if (!found) out[task] = "Bu model sağlayıcının güncel listesinde görünmüyor; kaldırılmış olabilir. “Test et” ile deneyin.";
+    else if (found.expiresAt) {
+      out[task] = `Sağlayıcı bu modeli ${new Date(found.expiresAt).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric", timeZone: SITE_TIME_ZONE })} tarihinde kaldıracak; yeni bir model seçin.`;
+    }
+  }
+  return out;
+}
+
 /* ───────────── Ana panel ───────────── */
 
 export function AiSettingsPanel(props: Props) {
@@ -242,6 +306,7 @@ export function AiSettingsPanel(props: Props) {
   const [showPrompts, setShowPrompts] = useState(false);
 
   const anyRetired = props.tasks.some((t) => t.retired);
+  const health = useModelHealth(models, props.providers);
   const dirty =
     TASK_ORDER.some((t) => models[t] !== (props.tasks.find((x) => x.task === t)?.stored ?? "")) ||
     writerPrompt !== props.writerPrompt || imagePrompt !== props.imagePrompt || criteria !== props.editorialCriteria ||
@@ -326,6 +391,9 @@ export function AiSettingsPanel(props: Props) {
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:pl-12">
                 <div className="flex-1 min-w-0 rounded-xl bg-muted/50 border border-border px-3 py-2 overflow-hidden">
                   <ModelChip value={models[task]} />
+                  {health[task] && (
+                    <p className="text-[11px] text-warning mt-0.5">{health[task]}</p>
+                  )}
                   {original?.retired && models[task] === original.stored && (
                     <p className="text-[11px] text-warning mt-0.5">Bu model eski bir sürüm ailesinden; kullanımdan kalkmış olabilir. “Test et” ile deneyin ya da güncel bir model seçin.</p>
                   )}

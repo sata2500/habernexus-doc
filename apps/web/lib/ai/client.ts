@@ -414,10 +414,17 @@ export interface CatalogModel {
   free: boolean;
   /** 1M token başına girdi/çıktı USD (biliniyorsa) */
   price?: { input: number; output: number };
+  /** Sağlayıcıya eklenme zamanı (ms; yalnızca OpenRouter bildirir) */
+  created?: number;
+  /** Sağlayıcının modeli kaldıracağı tarih (YYYY-AA-GG; yalnızca OpenRouter bildirir) */
+  expiresAt?: string;
+  /** Model sürümü (Google adlarından: gemini-3.8-flash → 3.8); sıralama için */
+  version?: number;
 }
 
 const catalogCache = new Map<AiProvider, { at: number; models: CatalogModel[] }>();
-const CATALOG_TTL_MS = 60 * 60 * 1000;
+// Yeni modeller kısa sürede görünsün; "Listeyi yenile" önbelleği beklemeden çeker
+const CATALOG_TTL_MS = 15 * 60 * 1000;
 
 async function fetchGoogleCatalog(): Promise<CatalogModel[]> {
   const key = process.env.GEMINI_API_KEY;
@@ -434,12 +441,16 @@ async function fetchGoogleCatalog(): Promise<CatalogModel[]> {
   }
   return ((data?.models ?? []) as { name: string; displayName?: string; supportedGenerationMethods?: string[] }[])
     .filter((m) => m.supportedGenerationMethods?.includes("generateContent") || m.supportedGenerationMethods?.includes("predict"))
-    .filter((m) => !/embedding|aqa|gemma-|learnlm/i.test(m.name))
+    // Metin/görsel/ses üretmeyen modeller (gömme, video, müzik, canlı sohbet) listelenmez
+    .filter((m) => !/embedding|aqa|gemma-|learnlm|veo-|lyria|-live-|native-audio/i.test(m.name))
     .map((m) => {
       const id = m.name.replace(/^models\//, "");
       const outputs: CatalogModel["outputs"] = /tts/.test(id) ? ["audio"] : /image|imagen/.test(id) ? ["image"] : ["text"];
-      return { ref: `google:${id}`, provider: "google" as const, id, name: m.displayName || id, outputs, free: false };
-    });
+      const version = Number(id.match(/(\d+(?:\.\d+)?)/)?.[1] ?? 0);
+      return { ref: `google:${id}`, provider: "google" as const, id, name: m.displayName || id, outputs, free: false, version };
+    })
+    // Google tarih bildirmez: sürüm numarasına göre yeniden eskiye
+    .sort((a, b) => (b.version ?? 0) - (a.version ?? 0) || a.id.localeCompare(b.id));
 }
 
 async function fetchOpenRouterCatalog(): Promise<CatalogModel[]> {
@@ -447,12 +458,12 @@ async function fetchOpenRouterCatalog(): Promise<CatalogModel[]> {
   if (!res.ok) throw new Error(`OpenRouter katalog hatası: ${res.status}`);
   const data = await res.json();
   return ((data?.data ?? []) as {
-    id: string; name: string;
+    id: string; name: string; created?: number; expiration_date?: string | null;
     architecture?: { output_modalities?: string[] };
     pricing?: { prompt?: string; completion?: string };
   }[])
     .filter((m) => !m.id.endsWith(":batch"))
-    .map((m) => {
+    .map((m): CatalogModel => {
       const out = m.architecture?.output_modalities ?? ["text"];
       const input = Number(m.pricing?.prompt ?? 0) * 1e6;
       const output = Number(m.pricing?.completion ?? 0) * 1e6;
@@ -464,8 +475,11 @@ async function fetchOpenRouterCatalog(): Promise<CatalogModel[]> {
         outputs: out.includes("image") ? ["image", ...(out.includes("text") ? (["text"] as const) : [])] : ["text"],
         free: input === 0 && output === 0,
         price: input >= 0 && output >= 0 ? { input: Math.round(input * 100) / 100, output: Math.round(output * 100) / 100 } : undefined,
+        created: m.created ? m.created * 1000 : undefined,
+        expiresAt: m.expiration_date || undefined,
       };
-    });
+    })
+    .sort((a, b) => (b.created ?? 0) - (a.created ?? 0));
 }
 
 /** Sağlayıcının güncel model listesi (1 saat önbellekli). */
