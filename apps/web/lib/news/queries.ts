@@ -89,7 +89,7 @@ export async function getDecisionOverview() {
     prisma.newsStory.aggregate({ _max: { analyzedAt: true } }),
     prisma.rssFeedSource.count({ where: { isActive: true } }),
     prisma.googleTrend.count({ where: { updatedAt: { gte: new Date(now.getTime() - 24 * HOUR) } } }),
-    prisma.systemSettings.findUnique({ where: { id: "global" }, select: { aiWriterAutoEnabled: true, aiWriterAutoCount: true, googleTrendsEnabled: true, aiWriterSearchEnabled: true } }),
+    prisma.systemSettings.findUnique({ where: { id: "global" }, select: { aiWriterAutoEnabled: true, aiWriterAutoCount: true, googleTrendsEnabled: true } }),
   ]);
   return {
     minScore: min,
@@ -98,7 +98,6 @@ export async function getDecisionOverview() {
     lastAnalysisAt: lastAnalysis._max.analyzedAt?.toISOString() ?? null,
     autoWriter: { enabled: !!settings?.aiWriterAutoEnabled, count: settings?.aiWriterAutoCount ?? 3 },
     trendsEnabled: settings?.googleTrendsEnabled !== false,
-    searchEnabled: !!settings?.aiWriterSearchEnabled,
   };
 }
 

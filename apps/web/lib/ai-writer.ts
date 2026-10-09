@@ -147,7 +147,7 @@ export async function writeStory(storyId: string): Promise<WriteResult> {
     const persona = await pickPersona(categoryId);
     // Talimatlar: admin paneli (yayın) > yazar profili > varsayılan kurallar (lib/news/writing-guide.ts)
     const useGoogleSearch = settings.aiWriterSearchEnabled || false;
-    const systemPrompt = buildWriterSystemPrompt({ publication: settings.aiWriterPrompt, persona: persona?.prompt, webSearch: useGoogleSearch });
+    const systemPrompt = buildWriterSystemPrompt({ publication: settings.aiWriterPrompt, persona: persona?.prompt });
 
     const related = story.relatedArticleId
       ? await prisma.article.findUnique({ where: { id: story.relatedArticleId }, select: { title: true, slug: true, excerpt: true, publishedAt: true, status: true } })
@@ -363,7 +363,7 @@ export async function rewriteArticleWithAI(articleId: string, options: RewriteOp
     const settings = await prisma.systemSettings.findFirst();
     const auto = options.originalityRate !== undefined;
     const useSearch = !auto && (settings?.aiWriterSearchEnabled ?? false);
-    const finalPrompt = buildWriterSystemPrompt({ publication: settings?.aiWriterPrompt, persona: article.aiPersona?.prompt, webSearch: useSearch });
+    const finalPrompt = buildWriterSystemPrompt({ publication: settings?.aiWriterPrompt, persona: article.aiPersona?.prompt });
     const task = auto
       ? `Bu haberin metninin %${options.originalityRate}'i başka haber sitelerindeki cümlelerle aynı. Aynı bilgileri (isim, rakam, tarih, yer, doğrudan alıntılar) koruyarak metni kelime seçimi ve cümle yapısı tamamen farklı, özgün ve tarafsız bir dille yeniden yaz. Bağlantıları (<a href>) koru; yeni bilgi ekleme.`
       : "Aşağıdaki haberi tamamen özgün, akıcı ve yüksek kaliteli olacak şekilde yeniden yaz. Anlatım bozukluklarını düzelt, bilgileri ve bağlantıları koru.";

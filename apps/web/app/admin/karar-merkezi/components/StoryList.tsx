@@ -106,19 +106,23 @@ function ScoreBreakdown({ s }: { s: StoryView }) {
   );
 }
 
-function StoryCard({ s, rank, tab, now, minScore, busy, onAction }: {
+function StoryCard({ s, rank, tab, now, minScore, busy, writing, onWrite, onAction }: {
   s: StoryView;
   rank: number | null;
   tab: DecisionTab;
   now: number;
   minScore: number;
   busy: boolean;
+  /** "Şimdi yaz"a basıldı, yazım sürüyor (sayfa yenilenmeden durum gösterilir) */
+  writing: boolean;
+  onWrite: () => void;
   onAction: (fn: () => Promise<{ success: boolean; message?: string; error?: string }>) => void;
 }) {
   const [open, setOpen] = useState(false);
-  const status = STATUS[s.status] ?? STATUS.NEW;
+  const shownStatus = writing ? "WRITING" : s.status;
+  const status = STATUS[shownStatus] ?? STATUS.NEW;
   const eliminated = ["DUPLICATE", "LOW_SCORE", "EXPIRED", "DISMISSED", "FAILED"].includes(s.status);
-  const editable = s.status === "READY" || s.status === "NEW";
+  const editable = !writing && (s.status === "READY" || s.status === "NEW");
   const left = s.expiresAt ? hoursLeft(s.expiresAt, now) : null;
   const eventSoon = s.eventAt && hoursLeft(s.eventAt, now) > 0;
 
@@ -133,7 +137,7 @@ function StoryCard({ s, rank, tab, now, minScore, busy, onAction }: {
         <div className="flex-1 min-w-0 space-y-1.5">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-bold", status.cls)}>
-              {s.status === "WRITING" && <Loader2 className="inline h-3 w-3 mr-0.5 animate-spin" />}{status.label}
+              {shownStatus === "WRITING" && <Loader2 className="inline h-3 w-3 mr-0.5 animate-spin" />}{status.label}
             </span>
             {s.pinned && <Chip icon={ArrowUpToLine} tone="info">Öne alındı</Chip>}
             {s.urgency === "BREAKING" && <Chip icon={Zap} tone="hot">Son dakika</Chip>}
@@ -164,13 +168,13 @@ function StoryCard({ s, rank, tab, now, minScore, busy, onAction }: {
             </p>
           )}
           {s.reason && !s.duplicate && <p className="text-xs text-muted-foreground italic">{s.reason}</p>}
-          {s.lastError && s.status !== "PUBLISHED" && (
+          {s.lastError && s.status !== "PUBLISHED" && !writing && (
             <p className="flex items-start gap-1 text-xs text-error"><AlertTriangle className="h-3.5 w-3.5 shrink-0 mt-0.5" /> Son deneme: {s.lastError}</p>
           )}
 
           <div className="flex flex-wrap items-center gap-1.5 pt-1">
-            {(editable || s.status === "FAILED") && (
-              <button disabled={busy} onClick={() => onAction(() => writeStoryNow(s.id))} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary-500 hover:bg-primary-600 text-white text-xs font-semibold disabled:opacity-50">
+            {(editable || (s.status === "FAILED" && !writing)) && (
+              <button disabled={busy} onClick={onWrite} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-primary-500 hover:bg-primary-600 text-white text-xs font-semibold disabled:opacity-50">
                 <PenLine className="h-3.5 w-3.5" /> Şimdi yaz
               </button>
             )}
@@ -179,7 +183,7 @@ function StoryCard({ s, rank, tab, now, minScore, busy, onAction }: {
                 {s.pinned ? <><Undo2 className="h-3.5 w-3.5" /> Önceliği kaldır</> : <><ArrowUpToLine className="h-3.5 w-3.5" /> Öne al</>}
               </button>
             )}
-            {(editable || s.status === "FAILED") && (
+            {(editable || (s.status === "FAILED" && !writing)) && (
               <button disabled={busy} onClick={() => onAction(() => dismissStory(s.id))} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-xs font-semibold text-muted-foreground hover:bg-error/10 hover:text-error disabled:opacity-50">
                 <X className="h-3.5 w-3.5" /> Ele
               </button>
@@ -238,14 +242,20 @@ export function StoryList({ stories, tab, minScore, offset, now }: { stories: St
   const router = useRouter();
   const [busy, start] = useTransition();
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null);
+  const [writingId, setWritingId] = useState<string | null>(null);
 
-  const onAction = (fn: () => Promise<{ success: boolean; message?: string; error?: string }>) => {
+  const onAction = (fn: () => Promise<{ success: boolean; message?: string; error?: string }>, done?: () => void) => {
     setMessage(null);
     start(async () => {
       const r = await fn();
       setMessage(r.success ? { ok: true, text: r.message ?? "Tamam." } : { ok: false, text: r.error ?? "İşlem başarısız." });
       router.refresh();
+      done?.();
     });
+  };
+  const onWrite = (id: string) => {
+    setWritingId(id);
+    onAction(() => writeStoryNow(id), () => setWritingId(null));
   };
 
   // Sıra numarası yalnızca bekleyen konulara verilir (yazılmakta olanlar hariç)
@@ -273,7 +283,7 @@ export function StoryList({ stories, tab, minScore, offset, now }: { stories: St
       )}
       <ul className="space-y-3">
         {stories.map((s) => (
-          <StoryCard key={s.id} s={s} rank={tab === "sira" && s.status === "READY" ? offset + ++rank : null} tab={tab} now={now} minScore={minScore} busy={busy} onAction={onAction} />
+          <StoryCard key={s.id} s={s} rank={tab === "sira" && s.status === "READY" ? offset + ++rank : null} tab={tab} now={now} minScore={minScore} busy={busy} writing={writingId === s.id} onWrite={() => onWrite(s.id)} onAction={onAction} />
         ))}
       </ul>
     </div>

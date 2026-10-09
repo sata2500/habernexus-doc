@@ -133,7 +133,7 @@ export default async function DecisionCenterPage({ searchParams }: { searchParam
         </>
       )}
 
-      {tab === "trendler" && trends && <TrendList trends={trends} enabled={overview.trendsEnabled} searchEnabled={overview.searchEnabled} />}
+      {tab === "trendler" && trends && <TrendList trends={trends} enabled={overview.trendsEnabled} />}
       {tab === "kaynaklar" && sources && <FeedSourceManager sources={sources} />}
     </div>
   );
