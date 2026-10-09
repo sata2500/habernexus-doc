@@ -53,6 +53,14 @@ export class AiError extends Error {
 // denenmez (120 sn × 3 deneme işçinin 300 sn sınırını aşıyordu).
 const RETRYABLE: AiErrorCode[] = ["quota", "unavailable"];
 
+/**
+ * Google'ın ara sıra döndürdüğü boş yanıtlar: model arama aracını hatalı çağırınca
+ * (MALFORMED_FUNCTION_CALL) ya da yanıt metni boş gelince. Aynı istek çoğunlukla ikinci denemede çalışır.
+ */
+export function isTransientEmpty(e: AiError) {
+  return e.code === "bad_response" && /Boş yanıt|MALFORMED_FUNCTION_CALL/i.test(e.raw);
+}
+
 function scrub(text: string) {
   // Olası anahtar sızıntılarını maskele
   return text
@@ -138,6 +146,11 @@ export interface TextRequest {
   json?: boolean;
   /** Güncel bilgi için web/Google araması kullan */
   search?: boolean;
+  /**
+   * Arama yalnızca ek doğrulama içinse (kaynak bilgisi istemde varsa) true: arama aracı aynı modelde
+   * art arda bozuk yanıt verirse son deneme aynı modelle aramasız yapılır.
+   */
+  searchOptional?: boolean;
   temperature?: number;
 }
 
@@ -191,8 +204,9 @@ async function runSelected<T>(chain: ModelRef[], fn: (ref: ModelRef) => Promise<
       return { result: await fn(ref), ref };
     } catch (error) {
       const e = toAiError(error, ref);
-      if (!RETRYABLE.includes(e.code) || attempt >= 2) throw e;
-      await sleep(attempt === 0 ? 2_000 : 6_000);
+      const transientEmpty = isTransientEmpty(e);
+      if ((!RETRYABLE.includes(e.code) && !transientEmpty) || attempt >= 2) throw e;
+      await sleep(transientEmpty ? 1_500 : attempt === 0 ? 2_000 : 6_000);
     }
   }
 }
@@ -200,8 +214,18 @@ async function runSelected<T>(chain: ModelRef[], fn: (ref: ModelRef) => Promise<
 /** Metin üretir. `task` admin panelinde seçilen modeli belirler. */
 export async function generateText(task: Exclude<AiTask, "image" | "tts">, req: TextRequest, opts: { model?: string } = {}) {
   const chain = resolveModelChain(task, await loadAiSettings(), opts.model);
-  const { result, ref } = await runSelected(chain, (r) => textWithRef(r, req));
-  return { text: result, model: formatModelRef(ref) };
+  try {
+    const { result, ref } = await runSelected(chain, (r) => textWithRef(r, req));
+    return { text: result, model: formatModelRef(ref) };
+  } catch (error) {
+    const e = toAiError(error, chain[0]);
+    // Arama aracı aynı modelde art arda bozuk yanıt verdiyse ve arama yalnızca ek doğrulamaysa:
+    // aynı modelle aramasız son deneme (model ya da sağlayıcı değişmez)
+    if (!req.search || !req.searchOptional || !isTransientEmpty(e)) throw e;
+    console.warn(`[AI] ${task}: arama aracı art arda bozuk yanıt verdi (${e.raw}); aynı modelle aramasız deneniyor.`);
+    const { result, ref } = await runSelected(chain, (r) => textWithRef(r, { ...req, search: false }));
+    return { text: result, model: formatModelRef(ref), searchSkipped: true as const };
+  }
 }
 
 export interface WebSource {

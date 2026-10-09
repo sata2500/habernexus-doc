@@ -90,3 +90,11 @@ test("görsel istemi: panel ve yazar profili talimatları birlikte, sabit stil d
   assert.ok(p.includes("Sade çizim (illüstrasyon) tarzı.") && p.includes("Soğuk tonlar.") && p.includes('"Deneme"'));
   assert.ok(!/fotogerçekçi/i.test(p));
 });
+
+test("Google'ın geçici boş yanıtları (MALFORMED_FUNCTION_CALL) tekrar denenir; diğer biçim hataları denenmez", async () => {
+  const { AiError, isTransientEmpty } = await import("../lib/ai/client");
+  assert.equal(isTransientEmpty(new AiError("bad_response", "google", "gemini-flash-latest", "Boş yanıt (MALFORMED_FUNCTION_CALL)")), true);
+  assert.equal(isTransientEmpty(new AiError("bad_response", "openrouter", "x/y", "Boş yanıt (length)")), true);
+  assert.equal(isTransientEmpty(new AiError("bad_response", null, null, "JSON ayrıştırılamadı: ...")), false);
+  assert.equal(isTransientEmpty(new AiError("safety", "google", "m", "Boş yanıt (SAFETY)")), false);
+});

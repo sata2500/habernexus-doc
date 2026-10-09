@@ -169,6 +169,8 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
       system: systemPrompt,
       prompt: textPrompt,
       search: useGoogleSearch,
+      // Kaynak haberler istemde: arama yalnızca ek doğrulama
+      searchOptional: true,
       temperature: 0.7,
     });
     const sourceTitle = (story.headline || story.title).trim().slice(0, 140);
@@ -376,6 +378,7 @@ Başlık: ${article.title}
 Mevcut metin:
 ${article.content.slice(0, 20000)}`,
       search: !auto && (settings?.aiWriterSearchEnabled ?? false),
+      searchOptional: true,
       temperature: auto ? 0.8 : 0.7,
     });
     const content = stripLeadingTitleHeading(article.title, cleanHtmlResponse(text));
