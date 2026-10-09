@@ -28,7 +28,7 @@ export default async function SettingsPage() {
         <p className="text-muted-foreground text-sm">Görünüm, bülten ve hesap ayarlarınız.</p>
       </div>
 
-      <Card className="p-6 md:p-8">
+      <Card className="p-4 sm:p-6 md:p-8">
         <div className="space-y-8">
           <section className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 pb-6 border-b border-border">
             <div>

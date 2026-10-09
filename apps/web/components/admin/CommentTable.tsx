@@ -1,6 +1,6 @@
 "use client";
 
-import { SITE_TIME_ZONE } from "@/lib/utils";
+import { cn, SITE_TIME_ZONE } from "@/lib/utils";
 import { useState, useTransition } from "react";
 import { Avatar } from "@/components/ui/Avatar";
 import { Trash2, ExternalLink, MessageSquare, Loader2 } from "lucide-react";
@@ -18,9 +18,11 @@ interface Props {
   comments: Comment[];
   onDelete: (id: string) => Promise<{ success: boolean; error?: string }>;
   isAdmin?: boolean;
+  /** Yorumu yazanın adı ve fotoğrafı (kullanıcının kendi yorumlarında gereksiz) */
+  showUser?: boolean;
 }
 
-export function CommentTable({ comments, onDelete, isAdmin }: Props) {
+export function CommentTable({ comments, onDelete, isAdmin, showUser = true }: Props) {
   const [, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -46,82 +48,58 @@ export function CommentTable({ comments, onDelete, isAdmin }: Props) {
     );
   }
 
+  const date = (d: Date) => new Date(d).toLocaleDateString("tr-TR", { timeZone: SITE_TIME_ZONE });
+  const deleteButton = (id: string) => (
+    <button
+      type="button"
+      onClick={() => handleDelete(id)}
+      disabled={deletingId === id}
+      className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-xl text-muted-foreground hover:bg-error/10 hover:text-error border border-border/60 hover:border-error/25 transition-all disabled:opacity-50 cursor-pointer"
+      title="Yorumu sil"
+      aria-label="Yorumu sil"
+    >
+      {deletingId === id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+    </button>
+  );
+
   return (
-    <div className="mt-6 border border-border/50 rounded-[2rem] overflow-hidden shadow-soft glass-strong bg-background/50 animate-in fade-in duration-300">
-      <div className="overflow-x-auto">
-        <table className="w-full block md:table md:table-layout-fixed text-left border-collapse">
-          <thead className="hidden md:table-header-group">
-            <tr className="bg-muted/30 border-b border-border/50">
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground w-[50%]">Kullanıcı / Yorum</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground w-[25%]">Makale</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground w-[13%]">Tarih</th>
-              <th className="px-6 py-4 text-xs font-bold uppercase tracking-wider text-muted-foreground text-right w-[12%]">Aksiyon</th>
-            </tr>
-          </thead>
-          <tbody className="block md:table-row-group divide-y divide-border/50">
-            {comments.map((comment) => (
-              <tr key={comment.id} className="flex flex-col md:table-row hover:bg-primary-500/5 transition-all duration-300 group p-4 md:p-0 gap-3 md:gap-0">
-                <td className="block md:table-cell px-0 md:px-6 py-0 md:py-4">
-                  <div className="flex gap-4">
-                    <Avatar 
-                      src={comment.user.image || undefined} 
-                      fallback={comment.user.name} 
-                      size="sm" 
-                    />
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2 flex-wrap min-w-0">
-                        <span className="text-sm font-bold truncate group-hover:text-[var(--color-primary-500)] transition-colors">{comment.user.name}</span>
-                        {isAdmin && comment.user.email && (
-                          <span className="text-[10px] text-muted-foreground truncate max-w-[150px] md:max-w-none">({comment.user.email})</span>
-                        )}
-                      </div>
-                      <p className="text-sm text-muted-foreground line-clamp-3 mt-1 break-words whitespace-pre-wrap">{comment.content}</p>
-                    </div>
-                  </div>
-                </td>
-                <td className="block md:table-cell px-0 md:px-6 py-0 md:py-4">
-                  <div className="max-w-full md:max-w-[200px] flex items-center md:block">
-                    <span className="md:hidden text-xs font-semibold text-muted-foreground mr-2 shrink-0">Makale:</span>
-                    <Link 
-                      href={`/article/${comment.article.slug}`}
-                      className="text-xs font-bold text-primary-500 hover:text-primary-600 hover:underline flex items-center gap-1.5 transition-colors min-w-0"
-                      target="_blank"
-                    >
-                      <span className="truncate">{comment.article.title}</span>
-                      <ExternalLink className="h-3 w-3 shrink-0" />
-                    </Link>
-                  </div>
-                </td>
-                <td className="block md:table-cell px-0 md:px-6 py-0 md:py-4">
-                  <div className="flex items-center md:block">
-                    <span className="md:hidden text-xs font-semibold text-muted-foreground mr-2">Tarih:</span>
-                    <span className="text-xs text-muted-foreground">
-                      {new Date(comment.createdAt).toLocaleDateString("tr-TR", { timeZone: SITE_TIME_ZONE })}
-                    </span>
-                  </div>
-                </td>
-                <td className="block md:table-cell px-0 md:px-6 py-0 md:py-4 text-left md:text-right border-t border-border/20 md:border-t-0 pt-2 md:pt-0">
-                  <div className="flex items-center justify-between md:justify-end">
-                    <span className="md:hidden text-xs font-semibold text-muted-foreground">İşlemler:</span>
-                    <button
-                      onClick={() => handleDelete(comment.id)}
-                      disabled={deletingId === comment.id}
-                      className="h-9 w-9 inline-flex items-center justify-center rounded-xl hover:bg-error/10 text-muted-foreground hover:text-error border border-transparent hover:border-error/25 transition-all disabled:opacity-50 cursor-pointer"
-                      title="Yorumu Kaldır"
-                    >
-                      {deletingId === comment.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <Trash2 className="h-4 w-4" />
-                      )}
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <ul className="mt-6 rounded-2xl border border-border bg-card shadow-soft divide-y divide-border/60 overflow-hidden animate-in fade-in duration-300">
+      {/* Masaüstünde sütun başlıkları; mobilde her yorum bir kart */}
+      <li aria-hidden="true" className="hidden md:grid grid-cols-[minmax(0,1fr)_14rem_6rem_2.25rem] gap-4 px-5 py-3 bg-muted/30 text-xs font-bold uppercase tracking-wider text-muted-foreground">
+        <span>{showUser ? "Kullanıcı / Yorum" : "Yorum"}</span><span>Haber</span><span>Tarih</span><span />
+      </li>
+      {comments.map((comment) => (
+        <li key={comment.id} className="p-4 md:px-5 md:grid md:grid-cols-[minmax(0,1fr)_14rem_6rem_2.25rem] md:gap-4 md:items-start hover:bg-primary-500/5 transition-colors">
+          <div className="flex gap-3 min-w-0">
+            {showUser && <Avatar src={comment.user.image || undefined} fallback={comment.user.name} size="sm" />}
+            <div className="min-w-0 flex-1">
+              {showUser && (
+                <p className="flex flex-wrap items-baseline gap-x-2 min-w-0">
+                  <span className="text-sm font-bold truncate max-w-full">{comment.user.name}</span>
+                  {isAdmin && comment.user.email && <span className="text-[11px] text-muted-foreground truncate max-w-full">{comment.user.email}</span>}
+                </p>
+              )}
+              <p className={cn("text-sm text-foreground/90 line-clamp-4 break-words whitespace-pre-wrap", showUser && "mt-1")}>{comment.content}</p>
+            </div>
+            <div className="md:hidden">{deleteButton(comment.id)}</div>
+          </div>
+
+          <div className={cn("mt-3 md:mt-0 min-w-0 text-xs", showUser && "pl-11 md:pl-0")}>
+            <Link
+              href={`/article/${comment.article.slug}`}
+              target="_blank"
+              className="inline-flex items-start gap-1.5 font-semibold text-primary-500 hover:text-primary-600 hover:underline max-w-full"
+            >
+              <span className="line-clamp-2 break-words">{comment.article.title}</span>
+              <ExternalLink className="h-3 w-3 shrink-0 mt-0.5" aria-hidden="true" />
+            </Link>
+            <p className="md:hidden mt-1 text-muted-foreground">{date(comment.createdAt)}</p>
+          </div>
+
+          <span className="hidden md:block text-xs text-muted-foreground">{date(comment.createdAt)}</span>
+          <div className="hidden md:block">{deleteButton(comment.id)}</div>
+        </li>
+      ))}
+    </ul>
   );
 }

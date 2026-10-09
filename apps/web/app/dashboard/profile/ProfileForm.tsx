@@ -96,7 +96,7 @@ export function ProfileForm({ initial }: Props) {
         </Link>
       )}
 
-      <Card variant="glass" className="p-6 md:p-8">
+      <Card variant="glass" className="p-4 sm:p-6 md:p-8">
         <form onSubmit={handleUpdate} className="space-y-8">
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 pb-8 border-b border-border/40">
             <div className="space-y-3 flex flex-col items-center sm:items-start shrink-0">

@@ -86,7 +86,7 @@ export function ImageUploader({
           "relative group cursor-pointer border-2 border-dashed border-border rounded-2xl overflow-hidden transition-all duration-300",
           "hover:border-primary-500/50 hover:bg-muted/30",
           aspectRatio === "square" ? "aspect-square" : "aspect-video",
-          value ? "border-solid" : "p-8 flex flex-col items-center justify-center gap-3",
+          value ? "border-solid" : cn(aspectRatio === "square" ? "p-3" : "p-8", "flex flex-col items-center justify-center gap-3"),
           uploading && "opacity-50 pointer-events-none"
         )}
       >

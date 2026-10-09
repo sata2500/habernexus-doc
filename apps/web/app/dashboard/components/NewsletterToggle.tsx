@@ -69,8 +69,8 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
   };
 
   return (
-    <div className="flex flex-col sm:flex-row items-start justify-between gap-6 pb-6 border-b border-border">
-      <div className="flex-1 space-y-4">
+    <div className="flex items-start justify-between gap-4 sm:gap-6 pb-6 border-b border-border">
+      <div className="flex-1 min-w-0 space-y-4">
         <div>
           <h2 id="newsletter-title" className="font-semibold text-foreground flex items-center gap-2">
             <Mail className="h-4 w-4" aria-hidden="true" /> Günlük haber bülteni
@@ -106,7 +106,7 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
         )}
       </div>
 
-      <div className="flex flex-col items-end gap-4 w-full sm:w-auto">
+      <div className="flex flex-col items-end gap-4 shrink-0">
         <label className="relative inline-flex items-center cursor-pointer">
           <input
             type="checkbox"
