@@ -5,9 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { AiError, cleanHtmlResponse, generateText, parseJsonResponse } from "@/lib/ai/client";
 import { keyTokens, signature } from "./text";
 import { attachTags, buildSeoPackage, uniqueArticleSlug } from "./seo";
-import { WRITER_RULES } from "./writing-guide";
+import { buildImagePrompt, buildWriterSystemPrompt } from "./writing-guide";
 import { invalidateArticle } from "@/lib/server/article-cache";
-import { afterPublish } from "@/lib/ai-writer";
+import { addToMediaLibrary, afterPublish, pickPersona, produceCoverImage } from "@/lib/ai-writer";
 
 const HOUR = 3_600_000;
 
@@ -50,15 +50,18 @@ export async function writeTrendArticle(trendId: string) {
     ]);
     if (!adminUser) return { success: false as const, error: "Admin kullanıcı bulunamadı." };
 
+    // Kategori yazımdan sonra belli olduğu için kategorisiz (genel) yazar profili kullanılır
+    const persona = await pickPersona(null);
     const { text } = await generateText("writer", {
-      system: `${settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün."}\n\n${WRITER_RULES}`,
+      // Çıktı biçimini (JSON) istem tanımlar; içerik HTML kuralları JSON şablonunda
+      system: buildWriterSystemPrompt({ publication: settings?.aiWriterPrompt, persona: persona?.prompt, output: "none" }),
       prompt: `Bugün: ${new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul", dateStyle: "long", timeStyle: "short" })}
 Türkiye'de şu an çok aranan konu: "${trend.keyword}"
 Bu konuyu web/Google araması ile araştır; insanların neden aradığını ve son gelişmeyi doğru, tarafsız ve özgün bir haberle anlat.
 Doğrulanamayan bilgi uydurma.
 
 Yanıtı SADECE şu JSON biçiminde ver:
-{ "title": "En fazla 90 karakterlik başlık", "excerpt": "1-2 cümlelik spot", "category": "${categories.map((c) => c.name).join(" | ") || "Gündem"}", "content": "HTML gövde (h2, h3, p, strong, ul, li; 500-900 kelime; h1 ve başlık tekrarı yok)" }`,
+{ "title": "En fazla 90 karakterlik başlık", "excerpt": "1-2 cümlelik spot", "category": "${categories.map((c) => c.name).join(" | ") || "Gündem"}", "content": "HTML gövde (h2, h3, p, strong, ul, li; h1, markdown ve başlık tekrarı yok)" }`,
       search: true,
       temperature: 0.6,
     });
@@ -72,6 +75,13 @@ Yanıtı SADECE şu JSON biçiminde ver:
     const title = seo.title;
     const sig = signature(title);
     const content = stripLeadingTitleHeading(title, stripLeadingTitleHeading(draftTitle, rawContent));
+    // Kapak görseli (admin paneli ve yazar profili görsel talimatlarıyla); trend haberlerinin RSS görseli yoktur
+    const coverImage = await produceCoverImage(
+      buildImagePrompt({ publication: settings?.aiWriterImagePrompt, persona: persona?.imagePrompt, title }),
+      null,
+      false,
+    );
+    await addToMediaLibrary(coverImage, adminUser.id);
 
     // Haber ve Karar Merkezi kaydı birlikte: trend "yazıldı" görünür ve tekrar yazılmaz
     const article = await prisma.$transaction(async (tx) => {
@@ -81,6 +91,8 @@ Yanıtı SADECE şu JSON biçiminde ver:
           slug: await uniqueArticleSlug(title, tx),
           content,
           excerpt: seo.description || parsed.excerpt?.trim().slice(0, 300) || null,
+          coverImage,
+          aiPersonaId: persona?.id ?? null,
           status: "PUBLISHED",
           authorId: adminUser.id,
           categoryId,

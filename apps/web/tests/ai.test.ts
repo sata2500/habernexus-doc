@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { crossProviderRef, isRetiredModel, parseModelRef } from "../lib/ai/models";
+import { isRetiredModel, parseModelRef } from "../lib/ai/models";
 import { resolveModelChain } from "../lib/ai/resolve";
 
 function withKeys(keys: { google?: boolean; openrouter?: boolean }, fn: () => void) {
@@ -32,24 +32,23 @@ test("retired model families are detected", () => {
   }
 });
 
-test("cross-provider mapping for Gemini models", () => {
-  assert.deepEqual(crossProviderRef({ provider: "google", model: "gemini-3.8-flash" }), { provider: "openrouter", model: "google/gemini-3.8-flash" });
-  assert.deepEqual(crossProviderRef({ provider: "openrouter", model: "google/gemini-3.8-flash" }), { provider: "google", model: "gemini-3.8-flash" });
-  assert.equal(crossProviderRef({ provider: "openrouter", model: "openai/gpt-5.6-sol" }), null);
-});
-
-test("legacy retired settings are upgraded and fall back to the other provider", () => {
+test("yalnızca panelde seçilen model kullanılır: yedek model ya da sağlayıcı yok", () => {
   withKeys({ google: true, openrouter: true }, () => {
-    const chain = fmt(resolveModelChain("analyzer", { aiAnalyzerModel: "google/gemini-2.0-flash-001" }));
-    assert.equal(chain[0], "openrouter:google/gemini-3.5-flash-lite");
-    assert.ok(chain.includes("google:gemini-3.5-flash-lite"));
+    assert.deepEqual(fmt(resolveModelChain("writer", { aiWriterModel: "google:gemini-3.8-flash" })), ["google:gemini-3.8-flash"]);
+    assert.deepEqual(fmt(resolveModelChain("analyzer", { aiAnalyzerModel: "openrouter:anthropic/claude-sonnet-5.5" })), ["openrouter:anthropic/claude-sonnet-5.5"]);
+    assert.deepEqual(fmt(resolveModelChain("image", { aiWriterImageModel: "openrouter:google/gemini-3.1-flash-image" })), ["openrouter:google/gemini-3.1-flash-image"]);
   });
 });
 
-test("chosen model is primary; same Gemini model via the other provider is the first backup", () => {
+test("eski sürüm model kendiliğinden değiştirilmez", () => {
   withKeys({ google: true, openrouter: true }, () => {
-    const chain = fmt(resolveModelChain("writer", { aiWriterModel: "google:gemini-3.8-flash" }));
-    assert.deepEqual(chain.slice(0, 2), ["google:gemini-3.8-flash", "openrouter:google/gemini-3.8-flash"]);
+    assert.deepEqual(fmt(resolveModelChain("analyzer", { aiAnalyzerModel: "google/gemini-2.0-flash-001" })), ["openrouter:google/gemini-2.0-flash-001"]);
+  });
+});
+
+test("seçilen sağlayıcının anahtarı yoksa diğerine geçilmez", () => {
+  withKeys({ openrouter: true }, () => {
+    assert.deepEqual(fmt(resolveModelChain("writer", { aiWriterModel: "google:gemini-3.8-flash" })), ["google:gemini-3.8-flash"]);
   });
 });
 
@@ -65,6 +64,29 @@ test("missing settings pick defaults for the provider that has a key", () => {
 test("TTS always resolves to Google models", () => {
   withKeys({ google: true, openrouter: true }, () => {
     const chain = resolveModelChain("tts", { aiTtsModel: "openrouter:some/tts" });
-    assert.ok(chain.length > 0 && chain.every((r) => r.provider === "google"));
+    assert.ok(chain.length === 1 && chain[0].provider === "google");
+    assert.deepEqual(fmt(resolveModelChain("tts", { aiTtsModel: "google:gemini-3.8-flash-tts" })), ["google:gemini-3.8-flash-tts"]);
   });
+});
+
+test("yazım talimatı: panel talimatı en başta ve en yüksek öncelikte; yazar profili ve varsayılanlar sonra", async () => {
+  const { buildWriterSystemPrompt, DEFAULT_PUBLICATION_PROMPT } = await import("../lib/news/writing-guide");
+  const s = buildWriterSystemPrompt({ publication: "Haberleri 300 kelimeyle yaz.", persona: "Samimi bir dil kullan." });
+  const iPub = s.indexOf("Haberleri 300 kelimeyle yaz.");
+  const iPersona = s.indexOf("Samimi bir dil kullan.");
+  const iDefaults = s.indexOf("VARSAYILAN YAZIM KURALLARI");
+  assert.ok(iPub >= 0 && iPersona > iPub && iDefaults > iPersona);
+  assert.match(s, /aksini söylemiyorsa uygula/);
+  assert.match(s, /ÇIKTI BİÇİMİ/);
+  // Panel boşsa varsayılan yayın talimatı; JSON çıktılı işlerde HTML biçim kuralı eklenmez
+  const empty = buildWriterSystemPrompt({ publication: "  ", output: "none", withDefaultRules: false });
+  assert.ok(empty.includes(DEFAULT_PUBLICATION_PROMPT));
+  assert.ok(!empty.includes("ÇIKTI BİÇİMİ") && !empty.includes("VARSAYILAN YAZIM"));
+});
+
+test("görsel istemi: panel ve yazar profili talimatları birlikte, sabit stil dayatılmaz", async () => {
+  const { buildImagePrompt } = await import("../lib/news/writing-guide");
+  const p = buildImagePrompt({ publication: "Sade çizim (illüstrasyon) tarzı.", persona: "Soğuk tonlar.", title: "Deneme" });
+  assert.ok(p.includes("Sade çizim (illüstrasyon) tarzı.") && p.includes("Soğuk tonlar.") && p.includes('"Deneme"'));
+  assert.ok(!/fotogerçekçi/i.test(p));
 });

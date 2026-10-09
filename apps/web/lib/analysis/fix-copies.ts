@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { generateText, parseJsonResponse } from "@/lib/ai/client";
 import { analyzeArticle } from "@/lib/article-analyzer";
 import { normalize } from "@/lib/news/text";
+import { buildWriterSystemPrompt } from "@/lib/news/writing-guide";
 import { invalidateArticle } from "@/lib/server/article-cache";
 import { restoreContentSnapshot, takeContentSnapshot } from "./snapshot";
 
@@ -26,7 +27,10 @@ function storedPassages(report: unknown): Passage[] {
 const plain = (html: string) => normalize(html.replace(/<[^>]*>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&"));
 
 export async function fixCopiedPassages(articleId: string) {
-  const article = await prisma.article.findUnique({ where: { id: articleId }, select: { id: true, title: true, content: true, analysisReport: true, plagiarismRate: true } });
+  const article = await prisma.article.findUnique({
+    where: { id: articleId },
+    select: { id: true, title: true, content: true, analysisReport: true, plagiarismRate: true, aiPersona: { select: { prompt: true } } },
+  });
   if (!article) return { success: false as const, error: "Haber bulunamadı." };
   const passages = storedPassages(article.analysisReport);
   if (passages.length === 0) return { success: false as const, error: "Analizde kopya cümle bulunmadı. Önce haberi yeniden analiz edin." };
@@ -44,8 +48,15 @@ export async function fixCopiedPassages(articleId: string) {
   const { text } = await generateText("writer", {
     json: true,
     temperature: 0.8,
-    system: "Sen titiz bir Türk haber editörüsün. Başka kaynaklardan aynen alınmış paragrafları, bilgileri değiştirmeden tamamen kendi cümlelerinle yeniden yazarsın.",
-    prompt: `Aşağıdaki paragraflarda başka haber sitelerinden aynen alınmış cümleler var. Her paragrafı:
+    // Yeniden yazılan paragraflar haberin geri kalanıyla aynı üslupta olsun: admin paneli ve yazar profili talimatları
+    system: buildWriterSystemPrompt({
+      publication: (await prisma.systemSettings.findFirst({ select: { aiWriterPrompt: true } }))?.aiWriterPrompt,
+      persona: article.aiPersona?.prompt,
+      output: "none",
+      withDefaultRules: false,
+    }),
+    prompt: `Görev: başka kaynaklardan aynen alınmış paragrafları, bilgileri değiştirmeden tamamen kendi cümlelerinle yeniden yaz.
+Aşağıdaki paragraflarda başka haber sitelerinden aynen alınmış cümleler var. Her paragrafı:
 - Aynı bilgileri (isim, rakam, tarih, yer, alıntı yapılan kişinin sözü) koruyarak, kelime seçimi ve cümle yapısı tamamen farklı olacak şekilde yeniden yaz.
 - Doğrudan alıntıları (tırnak içindeki sözler) değiştirme; onları "... dedi" gibi atıfla koru.
 - HTML etiketlerini koru: paragraf <p> ise <p>, madde <li> ise <li> olarak döndür; <a href> bağlantılarını ve <strong> vurgularını koru.

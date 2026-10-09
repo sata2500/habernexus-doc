@@ -78,15 +78,6 @@ export function formatModelRef(ref: ModelRef) {
   return `${ref.provider}:${ref.model}`;
 }
 
-/** Aynı modelin diğer sağlayıcıdaki karşılığı (yalnızca Google modelleri için anlamlı) */
-export function crossProviderRef(ref: ModelRef): ModelRef | null {
-  if (ref.provider === "google") return { provider: "openrouter", model: `google/${ref.model}` };
-  if (ref.provider === "openrouter" && ref.model.startsWith("google/")) {
-    return { provider: "google", model: ref.model.slice("google/".length).replace(/:.*$/, "") };
-  }
-  return null;
-}
-
 export function modelDisplayName(ref: ModelRef | null) {
   if (!ref) return "Seçilmedi";
   return `${ref.model} · ${PROVIDER_LABELS[ref.provider]}`;

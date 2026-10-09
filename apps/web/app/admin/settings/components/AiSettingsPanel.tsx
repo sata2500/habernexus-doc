@@ -226,7 +226,7 @@ function ModelPicker({
 
 export function AiSettingsPanel(props: Props) {
   const initialModels = Object.fromEntries(
-    props.tasks.map((t) => [t.task, t.retired || !t.stored ? t.effective ?? t.stored : t.stored])
+    props.tasks.map((t) => [t.task, t.stored || t.effective || ""])
   ) as Record<AiTask, string>;
 
   const [models, setModels] = useState(initialModels);
@@ -286,8 +286,8 @@ export function AiSettingsPanel(props: Props) {
           ))}
         </div>
         <p className="text-xs text-muted-foreground">
-          Anahtarlar Vercel ortam değişkenlerinden okunur (GEMINI_API_KEY, OPENROUTER_API_KEY). Bir sağlayıcı hata verirse sistem
-          aynı modeli otomatik olarak diğer sağlayıcı üzerinden dener.
+          Anahtarlar Vercel ortam değişkenlerinden okunur (GEMINI_API_KEY, OPENROUTER_API_KEY). Her görevde yalnızca burada seçtiğiniz
+          model kullanılır; başka sağlayıcıya ya da modele kendiliğinden geçilmez. Model hata verirse işlem durur ve hata ilgili ekranda gösterilir.
         </p>
       </section>
 
@@ -295,8 +295,9 @@ export function AiSettingsPanel(props: Props) {
         <div className="flex items-start gap-3 rounded-2xl border border-warning/40 bg-warning/10 p-4 text-sm">
           <AlertTriangle className="h-5 w-5 text-warning shrink-0 mt-0.5" />
           <p>
-            <span className="font-semibold">Kullanımdan kalkmış modeller güncellendi.</span>{" "}
-            Kayıtlı bazı modeller sağlayıcı tarafından kaldırılmış; yerlerine güncel öneriler seçildi. Kalıcı olması için kaydedin.
+            <span className="font-semibold">Eski sürüm model seçili.</span>{" "}
+            Bazı görevlerde seçili model eski bir sürüm ailesinden ve kullanımdan kalkmış olabilir. Sistem bunu kendiliğinden değiştirmez:
+            “Test et” ile deneyin, çalışmıyorsa güncel bir model seçip kaydedin.
           </p>
         </div>
       )}
@@ -325,8 +326,8 @@ export function AiSettingsPanel(props: Props) {
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:pl-12">
                 <div className="flex-1 min-w-0 rounded-xl bg-muted/50 border border-border px-3 py-2 overflow-hidden">
                   <ModelChip value={models[task]} />
-                  {original?.retired && models[task] === original.effective && (
-                    <p className="text-[11px] text-warning mt-0.5 truncate">Eski: {original.stored}</p>
+                  {original?.retired && models[task] === original.stored && (
+                    <p className="text-[11px] text-warning mt-0.5">Bu model eski bir sürüm ailesinden; kullanımdan kalkmış olabilir. “Test et” ile deneyin ya da güncel bir model seçin.</p>
                   )}
                 </div>
                 <div className="flex gap-2">
@@ -439,7 +440,7 @@ export function AiSettingsPanel(props: Props) {
           <button
             type="button"
             onClick={save}
-            disabled={isSaving || (!dirty && !anyRetired)}
+            disabled={isSaving || !dirty}
             className="h-11 px-6 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold inline-flex items-center gap-2 disabled:opacity-50 cursor-pointer"
           >
             {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />} Kaydet

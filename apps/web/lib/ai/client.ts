@@ -10,9 +10,9 @@ export { configuredProviders, resolveModelChain };
 
 /**
  * Tüm yapay zekâ çağrılarının geçtiği tek katman (Google Gemini + OpenRouter).
- * - Görev bazlı model seçimi (admin panelinden)
- * - Kaldırılmış modelleri otomatik güncel modele yükseltme
- * - Geçici hatalarda tekrar deneme, anahtar/kota/model hatasında diğer sağlayıcıya geçiş
+ * - Görev bazlı model seçimi (admin panelinden). Yalnızca seçilen model kullanılır: başka
+ *   sağlayıcıya ya da yedek modele kendiliğinden geçilmez.
+ * - Kota/geçici hizmet kesintisinde AYNI modelle kısa beklemeli tekrar deneme
  * - Sağlayıcının gerçek hata mesajını yöneticiye taşıyan hata sınıfı
  */
 
@@ -49,10 +49,9 @@ export class AiError extends Error {
   }
 }
 
-// Zaman aşımı aynı modelle tekrar denenmez: 120 sn × 3 deneme, işçinin 300 sn sınırını aşıp işi
-// yarıda bırakıyordu. Takılan model yerine doğrudan yedek modele geçilir.
+// Kota dolması ve geçici kesintide aynı model kısa beklemeyle tekrar denenir. Zaman aşımı tekrar
+// denenmez (120 sn × 3 deneme işçinin 300 sn sınırını aşıyordu).
 const RETRYABLE: AiErrorCode[] = ["quota", "unavailable"];
-const FALLBACK_ON: AiErrorCode[] = ["config", "auth", "billing", "quota", "model", "unavailable", "timeout"];
 
 function scrub(text: string) {
   // Olası anahtar sızıntılarını maskele
@@ -180,38 +179,28 @@ async function textWithRef(ref: ModelRef, req: TextRequest): Promise<string> {
   return text;
 }
 
-async function runWithFallback<T>(chain: ModelRef[], fn: (ref: ModelRef) => Promise<T>): Promise<{ result: T; ref: ModelRef; attempts: AiError[] }> {
-  const attempts: AiError[] = [];
-  for (const ref of chain) {
-    if (!hasKey(ref.provider)) {
-      attempts.push(new AiError("config", ref.provider, ref.model, `${ref.provider} anahtarı tanımlı değil`));
-      continue;
-    }
-    for (let attempt = 0; attempt < 3; attempt++) {
-      try {
-        return { result: await fn(ref), ref, attempts };
-      } catch (error) {
-        const e = toAiError(error, ref);
-        if (RETRYABLE.includes(e.code) && attempt < 2) {
-          await sleep(attempt === 0 ? 2_000 : 6_000);
-          continue;
-        }
-        attempts.push(e);
-        break;
-      }
-    }
-    const last = attempts[attempts.length - 1];
-    if (last && !FALLBACK_ON.includes(last.code)) break;
+/** Seçilen modeli çalıştırır (geçici hatalarda aynı modelle en fazla 3 deneme). Başka modele geçilmez. */
+async function runSelected<T>(chain: ModelRef[], fn: (ref: ModelRef) => Promise<T>): Promise<{ result: T; ref: ModelRef }> {
+  const ref = chain[0];
+  if (!ref) throw new AiError("config", null, null, "Bu görev için model seçilmemiş ve kullanılabilir sağlayıcı anahtarı yok");
+  if (!hasKey(ref.provider)) {
+    throw new AiError("config", ref.provider, ref.model, `${ref.provider === "google" ? "GEMINI_API_KEY" : "OPENROUTER_API_KEY"} tanımlı değil`);
   }
-  const primaryError = attempts.find((a) => a.code !== "config") ?? attempts[0];
-  throw primaryError ?? new AiError("config", null, null, "Kullanılabilir yapay zekâ sağlayıcısı yok");
+  for (let attempt = 0; ; attempt++) {
+    try {
+      return { result: await fn(ref), ref };
+    } catch (error) {
+      const e = toAiError(error, ref);
+      if (!RETRYABLE.includes(e.code) || attempt >= 2) throw e;
+      await sleep(attempt === 0 ? 2_000 : 6_000);
+    }
+  }
 }
 
 /** Metin üretir. `task` admin panelinde seçilen modeli belirler. */
 export async function generateText(task: Exclude<AiTask, "image" | "tts">, req: TextRequest, opts: { model?: string } = {}) {
   const chain = resolveModelChain(task, await loadAiSettings(), opts.model);
-  const { result, ref, attempts } = await runWithFallback(chain, (r) => textWithRef(r, req));
-  if (attempts.length) console.warn(`[AI] ${task} yedek modelle tamamlandı: ${formatModelRef(ref)}`, attempts.map((a) => `${a.provider}:${a.model} → ${a.code}`));
+  const { result, ref } = await runSelected(chain, (r) => textWithRef(r, req));
   return { text: result, model: formatModelRef(ref) };
 }
 
@@ -262,7 +251,7 @@ async function searchWithRef(ref: ModelRef, req: TextRequest): Promise<{ text: s
  */
 export async function searchWeb(task: Exclude<AiTask, "image" | "tts">, req: Omit<TextRequest, "search" | "json">) {
   const chain = resolveModelChain(task, await loadAiSettings());
-  const { result, ref } = await runWithFallback(chain, (r) => searchWithRef(r, req));
+  const { result, ref } = await runSelected(chain, (r) => searchWithRef(r, req));
   return { ...result, model: formatModelRef(ref) };
 }
 
@@ -368,7 +357,7 @@ async function imageWithRef(ref: ModelRef, prompt: string, referenceImageUrl?: s
 /** Kapak görseli üretir (Blob'a kaydetmez). */
 export async function generateImage(prompt: string, opts: { referenceImageUrl?: string; model?: string } = {}): Promise<ImageResult> {
   const chain = resolveModelChain("image", await loadAiSettings(), opts.model);
-  const { result, ref } = await runWithFallback(chain, (r) => imageWithRef(r, prompt, opts.referenceImageUrl));
+  const { result, ref } = await runSelected(chain, (r) => imageWithRef(r, prompt, opts.referenceImageUrl));
   if (result.buffer.length === 0 || result.buffer.length > 12 * 1024 * 1024) {
     throw new AiError("bad_response", ref.provider, ref.model, "Görsel boyutu geçersiz");
   }

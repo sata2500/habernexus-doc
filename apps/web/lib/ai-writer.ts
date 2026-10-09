@@ -10,7 +10,7 @@ import type { Prisma } from "./generated/client";
 import { findPublishedDuplicate } from "./news/stories";
 import { LIKELY_DUPLICATE, signature, storySimilarity } from "./news/text";
 import { stripLeadingTitleHeading } from "./article-content";
-import { WRITER_FORMAT } from "./news/writing-guide";
+import { buildImagePrompt, buildWriterSystemPrompt } from "./news/writing-guide";
 import { invalidateArticle } from "./server/article-cache";
 import { attachTags, buildSeoPackage, uniqueArticleSlug } from "./news/seo";
 import { enqueueJob, WORKER_PATH } from "./server/queue";
@@ -24,10 +24,12 @@ async function saveCoverImage(buffer: Buffer, mimeType: string) {
   return url;
 }
 
-/** Kapak görseli üret; başarısızsa RSS görselini sisteme aktar. */
-async function produceCoverImage(imagePromptBase: string, title: string, rssImageUrl: string | null, useRssImageAsReference: boolean) {
+/**
+ * Kapak görseli üret (istem: admin paneli görsel talimatı + yazar profili görsel talimatı).
+ * Başarısızsa RSS görselini sisteme aktar.
+ */
+export async function produceCoverImage(prompt: string, rssImageUrl: string | null, useRssImageAsReference: boolean) {
   try {
-    const prompt = `${imagePromptBase}\nHaber başlığı: "${title}"\nStil: Fotogerçekçi haber fotoğrafı, 16:9, üzerinde yazı veya logo yok.`;
     const image = await generateImage(prompt, { referenceImageUrl: useRssImageAsReference && rssImageUrl ? rssImageUrl : undefined });
     return await saveCoverImage(image.buffer, image.mimeType);
   } catch (error) {
@@ -50,7 +52,7 @@ type WriteResult =
   | { success: false; error: string };
 
 /** Konunun kategorisine göre persona seçer (kategoriye atanmış personalar sırayla, yoksa genel persona). */
-async function pickPersona(categoryId: string | null) {
+export async function pickPersona(categoryId: string | null) {
   const personaLink = categoryId
     ? await prisma.aiPersonaOnCategory.findFirst({
         where: { categoryId, persona: { isActive: true } },
@@ -143,9 +145,8 @@ export async function writeStory(storyId: string): Promise<WriteResult> {
 
     const categoryId = await findCategoryId(story.categoryName);
     const persona = await pickPersona(categoryId);
-    const globalSystemPrompt = settings.aiWriterPrompt || "Sen profesyonel bir haber yazarısın.";
-    const systemPrompt = persona?.prompt.trim() ? `${globalSystemPrompt}\n\nÖzel Yazım Talimatları:\n${persona.prompt}` : globalSystemPrompt;
-    const imagePromptBase = persona?.imagePrompt.trim() || settings.aiWriterImagePrompt || "Professional news cover image.";
+    // Talimatlar: admin paneli (yayın) > yazar profili > varsayılan kurallar (lib/news/writing-guide.ts)
+    const systemPrompt = buildWriterSystemPrompt({ publication: settings.aiWriterPrompt, persona: persona?.prompt });
     const useGoogleSearch = settings.aiWriterSearchEnabled || false;
 
     const related = story.relatedArticleId
@@ -165,7 +166,7 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
 Önceki haberi tekrar etme; yeni gelişmeye odaklan, gerekirse tek cümlelik bağlam ver.` : ""}${useGoogleSearch ? "\nKonuyu web/Google araması ile doğrula ve en güncel bilgileri kullan." : ""}`;
 
     const { text: rawContent, model: usedModel } = await generateText("writer", {
-      system: `${systemPrompt}\n\n${WRITER_FORMAT}`,
+      system: systemPrompt,
       prompt: textPrompt,
       search: useGoogleSearch,
       temperature: 0.7,
@@ -184,7 +185,8 @@ ${related ? `\nBU BİR DEVAM HABERİDİR. Daha önce şu haberi yayımladık: "$
     }
 
     const rssImage = story.items.find((i) => i.imageUrl)?.imageUrl ?? null;
-    const imageUrl = await produceCoverImage(imagePromptBase, title, rssImage, settings.aiWriterUseRssImage !== false);
+    const imagePrompt = buildImagePrompt({ publication: settings.aiWriterImagePrompt, persona: persona?.imagePrompt, title });
+    const imageUrl = await produceCoverImage(imagePrompt, rssImage, settings.aiWriterUseRssImage !== false);
 
     const adminUser = await prisma.user.findFirst({ where: { role: "ADMIN" }, orderBy: { createdAt: "asc" } });
     if (!adminUser) throw new Error("Admin kullanıcı bulunamadı.");
@@ -243,7 +245,7 @@ function escapeHtml(s: string) {
   return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 }
 
-async function addToMediaLibrary(imageUrl: string | null, userId: string) {
+export async function addToMediaLibrary(imageUrl: string | null, userId: string) {
   if (!imageUrl || !imageUrl.includes("public.blob.vercel-storage.com")) return;
   await prisma.media.create({
     data: { url: imageUrl, filename: imageUrl.split("/").pop() || `Cover_${Date.now()}.png`, size: 0, mimeType: "image/png", status: "RAW", userId },
@@ -357,10 +359,7 @@ export async function rewriteArticleWithAI(articleId: string, options: RewriteOp
     if (!article) throw new Error("Makale bulunamadı.");
 
     const settings = await prisma.systemSettings.findFirst();
-    const systemPrompt = settings?.aiWriterPrompt || "Sen profesyonel bir haber editörüsün.";
-    const finalPrompt = article.aiPersona?.prompt.trim()
-      ? `${systemPrompt}\n\nÖzel Yazım Talimatları:\n${article.aiPersona.prompt}`
-      : systemPrompt;
+    const finalPrompt = buildWriterSystemPrompt({ publication: settings?.aiWriterPrompt, persona: article.aiPersona?.prompt });
     const auto = options.originalityRate !== undefined;
     const task = auto
       ? `Bu haberin metninin %${options.originalityRate}'i başka haber sitelerindeki cümlelerle aynı. Aynı bilgileri (isim, rakam, tarih, yer, doğrudan alıntılar) koruyarak metni kelime seçimi ve cümle yapısı tamamen farklı, özgün ve tarafsız bir dille yeniden yaz. Bağlantıları (<a href>) koru; yeni bilgi ekleme.`
@@ -369,7 +368,7 @@ export async function rewriteArticleWithAI(articleId: string, options: RewriteOp
     console.log(`[AI Writer] ${auto ? "Otomatik özgünleştirme" : "Manuel yeniden yazım"}: "${article.title}" (${article.id})`);
 
     const { text } = await generateText("writer", {
-      system: `${finalPrompt}\n\n${WRITER_FORMAT}`,
+      system: finalPrompt,
       prompt: `${task}
 ${auto ? "" : analysisNotes(article.analysisReport)}
 Başlık: ${article.title}
