@@ -69,6 +69,7 @@ export default async function TagPage({ params, searchParams }: { params: Params
         </p>
       </header>
 
+      <h2 className="sr-only">Haber listesi</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         {articles.map((a, i) => <FeedArticleCard key={a.id} article={a} priority={i < 2} />)}
       </div>

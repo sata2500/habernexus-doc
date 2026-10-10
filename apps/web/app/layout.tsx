@@ -9,6 +9,7 @@ import Script from "next/script";
 import { preload } from "react-dom";
 import { getPublicMonetization } from "@/lib/server/monetization";
 import { CONSENT_INIT_SCRIPT } from "@/lib/google-consent";
+import { CONSENT_FLAGS_SCRIPT } from "@/lib/consent";
 import { FeedbackHost } from "@/components/ui/feedback";
 import "./globals.css";
 
@@ -110,6 +111,10 @@ export default async function RootLayout({
       className={`${inter.variable} ${outfit.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        {/* Çerez bandı sunucuda çizilir; karar vermiş okurda ilk boyamadan önce gizlenir (lib/consent) */}
+        <script dangerouslySetInnerHTML={{ __html: CONSENT_FLAGS_SCRIPT }} />
+      </head>
       <body className="min-h-screen flex flex-col antialiased">
         <DynamicThemeColors settings={settings} />
         <WebSiteJsonLd settings={settings} />

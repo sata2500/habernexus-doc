@@ -8,6 +8,7 @@ import {
   CONSENT_GROUPS,
   CONSENT_MAX_AGE,
   CONSENT_OPEN_EVENT,
+  consentNeedKey,
   needsConsent,
   parseConsent,
   READ_HISTORY_COOKIE,
@@ -66,7 +67,10 @@ export function useConsent(): ConsentChoices | null | undefined {
 /**
  * Çerez onay bandı. Yalnızca sitede açık olan gruplar sorulur (analitik ve reklam yönetim
  * panelinden açılır). "Reddet" "Kabul et" kadar kolaydır; seçim yapılmadan site kullanılabilir.
- * Sunucuda çizilmez: sayfalar önbellekten sunulur, tercih tarayıcıdadır.
+ * Sunucuda her zaman çizilir (sayfalar önbellekten sunulur, tercih tarayıcıdadır): karar vermiş
+ * okurda <head>'deki betik ve globals.css onu ilk boyamada gizler. Böylece bant JavaScript'i
+ * beklemeden görünür; mobilde sayfanın en büyük öğesi (LCP) çoğu zaman bu metin olduğundan
+ * tarayıcıda sonradan çizilmesi LCP'yi ~1 sn geciktiriyordu.
  */
 export function CookieConsent({ analytics, ads }: { analytics: boolean; ads: boolean }) {
   const current = useConsent();
@@ -83,9 +87,10 @@ export function CookieConsent({ analytics, ads }: { analytics: boolean; ads: boo
     return () => window.removeEventListener(CONSENT_OPEN_EVENT, open);
   }, []);
 
-  if (current === undefined) return null;
   const active: Record<ConsentGroup, boolean> = { personalization: true, analytics, ads };
-  if (!reopened && !needsConsent(current, active)) return null;
+  // Sunucuda ve hidrasyon sırasında tercih bilinmez (undefined): bant çizilir, gerekirse CSS gizler
+  const ssr = current === undefined;
+  if (!ssr && !reopened && !needsConsent(current, active)) return null;
 
   const groups = CONSENT_GROUPS.filter((g) => active[g]);
   const values = draft ?? Object.fromEntries(CONSENT_GROUPS.map((g) => [g, current?.[g] === true])) as Record<ConsentGroup, boolean>;
@@ -103,7 +108,8 @@ export function CookieConsent({ analytics, ads }: { analytics: boolean; ads: boo
     <section
       role="region"
       aria-labelledby="cookie-consent-title"
-      className="fixed inset-x-0 bottom-0 z-[var(--z-sticky)] p-3 sm:p-4 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] pointer-events-none"
+      data-need={ssr ? consentNeedKey(active) : undefined}
+      className="consent-banner fixed inset-x-0 bottom-0 z-[var(--z-sticky)] p-3 sm:p-4 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] pointer-events-none"
     >
       <div className="pointer-events-auto mx-auto max-w-3xl max-h-[80vh] overflow-y-auto rounded-2xl border border-border bg-card text-card-foreground shadow-lg p-4 sm:p-5 space-y-3">
         <div className="space-y-1 text-sm">

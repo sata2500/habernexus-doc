@@ -59,3 +59,20 @@ export function readConsentCookie(): ConsentChoices | null {
 export function hasPersonalizationConsent(): boolean {
   return readConsentCookie()?.personalization === true;
 }
+
+/**
+ * Sayfa çizilmeden önce <head>'de çalışan satır içi betik: karar verilmiş grupları <html>'e
+ * `data-consent-p/a/d` olarak yazar. Çerez bandı sunucuda çizildiği için, karar vermiş okurda
+ * globals.css bu işaretlere bakarak bandı ilk boyamada gizler (bant hiç yanıp sönmez).
+ */
+export const CONSENT_FLAGS_SCRIPT = `(function(){try{
+var m=document.cookie.match(/(?:^|; )${CONSENT_COOKIE}=([^;]*)/),v=m?decodeURIComponent(m[1]):"";
+var x=v.match(/^2\\.p([01-])a([01-])d([01-])$/)||(v.match(/^1\\.p([01])$/)?[0,v.charAt(3),"-","-"]:null);
+if(!x)return;var h=document.documentElement;
+["p","a","d"].forEach(function(k,i){if(x[i+1]!=="-")h.setAttribute("data-consent-"+k,"")});
+}catch(e){}})();`;
+
+/** Sitede etkin gruplar: sunucuda çizilen bandın hangi işaretlerle gizleneceğini belirler ("p", "pa", "pd", "pad") */
+export function consentNeedKey(active: Record<ConsentGroup, boolean>) {
+  return CONSENT_GROUPS.filter((g) => active[g]).map((g) => LETTERS[g]).join("");
+}

@@ -19,6 +19,7 @@ export default async function BookmarksPage() {
         </p>
       </div>
 
+      {bookmarks.length > 0 && <h2 className="sr-only">Kaydedilen haberler listesi</h2>}
       {bookmarks.length > 0 ? (
         <ul className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-6">
           {bookmarks.map((b, i) => (

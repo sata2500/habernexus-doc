@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { needsConsent, parseConsent, serializeConsent } from "../lib/consent";
+import { CONSENT_FLAGS_SCRIPT, consentNeedKey, needsConsent, parseConsent, serializeConsent } from "../lib/consent";
 import { normalizePlacements, pickWeighted } from "../lib/monetization";
 import { RETENTION, retentionCutoffs } from "../lib/server/retention";
 
@@ -90,4 +90,25 @@ test("bildirim: sessiz saatler gece yarısını geçebilir", async () => {
   assert.equal(inQuietHours(13, 12, 14), true);
   assert.equal(inQuietHours(14, 12, 14), false);
   assert.equal(inQuietHours(5, 0, 0), false); // başlangıç = bitiş: sessiz saat yok
+});
+
+/** <head> betiğini sahte bir document ile çalıştırır, <html>'e yazılan işaretleri döndürür */
+function flagsFor(cookie: string) {
+  const attrs: string[] = [];
+  const document = { cookie, documentElement: { setAttribute: (name: string) => attrs.push(name) } };
+  new Function("document", CONSENT_FLAGS_SCRIPT)(document);
+  return attrs;
+}
+
+test("çerez bandı: karar verilen gruplar <html>'e işaretlenir, sorulmamışlar işaretlenmez", () => {
+  assert.deepEqual(flagsFor(""), []);
+  assert.deepEqual(flagsFor("x=1; hn_consent=2.p1a-d0"), ["data-consent-p", "data-consent-d"]);
+  assert.deepEqual(flagsFor("hn_consent=1.p0"), ["data-consent-p"]);
+  assert.deepEqual(flagsFor("hn_consent=bozuk"), []);
+});
+
+test("çerez bandı: sunucuda çizilen bandın gizlenme anahtarı etkin gruplara göre", () => {
+  assert.equal(consentNeedKey({ personalization: true, analytics: false, ads: false }), "p");
+  assert.equal(consentNeedKey({ personalization: true, analytics: true, ads: true }), "pad");
+  assert.equal(consentNeedKey({ personalization: true, analytics: false, ads: true }), "pd");
 });

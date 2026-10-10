@@ -23,6 +23,17 @@
   unicode-range: U+0100-017F, U+0218-021B;
 }
 
+/*
+ * Sunucuda çizilen çerez bandı (data-need: sitede sorulan gruplar). <head>'deki betik karar verilmiş
+ * grupları <html data-consent-*> olarak işaretler; hepsine karar verilmişse bant ilk boyamada gizlenir.
+ */
+html[data-consent-p] .consent-banner[data-need="p"],
+html[data-consent-p][data-consent-a] .consent-banner[data-need="pa"],
+html[data-consent-p][data-consent-d] .consent-banner[data-need="pd"],
+html[data-consent-p][data-consent-a][data-consent-d] .consent-banner[data-need="pad"] {
+  display: none;
+}
+
 /* --- Theme Tokens --- */
 @theme {
   /* Fonts */

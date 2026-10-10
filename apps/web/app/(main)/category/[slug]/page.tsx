@@ -51,6 +51,7 @@ export default async function CategoryPage({ params }: { params: Params }) {
 
       <AdSlot placement="category_top" className="my-0" />
 
+      {category.articles.length > 0 && <h2 className="sr-only">Haber listesi</h2>}
       {category.articles.length > 0 ? (
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
           {category.articles.map((article, i) => (
