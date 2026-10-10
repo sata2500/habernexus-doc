@@ -64,19 +64,19 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
         <p className="text-muted-foreground text-sm">{active.description}</p>
       </div>
 
-      <nav aria-label="Ayar bölümleri" className="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 rounded-2xl bg-muted border border-border">
+      <nav aria-label="Ayar bölümleri" className="grid grid-cols-2 sm:grid-cols-3 2xl:grid-cols-6 gap-1 p-1 rounded-2xl bg-muted border border-border">
         {TABS.map((t) => (
           <Link
             key={t.id}
             href={`/admin/settings?tab=${t.id}`}
             aria-current={t.id === tab ? "page" : undefined}
             className={cn(
-              "h-10 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold transition-all",
+              "min-h-10 px-2 py-1.5 rounded-xl flex items-center justify-center gap-2 text-sm font-semibold text-center leading-tight transition-all",
               t.id === tab ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <t.icon className="h-4 w-4 shrink-0" />
-            <span className="truncate">{t.label}</span>
+            <span>{t.label}</span>
           </Link>
         ))}
       </nav>

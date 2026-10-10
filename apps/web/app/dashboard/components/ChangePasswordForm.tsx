@@ -39,7 +39,7 @@ export function ChangePasswordForm() {
   };
 
   return (
-    <form onSubmit={submit} className="space-y-3 w-full sm:max-w-sm" aria-label="Şifre değiştir">
+    <form onSubmit={submit} className="space-y-3 w-full lg:max-w-sm" aria-label="Şifre değiştir">
       {error && <p role="alert" className="text-sm text-error">{error}</p>}
       {state === "done" && (
         <p role="status" className="text-sm text-success flex items-center gap-1.5">

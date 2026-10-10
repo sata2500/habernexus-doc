@@ -56,7 +56,7 @@ export default async function ReadingHistoryPage({ searchParams }: { searchParam
             <BookOpen className="h-5 w-5 text-primary-500" /> Yarım kalanlar
             <span className="text-xs font-medium text-muted-foreground">· kaldığınız yerden devam edin</span>
           </h2>
-          <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <ul className="grid grid-cols-1 lg:grid-cols-2 gap-3">
             {unfinished.map((r) => (
               <li key={r.article.id} className="flex items-center gap-2 rounded-2xl border border-border bg-card p-2.5 shadow-card">
                 <Link href={`/article/${r.article.slug}`} className="flex min-w-0 flex-1 items-center gap-3 group">

@@ -1,4 +1,5 @@
 import "server-only";
+import { findOrCreate } from "@/lib/server/ensure-row";
 
 import { cache } from "react";
 import { prisma } from "@/lib/prisma";
@@ -24,8 +25,7 @@ const OFF: PublicMonetization = {
 
 /** Ham ayar satırı (yönetim paneli için) */
 export async function getMonetizationRow() {
-  return (await prisma.monetizationSettings.findUnique({ where: { id: "global" } }))
-    ?? (await prisma.monetizationSettings.create({ data: { id: "global" } }));
+  return findOrCreate(() => prisma.monetizationSettings.findUnique({ where: { id: "global" } }), () => prisma.monetizationSettings.create({ data: { id: "global" } }));
 }
 
 /**

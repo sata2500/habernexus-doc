@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { findOrCreate } from "@/lib/server/ensure-row";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { checkRateLimitAsync, getActionIdentity } from "@/lib/server/rate-limit";
@@ -62,7 +63,7 @@ export async function subscribeToNewsletter(email: string) {
     if (existingSubscriber?.isActive) {
       return { success: false, error: "Bu e-posta adresi zaten bültene kayıtlı." };
     }
-    const subscriber = existingSubscriber ?? (await prisma.subscriber.create({ data: { email: emailLower, isActive: false } }));
+    const subscriber = existingSubscriber ?? (await findOrCreate(() => prisma.subscriber.findUnique({ where: { email: emailLower } }), () => prisma.subscriber.create({ data: { email: emailLower, isActive: false } })));
 
     const mail = await sendEmail({
       to: emailLower,

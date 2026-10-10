@@ -1,4 +1,5 @@
 import "server-only";
+import { findOrCreate } from "@/lib/server/ensure-row";
 
 import { Client } from "@upstash/qstash";
 import { prisma } from "@/lib/prisma";
@@ -75,8 +76,7 @@ function qstash() {
 }
 
 export async function getSettingsRow() {
-  return (await prisma.systemSettings.findUnique({ where: { id: "global" } }))
-    ?? (await prisma.systemSettings.create({ data: { id: "global" } }));
+  return findOrCreate(() => prisma.systemSettings.findUnique({ where: { id: "global" } }), () => prisma.systemSettings.create({ data: { id: "global" } }));
 }
 
 export async function getAutomationStatus(): Promise<JobStatus[]> {

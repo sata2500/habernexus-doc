@@ -113,7 +113,7 @@ export function ProfileForm({ initial }: Props) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-border/40">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-6 border-b border-border/40">
             <div className="space-y-2">
               <label htmlFor="profile-name" className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Görünen ad</label>
               <div className="relative group">

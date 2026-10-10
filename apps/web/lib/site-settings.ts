@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { findOrCreate } from "@/lib/server/ensure-row";
 import { prisma } from "./prisma";
 import { appCache } from "./cache";
 import type { SiteSettings as SiteSettingsRow } from "./generated/client";
@@ -51,8 +52,7 @@ const DEFAULT_SETTINGS: Omit<SiteSettings, "createdAt" | "updatedAt"> = {
 export const getSiteSettings = cache(async (): Promise<SiteSettings> => {
   try {
     return await appCache.getOrSet(SITE_SETTINGS_CACHE_KEY, 300, async () =>
-      (await prisma.siteSettings.findUnique({ where: { id: "global" } }))
-        ?? (await prisma.siteSettings.create({ data: { id: "global" } })),
+      findOrCreate(() => prisma.siteSettings.findUnique({ where: { id: "global" } }), () => prisma.siteSettings.create({ data: { id: "global" } })),
     );
   } catch (e) {
     console.error("getSiteSettings error:", e);

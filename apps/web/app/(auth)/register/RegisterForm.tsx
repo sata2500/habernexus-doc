@@ -79,7 +79,7 @@ export function RegisterForm({ googleEnabled }: { googleEnabled: boolean }) {
           <p id="register-password-hint" className="mt-1.5 text-xs text-muted-foreground">En az 8 karakter. Başka sitelerde kullandığınız bir şifre seçmeyin.</p>
         </div>
         <label className="flex items-start gap-3 text-sm cursor-pointer select-none">
-          <input type="checkbox" checked={newsletter} onChange={(e) => setNewsletter(e.target.checked)} className="mt-0.5 h-4 w-4 rounded border-border accent-primary-600" />
+          <input type="checkbox" checked={newsletter} onChange={(e) => setNewsletter(e.target.checked)} className="mt-0.5 h-5 w-5 shrink-0 rounded border-border accent-primary-600" />
           <span className="text-muted-foreground">
             Günlük haber bültenini e-posta ile almak istiyorum. <span className="text-xs">(İsteğe bağlı; istediğiniz zaman ayarlardan kapatabilirsiniz.)</span>
           </span>

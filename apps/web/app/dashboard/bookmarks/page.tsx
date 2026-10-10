@@ -20,7 +20,7 @@ export default async function BookmarksPage() {
       </div>
 
       {bookmarks.length > 0 ? (
-        <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-6">
+        <ul className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-3 sm:gap-6">
           {bookmarks.map((b, i) => (
             <li key={b.id} className="relative">
               <FeedArticleCard article={b.article} layout="vertical" priority={i < 3} note={`${formatDate(b.createdAt)} kaydedildi`} />

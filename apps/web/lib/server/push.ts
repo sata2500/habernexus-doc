@@ -1,4 +1,5 @@
 import "server-only";
+import { findOrCreate } from "@/lib/server/ensure-row";
 
 import webpush from "web-push";
 import { prisma } from "@/lib/prisma";
@@ -27,8 +28,7 @@ function ensureVapid() {
 }
 
 export async function getNotificationSettings() {
-  return (await prisma.notificationSettings.findUnique({ where: { id: "global" } }))
-    ?? (await prisma.notificationSettings.create({ data: { id: "global" } }));
+  return findOrCreate(() => prisma.notificationSettings.findUnique({ where: { id: "global" } }), () => prisma.notificationSettings.create({ data: { id: "global" } }));
 }
 
 /** Türkiye saatiyle saat (0-23) */

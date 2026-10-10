@@ -1,3 +1,4 @@
+import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { getStaticPageBySlug } from "@/app/actions/static-pages";
 import { Mail, Phone, MapPin, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/Card";
@@ -38,7 +39,7 @@ export default async function ContactPage() {
         {page?.content ? (
           <div
             className="prose dark:prose-invert mx-auto text-lg text-muted-foreground"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(stripLeadingTitleHeading(page.title, page.content)) }}
           />
         ) : (
           <p className="text-lg text-muted-foreground">

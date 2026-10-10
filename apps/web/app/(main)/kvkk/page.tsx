@@ -1,3 +1,4 @@
+import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { getStaticPageBySlug } from "@/app/actions/static-pages";
 import { sanitizeHtml } from "@/lib/server/sanitize-html";
 
@@ -34,7 +35,7 @@ export default async function KVKKPage() {
 
         <div
           className="text-foreground"
-          dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(stripLeadingTitleHeading(page.title, page.content)) }}
         />
       </div>
     </div>

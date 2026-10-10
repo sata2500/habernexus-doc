@@ -45,7 +45,7 @@ export default async function SettingsPage() {
 
           <PushToggle />
 
-          <section className="flex flex-col sm:flex-row items-start justify-between gap-4 pb-6 border-b border-border">
+          <section className="flex flex-col lg:flex-row items-start justify-between gap-4 pb-6 border-b border-border">
             <div>
               <h2 className="font-semibold text-foreground">Şifre</h2>
               <p className="text-sm text-muted-foreground mt-1 max-w-xs">
@@ -57,7 +57,7 @@ export default async function SettingsPage() {
             {credential ? <ChangePasswordForm /> : null}
           </section>
 
-          <section className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <section className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
               <h2 className="font-semibold text-error">Hesabı sil</h2>
               <p className="text-sm text-muted-foreground mt-1">

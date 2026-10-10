@@ -137,8 +137,8 @@ export function MonetizationPanel({ initial, sentryConfigured, onVercel }: { ini
             const p = s.placements[key];
             const usesAdsense = p.mode === "adsense" || p.mode === "auto";
             return (
-              <li key={key} className="p-3 sm:p-4 grid gap-3 md:grid-cols-[1fr_auto_auto] md:items-center">
-                <div className="min-w-0">
+              <li key={key} className="p-3 sm:p-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_auto_auto] lg:items-center">
+                <div className="min-w-0 sm:col-span-2 lg:col-span-1">
                   <p className="font-semibold text-sm">{PLACEMENTS[key].label}</p>
                   <p className="text-xs text-muted-foreground">{PLACEMENTS[key].format === "banner" ? "Yatay alan" : "Kare alan (300×250)"}</p>
                 </div>
@@ -157,10 +157,10 @@ export function MonetizationPanel({ initial, sentryConfigured, onVercel }: { ini
                   placeholder="Reklam birimi kimliği"
                   disabled={!usesAdsense}
                   inputMode="numeric"
-                  className="h-10 w-full md:w-48 rounded-xl border border-border bg-card px-3 text-sm disabled:opacity-40"
+                  className="h-10 w-full lg:w-48 min-w-0 rounded-xl border border-border bg-card px-3 text-sm disabled:opacity-40"
                 />
                 {usesAdsense && (!adsenseOn || !p.adsenseSlot) && (
-                  <p className="md:col-span-3 text-xs text-warning flex gap-1.5">
+                  <p className="sm:col-span-2 lg:col-span-3 text-xs text-warning flex gap-1.5">
                     <Info className="h-3.5 w-3.5 shrink-0" />
                     {!adsenseOn ? "AdSense kapalı: bu alanda yalnızca sponsor reklamı gösterilebilir." : "Reklam birimi kimliği girilmeden AdSense reklamı gösterilemez."}
                   </p>

@@ -1,3 +1,4 @@
+import { stripLeadingTitleHeading } from "@/lib/article-content";
 import { Briefcase, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { getStaticPageBySlug } from "@/app/actions/static-pages";
@@ -31,7 +32,7 @@ export default async function CareersPage() {
         {page?.content ? (
           <div
             className="text-foreground"
-            dangerouslySetInnerHTML={{ __html: sanitizeHtml(page.content) }}
+            dangerouslySetInnerHTML={{ __html: sanitizeHtml(stripLeadingTitleHeading(page.title, page.content)) }}
           />
         ) : (
           <p className="text-lg text-muted-foreground">
