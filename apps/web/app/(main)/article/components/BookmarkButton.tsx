@@ -62,14 +62,14 @@ export function BookmarkButton({ articleId }: Props) {
       aria-label={label}
       title={error ?? label}
       className={cn(
-        "h-10 w-10 rounded-full transition-all duration-200 cursor-pointer flex items-center justify-center focus-ring disabled:opacity-60",
+        "h-10 w-10 rounded-full transition-colors duration-200 cursor-pointer flex items-center justify-center focus-ring disabled:opacity-60",
         saved
           ? "bg-primary-500 text-white hover:bg-primary-600 shadow-lg shadow-primary-500/30"
           : "bg-muted text-muted-foreground hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-950/20",
         error && "ring-2 ring-error",
       )}
     >
-      <Bookmark className={cn("h-5 w-5 transition-all", saved && "fill-current")} aria-hidden="true" />
+      <Bookmark className={cn("h-5 w-5", saved && "fill-current")} aria-hidden="true" />
     </button>
   );
 }

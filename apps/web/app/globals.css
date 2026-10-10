@@ -436,11 +436,8 @@ body {
 }
 
 @keyframes shimmer {
-  from {
-    background-position: -200% 0;
-  }
   to {
-    background-position: 200% 0;
+    transform: translateX(100%);
   }
 }
 
@@ -469,10 +466,22 @@ body {
   animation: scale-in 0.3s var(--ease-spring) forwards;
 }
 
-.animate-shimmer {
-  background: linear-gradient(90deg, var(--muted) 25%, var(--surface-elevated) 50%, var(--muted) 75%);
-  background-size: 200% 100%;
-  animation: shimmer 1.5s infinite;
+/* İskelet parıltısı transform ile kayar (GPU'da çizilir; background-position her karede yeniden boyar).
+   components katmanında: "absolute" gibi yardımcı sınıflar position'ı ezebilir. */
+@layer components {
+  .animate-shimmer {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--muted);
+  }
+  .animate-shimmer::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, var(--surface-elevated), transparent);
+    transform: translateX(-100%);
+    animation: shimmer 1.5s infinite;
+  }
 }
 
 .animate-pulse-glow {

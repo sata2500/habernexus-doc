@@ -54,8 +54,9 @@ export function ReadingProgressBar() {
     <>
       <div className="fixed top-0 left-0 right-0 h-1.5 z-50 bg-border/20 backdrop-blur-xs pointer-events-none">
         <div
-          className="h-full bg-linear-to-r from-primary-500 via-primary-400 to-accent-500 transition-all duration-150 ease-out"
-          style={{ width: `${shown}%` }}
+          // Genişlik yerine transform: kaydırma boyunca yerleşim yeniden hesaplanmaz, GPU'da çizilir
+          className="h-full origin-left bg-linear-to-r from-primary-500 via-primary-400 to-accent-500 transition-transform duration-150 ease-out"
+          style={{ transform: `scaleX(${shown / 100})` }}
         />
       </div>
 
@@ -85,7 +86,7 @@ export function ReadingProgressBar() {
                   <circle cx="10" cy="10" r="8" className="stroke-muted" strokeWidth="2.5" fill="none" />
                   <circle
                     cx="10" cy="10" r="8"
-                    className="stroke-primary-500 transition-all duration-150"
+                    className="stroke-primary-500"
                     strokeWidth="2.5"
                     strokeDasharray="50.26"
                     strokeDashoffset={50.26 - (50.26 * shown) / 100}
