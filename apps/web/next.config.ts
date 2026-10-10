@@ -115,6 +115,7 @@ export default withSentryConfig(nextConfig, {
   telemetry: false,
   sourcemaps: { disable: !sentryUpload, deleteSourcemapsAfterUpload: true },
   // Tarayıcı hataları sentry.io yerine kendi alan adımız üzerinden gider: reklam engelleyiciler ve
-  // "özel DNS" filtreleri sentry.io'yu engellediği için tarayıcı hataları aksi halde ulaşmayabilir
-  tunnelRoute: "/monitoring",
+  // "özel DNS" filtreleri sentry.io'yu engeller. Yol her derlemede rastgele üretilir; sabit "/monitoring"
+  // gizlilik listelerinde (EasyPrivacy vb.) bulunduğu için engelleniyordu. proxy.ts bu yolu kapsamaz.
+  tunnelRoute: true,
 });
