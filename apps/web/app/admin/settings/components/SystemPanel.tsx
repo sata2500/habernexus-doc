@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog } from "@/components/ui/feedback";
+
 import { useState, useTransition } from "react";
 import {
   AlertTriangle, CheckCircle2, Database, Globe, Loader2, PlayCircle, RefreshCw, XCircle, CircleDashed, Search,
@@ -163,12 +165,12 @@ export function SystemPanel({ initialStatus, dbError, services, indexing }: Prop
       if (res.success) { setStatus(res.status); setError(null); } else setError(res.error);
     });
 
-  const apply = () => {
+  const apply = async () => {
     if (!status) return;
     const msg = status.needsBaseline
       ? "Veritabanı daha önce migration geçmişi olmadan kurulmuş. Mevcut tablolar korunarak geçmiş oluşturulacak ve bekleyen güncellemeler uygulanacak. Devam edilsin mi?"
       : `${status.pendingCount} veritabanı güncellemesi uygulanacak. Mevcut veriler korunur. Devam edilsin mi?`;
-    if (!confirm(msg)) return;
+    if (!(await confirmDialog({ title: "Veritabanı güncellensin mi?", message: msg, confirmText: "Uygula" }))) return;
     startApply(async () => {
       const res = await applyMigrationsAction();
       if (res.success) { setResults(res.results); setStatus(res.status); setError(null); }

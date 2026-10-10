@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog } from "@/components/ui/feedback";
+
 import { useTransition } from "react";
 import { Loader2, Trash2, X } from "lucide-react";
 import { clearReadingHistory, removeReadingHistoryItem } from "../actions";
@@ -25,8 +27,8 @@ export function ClearHistoryButton() {
   return (
     <button
       type="button"
-      onClick={() => {
-        if (!window.confirm("Tüm okuma geçmişiniz silinsin mi? Öneriler de buna göre sıfırlanır.")) return;
+      onClick={async () => {
+        if (!(await confirmDialog({ title: "Okuma geçmişi silinsin mi?", message: "Tüm okuma geçmişiniz silinir; \"Sizin İçin\" önerileri de sıfırlanır.", confirmText: "Geçmişi temizle", tone: "danger" }))) return;
         start(async () => { await clearReadingHistory(); });
       }}
       disabled={pending}

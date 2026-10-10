@@ -1,5 +1,7 @@
 "use client";
 
+import { toast } from "@/components/ui/feedback";
+
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { BookmarkX, Loader2 } from "lucide-react";
@@ -15,7 +17,7 @@ export function RemoveBookmarkButton({ articleId, title }: { articleId: string; 
       onClick={() => start(async () => {
         const res = await toggleBookmark(articleId);
         if (res.success) router.refresh();
-        else alert(res.error);
+        else toast.error(res.error);
       })}
       disabled={pending}
       aria-label={`${title} kaydedilenlerden çıkar`}

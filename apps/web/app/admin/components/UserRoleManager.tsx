@@ -1,5 +1,8 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
+
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { BadgeCheck, Loader2, Trash2 } from "lucide-react";
@@ -23,7 +26,7 @@ export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[
     setBusyId(id);
     startTransition(async () => {
       const res = await fn();
-      if (!res.success) alert(res.error ?? "İşlem başarısız.");
+      if (!res.success) toast.error(res.error ?? "İşlem başarısız.");
       setBusyId(null);
       router.refresh();
     });
@@ -58,13 +61,10 @@ export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[
                   <select
                     value={u.role}
                     disabled={isMe}
-                    onChange={(e) => {
+                    onChange={async (e) => {
                       const next = e.target.value;
-                      // Yönetici yetkisi tüm paneli açar: yanlışlıkla verilmesin
-                      if (next === "ADMIN" && !confirm(`"${u.name}" yönetici yapılsın mı? Tüm içerik, kullanıcı ve site ayarlarını yönetebilecek.`)) {
-                        e.target.value = u.role;
-                        return;
-                      }
+                      // Yönetici yetkisi tüm paneli açar: yanlışlıkla verilmesin (seçim kontrollü; vazgeçilince eski rol görünür)
+                      if (next === "ADMIN" && !(await confirmDialog({ title: `"${u.name}" yönetici yapılsın mı?`, message: "Tüm içeriği, kullanıcıları ve site ayarlarını yönetebilecek.", confirmText: "Yönetici yap" }))) return;
                       run(u.id, () => updateUserRole(u.id, next));
                     }}
                     aria-label={`${u.name} rolü`}
@@ -75,8 +75,8 @@ export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[
                   {!u.emailVerified && (
                     <button
                       type="button"
-                      onClick={() => {
-                        if (confirm(`"${u.email}" adresi doğrulanmış sayılsın mı? Bu kişi doğrulama e-postası olmadan şifresiyle giriş yapabilecek. Yalnızca adresin bu kişiye ait olduğundan eminseniz onaylayın.`)) run(u.id, () => markEmailVerified(u.id));
+                      onClick={async () => {
+                        if (await confirmDialog({ title: `"${u.email}" doğrulanmış sayılsın mı?`, message: "Bu kişi doğrulama e-postası olmadan şifresiyle giriş yapabilecek. Yalnızca adresin bu kişiye ait olduğundan eminseniz onaylayın.", confirmText: "Doğrulanmış say" })) run(u.id, () => markEmailVerified(u.id));
                       }}
                       aria-label={`${u.email} adresini doğrulanmış say`}
                       title="E-postayı doğrulanmış say"
@@ -88,8 +88,8 @@ export function UserRoleManager({ users, currentUserId }: { users: AdminUserRow[
                   {!isMe && (
                     <button
                       type="button"
-                      onClick={() => {
-                        if (confirm(`"${u.name}" silinsin mi? Bu işlem geri alınamaz; yorumları ve okuma geçmişi silinir; yazdığı haberler silinmez, ilk yönetici hesabına devredilir.`)) run(u.id, () => deleteUser(u.id));
+                      onClick={async () => {
+                        if (await confirmDialog({ title: `"${u.name}" silinsin mi?`, message: "Bu işlem geri alınamaz. Yorumları ve okuma geçmişi silinir; yazdığı haberler silinmez, ilk yönetici hesabına devredilir.", confirmText: "Kullanıcıyı sil", tone: "danger" })) run(u.id, () => deleteUser(u.id));
                       }}
                       aria-label={`${u.name} kullanıcısını sil`}
                       title="Kullanıcıyı sil"

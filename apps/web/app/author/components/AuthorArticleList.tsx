@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -26,12 +28,12 @@ export function AuthorArticleList({ articles, filtered }: { articles: AuthorArti
   const [, start] = useTransition();
   const [analysis, setAnalysis] = useState<AuthorArticleRow | null>(null);
 
-  const remove = (a: AuthorArticleRow) => {
-    if (!confirm(`"${a.title}" kalıcı olarak silinsin mi? Bu işlem geri alınamaz.`)) return;
+  const remove = async (a: AuthorArticleRow) => {
+    if (!(await confirmDialog({ title: "Haber silinsin mi?", message: `"${a.title}" kalıcı olarak silinir; bu işlem geri alınamaz.`, confirmText: "Sil", tone: "danger" }))) return;
     setBusyId(a.id);
     start(async () => {
       const r = await deleteArticle(a.id);
-      if (!r.success) alert(r.error);
+      if (!r.success) toast.error(r.error);
       setBusyId(null);
       router.refresh();
     });

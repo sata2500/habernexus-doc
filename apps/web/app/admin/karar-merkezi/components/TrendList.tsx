@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog } from "@/components/ui/feedback";
+
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -14,8 +16,8 @@ export function TrendList({ trends, enabled }: { trends: TrendView[]; enabled: b
   const [busyId, setBusyId] = useState<string | null>(null);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  const write = (t: TrendView) => {
-    if (!confirm(`"${t.keyword}" hakkında haber yazılıp yayınlansın mı?`)) return;
+  const write = async (t: TrendView) => {
+    if (!(await confirmDialog({ title: `"${t.keyword}" hakkında haber yazılsın mı?`, message: "Haber yazılıp hemen yayınlanır.", confirmText: "Yaz ve yayınla" }))) return;
     setMsg(null);
     setBusyId(t.id);
     start(async () => {

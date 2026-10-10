@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog } from "@/components/ui/feedback";
+
 import { SITE_TIME_ZONE } from "@/lib/utils";
 import { useState, useMemo, useTransition } from "react";
 import { Plus, Trash2, RefreshCw, Power, ExternalLink, Loader2, Rss, Search, Filter, CheckSquare, Square, X } from "lucide-react";
@@ -100,7 +102,7 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`"${name}" kaynağını ve tüm öğelerini silmek istediğinize emin misiniz?`)) return;
+    if (!(await confirmDialog({ title: `"${name}" kaynağı silinsin mi?`, message: "Kaynak ve ondan gelen tüm kayıtlar kalıcı olarak silinir.", confirmText: "Sil", tone: "danger" }))) return;
     const res = await deleteRssSource(id);
     if (!res.success) {
       setError(res.error || "Kaynak silinemedi.");
@@ -143,9 +145,9 @@ export function FeedSourceManager({ sources: initialSources }: Props) {
     }
   };
 
-  const handleBulkAction = (action: "delete" | "scan" | "enable" | "disable") => {
+  const handleBulkAction = async (action: "delete" | "scan" | "enable" | "disable") => {
     if (selectedIds.size === 0) return;
-    if (action === "delete" && !confirm(`${selectedIds.size} adet RSS kaynağını silmek istediğinize emin misiniz?`)) return;
+    if (action === "delete" && !(await confirmDialog({ title: `${selectedIds.size} RSS kaynağı silinsin mi?`, message: "Kaynaklar ve onlardan gelen tüm kayıtlar kalıcı olarak silinir.", confirmText: "Sil", tone: "danger" }))) return;
 
     startTransition(async () => {
       const ids = Array.from(selectedIds);

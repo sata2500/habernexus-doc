@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
 import { cn, SITE_TIME_ZONE } from "@/lib/utils";
 import { useState, useTransition } from "react";
 import { Avatar } from "@/components/ui/Avatar";
@@ -26,14 +28,14 @@ export function CommentTable({ comments, onDelete, isAdmin, showUser = true }: P
   const [, startTransition] = useTransition();
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const handleDelete = (id: string) => {
-    if (!confirm("Bu yorumu silmek istediğinize emin misiniz?")) return;
+  const handleDelete = async (id: string) => {
+    if (!(await confirmDialog({ title: "Yorum silinsin mi?", message: "Bu işlem geri alınamaz.", confirmText: "Sil", tone: "danger" }))) return;
     
     setDeletingId(id);
     startTransition(async () => {
       const resp = await onDelete(id);
       if (!resp.success) {
-        alert(resp.error || "Silme işlemi başarısız.");
+        toast.error(resp.error || "Yorum silinemedi.");
       }
       setDeletingId(null);
     });

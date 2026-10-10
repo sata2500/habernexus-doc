@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog } from "@/components/ui/feedback";
+
 import { useEffect, useEffectEvent, useMemo, useRef, useState, useTransition } from "react";
 import { LiveSeoPanel } from "./LiveSeoPanel";
 import dynamic from "next/dynamic";
@@ -145,9 +147,9 @@ export function ArticleEditor({ article, categories, suggestion, initialNotice }
     setTagInput("");
   };
 
-  const save = (status: "DRAFT" | "PUBLISHED") => {
+  const save = async (status: "DRAFT" | "PUBLISHED") => {
     if (pending) return;
-    if (status === "DRAFT" && article.status === "PUBLISHED" && !confirm("Haber yayından kaldırılıp taslağa alınsın mı?")) return;
+    if (status === "DRAFT" && article.status === "PUBLISHED" && !(await confirmDialog({ title: "Haber yayından kaldırılsın mı?", message: "Haber taslağa alınır ve sitede görünmez.", confirmText: "Yayından kaldır" }))) return;
     setError(null);
     setNotice(null);
     // Yazılıp eklenmemiş etiket de kaydedilsin

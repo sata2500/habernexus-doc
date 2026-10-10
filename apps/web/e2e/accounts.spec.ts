@@ -35,6 +35,21 @@ test.describe("okur", () => {
     expect(errors).toEqual([]);
   });
 
+  test("onay penceresi: vazgeçilince hiçbir şey silinmez", async ({ page }) => {
+    await page.goto("/dashboard/settings");
+    await page.getByRole("button", { name: "Hesabımı kalıcı olarak sil" }).click();
+    const dialog = page.getByRole("alertdialog");
+    await expect(dialog).toBeVisible();
+    // "SİL" yazılmadan onay düğmesi kapalı
+    const confirm = dialog.getByRole("button", { name: "Hesabımı sil" });
+    await expect(confirm).toBeDisabled();
+    await dialog.getByRole("textbox").fill("sil");
+    await expect(confirm).toBeEnabled();
+    await dialog.getByRole("button", { name: "Vazgeç" }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByRole("heading", { level: 1 })).toContainText("Tercihler");
+  });
+
   test("panel sayfaları açılır; okur yazar masasına giremez", async ({ page }) => {
     for (const [path, heading] of [["/dashboard/profile", "Profil bilgileri"], ["/dashboard/history", "Okuduklarım"], ["/dashboard/settings", "Tercihler"]] as const) {
       await page.goto(path);

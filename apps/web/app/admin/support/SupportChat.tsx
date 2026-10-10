@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog } from "@/components/ui/feedback";
+
 import { useState, useTransition } from "react";
 import { sendSupportReply, updateTicketStatus, deleteSupportTicket } from "./actions";
 import { Loader2, Send, CheckCircle2, User, ShieldCheck, Mail, Trash2 } from "lucide-react";
@@ -61,8 +63,8 @@ export function SupportChat({ ticket }: Props) {
     });
   };
 
-  const handleDelete = () => {
-    if (!confirm("Bu bileti ve tüm mesajları/ekleri kalıcı olarak silmek istediğinize emin misiniz?")) return;
+  const handleDelete = async () => {
+    if (!(await confirmDialog({ title: "Bilet silinsin mi?", message: "Bilet, tüm mesajları ve ekleri kalıcı olarak silinir.", confirmText: "Sil", tone: "danger" }))) return;
 
     startDeleteTransition(async () => {
       const result = await deleteSupportTicket(ticket.id);

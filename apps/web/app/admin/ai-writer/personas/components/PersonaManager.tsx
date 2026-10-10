@@ -1,5 +1,8 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
+
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { FileText, Info, Loader2, Pencil, Plus, Sparkles, Trash2, Users, X } from "lucide-react";
@@ -128,17 +131,17 @@ export function PersonaManager({ personas, categories }: { personas: PersonaView
   const toggleActive = async (p: PersonaView) => {
     setBusyId(p.id);
     const res = await setPersonaActive(p.id, !p.isActive);
-    if (!res.success) alert(res.error);
+    if (!res.success) toast.error(res.error);
     router.refresh();
     setBusyId(null);
   };
 
   const remove = async (p: PersonaView) => {
     const note = p.articleCount ? ` Yazdığı ${p.articleCount} haber silinmez; yazar olarak site hesabı görünür.` : "";
-    if (!confirm(`"${p.name}" silinsin mi?${note}`)) return;
+    if (!(await confirmDialog({ title: `"${p.name}" silinsin mi?`, message: note.trim() || "Bu işlem geri alınamaz.", confirmText: "Sil", tone: "danger" }))) return;
     setBusyId(p.id);
     const res = await deletePersona(p.id);
-    if (!res.success) alert(res.error);
+    if (!res.success) toast.error(res.error);
     router.refresh();
     setBusyId(null);
   };

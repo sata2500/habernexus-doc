@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
 import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { ArrowDown, ArrowUp, ExternalLink, Images, Loader2, Newspaper, Pencil, Plus, Search, Trash2, X } from "lucide-react";
@@ -65,7 +67,7 @@ export function SliderClient({ slider }: { slider: SliderData }) {
   const act = (fn: () => Promise<{ success: boolean; error?: string }>) =>
     startTransition(async () => {
       const res = await fn();
-      if (!res.success) alert(res.error ?? "İşlem başarısız.");
+      if (!res.success) toast.error(res.error ?? "İşlem başarısız.");
       router.refresh();
     });
 
@@ -174,7 +176,7 @@ export function SliderClient({ slider }: { slider: SliderData }) {
                     <button onClick={() => openEdit(s)} aria-label="Düzenle" className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-muted">
                       <Pencil className="h-4 w-4" />
                     </button>
-                    <button onClick={() => { if (confirm("Bu slayt silinsin mi?")) act(() => deleteSlide(s.id)); }} aria-label="Sil" className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-error/10 hover:text-error">
+                    <button onClick={async () => { if (await confirmDialog({ title: "Slayt silinsin mi?", confirmText: "Sil", tone: "danger" })) act(() => deleteSlide(s.id)); }} aria-label="Sil" className="h-8 w-8 inline-flex items-center justify-center rounded-lg text-muted-foreground hover:bg-error/10 hover:text-error">
                       <Trash2 className="h-4 w-4" />
                     </button>
                   </div>

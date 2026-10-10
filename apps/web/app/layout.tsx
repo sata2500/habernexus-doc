@@ -8,6 +8,7 @@ import { getSiteSettings } from "@/lib/site-settings";
 import Script from "next/script";
 import { getPublicMonetization } from "@/lib/server/monetization";
 import { CONSENT_INIT_SCRIPT } from "@/lib/google-consent";
+import { FeedbackHost } from "@/components/ui/feedback";
 import "./globals.css";
 
 const inter = Inter({
@@ -107,6 +108,7 @@ export default async function RootLayout({
         <WebSiteJsonLd settings={settings} />
         <OrganizationJsonLd settings={settings} />
         <ThemeProvider>{children}</ThemeProvider>
+        <FeedbackHost />
         {/* Google Consent Mode varsayılanları: Google betiklerinden önce, çerezdeki tercihe göre */}
         {usesGoogle && <Script id="consent-init" strategy="beforeInteractive">{CONSENT_INIT_SCRIPT}</Script>}
       </body>

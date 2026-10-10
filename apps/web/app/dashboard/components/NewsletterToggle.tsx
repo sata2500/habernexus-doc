@@ -1,5 +1,7 @@
 "use client";
 
+import { toast } from "@/components/ui/feedback";
+
 import { useState } from "react";
 import { updateNewsletterSubscription, updateNewsletterTime, testNewsletterEmail } from "../actions";
 import { Loader2, Mail, Send, CheckCircle2, AlertCircle } from "lucide-react";
@@ -30,7 +32,7 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
 
     const result = await updateNewsletterSubscription(newState).catch(() => ({ success: false as const, error: "Bağlantı kurulamadı." }));
     if (!result.success) {
-      alert(result.error);
+      toast.error(result.error);
       setIsSubscribed(!newState);
     }
     setIsLoading(false);
@@ -43,7 +45,7 @@ export function NewsletterToggle({ initialSubscribed, initialTime }: NewsletterT
 
     const result = await updateNewsletterTime(newTime).catch(() => ({ success: false as const, error: "Bağlantı kurulamadı." }));
     if (!result.success) {
-      alert(result.error);
+      toast.error(result.error);
       setTime(previous);
     }
     setIsLoading(false);

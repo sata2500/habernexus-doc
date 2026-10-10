@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog } from "@/components/ui/feedback";
+
 import { useEffect, useState, useTransition } from "react";
 import {
   AlertCircle, AlertTriangle, BookOpen, CheckCircle2, CircleAlert, ExternalLink, FileSearch, ListChecks, PenLine,
@@ -121,9 +123,9 @@ export function ArticleAnalysisModal({ articleId, articleTitle, userRole, initia
   const report = asV2(data?.analysisReport);
   const hasOld = !report && data?.qualityScore != null;
 
-  const run = (kind: "analyze" | "rewrite" | "fix") => {
-    if (kind === "fix" && !confirm("Kaynaklardan aynen alınmış cümlelerin geçtiği paragraflar, bilgiler korunarak yapay zekâ ile yeniden yazılacak ve haber tekrar analiz edilecek. Devam edilsin mi?")) return;
-    if (kind === "rewrite" && !confirm("Haber metni yapay zekâ ile, analizdeki eksikler giderilecek şekilde yeniden yazılacak. Mevcut metin değişecek. Devam edilsin mi?")) return;
+  const run = async (kind: "analyze" | "rewrite" | "fix") => {
+    if (kind === "fix" && !(await confirmDialog({ title: "Kopya paragraflar yeniden yazılsın mı?", message: "Kaynaklardan aynen alınmış cümlelerin geçtiği paragraflar, bilgiler korunarak yapay zekâ ile yeniden yazılır ve haber tekrar analiz edilir.", confirmText: "Yeniden yaz" }))) return;
+    if (kind === "rewrite" && !(await confirmDialog({ title: "Haber yeniden yazılsın mı?", message: "Metin, analizdeki eksikler giderilecek şekilde yapay zekâ ile yeniden yazılır. Mevcut metin değişir.", confirmText: "Yeniden yaz" }))) return;
     setError(null);
     setNotice(null);
     setAction(kind);

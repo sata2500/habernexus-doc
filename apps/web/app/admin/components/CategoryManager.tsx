@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
 import { useState, useTransition, FormEvent } from "react";
 import { createCategory, updateCategory, deleteCategoryAdmin } from "../actions";
 import { Loader2, Trash2, Edit2, Bookmark, CheckCircle2, AlertCircle } from "lucide-react";
@@ -84,12 +86,12 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
     });
   };
 
-  const handleDelete = (id: string, count: number) => {
+  const handleDelete = async (id: string, count: number) => {
     if (count > 0) {
-      alert("Bu kategoriye ait makaleler olduğu için silinemez. Lütfen önce makaleleri şuradan taşıyın veya silin.");
+      toast.error("Bu kategoride haberler olduğu için silinemez. Önce haberleri başka bir kategoriye taşıyın ya da silin.");
       return;
     }
-    if (!confirm("Kategoriyi kalıcı olarak silmek istediğinizden emin misiniz?")) return;
+    if (!(await confirmDialog({ title: "Kategori silinsin mi?", message: "Bu işlem geri alınamaz.", confirmText: "Sil", tone: "danger" }))) return;
 
     setActionId(id + "-delete");
     setErrorMsg("");

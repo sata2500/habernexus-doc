@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AlertCircle, CheckCircle2, CheckSquare, Clock, ExternalLink, ImageIcon, Loader2, Square, Trash2, X, Zap } from "lucide-react";
@@ -46,20 +48,20 @@ export function MediaManagerClient({ items }: { items: AdminMediaRow[] }) {
       }
       setWorking((w) => { const next = new Set(w); next.delete(id); return next; });
     }
-    if (failed) alert(`${failed} görsel optimize edilemedi.`);
+    if (failed) toast.error(`${failed} görsel optimize edilemedi.`);
     setSelected(new Set());
     router.refresh();
   };
 
-  const remove = (ids: string[]) => {
+  const remove = async (ids: string[]) => {
     const used = items.filter((m) => ids.includes(m.id) && m.usedIn.length > 0);
     const warning = used.length
-      ? `\n\nDikkat: ${used.length} görsel kullanımda (${[...new Set(used.flatMap((m) => m.usedIn))].join(", ")}). Silinirse bu yerlerden kaldırılır; görseli kullanan slaytlar da silinir.`
-      : "";
-    if (!confirm(`${ids.length} görsel kalıcı olarak silinsin mi?${warning}`)) return;
+      ? `Dikkat: ${used.length} görsel kullanımda (${[...new Set(used.flatMap((m) => m.usedIn))].join(", ")}). Silinirse bu yerlerden kaldırılır; görseli kullanan slaytlar da silinir.`
+      : "Bu işlem geri alınamaz.";
+    if (!(await confirmDialog({ title: `${ids.length} görsel silinsin mi?`, message: warning, confirmText: "Sil", tone: "danger" }))) return;
     startTransition(async () => {
       const res = await deleteMediaItems(ids);
-      if (!res.success) alert(res.error);
+      if (!res.success) toast.error(res.error);
       setSelected(new Set());
       router.refresh();
     });

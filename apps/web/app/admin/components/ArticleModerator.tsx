@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
 import { displayScore } from "@/lib/analysis/report";
 import { useState, useTransition } from "react";
 import Link from "next/link";
@@ -37,7 +39,7 @@ export function ArticleModerator({ articles }: { articles: AdminArticleRow[] }) 
     setBusyId(id);
     startTransition(async () => {
       const res = await fn();
-      if (!res.success) alert(res.error ?? "İşlem başarısız.");
+      if (!res.success) toast.error(res.error ?? "İşlem başarısız.");
       setBusyId(null);
       router.refresh();
     });
@@ -77,7 +79,7 @@ export function ArticleModerator({ articles }: { articles: AdminArticleRow[] }) 
             </button>
             <button
               disabled={isPending}
-              onClick={() => { if (confirm(`${ids.length} makale kalıcı olarak silinsin mi?`)) run(null, () => bulkDeleteArticles(ids)); }}
+              onClick={async () => { if (await confirmDialog({ title: `${ids.length} haber silinsin mi?`, message: "Haberler kalıcı olarak silinir; bu işlem geri alınamaz.", confirmText: "Sil", tone: "danger" })) run(null, () => bulkDeleteArticles(ids)); }}
               className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg bg-error text-white text-xs font-semibold disabled:opacity-50"
             >
               <Trash2 className="h-3.5 w-3.5" /> Sil
@@ -150,7 +152,7 @@ export function ArticleModerator({ articles }: { articles: AdminArticleRow[] }) 
                       {published ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                     <button
-                      onClick={() => { if (confirm("Bu makale kalıcı olarak silinsin mi?")) run(a.id, () => deleteArticle(a.id)); }}
+                      onClick={async () => { if (await confirmDialog({ title: "Haber silinsin mi?", message: `"${a.title}" kalıcı olarak silinir; bu işlem geri alınamaz.`, confirmText: "Sil", tone: "danger" })) run(a.id, () => deleteArticle(a.id)); }}
                       aria-label="Sil"
                       title="Sil"
                       className="inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-error/10 hover:text-error"

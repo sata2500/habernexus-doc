@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
 import { SITE_TIME_ZONE } from "@/lib/utils";
 import { useState } from "react";
 import { Avatar } from "@/components/ui/Avatar";
@@ -40,14 +42,14 @@ export function CommentItem({ comment, userId, articleId, onUpdate, isReply, roo
   });
 
   const handleDelete = async () => {
-    if (!confirm("Bu yorumu silmek istediğinize emin misiniz?")) return;
+    if (!(await confirmDialog({ title: "Yorum silinsin mi?", message: "Bu işlem geri alınamaz.", confirmText: "Sil", tone: "danger" }))) return;
 
     setIsDeleting(true);
     const result = await deleteComment(comment.id);
     if (result.success) {
       onUpdate();
     } else {
-      alert(result.error || "Yorum silinemedi.");
+      toast.error(result.error || "Yorum silinemedi.");
       setIsDeleting(false);
     }
   };

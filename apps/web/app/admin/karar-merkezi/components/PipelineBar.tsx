@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog } from "@/components/ui/feedback";
+
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Loader2, PenLine, RefreshCw, XCircle } from "lucide-react";
@@ -13,8 +15,8 @@ export function PipelineBar({ queueCount }: { queueCount: number }) {
   const [running, setRunning] = useState<"scan" | "write" | null>(null);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
-  const run = (kind: "scan" | "write") => {
-    if (kind === "write" && !confirm("Sıradaki en yüksek puanlı konu şimdi yazılıp yayınlansın mı?")) return;
+  const run = async (kind: "scan" | "write") => {
+    if (kind === "write" && !(await confirmDialog({ title: "Sıradaki konu şimdi yazılsın mı?", message: "En yüksek puanlı konu yazılıp hemen yayınlanır.", confirmText: "Yaz ve yayınla" }))) return;
     setMsg(null);
     setRunning(kind);
     start(async () => {

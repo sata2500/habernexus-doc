@@ -1,5 +1,7 @@
 "use client";
 
+import { confirmDialog, toast } from "@/components/ui/feedback";
+
 import { useState } from "react";
 
 import { deleteAccount } from "../actions";
@@ -9,8 +11,14 @@ export function DeleteAccountButton() {
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDeleteAccount = async () => {
-    const answer = window.prompt("Hesabınız ve yorumlarınız, kaydettikleriniz, okuma geçmişiniz kalıcı olarak silinecek. Bu işlem geri alınamaz.\n\nOnaylamak için SİL yazın:");
-    if (answer?.trim().toLocaleUpperCase("tr") !== "SİL") return;
+    const ok = await confirmDialog({
+      title: "Hesabınız silinsin mi?",
+      message: "Hesabınız; yorumlarınız, kaydettikleriniz ve okuma geçmişinizle birlikte kalıcı olarak silinir. Bu işlem geri alınamaz.",
+      confirmText: "Hesabımı sil",
+      tone: "danger",
+      requireText: "SİL",
+    });
+    if (!ok) return;
 
     setIsDeleting(true);
     const result = await deleteAccount().catch(() => ({ success: false as const, error: "Bağlantı kurulamadı." }));
@@ -20,7 +28,7 @@ export function DeleteAccountButton() {
       // eslint-disable-next-line @next/next/no-location-assign-relative-destination -- istemci yönlendirmesi oturum önbelleğini temizlemez
       window.location.assign("/");
     } else {
-      alert(result.error);
+      toast.error(result.error);
       setIsDeleting(false);
     }
   };
