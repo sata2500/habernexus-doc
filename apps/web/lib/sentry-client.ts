@@ -5,7 +5,7 @@ import { sentryBaseOptions } from "@/sentry.shared";
  * tarayıcı boşa çıkınca yüklenir. O ana kadar oluşan hatalar sıraya alınır ve Sentry hazır olunca gönderilir.
  * DSN yoksa hiçbir şey yüklenmez.
  */
-type SentryModule = typeof import("@sentry/nextjs");
+type SentryModule = typeof import("./sentry-sdk");
 
 let loading: Promise<SentryModule | null> | null = null;
 const early: unknown[] = [];
@@ -15,7 +15,7 @@ function onEarlyRejection(e: PromiseRejectionEvent) { early.push(e.reason); }
 
 export function loadSentry(): Promise<SentryModule | null> {
   if (!sentryBaseOptions.enabled || typeof window === "undefined") return Promise.resolve(null);
-  loading ??= import("@sentry/nextjs")
+  loading ??= import("./sentry-sdk")
     .then((Sentry) => {
       if (!Sentry.getClient()) {
         Sentry.init({

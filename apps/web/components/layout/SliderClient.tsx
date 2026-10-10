@@ -112,8 +112,9 @@ export function SliderClient({ slides, interval = 5000, autoPlay = true }: Slide
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover group-hover/slide:scale-105 transition-transform duration-1000"
-                priority={index === 0}
-                fetchPriority={index === 0 ? "high" : undefined}
+                // İlk slayt sayfanın en üstünde, mobilde en büyük görsel (LCP) odur: hemen ve yüksek öncelikle yüklenir
+                loading={index === 0 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
 

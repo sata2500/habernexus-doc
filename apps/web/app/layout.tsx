@@ -21,6 +21,9 @@ const outfit = Outfit({
   variable: "--font-outfit",
   subsets: ["latin", "latin-ext"],
   display: "swap",
+  // Yalnızca başlıklarda kullanılır; önceden yüklenmesi ilk açılışta büyük görselle (LCP) bant genişliği yarıştırıyordu.
+  // Yedek yazı tipi ölçüleri Next tarafından eşitlendiği için geç yüklenmesi kaymaya yol açmaz.
+  preload: false,
 });
 
 export const viewport: Viewport = {

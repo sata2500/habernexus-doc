@@ -1,3 +1,5 @@
+import { Newspaper } from "lucide-react";
+import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getCategoriesWithCount } from "@/lib/data";
@@ -28,7 +30,13 @@ export default async function MainLayout({
       >
         İçeriğe geç
       </a>
-      <Navbar categories={categories} settings={settings} />
+      <Navbar
+        categories={categories.map((c) => ({
+          id: c.id, name: c.name, slug: c.slug, color: c.color,
+          iconNode: <DynamicIcon name={c.icon} className="h-full w-full" fallback={Newspaper} />,
+        }))}
+        settings={settings}
+      />
       <main id="main-content" tabIndex={-1} className="flex-1 outline-none">{children}</main>
       <Footer categories={categories} settings={settings} />
       <CookieConsent analytics={!!monetization.gaMeasurementId} ads={!!monetization.adsensePublisherId} />

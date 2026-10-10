@@ -117,7 +117,9 @@ export default async function HomePage() {
                       src={heroArticle.coverImage}
                       alt=""
                       fill
-                      priority
+                      // Mobilde sayfanın en büyük öğesi (LCP): hemen ve en yüksek öncelikle yüklensin
+                      loading="eager"
+                      fetchPriority="high"
                       sizes="(min-width: 1024px) 66vw, 100vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />

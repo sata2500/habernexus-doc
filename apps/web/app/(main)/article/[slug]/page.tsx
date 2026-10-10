@@ -238,7 +238,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
             alt={article.title}
             fill
             className="object-cover"
-            priority
+            loading="eager"
             fetchPriority="high"
             placeholder="blur"
             blurDataURL={ARTICLE_COVER_BLUR_DATA_URL}

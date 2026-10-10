@@ -5,12 +5,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession, signOut } from "@/lib/auth-client";
-import { LogOut, Menu, Newspaper, Search, X } from "lucide-react";
+import { LogOut, Menu, Search, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/Button";
 import { Avatar } from "@/components/ui/Avatar";
 import { ThemeToggle } from "@/components/layout/ThemeToggle";
-import { DynamicIcon } from "@/components/ui/DynamicIcon";
 import type { SiteSettings } from "@/lib/site-settings";
 
 interface Category {
@@ -18,7 +17,8 @@ interface Category {
   name: string;
   slug: string;
   color?: string | null;
-  icon?: string | null;
+  /** Sunucuda çizilmiş kategori simgesi: ~100 simgelik tablo tarayıcı paketine girmesin */
+  iconNode?: React.ReactNode;
 }
 
 const ROLE_LABEL: Record<string, string> = { ADMIN: "Yönetici", AUTHOR: "Yazar" };
@@ -97,7 +97,7 @@ export function Navbar({ categories = [], settings }: { categories?: Category[];
             : "text-muted-foreground hover:text-foreground hover:bg-muted",
         )}
       >
-        <DynamicIcon name={item.icon} className={mobile ? "h-4 w-4" : "h-3.5 w-3.5"} fallback={Newspaper} />
+        <span className={cn("inline-flex shrink-0", mobile ? "h-4 w-4" : "h-3.5 w-3.5")}>{item.iconNode}</span>
         {item.name}
       </Link>
     );

@@ -45,7 +45,7 @@ export function FeedArticleCard({ article, priority, badge, layout = "responsive
               src={article.coverImage}
               alt=""
               fill
-              priority={priority}
+              loading={priority ? "eager" : "lazy"}
               className="object-cover group-hover:scale-105 transition-transform duration-700"
               sizes="(max-width: 640px) 112px, (max-width: 1024px) 50vw, 33vw"
             />
