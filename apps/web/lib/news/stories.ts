@@ -94,7 +94,6 @@ export async function clusterNewItems(limit = 400) {
     where: {
       storyId: null,
       usedForArticle: false,
-      dismissed: false,
       status: { notIn: ["EXPIRED_STALE", "DISMISSED"] },
       createdAt: { gte: since },
     },

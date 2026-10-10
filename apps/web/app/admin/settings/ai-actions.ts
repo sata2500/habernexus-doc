@@ -87,8 +87,6 @@ export async function saveAiSettings(input: AiSettingsInput) {
         aiAnalyzerModel: d.models.analyzer,
         aiWriterImageModel: d.models.image,
         aiTtsModel: d.models.tts,
-        // Eski "varsayılan sağlayıcı" alanı yazar modelinin sağlayıcısını izler (geriye dönük uyum)
-        aiProvider: d.models.writer.startsWith("google:") ? "GOOGLE" : "OPENROUTER",
         aiWriterPrompt: d.writerPrompt,
         aiWriterImagePrompt: d.imagePrompt,
         aiAnalyzerPrompt: d.editorialCriteria || null,

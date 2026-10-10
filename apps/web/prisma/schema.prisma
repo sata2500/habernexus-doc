@@ -333,26 +333,18 @@ model RssFeedItem {
   imageUrl         String?
   publishedAt      DateTime?
   status           RssItemStatus     @default(PENDING)
-  aiScore          Int? // 0-100 Gemini öneri puanı
-  aiAnalysis       Json? // Gemini'nin tam JSON çıktısı
-  dismissed        Boolean           @default(false) // "İlginç değil" işareti
   usedForArticle   Boolean           @default(false) // Bu öneriden haber yazıldıysa
-  processingAt     DateTime?
-  processingToken  String?           @unique
   /// Bu haberin ait olduğu konu (aynı olayı anlatan haberler tek konuda toplanır)
   storyId          String?
   story            NewsStory?        @relation(fields: [storyId], references: [id], onDelete: SetNull)
   source           RssFeedSource     @relation(fields: [sourceId], references: [id], onDelete: Cascade)
-  googleTrendItems GoogleTrendItem[]
   article          Article?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
 
   @@index([sourceId])
   @@index([status])
-  @@index([aiScore])
   @@index([publishedAt])
-  @@index([dismissed])
   @@index([usedForArticle])
   @@index([storyId])
 }
@@ -446,7 +438,6 @@ model SystemSettings {
   qStashNewsletterId String? // QStash Newsletter Task ID
 
   // AI Sağlayıcısı (OPENROUTER veya GOOGLE)
-  aiProvider String @default("OPENROUTER")
 
   // AI Analiz ve Özet Modeli (RSS Puanlama & Özetleme). Biçim: "sağlayıcı:model"
   aiAnalyzerModel  String  @default("google:gemini-3.5-flash-lite")
@@ -473,20 +464,10 @@ model SystemSettings {
   maxNewsAgeHours            Int     @default(24) // Kaç saatten eski haberler elensin (0 = kapalı)
   googleTrendsEnabled        Boolean @default(true) // Google Trends entegrasyonu aktif mi
   googleTrendsGeo            String  @default("TR") // Bölge kodu ("TR", "US" vb.)
-  trendAutoPublishThreshold  Int     @default(70) // Trend eşleşme skoru kaç üzerindeyse öncelikli otomatik yayın
-  trendSearchGenerateEnabled Boolean @default(true) // Trends'te olup RSS'te olmayan konu için aramayla haber üret
   /// Karar Merkezi: bu puanın altındaki konular otomatik yazılmaz
   storyMinScore              Int     @default(60)
 
   updatedAt DateTime @updatedAt
-}
-
-enum TrendAction {
-  PENDING
-  AUTO_PUBLISHED
-  SEARCH_GENERATED
-  SCHEDULED_DRAFT
-  DISMISSED
 }
 
 /// Google Trends Verileri
@@ -498,29 +479,12 @@ model GoogleTrend {
   category     String?
   country      String            @default("TR")
   trafficScore Int               @default(50)
-  items        GoogleTrendItem[]
   createdAt    DateTime          @default(now())
   updatedAt    DateTime          @updatedAt
 
   @@index([keyword])
   @@index([trafficScore])
   @@index([country])
-}
-
-/// Trends ile RSS Karşılaştırma Eşleşmesi
-model GoogleTrendItem {
-  id          String       @id @default(cuid())
-  trendId     String
-  rssItemId   String?
-  matchScore  Int
-  actionTaken TrendAction  @default(PENDING)
-  trend       GoogleTrend  @relation(fields: [trendId], references: [id], onDelete: Cascade)
-  rssItem     RssFeedItem? @relation(fields: [rssItemId], references: [id], onDelete: SetNull)
-  createdAt   DateTime     @default(now())
-
-  @@index([trendId])
-  @@index([rssItemId])
-  @@index([matchScore])
 }
 
 /// AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)
@@ -585,39 +549,12 @@ model SiteSettings {
   createdAt         DateTime @default(now())
 }
 
-enum AiModelType {
-  TEXT
-  IMAGE
-  MULTIMODAL
-}
-
-model AiModel {
-  id          String      @id // OpenRouter model ID (örn: "openai/gpt-4")
-  name        String
-  description String?     @db.Text
-  type        AiModelType @default(TEXT)
-  isFree      Boolean     @default(false)
-  isActive    Boolean     @default(true)
-
-  // Yetenekler ve Modaliteler
-  inputModalities  Json? // ["text", "image"]
-  outputModalities Json? // ["text", "image"]
-  supportsSearch   Boolean @default(false)
-  supportsVision   Boolean @default(false)
-  supportsT2I      Boolean @default(false)
-  supportsI2I      Boolean @default(false)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model Slider {
   id           String   @id @default("homepage") // Use "homepage" as default ID for the main slider
   name         String   @unique
   autoPlay     Boolean  @default(true)
   interval     Int      @default(5000)
   height       String?  @default("500px")
-  mobileHeight String?  @default("300px")
   isActive     Boolean  @default(true)
   slides       Slide[]
   createdAt    DateTime @default(now())

@@ -124,11 +124,6 @@ export type SystemSettings = $Result.DefaultSelection<Prisma.$SystemSettingsPayl
  */
 export type GoogleTrend = $Result.DefaultSelection<Prisma.$GoogleTrendPayload>
 /**
- * Model GoogleTrendItem
- * Trends ile RSS Karşılaştırma Eşleşmesi
- */
-export type GoogleTrendItem = $Result.DefaultSelection<Prisma.$GoogleTrendItemPayload>
-/**
  * Model AiPersona
  * AI Yazar Personaları (Farklı kategoriler için farklı yazım ve görsel stilleri)
  */
@@ -143,11 +138,6 @@ export type AiPersonaOnCategory = $Result.DefaultSelection<Prisma.$AiPersonaOnCa
  * Platform marka ve görünüm ayarları (Singleton - id her zaman "global")
  */
 export type SiteSettings = $Result.DefaultSelection<Prisma.$SiteSettingsPayload>
-/**
- * Model AiModel
- * 
- */
-export type AiModel = $Result.DefaultSelection<Prisma.$AiModelPayload>
 /**
  * Model Slider
  * 
@@ -241,26 +231,6 @@ export const RssItemStatus: {
 
 export type RssItemStatus = (typeof RssItemStatus)[keyof typeof RssItemStatus]
 
-
-export const TrendAction: {
-  PENDING: 'PENDING',
-  AUTO_PUBLISHED: 'AUTO_PUBLISHED',
-  SEARCH_GENERATED: 'SEARCH_GENERATED',
-  SCHEDULED_DRAFT: 'SCHEDULED_DRAFT',
-  DISMISSED: 'DISMISSED'
-};
-
-export type TrendAction = (typeof TrendAction)[keyof typeof TrendAction]
-
-
-export const AiModelType: {
-  TEXT: 'TEXT',
-  IMAGE: 'IMAGE',
-  MULTIMODAL: 'MULTIMODAL'
-};
-
-export type AiModelType = (typeof AiModelType)[keyof typeof AiModelType]
-
 }
 
 export type MediaStatus = $Enums.MediaStatus
@@ -278,14 +248,6 @@ export const StoryUrgency: typeof $Enums.StoryUrgency
 export type RssItemStatus = $Enums.RssItemStatus
 
 export const RssItemStatus: typeof $Enums.RssItemStatus
-
-export type TrendAction = $Enums.TrendAction
-
-export const TrendAction: typeof $Enums.TrendAction
-
-export type AiModelType = $Enums.AiModelType
-
-export const AiModelType: typeof $Enums.AiModelType
 
 /**
  * ##  Prisma Client ʲˢ
@@ -629,16 +591,6 @@ export class PrismaClient<
   get googleTrend(): Prisma.GoogleTrendDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.googleTrendItem`: Exposes CRUD operations for the **GoogleTrendItem** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more GoogleTrendItems
-    * const googleTrendItems = await prisma.googleTrendItem.findMany()
-    * ```
-    */
-  get googleTrendItem(): Prisma.GoogleTrendItemDelegate<ExtArgs, ClientOptions>;
-
-  /**
    * `prisma.aiPersona`: Exposes CRUD operations for the **AiPersona** model.
     * Example usage:
     * ```ts
@@ -667,16 +619,6 @@ export class PrismaClient<
     * ```
     */
   get siteSettings(): Prisma.SiteSettingsDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.aiModel`: Exposes CRUD operations for the **AiModel** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more AiModels
-    * const aiModels = await prisma.aiModel.findMany()
-    * ```
-    */
-  get aiModel(): Prisma.AiModelDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.slider`: Exposes CRUD operations for the **Slider** model.
@@ -1226,11 +1168,9 @@ export namespace Prisma {
     NewsStory: 'NewsStory',
     SystemSettings: 'SystemSettings',
     GoogleTrend: 'GoogleTrend',
-    GoogleTrendItem: 'GoogleTrendItem',
     AiPersona: 'AiPersona',
     AiPersonaOnCategory: 'AiPersonaOnCategory',
     SiteSettings: 'SiteSettings',
-    AiModel: 'AiModel',
     Slider: 'Slider',
     Slide: 'Slide',
     MonetizationSettings: 'MonetizationSettings',
@@ -1254,7 +1194,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "articleRead" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "newsStory" | "systemSettings" | "googleTrend" | "googleTrendItem" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "aiModel" | "slider" | "slide" | "monetizationSettings" | "sponsorAd" | "articleViewMark" | "pushSubscription" | "notificationSettings" | "pushLog"
+      modelProps: "user" | "session" | "account" | "verification" | "article" | "category" | "tag" | "tagOnArticle" | "comment" | "articleReaction" | "articleRead" | "bookmark" | "subscriber" | "media" | "staticPage" | "supportTicket" | "supportMessage" | "rssFeedSource" | "rssFeedItem" | "newsStory" | "systemSettings" | "googleTrend" | "aiPersona" | "aiPersonaOnCategory" | "siteSettings" | "slider" | "slide" | "monetizationSettings" | "sponsorAd" | "articleViewMark" | "pushSubscription" | "notificationSettings" | "pushLog"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -2886,80 +2826,6 @@ export namespace Prisma {
           }
         }
       }
-      GoogleTrendItem: {
-        payload: Prisma.$GoogleTrendItemPayload<ExtArgs>
-        fields: Prisma.GoogleTrendItemFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.GoogleTrendItemFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.GoogleTrendItemFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
-          }
-          findFirst: {
-            args: Prisma.GoogleTrendItemFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.GoogleTrendItemFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
-          }
-          findMany: {
-            args: Prisma.GoogleTrendItemFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>[]
-          }
-          create: {
-            args: Prisma.GoogleTrendItemCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
-          }
-          createMany: {
-            args: Prisma.GoogleTrendItemCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.GoogleTrendItemCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>[]
-          }
-          delete: {
-            args: Prisma.GoogleTrendItemDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
-          }
-          update: {
-            args: Prisma.GoogleTrendItemUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
-          }
-          deleteMany: {
-            args: Prisma.GoogleTrendItemDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.GoogleTrendItemUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.GoogleTrendItemUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>[]
-          }
-          upsert: {
-            args: Prisma.GoogleTrendItemUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$GoogleTrendItemPayload>
-          }
-          aggregate: {
-            args: Prisma.GoogleTrendItemAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateGoogleTrendItem>
-          }
-          groupBy: {
-            args: Prisma.GoogleTrendItemGroupByArgs<ExtArgs>
-            result: $Utils.Optional<GoogleTrendItemGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.GoogleTrendItemCountArgs<ExtArgs>
-            result: $Utils.Optional<GoogleTrendItemCountAggregateOutputType> | number
-          }
-        }
-      }
       AiPersona: {
         payload: Prisma.$AiPersonaPayload<ExtArgs>
         fields: Prisma.AiPersonaFieldRefs
@@ -3179,80 +3045,6 @@ export namespace Prisma {
           count: {
             args: Prisma.SiteSettingsCountArgs<ExtArgs>
             result: $Utils.Optional<SiteSettingsCountAggregateOutputType> | number
-          }
-        }
-      }
-      AiModel: {
-        payload: Prisma.$AiModelPayload<ExtArgs>
-        fields: Prisma.AiModelFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.AiModelFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.AiModelFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload>
-          }
-          findFirst: {
-            args: Prisma.AiModelFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.AiModelFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload>
-          }
-          findMany: {
-            args: Prisma.AiModelFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload>[]
-          }
-          create: {
-            args: Prisma.AiModelCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload>
-          }
-          createMany: {
-            args: Prisma.AiModelCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.AiModelCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload>[]
-          }
-          delete: {
-            args: Prisma.AiModelDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload>
-          }
-          update: {
-            args: Prisma.AiModelUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload>
-          }
-          deleteMany: {
-            args: Prisma.AiModelDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.AiModelUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.AiModelUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload>[]
-          }
-          upsert: {
-            args: Prisma.AiModelUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$AiModelPayload>
-          }
-          aggregate: {
-            args: Prisma.AiModelAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateAiModel>
-          }
-          groupBy: {
-            args: Prisma.AiModelGroupByArgs<ExtArgs>
-            result: $Utils.Optional<AiModelGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.AiModelCountArgs<ExtArgs>
-            result: $Utils.Optional<AiModelCountAggregateOutputType> | number
           }
         }
       }
@@ -3993,11 +3785,9 @@ export namespace Prisma {
     newsStory?: NewsStoryOmit
     systemSettings?: SystemSettingsOmit
     googleTrend?: GoogleTrendOmit
-    googleTrendItem?: GoogleTrendItemOmit
     aiPersona?: AiPersonaOmit
     aiPersonaOnCategory?: AiPersonaOnCategoryOmit
     siteSettings?: SiteSettingsOmit
-    aiModel?: AiModelOmit
     slider?: SliderOmit
     slide?: SlideOmit
     monetizationSettings?: MonetizationSettingsOmit
@@ -4416,37 +4206,6 @@ export namespace Prisma {
 
 
   /**
-   * Count Type RssFeedItemCountOutputType
-   */
-
-  export type RssFeedItemCountOutputType = {
-    googleTrendItems: number
-  }
-
-  export type RssFeedItemCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    googleTrendItems?: boolean | RssFeedItemCountOutputTypeCountGoogleTrendItemsArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * RssFeedItemCountOutputType without action
-   */
-  export type RssFeedItemCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RssFeedItemCountOutputType
-     */
-    select?: RssFeedItemCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * RssFeedItemCountOutputType without action
-   */
-  export type RssFeedItemCountOutputTypeCountGoogleTrendItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: GoogleTrendItemWhereInput
-  }
-
-
-  /**
    * Count Type NewsStoryCountOutputType
    */
 
@@ -4474,37 +4233,6 @@ export namespace Prisma {
    */
   export type NewsStoryCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: RssFeedItemWhereInput
-  }
-
-
-  /**
-   * Count Type GoogleTrendCountOutputType
-   */
-
-  export type GoogleTrendCountOutputType = {
-    items: number
-  }
-
-  export type GoogleTrendCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    items?: boolean | GoogleTrendCountOutputTypeCountItemsArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * GoogleTrendCountOutputType without action
-   */
-  export type GoogleTrendCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendCountOutputType
-     */
-    select?: GoogleTrendCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * GoogleTrendCountOutputType without action
-   */
-  export type GoogleTrendCountOutputTypeCountItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: GoogleTrendItemWhereInput
   }
 
 
@@ -25203,18 +24931,8 @@ export namespace Prisma {
 
   export type AggregateRssFeedItem = {
     _count: RssFeedItemCountAggregateOutputType | null
-    _avg: RssFeedItemAvgAggregateOutputType | null
-    _sum: RssFeedItemSumAggregateOutputType | null
     _min: RssFeedItemMinAggregateOutputType | null
     _max: RssFeedItemMaxAggregateOutputType | null
-  }
-
-  export type RssFeedItemAvgAggregateOutputType = {
-    aiScore: number | null
-  }
-
-  export type RssFeedItemSumAggregateOutputType = {
-    aiScore: number | null
   }
 
   export type RssFeedItemMinAggregateOutputType = {
@@ -25227,11 +24945,7 @@ export namespace Prisma {
     imageUrl: string | null
     publishedAt: Date | null
     status: $Enums.RssItemStatus | null
-    aiScore: number | null
-    dismissed: boolean | null
     usedForArticle: boolean | null
-    processingAt: Date | null
-    processingToken: string | null
     storyId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -25247,11 +24961,7 @@ export namespace Prisma {
     imageUrl: string | null
     publishedAt: Date | null
     status: $Enums.RssItemStatus | null
-    aiScore: number | null
-    dismissed: boolean | null
     usedForArticle: boolean | null
-    processingAt: Date | null
-    processingToken: string | null
     storyId: string | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -25267,26 +24977,13 @@ export namespace Prisma {
     imageUrl: number
     publishedAt: number
     status: number
-    aiScore: number
-    aiAnalysis: number
-    dismissed: number
     usedForArticle: number
-    processingAt: number
-    processingToken: number
     storyId: number
     createdAt: number
     updatedAt: number
     _all: number
   }
 
-
-  export type RssFeedItemAvgAggregateInputType = {
-    aiScore?: true
-  }
-
-  export type RssFeedItemSumAggregateInputType = {
-    aiScore?: true
-  }
 
   export type RssFeedItemMinAggregateInputType = {
     id?: true
@@ -25298,11 +24995,7 @@ export namespace Prisma {
     imageUrl?: true
     publishedAt?: true
     status?: true
-    aiScore?: true
-    dismissed?: true
     usedForArticle?: true
-    processingAt?: true
-    processingToken?: true
     storyId?: true
     createdAt?: true
     updatedAt?: true
@@ -25318,11 +25011,7 @@ export namespace Prisma {
     imageUrl?: true
     publishedAt?: true
     status?: true
-    aiScore?: true
-    dismissed?: true
     usedForArticle?: true
-    processingAt?: true
-    processingToken?: true
     storyId?: true
     createdAt?: true
     updatedAt?: true
@@ -25338,12 +25027,7 @@ export namespace Prisma {
     imageUrl?: true
     publishedAt?: true
     status?: true
-    aiScore?: true
-    aiAnalysis?: true
-    dismissed?: true
     usedForArticle?: true
-    processingAt?: true
-    processingToken?: true
     storyId?: true
     createdAt?: true
     updatedAt?: true
@@ -25388,18 +25072,6 @@ export namespace Prisma {
     /**
      * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
      * 
-     * Select which fields to average
-    **/
-    _avg?: RssFeedItemAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: RssFeedItemSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
      * Select which fields to find the minimum value
     **/
     _min?: RssFeedItemMinAggregateInputType
@@ -25430,8 +25102,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     _count?: RssFeedItemCountAggregateInputType | true
-    _avg?: RssFeedItemAvgAggregateInputType
-    _sum?: RssFeedItemSumAggregateInputType
     _min?: RssFeedItemMinAggregateInputType
     _max?: RssFeedItemMaxAggregateInputType
   }
@@ -25446,18 +25116,11 @@ export namespace Prisma {
     imageUrl: string | null
     publishedAt: Date | null
     status: $Enums.RssItemStatus
-    aiScore: number | null
-    aiAnalysis: JsonValue | null
-    dismissed: boolean
     usedForArticle: boolean
-    processingAt: Date | null
-    processingToken: string | null
     storyId: string | null
     createdAt: Date
     updatedAt: Date
     _count: RssFeedItemCountAggregateOutputType | null
-    _avg: RssFeedItemAvgAggregateOutputType | null
-    _sum: RssFeedItemSumAggregateOutputType | null
     _min: RssFeedItemMinAggregateOutputType | null
     _max: RssFeedItemMaxAggregateOutputType | null
   }
@@ -25486,20 +25149,13 @@ export namespace Prisma {
     imageUrl?: boolean
     publishedAt?: boolean
     status?: boolean
-    aiScore?: boolean
-    aiAnalysis?: boolean
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: boolean
-    processingToken?: boolean
     storyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     story?: boolean | RssFeedItem$storyArgs<ExtArgs>
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
-    googleTrendItems?: boolean | RssFeedItem$googleTrendItemsArgs<ExtArgs>
     article?: boolean | RssFeedItem$articleArgs<ExtArgs>
-    _count?: boolean | RssFeedItemCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["rssFeedItem"]>
 
   export type RssFeedItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -25512,12 +25168,7 @@ export namespace Prisma {
     imageUrl?: boolean
     publishedAt?: boolean
     status?: boolean
-    aiScore?: boolean
-    aiAnalysis?: boolean
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: boolean
-    processingToken?: boolean
     storyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -25535,12 +25186,7 @@ export namespace Prisma {
     imageUrl?: boolean
     publishedAt?: boolean
     status?: boolean
-    aiScore?: boolean
-    aiAnalysis?: boolean
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: boolean
-    processingToken?: boolean
     storyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -25558,24 +25204,17 @@ export namespace Prisma {
     imageUrl?: boolean
     publishedAt?: boolean
     status?: boolean
-    aiScore?: boolean
-    aiAnalysis?: boolean
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: boolean
-    processingToken?: boolean
     storyId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type RssFeedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceId" | "title" | "url" | "urlHash" | "excerpt" | "imageUrl" | "publishedAt" | "status" | "aiScore" | "aiAnalysis" | "dismissed" | "usedForArticle" | "processingAt" | "processingToken" | "storyId" | "createdAt" | "updatedAt", ExtArgs["result"]["rssFeedItem"]>
+  export type RssFeedItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceId" | "title" | "url" | "urlHash" | "excerpt" | "imageUrl" | "publishedAt" | "status" | "usedForArticle" | "storyId" | "createdAt" | "updatedAt", ExtArgs["result"]["rssFeedItem"]>
   export type RssFeedItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     story?: boolean | RssFeedItem$storyArgs<ExtArgs>
     source?: boolean | RssFeedSourceDefaultArgs<ExtArgs>
-    googleTrendItems?: boolean | RssFeedItem$googleTrendItemsArgs<ExtArgs>
     article?: boolean | RssFeedItem$articleArgs<ExtArgs>
-    _count?: boolean | RssFeedItemCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type RssFeedItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     story?: boolean | RssFeedItem$storyArgs<ExtArgs>
@@ -25591,7 +25230,6 @@ export namespace Prisma {
     objects: {
       story: Prisma.$NewsStoryPayload<ExtArgs> | null
       source: Prisma.$RssFeedSourcePayload<ExtArgs>
-      googleTrendItems: Prisma.$GoogleTrendItemPayload<ExtArgs>[]
       article: Prisma.$ArticlePayload<ExtArgs> | null
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -25604,12 +25242,7 @@ export namespace Prisma {
       imageUrl: string | null
       publishedAt: Date | null
       status: $Enums.RssItemStatus
-      aiScore: number | null
-      aiAnalysis: Prisma.JsonValue | null
-      dismissed: boolean
       usedForArticle: boolean
-      processingAt: Date | null
-      processingToken: string | null
       /**
        * Bu haberin ait olduğu konu (aynı olayı anlatan haberler tek konuda toplanır)
        */
@@ -26012,7 +25645,6 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     story<T extends RssFeedItem$storyArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedItem$storyArgs<ExtArgs>>): Prisma__NewsStoryClient<$Result.GetResult<Prisma.$NewsStoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     source<T extends RssFeedSourceDefaultArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedSourceDefaultArgs<ExtArgs>>): Prisma__RssFeedSourceClient<$Result.GetResult<Prisma.$RssFeedSourcePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    googleTrendItems<T extends RssFeedItem$googleTrendItemsArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedItem$googleTrendItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     article<T extends RssFeedItem$articleArgs<ExtArgs> = {}>(args?: Subset<T, RssFeedItem$articleArgs<ExtArgs>>): Prisma__ArticleClient<$Result.GetResult<Prisma.$ArticlePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -26052,12 +25684,7 @@ export namespace Prisma {
     readonly imageUrl: FieldRef<"RssFeedItem", 'String'>
     readonly publishedAt: FieldRef<"RssFeedItem", 'DateTime'>
     readonly status: FieldRef<"RssFeedItem", 'RssItemStatus'>
-    readonly aiScore: FieldRef<"RssFeedItem", 'Int'>
-    readonly aiAnalysis: FieldRef<"RssFeedItem", 'Json'>
-    readonly dismissed: FieldRef<"RssFeedItem", 'Boolean'>
     readonly usedForArticle: FieldRef<"RssFeedItem", 'Boolean'>
-    readonly processingAt: FieldRef<"RssFeedItem", 'DateTime'>
-    readonly processingToken: FieldRef<"RssFeedItem", 'String'>
     readonly storyId: FieldRef<"RssFeedItem", 'String'>
     readonly createdAt: FieldRef<"RssFeedItem", 'DateTime'>
     readonly updatedAt: FieldRef<"RssFeedItem", 'DateTime'>
@@ -26478,30 +26105,6 @@ export namespace Prisma {
      */
     include?: NewsStoryInclude<ExtArgs> | null
     where?: NewsStoryWhereInput
-  }
-
-  /**
-   * RssFeedItem.googleTrendItems
-   */
-  export type RssFeedItem$googleTrendItemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    where?: GoogleTrendItemWhereInput
-    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
-    cursor?: GoogleTrendItemWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
   }
 
   /**
@@ -28084,7 +27687,6 @@ export namespace Prisma {
     rssRetentionDays: number | null
     aiWriterAutoCount: number | null
     maxNewsAgeHours: number | null
-    trendAutoPublishThreshold: number | null
     storyMinScore: number | null
   }
 
@@ -28092,7 +27694,6 @@ export namespace Prisma {
     rssRetentionDays: number | null
     aiWriterAutoCount: number | null
     maxNewsAgeHours: number | null
-    trendAutoPublishThreshold: number | null
     storyMinScore: number | null
   }
 
@@ -28104,7 +27705,6 @@ export namespace Prisma {
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
-    aiProvider: string | null
     aiAnalyzerModel: string | null
     aiAnalyzerPrompt: string | null
     aiTtsModel: string | null
@@ -28121,8 +27721,6 @@ export namespace Prisma {
     maxNewsAgeHours: number | null
     googleTrendsEnabled: boolean | null
     googleTrendsGeo: string | null
-    trendAutoPublishThreshold: number | null
-    trendSearchGenerateEnabled: boolean | null
     storyMinScore: number | null
     updatedAt: Date | null
   }
@@ -28135,7 +27733,6 @@ export namespace Prisma {
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
-    aiProvider: string | null
     aiAnalyzerModel: string | null
     aiAnalyzerPrompt: string | null
     aiTtsModel: string | null
@@ -28152,8 +27749,6 @@ export namespace Prisma {
     maxNewsAgeHours: number | null
     googleTrendsEnabled: boolean | null
     googleTrendsGeo: string | null
-    trendAutoPublishThreshold: number | null
-    trendSearchGenerateEnabled: boolean | null
     storyMinScore: number | null
     updatedAt: Date | null
   }
@@ -28166,7 +27761,6 @@ export namespace Prisma {
     qStashScanId: number
     qStashAnalyzeId: number
     qStashNewsletterId: number
-    aiProvider: number
     aiAnalyzerModel: number
     aiAnalyzerPrompt: number
     aiTtsModel: number
@@ -28183,8 +27777,6 @@ export namespace Prisma {
     maxNewsAgeHours: number
     googleTrendsEnabled: number
     googleTrendsGeo: number
-    trendAutoPublishThreshold: number
-    trendSearchGenerateEnabled: number
     storyMinScore: number
     updatedAt: number
     _all: number
@@ -28195,7 +27787,6 @@ export namespace Prisma {
     rssRetentionDays?: true
     aiWriterAutoCount?: true
     maxNewsAgeHours?: true
-    trendAutoPublishThreshold?: true
     storyMinScore?: true
   }
 
@@ -28203,7 +27794,6 @@ export namespace Prisma {
     rssRetentionDays?: true
     aiWriterAutoCount?: true
     maxNewsAgeHours?: true
-    trendAutoPublishThreshold?: true
     storyMinScore?: true
   }
 
@@ -28215,7 +27805,6 @@ export namespace Prisma {
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
-    aiProvider?: true
     aiAnalyzerModel?: true
     aiAnalyzerPrompt?: true
     aiTtsModel?: true
@@ -28232,8 +27821,6 @@ export namespace Prisma {
     maxNewsAgeHours?: true
     googleTrendsEnabled?: true
     googleTrendsGeo?: true
-    trendAutoPublishThreshold?: true
-    trendSearchGenerateEnabled?: true
     storyMinScore?: true
     updatedAt?: true
   }
@@ -28246,7 +27833,6 @@ export namespace Prisma {
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
-    aiProvider?: true
     aiAnalyzerModel?: true
     aiAnalyzerPrompt?: true
     aiTtsModel?: true
@@ -28263,8 +27849,6 @@ export namespace Prisma {
     maxNewsAgeHours?: true
     googleTrendsEnabled?: true
     googleTrendsGeo?: true
-    trendAutoPublishThreshold?: true
-    trendSearchGenerateEnabled?: true
     storyMinScore?: true
     updatedAt?: true
   }
@@ -28277,7 +27861,6 @@ export namespace Prisma {
     qStashScanId?: true
     qStashAnalyzeId?: true
     qStashNewsletterId?: true
-    aiProvider?: true
     aiAnalyzerModel?: true
     aiAnalyzerPrompt?: true
     aiTtsModel?: true
@@ -28294,8 +27877,6 @@ export namespace Prisma {
     maxNewsAgeHours?: true
     googleTrendsEnabled?: true
     googleTrendsGeo?: true
-    trendAutoPublishThreshold?: true
-    trendSearchGenerateEnabled?: true
     storyMinScore?: true
     updatedAt?: true
     _all?: true
@@ -28395,7 +27976,6 @@ export namespace Prisma {
     qStashScanId: string | null
     qStashAnalyzeId: string | null
     qStashNewsletterId: string | null
-    aiProvider: string
     aiAnalyzerModel: string
     aiAnalyzerPrompt: string | null
     aiTtsModel: string
@@ -28412,8 +27992,6 @@ export namespace Prisma {
     maxNewsAgeHours: number
     googleTrendsEnabled: boolean
     googleTrendsGeo: string
-    trendAutoPublishThreshold: number
-    trendSearchGenerateEnabled: boolean
     storyMinScore: number
     updatedAt: Date
     _count: SystemSettingsCountAggregateOutputType | null
@@ -28445,7 +28023,6 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
-    aiProvider?: boolean
     aiAnalyzerModel?: boolean
     aiAnalyzerPrompt?: boolean
     aiTtsModel?: boolean
@@ -28462,8 +28039,6 @@ export namespace Prisma {
     maxNewsAgeHours?: boolean
     googleTrendsEnabled?: boolean
     googleTrendsGeo?: boolean
-    trendAutoPublishThreshold?: boolean
-    trendSearchGenerateEnabled?: boolean
     storyMinScore?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
@@ -28476,7 +28051,6 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
-    aiProvider?: boolean
     aiAnalyzerModel?: boolean
     aiAnalyzerPrompt?: boolean
     aiTtsModel?: boolean
@@ -28493,8 +28067,6 @@ export namespace Prisma {
     maxNewsAgeHours?: boolean
     googleTrendsEnabled?: boolean
     googleTrendsGeo?: boolean
-    trendAutoPublishThreshold?: boolean
-    trendSearchGenerateEnabled?: boolean
     storyMinScore?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
@@ -28507,7 +28079,6 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
-    aiProvider?: boolean
     aiAnalyzerModel?: boolean
     aiAnalyzerPrompt?: boolean
     aiTtsModel?: boolean
@@ -28524,8 +28095,6 @@ export namespace Prisma {
     maxNewsAgeHours?: boolean
     googleTrendsEnabled?: boolean
     googleTrendsGeo?: boolean
-    trendAutoPublishThreshold?: boolean
-    trendSearchGenerateEnabled?: boolean
     storyMinScore?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["systemSettings"]>
@@ -28538,7 +28107,6 @@ export namespace Prisma {
     qStashScanId?: boolean
     qStashAnalyzeId?: boolean
     qStashNewsletterId?: boolean
-    aiProvider?: boolean
     aiAnalyzerModel?: boolean
     aiAnalyzerPrompt?: boolean
     aiTtsModel?: boolean
@@ -28555,13 +28123,11 @@ export namespace Prisma {
     maxNewsAgeHours?: boolean
     googleTrendsEnabled?: boolean
     googleTrendsGeo?: boolean
-    trendAutoPublishThreshold?: boolean
-    trendSearchGenerateEnabled?: boolean
     storyMinScore?: boolean
     updatedAt?: boolean
   }
 
-  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiProvider" | "aiAnalyzerModel" | "aiAnalyzerPrompt" | "aiTtsModel" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "aiWriterSearchEnabled" | "maxNewsAgeHours" | "googleTrendsEnabled" | "googleTrendsGeo" | "trendAutoPublishThreshold" | "trendSearchGenerateEnabled" | "storyMinScore" | "updatedAt", ExtArgs["result"]["systemSettings"]>
+  export type SystemSettingsOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "rssScanCron" | "rssAnalyzeCron" | "rssRetentionDays" | "qStashScanId" | "qStashAnalyzeId" | "qStashNewsletterId" | "aiAnalyzerModel" | "aiAnalyzerPrompt" | "aiTtsModel" | "aiWriterModel" | "aiWriterImageModel" | "aiWriterPrompt" | "aiWriterImagePrompt" | "aiWriterUseRssImage" | "aiWriterAutoEnabled" | "aiWriterAutoCount" | "aiWriterAutoCron" | "qStashAiWriterId" | "aiWriterSearchEnabled" | "maxNewsAgeHours" | "googleTrendsEnabled" | "googleTrendsGeo" | "storyMinScore" | "updatedAt", ExtArgs["result"]["systemSettings"]>
 
   export type $SystemSettingsPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "SystemSettings"
@@ -28574,7 +28140,6 @@ export namespace Prisma {
       qStashScanId: string | null
       qStashAnalyzeId: string | null
       qStashNewsletterId: string | null
-      aiProvider: string
       aiAnalyzerModel: string
       /**
        * RSS haberlerini puanlarken uygulanacak editoryal kriterler (boşsa varsayılan)
@@ -28597,8 +28162,6 @@ export namespace Prisma {
       maxNewsAgeHours: number
       googleTrendsEnabled: boolean
       googleTrendsGeo: string
-      trendAutoPublishThreshold: number
-      trendSearchGenerateEnabled: boolean
       /**
        * Karar Merkezi: bu puanın altındaki konular otomatik yazılmaz
        */
@@ -29034,7 +28597,6 @@ export namespace Prisma {
     readonly qStashScanId: FieldRef<"SystemSettings", 'String'>
     readonly qStashAnalyzeId: FieldRef<"SystemSettings", 'String'>
     readonly qStashNewsletterId: FieldRef<"SystemSettings", 'String'>
-    readonly aiProvider: FieldRef<"SystemSettings", 'String'>
     readonly aiAnalyzerModel: FieldRef<"SystemSettings", 'String'>
     readonly aiAnalyzerPrompt: FieldRef<"SystemSettings", 'String'>
     readonly aiTtsModel: FieldRef<"SystemSettings", 'String'>
@@ -29051,8 +28613,6 @@ export namespace Prisma {
     readonly maxNewsAgeHours: FieldRef<"SystemSettings", 'Int'>
     readonly googleTrendsEnabled: FieldRef<"SystemSettings", 'Boolean'>
     readonly googleTrendsGeo: FieldRef<"SystemSettings", 'String'>
-    readonly trendAutoPublishThreshold: FieldRef<"SystemSettings", 'Int'>
-    readonly trendSearchGenerateEnabled: FieldRef<"SystemSettings", 'Boolean'>
     readonly storyMinScore: FieldRef<"SystemSettings", 'Int'>
     readonly updatedAt: FieldRef<"SystemSettings", 'DateTime'>
   }
@@ -29656,8 +29216,6 @@ export namespace Prisma {
     trafficScore?: boolean
     createdAt?: boolean
     updatedAt?: boolean
-    items?: boolean | GoogleTrend$itemsArgs<ExtArgs>
-    _count?: boolean | GoogleTrendCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["googleTrend"]>
 
   export type GoogleTrendSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -29697,18 +29255,10 @@ export namespace Prisma {
   }
 
   export type GoogleTrendOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "keyword" | "searchVolume" | "exploreUrl" | "category" | "country" | "trafficScore" | "createdAt" | "updatedAt", ExtArgs["result"]["googleTrend"]>
-  export type GoogleTrendInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    items?: boolean | GoogleTrend$itemsArgs<ExtArgs>
-    _count?: boolean | GoogleTrendCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type GoogleTrendIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
-  export type GoogleTrendIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
 
   export type $GoogleTrendPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "GoogleTrend"
-    objects: {
-      items: Prisma.$GoogleTrendItemPayload<ExtArgs>[]
-    }
+    objects: {}
     scalars: $Extensions.GetPayloadResult<{
       id: string
       keyword: string
@@ -30113,7 +29663,6 @@ export namespace Prisma {
    */
   export interface Prisma__GoogleTrendClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
-    items<T extends GoogleTrend$itemsArgs<ExtArgs> = {}>(args?: Subset<T, GoogleTrend$itemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -30169,10 +29718,6 @@ export namespace Prisma {
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
-    /**
      * Filter, which GoogleTrend to fetch.
      */
     where: GoogleTrendWhereUniqueInput
@@ -30191,10 +29736,6 @@ export namespace Prisma {
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
-    /**
      * Filter, which GoogleTrend to fetch.
      */
     where: GoogleTrendWhereUniqueInput
@@ -30212,10 +29753,6 @@ export namespace Prisma {
      * Omit specific fields from the GoogleTrend
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
     /**
      * Filter, which GoogleTrend to fetch.
      */
@@ -30265,10 +29802,6 @@ export namespace Prisma {
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
-    /**
      * Filter, which GoogleTrend to fetch.
      */
     where?: GoogleTrendWhereInput
@@ -30316,10 +29849,6 @@ export namespace Prisma {
      * Omit specific fields from the GoogleTrend
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
     /**
      * Filter, which GoogleTrends to fetch.
      */
@@ -30369,10 +29898,6 @@ export namespace Prisma {
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
-    /**
      * The data needed to create a GoogleTrend.
      */
     data: XOR<GoogleTrendCreateInput, GoogleTrendUncheckedCreateInput>
@@ -30420,10 +29945,6 @@ export namespace Prisma {
      * Omit specific fields from the GoogleTrend
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
     /**
      * The data needed to update a GoogleTrend.
      */
@@ -30491,10 +30012,6 @@ export namespace Prisma {
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
-    /**
      * The filter to search for the GoogleTrend to update in case it exists.
      */
     where: GoogleTrendWhereUniqueInput
@@ -30521,10 +30038,6 @@ export namespace Prisma {
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
     /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
-    /**
      * Filter which GoogleTrend to delete.
      */
     where: GoogleTrendWhereUniqueInput
@@ -30545,30 +30058,6 @@ export namespace Prisma {
   }
 
   /**
-   * GoogleTrend.items
-   */
-  export type GoogleTrend$itemsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    where?: GoogleTrendItemWhereInput
-    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
-    cursor?: GoogleTrendItemWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
-  }
-
-  /**
    * GoogleTrend without action
    */
   export type GoogleTrendDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -30580,1147 +30069,6 @@ export namespace Prisma {
      * Omit specific fields from the GoogleTrend
      */
     omit?: GoogleTrendOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model GoogleTrendItem
-   */
-
-  export type AggregateGoogleTrendItem = {
-    _count: GoogleTrendItemCountAggregateOutputType | null
-    _avg: GoogleTrendItemAvgAggregateOutputType | null
-    _sum: GoogleTrendItemSumAggregateOutputType | null
-    _min: GoogleTrendItemMinAggregateOutputType | null
-    _max: GoogleTrendItemMaxAggregateOutputType | null
-  }
-
-  export type GoogleTrendItemAvgAggregateOutputType = {
-    matchScore: number | null
-  }
-
-  export type GoogleTrendItemSumAggregateOutputType = {
-    matchScore: number | null
-  }
-
-  export type GoogleTrendItemMinAggregateOutputType = {
-    id: string | null
-    trendId: string | null
-    rssItemId: string | null
-    matchScore: number | null
-    actionTaken: $Enums.TrendAction | null
-    createdAt: Date | null
-  }
-
-  export type GoogleTrendItemMaxAggregateOutputType = {
-    id: string | null
-    trendId: string | null
-    rssItemId: string | null
-    matchScore: number | null
-    actionTaken: $Enums.TrendAction | null
-    createdAt: Date | null
-  }
-
-  export type GoogleTrendItemCountAggregateOutputType = {
-    id: number
-    trendId: number
-    rssItemId: number
-    matchScore: number
-    actionTaken: number
-    createdAt: number
-    _all: number
-  }
-
-
-  export type GoogleTrendItemAvgAggregateInputType = {
-    matchScore?: true
-  }
-
-  export type GoogleTrendItemSumAggregateInputType = {
-    matchScore?: true
-  }
-
-  export type GoogleTrendItemMinAggregateInputType = {
-    id?: true
-    trendId?: true
-    rssItemId?: true
-    matchScore?: true
-    actionTaken?: true
-    createdAt?: true
-  }
-
-  export type GoogleTrendItemMaxAggregateInputType = {
-    id?: true
-    trendId?: true
-    rssItemId?: true
-    matchScore?: true
-    actionTaken?: true
-    createdAt?: true
-  }
-
-  export type GoogleTrendItemCountAggregateInputType = {
-    id?: true
-    trendId?: true
-    rssItemId?: true
-    matchScore?: true
-    actionTaken?: true
-    createdAt?: true
-    _all?: true
-  }
-
-  export type GoogleTrendItemAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which GoogleTrendItem to aggregate.
-     */
-    where?: GoogleTrendItemWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of GoogleTrendItems to fetch.
-     */
-    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: GoogleTrendItemWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` GoogleTrendItems from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` GoogleTrendItems.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned GoogleTrendItems
-    **/
-    _count?: true | GoogleTrendItemCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: GoogleTrendItemAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: GoogleTrendItemSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: GoogleTrendItemMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: GoogleTrendItemMaxAggregateInputType
-  }
-
-  export type GetGoogleTrendItemAggregateType<T extends GoogleTrendItemAggregateArgs> = {
-        [P in keyof T & keyof AggregateGoogleTrendItem]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateGoogleTrendItem[P]>
-      : GetScalarType<T[P], AggregateGoogleTrendItem[P]>
-  }
-
-
-
-
-  export type GoogleTrendItemGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: GoogleTrendItemWhereInput
-    orderBy?: GoogleTrendItemOrderByWithAggregationInput | GoogleTrendItemOrderByWithAggregationInput[]
-    by: GoogleTrendItemScalarFieldEnum[] | GoogleTrendItemScalarFieldEnum
-    having?: GoogleTrendItemScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: GoogleTrendItemCountAggregateInputType | true
-    _avg?: GoogleTrendItemAvgAggregateInputType
-    _sum?: GoogleTrendItemSumAggregateInputType
-    _min?: GoogleTrendItemMinAggregateInputType
-    _max?: GoogleTrendItemMaxAggregateInputType
-  }
-
-  export type GoogleTrendItemGroupByOutputType = {
-    id: string
-    trendId: string
-    rssItemId: string | null
-    matchScore: number
-    actionTaken: $Enums.TrendAction
-    createdAt: Date
-    _count: GoogleTrendItemCountAggregateOutputType | null
-    _avg: GoogleTrendItemAvgAggregateOutputType | null
-    _sum: GoogleTrendItemSumAggregateOutputType | null
-    _min: GoogleTrendItemMinAggregateOutputType | null
-    _max: GoogleTrendItemMaxAggregateOutputType | null
-  }
-
-  type GetGoogleTrendItemGroupByPayload<T extends GoogleTrendItemGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<GoogleTrendItemGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof GoogleTrendItemGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], GoogleTrendItemGroupByOutputType[P]>
-            : GetScalarType<T[P], GoogleTrendItemGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type GoogleTrendItemSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    trendId?: boolean
-    rssItemId?: boolean
-    matchScore?: boolean
-    actionTaken?: boolean
-    createdAt?: boolean
-    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
-    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
-  }, ExtArgs["result"]["googleTrendItem"]>
-
-  export type GoogleTrendItemSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    trendId?: boolean
-    rssItemId?: boolean
-    matchScore?: boolean
-    actionTaken?: boolean
-    createdAt?: boolean
-    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
-    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
-  }, ExtArgs["result"]["googleTrendItem"]>
-
-  export type GoogleTrendItemSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    trendId?: boolean
-    rssItemId?: boolean
-    matchScore?: boolean
-    actionTaken?: boolean
-    createdAt?: boolean
-    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
-    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
-  }, ExtArgs["result"]["googleTrendItem"]>
-
-  export type GoogleTrendItemSelectScalar = {
-    id?: boolean
-    trendId?: boolean
-    rssItemId?: boolean
-    matchScore?: boolean
-    actionTaken?: boolean
-    createdAt?: boolean
-  }
-
-  export type GoogleTrendItemOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "trendId" | "rssItemId" | "matchScore" | "actionTaken" | "createdAt", ExtArgs["result"]["googleTrendItem"]>
-  export type GoogleTrendItemInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
-    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
-  }
-  export type GoogleTrendItemIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
-    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
-  }
-  export type GoogleTrendItemIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    trend?: boolean | GoogleTrendDefaultArgs<ExtArgs>
-    rssItem?: boolean | GoogleTrendItem$rssItemArgs<ExtArgs>
-  }
-
-  export type $GoogleTrendItemPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "GoogleTrendItem"
-    objects: {
-      trend: Prisma.$GoogleTrendPayload<ExtArgs>
-      rssItem: Prisma.$RssFeedItemPayload<ExtArgs> | null
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      trendId: string
-      rssItemId: string | null
-      matchScore: number
-      actionTaken: $Enums.TrendAction
-      createdAt: Date
-    }, ExtArgs["result"]["googleTrendItem"]>
-    composites: {}
-  }
-
-  type GoogleTrendItemGetPayload<S extends boolean | null | undefined | GoogleTrendItemDefaultArgs> = $Result.GetResult<Prisma.$GoogleTrendItemPayload, S>
-
-  type GoogleTrendItemCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<GoogleTrendItemFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: GoogleTrendItemCountAggregateInputType | true
-    }
-
-  export interface GoogleTrendItemDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['GoogleTrendItem'], meta: { name: 'GoogleTrendItem' } }
-    /**
-     * Find zero or one GoogleTrendItem that matches the filter.
-     * @param {GoogleTrendItemFindUniqueArgs} args - Arguments to find a GoogleTrendItem
-     * @example
-     * // Get one GoogleTrendItem
-     * const googleTrendItem = await prisma.googleTrendItem.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends GoogleTrendItemFindUniqueArgs>(args: SelectSubset<T, GoogleTrendItemFindUniqueArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one GoogleTrendItem that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {GoogleTrendItemFindUniqueOrThrowArgs} args - Arguments to find a GoogleTrendItem
-     * @example
-     * // Get one GoogleTrendItem
-     * const googleTrendItem = await prisma.googleTrendItem.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends GoogleTrendItemFindUniqueOrThrowArgs>(args: SelectSubset<T, GoogleTrendItemFindUniqueOrThrowArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first GoogleTrendItem that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {GoogleTrendItemFindFirstArgs} args - Arguments to find a GoogleTrendItem
-     * @example
-     * // Get one GoogleTrendItem
-     * const googleTrendItem = await prisma.googleTrendItem.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends GoogleTrendItemFindFirstArgs>(args?: SelectSubset<T, GoogleTrendItemFindFirstArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first GoogleTrendItem that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {GoogleTrendItemFindFirstOrThrowArgs} args - Arguments to find a GoogleTrendItem
-     * @example
-     * // Get one GoogleTrendItem
-     * const googleTrendItem = await prisma.googleTrendItem.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends GoogleTrendItemFindFirstOrThrowArgs>(args?: SelectSubset<T, GoogleTrendItemFindFirstOrThrowArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more GoogleTrendItems that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {GoogleTrendItemFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all GoogleTrendItems
-     * const googleTrendItems = await prisma.googleTrendItem.findMany()
-     * 
-     * // Get first 10 GoogleTrendItems
-     * const googleTrendItems = await prisma.googleTrendItem.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const googleTrendItemWithIdOnly = await prisma.googleTrendItem.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends GoogleTrendItemFindManyArgs>(args?: SelectSubset<T, GoogleTrendItemFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a GoogleTrendItem.
-     * @param {GoogleTrendItemCreateArgs} args - Arguments to create a GoogleTrendItem.
-     * @example
-     * // Create one GoogleTrendItem
-     * const GoogleTrendItem = await prisma.googleTrendItem.create({
-     *   data: {
-     *     // ... data to create a GoogleTrendItem
-     *   }
-     * })
-     * 
-     */
-    create<T extends GoogleTrendItemCreateArgs>(args: SelectSubset<T, GoogleTrendItemCreateArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many GoogleTrendItems.
-     * @param {GoogleTrendItemCreateManyArgs} args - Arguments to create many GoogleTrendItems.
-     * @example
-     * // Create many GoogleTrendItems
-     * const googleTrendItem = await prisma.googleTrendItem.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends GoogleTrendItemCreateManyArgs>(args?: SelectSubset<T, GoogleTrendItemCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many GoogleTrendItems and returns the data saved in the database.
-     * @param {GoogleTrendItemCreateManyAndReturnArgs} args - Arguments to create many GoogleTrendItems.
-     * @example
-     * // Create many GoogleTrendItems
-     * const googleTrendItem = await prisma.googleTrendItem.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many GoogleTrendItems and only return the `id`
-     * const googleTrendItemWithIdOnly = await prisma.googleTrendItem.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends GoogleTrendItemCreateManyAndReturnArgs>(args?: SelectSubset<T, GoogleTrendItemCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a GoogleTrendItem.
-     * @param {GoogleTrendItemDeleteArgs} args - Arguments to delete one GoogleTrendItem.
-     * @example
-     * // Delete one GoogleTrendItem
-     * const GoogleTrendItem = await prisma.googleTrendItem.delete({
-     *   where: {
-     *     // ... filter to delete one GoogleTrendItem
-     *   }
-     * })
-     * 
-     */
-    delete<T extends GoogleTrendItemDeleteArgs>(args: SelectSubset<T, GoogleTrendItemDeleteArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one GoogleTrendItem.
-     * @param {GoogleTrendItemUpdateArgs} args - Arguments to update one GoogleTrendItem.
-     * @example
-     * // Update one GoogleTrendItem
-     * const googleTrendItem = await prisma.googleTrendItem.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends GoogleTrendItemUpdateArgs>(args: SelectSubset<T, GoogleTrendItemUpdateArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more GoogleTrendItems.
-     * @param {GoogleTrendItemDeleteManyArgs} args - Arguments to filter GoogleTrendItems to delete.
-     * @example
-     * // Delete a few GoogleTrendItems
-     * const { count } = await prisma.googleTrendItem.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends GoogleTrendItemDeleteManyArgs>(args?: SelectSubset<T, GoogleTrendItemDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more GoogleTrendItems.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {GoogleTrendItemUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many GoogleTrendItems
-     * const googleTrendItem = await prisma.googleTrendItem.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends GoogleTrendItemUpdateManyArgs>(args: SelectSubset<T, GoogleTrendItemUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more GoogleTrendItems and returns the data updated in the database.
-     * @param {GoogleTrendItemUpdateManyAndReturnArgs} args - Arguments to update many GoogleTrendItems.
-     * @example
-     * // Update many GoogleTrendItems
-     * const googleTrendItem = await prisma.googleTrendItem.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more GoogleTrendItems and only return the `id`
-     * const googleTrendItemWithIdOnly = await prisma.googleTrendItem.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends GoogleTrendItemUpdateManyAndReturnArgs>(args: SelectSubset<T, GoogleTrendItemUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one GoogleTrendItem.
-     * @param {GoogleTrendItemUpsertArgs} args - Arguments to update or create a GoogleTrendItem.
-     * @example
-     * // Update or create a GoogleTrendItem
-     * const googleTrendItem = await prisma.googleTrendItem.upsert({
-     *   create: {
-     *     // ... data to create a GoogleTrendItem
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the GoogleTrendItem we want to update
-     *   }
-     * })
-     */
-    upsert<T extends GoogleTrendItemUpsertArgs>(args: SelectSubset<T, GoogleTrendItemUpsertArgs<ExtArgs>>): Prisma__GoogleTrendItemClient<$Result.GetResult<Prisma.$GoogleTrendItemPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of GoogleTrendItems.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {GoogleTrendItemCountArgs} args - Arguments to filter GoogleTrendItems to count.
-     * @example
-     * // Count the number of GoogleTrendItems
-     * const count = await prisma.googleTrendItem.count({
-     *   where: {
-     *     // ... the filter for the GoogleTrendItems we want to count
-     *   }
-     * })
-    **/
-    count<T extends GoogleTrendItemCountArgs>(
-      args?: Subset<T, GoogleTrendItemCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], GoogleTrendItemCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a GoogleTrendItem.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {GoogleTrendItemAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends GoogleTrendItemAggregateArgs>(args: Subset<T, GoogleTrendItemAggregateArgs>): Prisma.PrismaPromise<GetGoogleTrendItemAggregateType<T>>
-
-    /**
-     * Group by GoogleTrendItem.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {GoogleTrendItemGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends GoogleTrendItemGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: GoogleTrendItemGroupByArgs['orderBy'] }
-        : { orderBy?: GoogleTrendItemGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, GoogleTrendItemGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetGoogleTrendItemGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the GoogleTrendItem model
-   */
-  readonly fields: GoogleTrendItemFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for GoogleTrendItem.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__GoogleTrendItemClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    trend<T extends GoogleTrendDefaultArgs<ExtArgs> = {}>(args?: Subset<T, GoogleTrendDefaultArgs<ExtArgs>>): Prisma__GoogleTrendClient<$Result.GetResult<Prisma.$GoogleTrendPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    rssItem<T extends GoogleTrendItem$rssItemArgs<ExtArgs> = {}>(args?: Subset<T, GoogleTrendItem$rssItemArgs<ExtArgs>>): Prisma__RssFeedItemClient<$Result.GetResult<Prisma.$RssFeedItemPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the GoogleTrendItem model
-   */
-  interface GoogleTrendItemFieldRefs {
-    readonly id: FieldRef<"GoogleTrendItem", 'String'>
-    readonly trendId: FieldRef<"GoogleTrendItem", 'String'>
-    readonly rssItemId: FieldRef<"GoogleTrendItem", 'String'>
-    readonly matchScore: FieldRef<"GoogleTrendItem", 'Int'>
-    readonly actionTaken: FieldRef<"GoogleTrendItem", 'TrendAction'>
-    readonly createdAt: FieldRef<"GoogleTrendItem", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * GoogleTrendItem findUnique
-   */
-  export type GoogleTrendItemFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    /**
-     * Filter, which GoogleTrendItem to fetch.
-     */
-    where: GoogleTrendItemWhereUniqueInput
-  }
-
-  /**
-   * GoogleTrendItem findUniqueOrThrow
-   */
-  export type GoogleTrendItemFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    /**
-     * Filter, which GoogleTrendItem to fetch.
-     */
-    where: GoogleTrendItemWhereUniqueInput
-  }
-
-  /**
-   * GoogleTrendItem findFirst
-   */
-  export type GoogleTrendItemFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    /**
-     * Filter, which GoogleTrendItem to fetch.
-     */
-    where?: GoogleTrendItemWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of GoogleTrendItems to fetch.
-     */
-    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for GoogleTrendItems.
-     */
-    cursor?: GoogleTrendItemWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` GoogleTrendItems from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` GoogleTrendItems.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of GoogleTrendItems.
-     */
-    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
-  }
-
-  /**
-   * GoogleTrendItem findFirstOrThrow
-   */
-  export type GoogleTrendItemFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    /**
-     * Filter, which GoogleTrendItem to fetch.
-     */
-    where?: GoogleTrendItemWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of GoogleTrendItems to fetch.
-     */
-    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for GoogleTrendItems.
-     */
-    cursor?: GoogleTrendItemWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` GoogleTrendItems from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` GoogleTrendItems.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of GoogleTrendItems.
-     */
-    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
-  }
-
-  /**
-   * GoogleTrendItem findMany
-   */
-  export type GoogleTrendItemFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    /**
-     * Filter, which GoogleTrendItems to fetch.
-     */
-    where?: GoogleTrendItemWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of GoogleTrendItems to fetch.
-     */
-    orderBy?: GoogleTrendItemOrderByWithRelationInput | GoogleTrendItemOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing GoogleTrendItems.
-     */
-    cursor?: GoogleTrendItemWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` GoogleTrendItems from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` GoogleTrendItems.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of GoogleTrendItems.
-     */
-    distinct?: GoogleTrendItemScalarFieldEnum | GoogleTrendItemScalarFieldEnum[]
-  }
-
-  /**
-   * GoogleTrendItem create
-   */
-  export type GoogleTrendItemCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    /**
-     * The data needed to create a GoogleTrendItem.
-     */
-    data: XOR<GoogleTrendItemCreateInput, GoogleTrendItemUncheckedCreateInput>
-  }
-
-  /**
-   * GoogleTrendItem createMany
-   */
-  export type GoogleTrendItemCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many GoogleTrendItems.
-     */
-    data: GoogleTrendItemCreateManyInput | GoogleTrendItemCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * GoogleTrendItem createManyAndReturn
-   */
-  export type GoogleTrendItemCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * The data used to create many GoogleTrendItems.
-     */
-    data: GoogleTrendItemCreateManyInput | GoogleTrendItemCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * GoogleTrendItem update
-   */
-  export type GoogleTrendItemUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    /**
-     * The data needed to update a GoogleTrendItem.
-     */
-    data: XOR<GoogleTrendItemUpdateInput, GoogleTrendItemUncheckedUpdateInput>
-    /**
-     * Choose, which GoogleTrendItem to update.
-     */
-    where: GoogleTrendItemWhereUniqueInput
-  }
-
-  /**
-   * GoogleTrendItem updateMany
-   */
-  export type GoogleTrendItemUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update GoogleTrendItems.
-     */
-    data: XOR<GoogleTrendItemUpdateManyMutationInput, GoogleTrendItemUncheckedUpdateManyInput>
-    /**
-     * Filter which GoogleTrendItems to update
-     */
-    where?: GoogleTrendItemWhereInput
-    /**
-     * Limit how many GoogleTrendItems to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * GoogleTrendItem updateManyAndReturn
-   */
-  export type GoogleTrendItemUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * The data used to update GoogleTrendItems.
-     */
-    data: XOR<GoogleTrendItemUpdateManyMutationInput, GoogleTrendItemUncheckedUpdateManyInput>
-    /**
-     * Filter which GoogleTrendItems to update
-     */
-    where?: GoogleTrendItemWhereInput
-    /**
-     * Limit how many GoogleTrendItems to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * GoogleTrendItem upsert
-   */
-  export type GoogleTrendItemUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    /**
-     * The filter to search for the GoogleTrendItem to update in case it exists.
-     */
-    where: GoogleTrendItemWhereUniqueInput
-    /**
-     * In case the GoogleTrendItem found by the `where` argument doesn't exist, create a new GoogleTrendItem with this data.
-     */
-    create: XOR<GoogleTrendItemCreateInput, GoogleTrendItemUncheckedCreateInput>
-    /**
-     * In case the GoogleTrendItem was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<GoogleTrendItemUpdateInput, GoogleTrendItemUncheckedUpdateInput>
-  }
-
-  /**
-   * GoogleTrendItem delete
-   */
-  export type GoogleTrendItemDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
-    /**
-     * Filter which GoogleTrendItem to delete.
-     */
-    where: GoogleTrendItemWhereUniqueInput
-  }
-
-  /**
-   * GoogleTrendItem deleteMany
-   */
-  export type GoogleTrendItemDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which GoogleTrendItems to delete
-     */
-    where?: GoogleTrendItemWhereInput
-    /**
-     * Limit how many GoogleTrendItems to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * GoogleTrendItem.rssItem
-   */
-  export type GoogleTrendItem$rssItemArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the RssFeedItem
-     */
-    select?: RssFeedItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the RssFeedItem
-     */
-    omit?: RssFeedItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: RssFeedItemInclude<ExtArgs> | null
-    where?: RssFeedItemWhereInput
-  }
-
-  /**
-   * GoogleTrendItem without action
-   */
-  export type GoogleTrendItemDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the GoogleTrendItem
-     */
-    select?: GoogleTrendItemSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the GoogleTrendItem
-     */
-    omit?: GoogleTrendItemOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: GoogleTrendItemInclude<ExtArgs> | null
   }
 
 
@@ -35289,1115 +33637,6 @@ export namespace Prisma {
 
 
   /**
-   * Model AiModel
-   */
-
-  export type AggregateAiModel = {
-    _count: AiModelCountAggregateOutputType | null
-    _min: AiModelMinAggregateOutputType | null
-    _max: AiModelMaxAggregateOutputType | null
-  }
-
-  export type AiModelMinAggregateOutputType = {
-    id: string | null
-    name: string | null
-    description: string | null
-    type: $Enums.AiModelType | null
-    isFree: boolean | null
-    isActive: boolean | null
-    supportsSearch: boolean | null
-    supportsVision: boolean | null
-    supportsT2I: boolean | null
-    supportsI2I: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type AiModelMaxAggregateOutputType = {
-    id: string | null
-    name: string | null
-    description: string | null
-    type: $Enums.AiModelType | null
-    isFree: boolean | null
-    isActive: boolean | null
-    supportsSearch: boolean | null
-    supportsVision: boolean | null
-    supportsT2I: boolean | null
-    supportsI2I: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type AiModelCountAggregateOutputType = {
-    id: number
-    name: number
-    description: number
-    type: number
-    isFree: number
-    isActive: number
-    inputModalities: number
-    outputModalities: number
-    supportsSearch: number
-    supportsVision: number
-    supportsT2I: number
-    supportsI2I: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type AiModelMinAggregateInputType = {
-    id?: true
-    name?: true
-    description?: true
-    type?: true
-    isFree?: true
-    isActive?: true
-    supportsSearch?: true
-    supportsVision?: true
-    supportsT2I?: true
-    supportsI2I?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type AiModelMaxAggregateInputType = {
-    id?: true
-    name?: true
-    description?: true
-    type?: true
-    isFree?: true
-    isActive?: true
-    supportsSearch?: true
-    supportsVision?: true
-    supportsT2I?: true
-    supportsI2I?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type AiModelCountAggregateInputType = {
-    id?: true
-    name?: true
-    description?: true
-    type?: true
-    isFree?: true
-    isActive?: true
-    inputModalities?: true
-    outputModalities?: true
-    supportsSearch?: true
-    supportsVision?: true
-    supportsT2I?: true
-    supportsI2I?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type AiModelAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which AiModel to aggregate.
-     */
-    where?: AiModelWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of AiModels to fetch.
-     */
-    orderBy?: AiModelOrderByWithRelationInput | AiModelOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: AiModelWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` AiModels from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` AiModels.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned AiModels
-    **/
-    _count?: true | AiModelCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: AiModelMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: AiModelMaxAggregateInputType
-  }
-
-  export type GetAiModelAggregateType<T extends AiModelAggregateArgs> = {
-        [P in keyof T & keyof AggregateAiModel]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateAiModel[P]>
-      : GetScalarType<T[P], AggregateAiModel[P]>
-  }
-
-
-
-
-  export type AiModelGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: AiModelWhereInput
-    orderBy?: AiModelOrderByWithAggregationInput | AiModelOrderByWithAggregationInput[]
-    by: AiModelScalarFieldEnum[] | AiModelScalarFieldEnum
-    having?: AiModelScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: AiModelCountAggregateInputType | true
-    _min?: AiModelMinAggregateInputType
-    _max?: AiModelMaxAggregateInputType
-  }
-
-  export type AiModelGroupByOutputType = {
-    id: string
-    name: string
-    description: string | null
-    type: $Enums.AiModelType
-    isFree: boolean
-    isActive: boolean
-    inputModalities: JsonValue | null
-    outputModalities: JsonValue | null
-    supportsSearch: boolean
-    supportsVision: boolean
-    supportsT2I: boolean
-    supportsI2I: boolean
-    createdAt: Date
-    updatedAt: Date
-    _count: AiModelCountAggregateOutputType | null
-    _min: AiModelMinAggregateOutputType | null
-    _max: AiModelMaxAggregateOutputType | null
-  }
-
-  type GetAiModelGroupByPayload<T extends AiModelGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<AiModelGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof AiModelGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], AiModelGroupByOutputType[P]>
-            : GetScalarType<T[P], AiModelGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type AiModelSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    type?: boolean
-    isFree?: boolean
-    isActive?: boolean
-    inputModalities?: boolean
-    outputModalities?: boolean
-    supportsSearch?: boolean
-    supportsVision?: boolean
-    supportsT2I?: boolean
-    supportsI2I?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["aiModel"]>
-
-  export type AiModelSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    type?: boolean
-    isFree?: boolean
-    isActive?: boolean
-    inputModalities?: boolean
-    outputModalities?: boolean
-    supportsSearch?: boolean
-    supportsVision?: boolean
-    supportsT2I?: boolean
-    supportsI2I?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["aiModel"]>
-
-  export type AiModelSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    type?: boolean
-    isFree?: boolean
-    isActive?: boolean
-    inputModalities?: boolean
-    outputModalities?: boolean
-    supportsSearch?: boolean
-    supportsVision?: boolean
-    supportsT2I?: boolean
-    supportsI2I?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }, ExtArgs["result"]["aiModel"]>
-
-  export type AiModelSelectScalar = {
-    id?: boolean
-    name?: boolean
-    description?: boolean
-    type?: boolean
-    isFree?: boolean
-    isActive?: boolean
-    inputModalities?: boolean
-    outputModalities?: boolean
-    supportsSearch?: boolean
-    supportsVision?: boolean
-    supportsT2I?: boolean
-    supportsI2I?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type AiModelOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "description" | "type" | "isFree" | "isActive" | "inputModalities" | "outputModalities" | "supportsSearch" | "supportsVision" | "supportsT2I" | "supportsI2I" | "createdAt" | "updatedAt", ExtArgs["result"]["aiModel"]>
-
-  export type $AiModelPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "AiModel"
-    objects: {}
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      name: string
-      description: string | null
-      type: $Enums.AiModelType
-      isFree: boolean
-      isActive: boolean
-      inputModalities: Prisma.JsonValue | null
-      outputModalities: Prisma.JsonValue | null
-      supportsSearch: boolean
-      supportsVision: boolean
-      supportsT2I: boolean
-      supportsI2I: boolean
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["aiModel"]>
-    composites: {}
-  }
-
-  type AiModelGetPayload<S extends boolean | null | undefined | AiModelDefaultArgs> = $Result.GetResult<Prisma.$AiModelPayload, S>
-
-  type AiModelCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<AiModelFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: AiModelCountAggregateInputType | true
-    }
-
-  export interface AiModelDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['AiModel'], meta: { name: 'AiModel' } }
-    /**
-     * Find zero or one AiModel that matches the filter.
-     * @param {AiModelFindUniqueArgs} args - Arguments to find a AiModel
-     * @example
-     * // Get one AiModel
-     * const aiModel = await prisma.aiModel.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends AiModelFindUniqueArgs>(args: SelectSubset<T, AiModelFindUniqueArgs<ExtArgs>>): Prisma__AiModelClient<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one AiModel that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {AiModelFindUniqueOrThrowArgs} args - Arguments to find a AiModel
-     * @example
-     * // Get one AiModel
-     * const aiModel = await prisma.aiModel.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends AiModelFindUniqueOrThrowArgs>(args: SelectSubset<T, AiModelFindUniqueOrThrowArgs<ExtArgs>>): Prisma__AiModelClient<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first AiModel that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AiModelFindFirstArgs} args - Arguments to find a AiModel
-     * @example
-     * // Get one AiModel
-     * const aiModel = await prisma.aiModel.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends AiModelFindFirstArgs>(args?: SelectSubset<T, AiModelFindFirstArgs<ExtArgs>>): Prisma__AiModelClient<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first AiModel that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AiModelFindFirstOrThrowArgs} args - Arguments to find a AiModel
-     * @example
-     * // Get one AiModel
-     * const aiModel = await prisma.aiModel.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends AiModelFindFirstOrThrowArgs>(args?: SelectSubset<T, AiModelFindFirstOrThrowArgs<ExtArgs>>): Prisma__AiModelClient<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more AiModels that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AiModelFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all AiModels
-     * const aiModels = await prisma.aiModel.findMany()
-     * 
-     * // Get first 10 AiModels
-     * const aiModels = await prisma.aiModel.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const aiModelWithIdOnly = await prisma.aiModel.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends AiModelFindManyArgs>(args?: SelectSubset<T, AiModelFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a AiModel.
-     * @param {AiModelCreateArgs} args - Arguments to create a AiModel.
-     * @example
-     * // Create one AiModel
-     * const AiModel = await prisma.aiModel.create({
-     *   data: {
-     *     // ... data to create a AiModel
-     *   }
-     * })
-     * 
-     */
-    create<T extends AiModelCreateArgs>(args: SelectSubset<T, AiModelCreateArgs<ExtArgs>>): Prisma__AiModelClient<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many AiModels.
-     * @param {AiModelCreateManyArgs} args - Arguments to create many AiModels.
-     * @example
-     * // Create many AiModels
-     * const aiModel = await prisma.aiModel.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends AiModelCreateManyArgs>(args?: SelectSubset<T, AiModelCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many AiModels and returns the data saved in the database.
-     * @param {AiModelCreateManyAndReturnArgs} args - Arguments to create many AiModels.
-     * @example
-     * // Create many AiModels
-     * const aiModel = await prisma.aiModel.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many AiModels and only return the `id`
-     * const aiModelWithIdOnly = await prisma.aiModel.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends AiModelCreateManyAndReturnArgs>(args?: SelectSubset<T, AiModelCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a AiModel.
-     * @param {AiModelDeleteArgs} args - Arguments to delete one AiModel.
-     * @example
-     * // Delete one AiModel
-     * const AiModel = await prisma.aiModel.delete({
-     *   where: {
-     *     // ... filter to delete one AiModel
-     *   }
-     * })
-     * 
-     */
-    delete<T extends AiModelDeleteArgs>(args: SelectSubset<T, AiModelDeleteArgs<ExtArgs>>): Prisma__AiModelClient<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one AiModel.
-     * @param {AiModelUpdateArgs} args - Arguments to update one AiModel.
-     * @example
-     * // Update one AiModel
-     * const aiModel = await prisma.aiModel.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends AiModelUpdateArgs>(args: SelectSubset<T, AiModelUpdateArgs<ExtArgs>>): Prisma__AiModelClient<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more AiModels.
-     * @param {AiModelDeleteManyArgs} args - Arguments to filter AiModels to delete.
-     * @example
-     * // Delete a few AiModels
-     * const { count } = await prisma.aiModel.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends AiModelDeleteManyArgs>(args?: SelectSubset<T, AiModelDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more AiModels.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AiModelUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many AiModels
-     * const aiModel = await prisma.aiModel.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends AiModelUpdateManyArgs>(args: SelectSubset<T, AiModelUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more AiModels and returns the data updated in the database.
-     * @param {AiModelUpdateManyAndReturnArgs} args - Arguments to update many AiModels.
-     * @example
-     * // Update many AiModels
-     * const aiModel = await prisma.aiModel.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more AiModels and only return the `id`
-     * const aiModelWithIdOnly = await prisma.aiModel.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends AiModelUpdateManyAndReturnArgs>(args: SelectSubset<T, AiModelUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one AiModel.
-     * @param {AiModelUpsertArgs} args - Arguments to update or create a AiModel.
-     * @example
-     * // Update or create a AiModel
-     * const aiModel = await prisma.aiModel.upsert({
-     *   create: {
-     *     // ... data to create a AiModel
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the AiModel we want to update
-     *   }
-     * })
-     */
-    upsert<T extends AiModelUpsertArgs>(args: SelectSubset<T, AiModelUpsertArgs<ExtArgs>>): Prisma__AiModelClient<$Result.GetResult<Prisma.$AiModelPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of AiModels.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AiModelCountArgs} args - Arguments to filter AiModels to count.
-     * @example
-     * // Count the number of AiModels
-     * const count = await prisma.aiModel.count({
-     *   where: {
-     *     // ... the filter for the AiModels we want to count
-     *   }
-     * })
-    **/
-    count<T extends AiModelCountArgs>(
-      args?: Subset<T, AiModelCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], AiModelCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a AiModel.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AiModelAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends AiModelAggregateArgs>(args: Subset<T, AiModelAggregateArgs>): Prisma.PrismaPromise<GetAiModelAggregateType<T>>
-
-    /**
-     * Group by AiModel.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {AiModelGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends AiModelGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: AiModelGroupByArgs['orderBy'] }
-        : { orderBy?: AiModelGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, AiModelGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetAiModelGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the AiModel model
-   */
-  readonly fields: AiModelFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for AiModel.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__AiModelClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the AiModel model
-   */
-  interface AiModelFieldRefs {
-    readonly id: FieldRef<"AiModel", 'String'>
-    readonly name: FieldRef<"AiModel", 'String'>
-    readonly description: FieldRef<"AiModel", 'String'>
-    readonly type: FieldRef<"AiModel", 'AiModelType'>
-    readonly isFree: FieldRef<"AiModel", 'Boolean'>
-    readonly isActive: FieldRef<"AiModel", 'Boolean'>
-    readonly inputModalities: FieldRef<"AiModel", 'Json'>
-    readonly outputModalities: FieldRef<"AiModel", 'Json'>
-    readonly supportsSearch: FieldRef<"AiModel", 'Boolean'>
-    readonly supportsVision: FieldRef<"AiModel", 'Boolean'>
-    readonly supportsT2I: FieldRef<"AiModel", 'Boolean'>
-    readonly supportsI2I: FieldRef<"AiModel", 'Boolean'>
-    readonly createdAt: FieldRef<"AiModel", 'DateTime'>
-    readonly updatedAt: FieldRef<"AiModel", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * AiModel findUnique
-   */
-  export type AiModelFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * Filter, which AiModel to fetch.
-     */
-    where: AiModelWhereUniqueInput
-  }
-
-  /**
-   * AiModel findUniqueOrThrow
-   */
-  export type AiModelFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * Filter, which AiModel to fetch.
-     */
-    where: AiModelWhereUniqueInput
-  }
-
-  /**
-   * AiModel findFirst
-   */
-  export type AiModelFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * Filter, which AiModel to fetch.
-     */
-    where?: AiModelWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of AiModels to fetch.
-     */
-    orderBy?: AiModelOrderByWithRelationInput | AiModelOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for AiModels.
-     */
-    cursor?: AiModelWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` AiModels from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` AiModels.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of AiModels.
-     */
-    distinct?: AiModelScalarFieldEnum | AiModelScalarFieldEnum[]
-  }
-
-  /**
-   * AiModel findFirstOrThrow
-   */
-  export type AiModelFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * Filter, which AiModel to fetch.
-     */
-    where?: AiModelWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of AiModels to fetch.
-     */
-    orderBy?: AiModelOrderByWithRelationInput | AiModelOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for AiModels.
-     */
-    cursor?: AiModelWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` AiModels from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` AiModels.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of AiModels.
-     */
-    distinct?: AiModelScalarFieldEnum | AiModelScalarFieldEnum[]
-  }
-
-  /**
-   * AiModel findMany
-   */
-  export type AiModelFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * Filter, which AiModels to fetch.
-     */
-    where?: AiModelWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of AiModels to fetch.
-     */
-    orderBy?: AiModelOrderByWithRelationInput | AiModelOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing AiModels.
-     */
-    cursor?: AiModelWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` AiModels from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` AiModels.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of AiModels.
-     */
-    distinct?: AiModelScalarFieldEnum | AiModelScalarFieldEnum[]
-  }
-
-  /**
-   * AiModel create
-   */
-  export type AiModelCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * The data needed to create a AiModel.
-     */
-    data: XOR<AiModelCreateInput, AiModelUncheckedCreateInput>
-  }
-
-  /**
-   * AiModel createMany
-   */
-  export type AiModelCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many AiModels.
-     */
-    data: AiModelCreateManyInput | AiModelCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * AiModel createManyAndReturn
-   */
-  export type AiModelCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * The data used to create many AiModels.
-     */
-    data: AiModelCreateManyInput | AiModelCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * AiModel update
-   */
-  export type AiModelUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * The data needed to update a AiModel.
-     */
-    data: XOR<AiModelUpdateInput, AiModelUncheckedUpdateInput>
-    /**
-     * Choose, which AiModel to update.
-     */
-    where: AiModelWhereUniqueInput
-  }
-
-  /**
-   * AiModel updateMany
-   */
-  export type AiModelUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update AiModels.
-     */
-    data: XOR<AiModelUpdateManyMutationInput, AiModelUncheckedUpdateManyInput>
-    /**
-     * Filter which AiModels to update
-     */
-    where?: AiModelWhereInput
-    /**
-     * Limit how many AiModels to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * AiModel updateManyAndReturn
-   */
-  export type AiModelUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * The data used to update AiModels.
-     */
-    data: XOR<AiModelUpdateManyMutationInput, AiModelUncheckedUpdateManyInput>
-    /**
-     * Filter which AiModels to update
-     */
-    where?: AiModelWhereInput
-    /**
-     * Limit how many AiModels to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * AiModel upsert
-   */
-  export type AiModelUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * The filter to search for the AiModel to update in case it exists.
-     */
-    where: AiModelWhereUniqueInput
-    /**
-     * In case the AiModel found by the `where` argument doesn't exist, create a new AiModel with this data.
-     */
-    create: XOR<AiModelCreateInput, AiModelUncheckedCreateInput>
-    /**
-     * In case the AiModel was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<AiModelUpdateInput, AiModelUncheckedUpdateInput>
-  }
-
-  /**
-   * AiModel delete
-   */
-  export type AiModelDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-    /**
-     * Filter which AiModel to delete.
-     */
-    where: AiModelWhereUniqueInput
-  }
-
-  /**
-   * AiModel deleteMany
-   */
-  export type AiModelDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which AiModels to delete
-     */
-    where?: AiModelWhereInput
-    /**
-     * Limit how many AiModels to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * AiModel without action
-   */
-  export type AiModelDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the AiModel
-     */
-    select?: AiModelSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the AiModel
-     */
-    omit?: AiModelOmit<ExtArgs> | null
-  }
-
-
-  /**
    * Model Slider
    */
 
@@ -36423,7 +33662,6 @@ export namespace Prisma {
     autoPlay: boolean | null
     interval: number | null
     height: string | null
-    mobileHeight: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -36435,7 +33673,6 @@ export namespace Prisma {
     autoPlay: boolean | null
     interval: number | null
     height: string | null
-    mobileHeight: string | null
     isActive: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -36447,7 +33684,6 @@ export namespace Prisma {
     autoPlay: number
     interval: number
     height: number
-    mobileHeight: number
     isActive: number
     createdAt: number
     updatedAt: number
@@ -36469,7 +33705,6 @@ export namespace Prisma {
     autoPlay?: true
     interval?: true
     height?: true
-    mobileHeight?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -36481,7 +33716,6 @@ export namespace Prisma {
     autoPlay?: true
     interval?: true
     height?: true
-    mobileHeight?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -36493,7 +33727,6 @@ export namespace Prisma {
     autoPlay?: true
     interval?: true
     height?: true
-    mobileHeight?: true
     isActive?: true
     createdAt?: true
     updatedAt?: true
@@ -36592,7 +33825,6 @@ export namespace Prisma {
     autoPlay: boolean
     interval: number
     height: string | null
-    mobileHeight: string | null
     isActive: boolean
     createdAt: Date
     updatedAt: Date
@@ -36623,7 +33855,6 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: boolean
     height?: boolean
-    mobileHeight?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -36637,7 +33868,6 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: boolean
     height?: boolean
-    mobileHeight?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -36649,7 +33879,6 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: boolean
     height?: boolean
-    mobileHeight?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -36661,13 +33890,12 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: boolean
     height?: boolean
-    mobileHeight?: boolean
     isActive?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type SliderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "autoPlay" | "interval" | "height" | "mobileHeight" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["slider"]>
+  export type SliderOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "name" | "autoPlay" | "interval" | "height" | "isActive" | "createdAt" | "updatedAt", ExtArgs["result"]["slider"]>
   export type SliderInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     slides?: boolean | Slider$slidesArgs<ExtArgs>
     _count?: boolean | SliderCountOutputTypeDefaultArgs<ExtArgs>
@@ -36686,7 +33914,6 @@ export namespace Prisma {
       autoPlay: boolean
       interval: number
       height: string | null
-      mobileHeight: string | null
       isActive: boolean
       createdAt: Date
       updatedAt: Date
@@ -37119,7 +34346,6 @@ export namespace Prisma {
     readonly autoPlay: FieldRef<"Slider", 'Boolean'>
     readonly interval: FieldRef<"Slider", 'Int'>
     readonly height: FieldRef<"Slider", 'String'>
-    readonly mobileHeight: FieldRef<"Slider", 'String'>
     readonly isActive: FieldRef<"Slider", 'Boolean'>
     readonly createdAt: FieldRef<"Slider", 'DateTime'>
     readonly updatedAt: FieldRef<"Slider", 'DateTime'>
@@ -45576,12 +42802,7 @@ export namespace Prisma {
     imageUrl: 'imageUrl',
     publishedAt: 'publishedAt',
     status: 'status',
-    aiScore: 'aiScore',
-    aiAnalysis: 'aiAnalysis',
-    dismissed: 'dismissed',
     usedForArticle: 'usedForArticle',
-    processingAt: 'processingAt',
-    processingToken: 'processingToken',
     storyId: 'storyId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -45636,7 +42857,6 @@ export namespace Prisma {
     qStashScanId: 'qStashScanId',
     qStashAnalyzeId: 'qStashAnalyzeId',
     qStashNewsletterId: 'qStashNewsletterId',
-    aiProvider: 'aiProvider',
     aiAnalyzerModel: 'aiAnalyzerModel',
     aiAnalyzerPrompt: 'aiAnalyzerPrompt',
     aiTtsModel: 'aiTtsModel',
@@ -45653,8 +42873,6 @@ export namespace Prisma {
     maxNewsAgeHours: 'maxNewsAgeHours',
     googleTrendsEnabled: 'googleTrendsEnabled',
     googleTrendsGeo: 'googleTrendsGeo',
-    trendAutoPublishThreshold: 'trendAutoPublishThreshold',
-    trendSearchGenerateEnabled: 'trendSearchGenerateEnabled',
     storyMinScore: 'storyMinScore',
     updatedAt: 'updatedAt'
   };
@@ -45675,18 +42893,6 @@ export namespace Prisma {
   };
 
   export type GoogleTrendScalarFieldEnum = (typeof GoogleTrendScalarFieldEnum)[keyof typeof GoogleTrendScalarFieldEnum]
-
-
-  export const GoogleTrendItemScalarFieldEnum: {
-    id: 'id',
-    trendId: 'trendId',
-    rssItemId: 'rssItemId',
-    matchScore: 'matchScore',
-    actionTaken: 'actionTaken',
-    createdAt: 'createdAt'
-  };
-
-  export type GoogleTrendItemScalarFieldEnum = (typeof GoogleTrendItemScalarFieldEnum)[keyof typeof GoogleTrendItemScalarFieldEnum]
 
 
   export const AiPersonaScalarFieldEnum: {
@@ -45752,33 +42958,12 @@ export namespace Prisma {
   export type SiteSettingsScalarFieldEnum = (typeof SiteSettingsScalarFieldEnum)[keyof typeof SiteSettingsScalarFieldEnum]
 
 
-  export const AiModelScalarFieldEnum: {
-    id: 'id',
-    name: 'name',
-    description: 'description',
-    type: 'type',
-    isFree: 'isFree',
-    isActive: 'isActive',
-    inputModalities: 'inputModalities',
-    outputModalities: 'outputModalities',
-    supportsSearch: 'supportsSearch',
-    supportsVision: 'supportsVision',
-    supportsT2I: 'supportsT2I',
-    supportsI2I: 'supportsI2I',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type AiModelScalarFieldEnum = (typeof AiModelScalarFieldEnum)[keyof typeof AiModelScalarFieldEnum]
-
-
   export const SliderScalarFieldEnum: {
     id: 'id',
     name: 'name',
     autoPlay: 'autoPlay',
     interval: 'interval',
     height: 'height',
-    mobileHeight: 'mobileHeight',
     isActive: 'isActive',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -46062,34 +43247,6 @@ export namespace Prisma {
    * Reference to a field of type 'StoryUrgency[]'
    */
   export type ListEnumStoryUrgencyFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'StoryUrgency[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'TrendAction'
-   */
-  export type EnumTrendActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrendAction'>
-    
-
-
-  /**
-   * Reference to a field of type 'TrendAction[]'
-   */
-  export type ListEnumTrendActionFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TrendAction[]'>
-    
-
-
-  /**
-   * Reference to a field of type 'AiModelType'
-   */
-  export type EnumAiModelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AiModelType'>
-    
-
-
-  /**
-   * Reference to a field of type 'AiModelType[]'
-   */
-  export type ListEnumAiModelTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AiModelType[]'>
     
 
 
@@ -47513,18 +44670,12 @@ export namespace Prisma {
     imageUrl?: StringNullableFilter<"RssFeedItem"> | string | null
     publishedAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
     status?: EnumRssItemStatusFilter<"RssFeedItem"> | $Enums.RssItemStatus
-    aiScore?: IntNullableFilter<"RssFeedItem"> | number | null
-    aiAnalysis?: JsonNullableFilter<"RssFeedItem">
-    dismissed?: BoolFilter<"RssFeedItem"> | boolean
     usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
-    processingAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
-    processingToken?: StringNullableFilter<"RssFeedItem"> | string | null
     storyId?: StringNullableFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     story?: XOR<NewsStoryNullableScalarRelationFilter, NewsStoryWhereInput> | null
     source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
-    googleTrendItems?: GoogleTrendItemListRelationFilter
     article?: XOR<ArticleNullableScalarRelationFilter, ArticleWhereInput> | null
   }
 
@@ -47538,18 +44689,12 @@ export namespace Prisma {
     imageUrl?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     status?: SortOrder
-    aiScore?: SortOrderInput | SortOrder
-    aiAnalysis?: SortOrderInput | SortOrder
-    dismissed?: SortOrder
     usedForArticle?: SortOrder
-    processingAt?: SortOrderInput | SortOrder
-    processingToken?: SortOrderInput | SortOrder
     storyId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     story?: NewsStoryOrderByWithRelationInput
     source?: RssFeedSourceOrderByWithRelationInput
-    googleTrendItems?: GoogleTrendItemOrderByRelationAggregateInput
     article?: ArticleOrderByWithRelationInput
   }
 
@@ -47557,7 +44702,6 @@ export namespace Prisma {
     id?: string
     url?: string
     urlHash?: string
-    processingToken?: string
     AND?: RssFeedItemWhereInput | RssFeedItemWhereInput[]
     OR?: RssFeedItemWhereInput[]
     NOT?: RssFeedItemWhereInput | RssFeedItemWhereInput[]
@@ -47567,19 +44711,14 @@ export namespace Prisma {
     imageUrl?: StringNullableFilter<"RssFeedItem"> | string | null
     publishedAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
     status?: EnumRssItemStatusFilter<"RssFeedItem"> | $Enums.RssItemStatus
-    aiScore?: IntNullableFilter<"RssFeedItem"> | number | null
-    aiAnalysis?: JsonNullableFilter<"RssFeedItem">
-    dismissed?: BoolFilter<"RssFeedItem"> | boolean
     usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
-    processingAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
     storyId?: StringNullableFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     story?: XOR<NewsStoryNullableScalarRelationFilter, NewsStoryWhereInput> | null
     source?: XOR<RssFeedSourceScalarRelationFilter, RssFeedSourceWhereInput>
-    googleTrendItems?: GoogleTrendItemListRelationFilter
     article?: XOR<ArticleNullableScalarRelationFilter, ArticleWhereInput> | null
-  }, "id" | "url" | "urlHash" | "processingToken">
+  }, "id" | "url" | "urlHash">
 
   export type RssFeedItemOrderByWithAggregationInput = {
     id?: SortOrder
@@ -47591,20 +44730,13 @@ export namespace Prisma {
     imageUrl?: SortOrderInput | SortOrder
     publishedAt?: SortOrderInput | SortOrder
     status?: SortOrder
-    aiScore?: SortOrderInput | SortOrder
-    aiAnalysis?: SortOrderInput | SortOrder
-    dismissed?: SortOrder
     usedForArticle?: SortOrder
-    processingAt?: SortOrderInput | SortOrder
-    processingToken?: SortOrderInput | SortOrder
     storyId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: RssFeedItemCountOrderByAggregateInput
-    _avg?: RssFeedItemAvgOrderByAggregateInput
     _max?: RssFeedItemMaxOrderByAggregateInput
     _min?: RssFeedItemMinOrderByAggregateInput
-    _sum?: RssFeedItemSumOrderByAggregateInput
   }
 
   export type RssFeedItemScalarWhereWithAggregatesInput = {
@@ -47620,12 +44752,7 @@ export namespace Prisma {
     imageUrl?: StringNullableWithAggregatesFilter<"RssFeedItem"> | string | null
     publishedAt?: DateTimeNullableWithAggregatesFilter<"RssFeedItem"> | Date | string | null
     status?: EnumRssItemStatusWithAggregatesFilter<"RssFeedItem"> | $Enums.RssItemStatus
-    aiScore?: IntNullableWithAggregatesFilter<"RssFeedItem"> | number | null
-    aiAnalysis?: JsonNullableWithAggregatesFilter<"RssFeedItem">
-    dismissed?: BoolWithAggregatesFilter<"RssFeedItem"> | boolean
     usedForArticle?: BoolWithAggregatesFilter<"RssFeedItem"> | boolean
-    processingAt?: DateTimeNullableWithAggregatesFilter<"RssFeedItem"> | Date | string | null
-    processingToken?: StringNullableWithAggregatesFilter<"RssFeedItem"> | string | null
     storyId?: StringNullableWithAggregatesFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"RssFeedItem"> | Date | string
@@ -47837,7 +44964,6 @@ export namespace Prisma {
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
-    aiProvider?: StringFilter<"SystemSettings"> | string
     aiAnalyzerModel?: StringFilter<"SystemSettings"> | string
     aiAnalyzerPrompt?: StringNullableFilter<"SystemSettings"> | string | null
     aiTtsModel?: StringFilter<"SystemSettings"> | string
@@ -47854,8 +44980,6 @@ export namespace Prisma {
     maxNewsAgeHours?: IntFilter<"SystemSettings"> | number
     googleTrendsEnabled?: BoolFilter<"SystemSettings"> | boolean
     googleTrendsGeo?: StringFilter<"SystemSettings"> | string
-    trendAutoPublishThreshold?: IntFilter<"SystemSettings"> | number
-    trendSearchGenerateEnabled?: BoolFilter<"SystemSettings"> | boolean
     storyMinScore?: IntFilter<"SystemSettings"> | number
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }
@@ -47868,7 +44992,6 @@ export namespace Prisma {
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
     qStashNewsletterId?: SortOrderInput | SortOrder
-    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiAnalyzerPrompt?: SortOrderInput | SortOrder
     aiTtsModel?: SortOrder
@@ -47885,8 +45008,6 @@ export namespace Prisma {
     maxNewsAgeHours?: SortOrder
     googleTrendsEnabled?: SortOrder
     googleTrendsGeo?: SortOrder
-    trendAutoPublishThreshold?: SortOrder
-    trendSearchGenerateEnabled?: SortOrder
     storyMinScore?: SortOrder
     updatedAt?: SortOrder
   }
@@ -47902,7 +45023,6 @@ export namespace Prisma {
     qStashScanId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableFilter<"SystemSettings"> | string | null
-    aiProvider?: StringFilter<"SystemSettings"> | string
     aiAnalyzerModel?: StringFilter<"SystemSettings"> | string
     aiAnalyzerPrompt?: StringNullableFilter<"SystemSettings"> | string | null
     aiTtsModel?: StringFilter<"SystemSettings"> | string
@@ -47919,8 +45039,6 @@ export namespace Prisma {
     maxNewsAgeHours?: IntFilter<"SystemSettings"> | number
     googleTrendsEnabled?: BoolFilter<"SystemSettings"> | boolean
     googleTrendsGeo?: StringFilter<"SystemSettings"> | string
-    trendAutoPublishThreshold?: IntFilter<"SystemSettings"> | number
-    trendSearchGenerateEnabled?: BoolFilter<"SystemSettings"> | boolean
     storyMinScore?: IntFilter<"SystemSettings"> | number
     updatedAt?: DateTimeFilter<"SystemSettings"> | Date | string
   }, "id">
@@ -47933,7 +45051,6 @@ export namespace Prisma {
     qStashScanId?: SortOrderInput | SortOrder
     qStashAnalyzeId?: SortOrderInput | SortOrder
     qStashNewsletterId?: SortOrderInput | SortOrder
-    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiAnalyzerPrompt?: SortOrderInput | SortOrder
     aiTtsModel?: SortOrder
@@ -47950,8 +45067,6 @@ export namespace Prisma {
     maxNewsAgeHours?: SortOrder
     googleTrendsEnabled?: SortOrder
     googleTrendsGeo?: SortOrder
-    trendAutoPublishThreshold?: SortOrder
-    trendSearchGenerateEnabled?: SortOrder
     storyMinScore?: SortOrder
     updatedAt?: SortOrder
     _count?: SystemSettingsCountOrderByAggregateInput
@@ -47972,7 +45087,6 @@ export namespace Prisma {
     qStashScanId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     qStashAnalyzeId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     qStashNewsletterId?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
-    aiProvider?: StringWithAggregatesFilter<"SystemSettings"> | string
     aiAnalyzerModel?: StringWithAggregatesFilter<"SystemSettings"> | string
     aiAnalyzerPrompt?: StringNullableWithAggregatesFilter<"SystemSettings"> | string | null
     aiTtsModel?: StringWithAggregatesFilter<"SystemSettings"> | string
@@ -47989,8 +45103,6 @@ export namespace Prisma {
     maxNewsAgeHours?: IntWithAggregatesFilter<"SystemSettings"> | number
     googleTrendsEnabled?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
     googleTrendsGeo?: StringWithAggregatesFilter<"SystemSettings"> | string
-    trendAutoPublishThreshold?: IntWithAggregatesFilter<"SystemSettings"> | number
-    trendSearchGenerateEnabled?: BoolWithAggregatesFilter<"SystemSettings"> | boolean
     storyMinScore?: IntWithAggregatesFilter<"SystemSettings"> | number
     updatedAt?: DateTimeWithAggregatesFilter<"SystemSettings"> | Date | string
   }
@@ -48008,7 +45120,6 @@ export namespace Prisma {
     trafficScore?: IntFilter<"GoogleTrend"> | number
     createdAt?: DateTimeFilter<"GoogleTrend"> | Date | string
     updatedAt?: DateTimeFilter<"GoogleTrend"> | Date | string
-    items?: GoogleTrendItemListRelationFilter
   }
 
   export type GoogleTrendOrderByWithRelationInput = {
@@ -48021,7 +45132,6 @@ export namespace Prisma {
     trafficScore?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-    items?: GoogleTrendItemOrderByRelationAggregateInput
   }
 
   export type GoogleTrendWhereUniqueInput = Prisma.AtLeast<{
@@ -48037,7 +45147,6 @@ export namespace Prisma {
     trafficScore?: IntFilter<"GoogleTrend"> | number
     createdAt?: DateTimeFilter<"GoogleTrend"> | Date | string
     updatedAt?: DateTimeFilter<"GoogleTrend"> | Date | string
-    items?: GoogleTrendItemListRelationFilter
   }, "id" | "keyword">
 
   export type GoogleTrendOrderByWithAggregationInput = {
@@ -48070,71 +45179,6 @@ export namespace Prisma {
     trafficScore?: IntWithAggregatesFilter<"GoogleTrend"> | number
     createdAt?: DateTimeWithAggregatesFilter<"GoogleTrend"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"GoogleTrend"> | Date | string
-  }
-
-  export type GoogleTrendItemWhereInput = {
-    AND?: GoogleTrendItemWhereInput | GoogleTrendItemWhereInput[]
-    OR?: GoogleTrendItemWhereInput[]
-    NOT?: GoogleTrendItemWhereInput | GoogleTrendItemWhereInput[]
-    id?: StringFilter<"GoogleTrendItem"> | string
-    trendId?: StringFilter<"GoogleTrendItem"> | string
-    rssItemId?: StringNullableFilter<"GoogleTrendItem"> | string | null
-    matchScore?: IntFilter<"GoogleTrendItem"> | number
-    actionTaken?: EnumTrendActionFilter<"GoogleTrendItem"> | $Enums.TrendAction
-    createdAt?: DateTimeFilter<"GoogleTrendItem"> | Date | string
-    trend?: XOR<GoogleTrendScalarRelationFilter, GoogleTrendWhereInput>
-    rssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
-  }
-
-  export type GoogleTrendItemOrderByWithRelationInput = {
-    id?: SortOrder
-    trendId?: SortOrder
-    rssItemId?: SortOrderInput | SortOrder
-    matchScore?: SortOrder
-    actionTaken?: SortOrder
-    createdAt?: SortOrder
-    trend?: GoogleTrendOrderByWithRelationInput
-    rssItem?: RssFeedItemOrderByWithRelationInput
-  }
-
-  export type GoogleTrendItemWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: GoogleTrendItemWhereInput | GoogleTrendItemWhereInput[]
-    OR?: GoogleTrendItemWhereInput[]
-    NOT?: GoogleTrendItemWhereInput | GoogleTrendItemWhereInput[]
-    trendId?: StringFilter<"GoogleTrendItem"> | string
-    rssItemId?: StringNullableFilter<"GoogleTrendItem"> | string | null
-    matchScore?: IntFilter<"GoogleTrendItem"> | number
-    actionTaken?: EnumTrendActionFilter<"GoogleTrendItem"> | $Enums.TrendAction
-    createdAt?: DateTimeFilter<"GoogleTrendItem"> | Date | string
-    trend?: XOR<GoogleTrendScalarRelationFilter, GoogleTrendWhereInput>
-    rssItem?: XOR<RssFeedItemNullableScalarRelationFilter, RssFeedItemWhereInput> | null
-  }, "id">
-
-  export type GoogleTrendItemOrderByWithAggregationInput = {
-    id?: SortOrder
-    trendId?: SortOrder
-    rssItemId?: SortOrderInput | SortOrder
-    matchScore?: SortOrder
-    actionTaken?: SortOrder
-    createdAt?: SortOrder
-    _count?: GoogleTrendItemCountOrderByAggregateInput
-    _avg?: GoogleTrendItemAvgOrderByAggregateInput
-    _max?: GoogleTrendItemMaxOrderByAggregateInput
-    _min?: GoogleTrendItemMinOrderByAggregateInput
-    _sum?: GoogleTrendItemSumOrderByAggregateInput
-  }
-
-  export type GoogleTrendItemScalarWhereWithAggregatesInput = {
-    AND?: GoogleTrendItemScalarWhereWithAggregatesInput | GoogleTrendItemScalarWhereWithAggregatesInput[]
-    OR?: GoogleTrendItemScalarWhereWithAggregatesInput[]
-    NOT?: GoogleTrendItemScalarWhereWithAggregatesInput | GoogleTrendItemScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"GoogleTrendItem"> | string
-    trendId?: StringWithAggregatesFilter<"GoogleTrendItem"> | string
-    rssItemId?: StringNullableWithAggregatesFilter<"GoogleTrendItem"> | string | null
-    matchScore?: IntWithAggregatesFilter<"GoogleTrendItem"> | number
-    actionTaken?: EnumTrendActionWithAggregatesFilter<"GoogleTrendItem"> | $Enums.TrendAction
-    createdAt?: DateTimeWithAggregatesFilter<"GoogleTrendItem"> | Date | string
   }
 
   export type AiPersonaWhereInput = {
@@ -48456,103 +45500,6 @@ export namespace Prisma {
     createdAt?: DateTimeWithAggregatesFilter<"SiteSettings"> | Date | string
   }
 
-  export type AiModelWhereInput = {
-    AND?: AiModelWhereInput | AiModelWhereInput[]
-    OR?: AiModelWhereInput[]
-    NOT?: AiModelWhereInput | AiModelWhereInput[]
-    id?: StringFilter<"AiModel"> | string
-    name?: StringFilter<"AiModel"> | string
-    description?: StringNullableFilter<"AiModel"> | string | null
-    type?: EnumAiModelTypeFilter<"AiModel"> | $Enums.AiModelType
-    isFree?: BoolFilter<"AiModel"> | boolean
-    isActive?: BoolFilter<"AiModel"> | boolean
-    inputModalities?: JsonNullableFilter<"AiModel">
-    outputModalities?: JsonNullableFilter<"AiModel">
-    supportsSearch?: BoolFilter<"AiModel"> | boolean
-    supportsVision?: BoolFilter<"AiModel"> | boolean
-    supportsT2I?: BoolFilter<"AiModel"> | boolean
-    supportsI2I?: BoolFilter<"AiModel"> | boolean
-    createdAt?: DateTimeFilter<"AiModel"> | Date | string
-    updatedAt?: DateTimeFilter<"AiModel"> | Date | string
-  }
-
-  export type AiModelOrderByWithRelationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrderInput | SortOrder
-    type?: SortOrder
-    isFree?: SortOrder
-    isActive?: SortOrder
-    inputModalities?: SortOrderInput | SortOrder
-    outputModalities?: SortOrderInput | SortOrder
-    supportsSearch?: SortOrder
-    supportsVision?: SortOrder
-    supportsT2I?: SortOrder
-    supportsI2I?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type AiModelWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: AiModelWhereInput | AiModelWhereInput[]
-    OR?: AiModelWhereInput[]
-    NOT?: AiModelWhereInput | AiModelWhereInput[]
-    name?: StringFilter<"AiModel"> | string
-    description?: StringNullableFilter<"AiModel"> | string | null
-    type?: EnumAiModelTypeFilter<"AiModel"> | $Enums.AiModelType
-    isFree?: BoolFilter<"AiModel"> | boolean
-    isActive?: BoolFilter<"AiModel"> | boolean
-    inputModalities?: JsonNullableFilter<"AiModel">
-    outputModalities?: JsonNullableFilter<"AiModel">
-    supportsSearch?: BoolFilter<"AiModel"> | boolean
-    supportsVision?: BoolFilter<"AiModel"> | boolean
-    supportsT2I?: BoolFilter<"AiModel"> | boolean
-    supportsI2I?: BoolFilter<"AiModel"> | boolean
-    createdAt?: DateTimeFilter<"AiModel"> | Date | string
-    updatedAt?: DateTimeFilter<"AiModel"> | Date | string
-  }, "id">
-
-  export type AiModelOrderByWithAggregationInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrderInput | SortOrder
-    type?: SortOrder
-    isFree?: SortOrder
-    isActive?: SortOrder
-    inputModalities?: SortOrderInput | SortOrder
-    outputModalities?: SortOrderInput | SortOrder
-    supportsSearch?: SortOrder
-    supportsVision?: SortOrder
-    supportsT2I?: SortOrder
-    supportsI2I?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: AiModelCountOrderByAggregateInput
-    _max?: AiModelMaxOrderByAggregateInput
-    _min?: AiModelMinOrderByAggregateInput
-  }
-
-  export type AiModelScalarWhereWithAggregatesInput = {
-    AND?: AiModelScalarWhereWithAggregatesInput | AiModelScalarWhereWithAggregatesInput[]
-    OR?: AiModelScalarWhereWithAggregatesInput[]
-    NOT?: AiModelScalarWhereWithAggregatesInput | AiModelScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"AiModel"> | string
-    name?: StringWithAggregatesFilter<"AiModel"> | string
-    description?: StringNullableWithAggregatesFilter<"AiModel"> | string | null
-    type?: EnumAiModelTypeWithAggregatesFilter<"AiModel"> | $Enums.AiModelType
-    isFree?: BoolWithAggregatesFilter<"AiModel"> | boolean
-    isActive?: BoolWithAggregatesFilter<"AiModel"> | boolean
-    inputModalities?: JsonNullableWithAggregatesFilter<"AiModel">
-    outputModalities?: JsonNullableWithAggregatesFilter<"AiModel">
-    supportsSearch?: BoolWithAggregatesFilter<"AiModel"> | boolean
-    supportsVision?: BoolWithAggregatesFilter<"AiModel"> | boolean
-    supportsT2I?: BoolWithAggregatesFilter<"AiModel"> | boolean
-    supportsI2I?: BoolWithAggregatesFilter<"AiModel"> | boolean
-    createdAt?: DateTimeWithAggregatesFilter<"AiModel"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"AiModel"> | Date | string
-  }
-
   export type SliderWhereInput = {
     AND?: SliderWhereInput | SliderWhereInput[]
     OR?: SliderWhereInput[]
@@ -48562,7 +45509,6 @@ export namespace Prisma {
     autoPlay?: BoolFilter<"Slider"> | boolean
     interval?: IntFilter<"Slider"> | number
     height?: StringNullableFilter<"Slider"> | string | null
-    mobileHeight?: StringNullableFilter<"Slider"> | string | null
     isActive?: BoolFilter<"Slider"> | boolean
     createdAt?: DateTimeFilter<"Slider"> | Date | string
     updatedAt?: DateTimeFilter<"Slider"> | Date | string
@@ -48575,7 +45521,6 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrderInput | SortOrder
-    mobileHeight?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -48591,7 +45536,6 @@ export namespace Prisma {
     autoPlay?: BoolFilter<"Slider"> | boolean
     interval?: IntFilter<"Slider"> | number
     height?: StringNullableFilter<"Slider"> | string | null
-    mobileHeight?: StringNullableFilter<"Slider"> | string | null
     isActive?: BoolFilter<"Slider"> | boolean
     createdAt?: DateTimeFilter<"Slider"> | Date | string
     updatedAt?: DateTimeFilter<"Slider"> | Date | string
@@ -48604,7 +45548,6 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrderInput | SortOrder
-    mobileHeight?: SortOrderInput | SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -48624,7 +45567,6 @@ export namespace Prisma {
     autoPlay?: BoolWithAggregatesFilter<"Slider"> | boolean
     interval?: IntWithAggregatesFilter<"Slider"> | number
     height?: StringNullableWithAggregatesFilter<"Slider"> | string | null
-    mobileHeight?: StringNullableWithAggregatesFilter<"Slider"> | string | null
     isActive?: BoolWithAggregatesFilter<"Slider"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Slider"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Slider"> | Date | string
@@ -50686,17 +47628,11 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     story?: NewsStoryCreateNestedOneWithoutItemsInput
     source: RssFeedSourceCreateNestedOneWithoutItemsInput
-    googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
     article?: ArticleCreateNestedOneWithoutSourceRssItemInput
   }
 
@@ -50710,16 +47646,10 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
     article?: ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput
   }
 
@@ -50732,17 +47662,11 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     story?: NewsStoryUpdateOneWithoutItemsNestedInput
     source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
-    googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
     article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
   }
 
@@ -50756,16 +47680,10 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
     article?: ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput
   }
 
@@ -50779,12 +47697,7 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -50799,12 +47712,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -50819,12 +47727,7 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -51086,7 +47989,6 @@ export namespace Prisma {
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
-    aiProvider?: string
     aiAnalyzerModel?: string
     aiAnalyzerPrompt?: string | null
     aiTtsModel?: string
@@ -51103,8 +48005,6 @@ export namespace Prisma {
     maxNewsAgeHours?: number
     googleTrendsEnabled?: boolean
     googleTrendsGeo?: string
-    trendAutoPublishThreshold?: number
-    trendSearchGenerateEnabled?: boolean
     storyMinScore?: number
     updatedAt?: Date | string
   }
@@ -51117,7 +48017,6 @@ export namespace Prisma {
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
-    aiProvider?: string
     aiAnalyzerModel?: string
     aiAnalyzerPrompt?: string | null
     aiTtsModel?: string
@@ -51134,8 +48033,6 @@ export namespace Prisma {
     maxNewsAgeHours?: number
     googleTrendsEnabled?: boolean
     googleTrendsGeo?: string
-    trendAutoPublishThreshold?: number
-    trendSearchGenerateEnabled?: boolean
     storyMinScore?: number
     updatedAt?: Date | string
   }
@@ -51148,7 +48045,6 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
-    aiProvider?: StringFieldUpdateOperationsInput | string
     aiAnalyzerModel?: StringFieldUpdateOperationsInput | string
     aiAnalyzerPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     aiTtsModel?: StringFieldUpdateOperationsInput | string
@@ -51165,8 +48061,6 @@ export namespace Prisma {
     maxNewsAgeHours?: IntFieldUpdateOperationsInput | number
     googleTrendsEnabled?: BoolFieldUpdateOperationsInput | boolean
     googleTrendsGeo?: StringFieldUpdateOperationsInput | string
-    trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
-    trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
     storyMinScore?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -51179,7 +48073,6 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
-    aiProvider?: StringFieldUpdateOperationsInput | string
     aiAnalyzerModel?: StringFieldUpdateOperationsInput | string
     aiAnalyzerPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     aiTtsModel?: StringFieldUpdateOperationsInput | string
@@ -51196,8 +48089,6 @@ export namespace Prisma {
     maxNewsAgeHours?: IntFieldUpdateOperationsInput | number
     googleTrendsEnabled?: BoolFieldUpdateOperationsInput | boolean
     googleTrendsGeo?: StringFieldUpdateOperationsInput | string
-    trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
-    trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
     storyMinScore?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -51210,7 +48101,6 @@ export namespace Prisma {
     qStashScanId?: string | null
     qStashAnalyzeId?: string | null
     qStashNewsletterId?: string | null
-    aiProvider?: string
     aiAnalyzerModel?: string
     aiAnalyzerPrompt?: string | null
     aiTtsModel?: string
@@ -51227,8 +48117,6 @@ export namespace Prisma {
     maxNewsAgeHours?: number
     googleTrendsEnabled?: boolean
     googleTrendsGeo?: string
-    trendAutoPublishThreshold?: number
-    trendSearchGenerateEnabled?: boolean
     storyMinScore?: number
     updatedAt?: Date | string
   }
@@ -51241,7 +48129,6 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
-    aiProvider?: StringFieldUpdateOperationsInput | string
     aiAnalyzerModel?: StringFieldUpdateOperationsInput | string
     aiAnalyzerPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     aiTtsModel?: StringFieldUpdateOperationsInput | string
@@ -51258,8 +48145,6 @@ export namespace Prisma {
     maxNewsAgeHours?: IntFieldUpdateOperationsInput | number
     googleTrendsEnabled?: BoolFieldUpdateOperationsInput | boolean
     googleTrendsGeo?: StringFieldUpdateOperationsInput | string
-    trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
-    trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
     storyMinScore?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -51272,7 +48157,6 @@ export namespace Prisma {
     qStashScanId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashAnalyzeId?: NullableStringFieldUpdateOperationsInput | string | null
     qStashNewsletterId?: NullableStringFieldUpdateOperationsInput | string | null
-    aiProvider?: StringFieldUpdateOperationsInput | string
     aiAnalyzerModel?: StringFieldUpdateOperationsInput | string
     aiAnalyzerPrompt?: NullableStringFieldUpdateOperationsInput | string | null
     aiTtsModel?: StringFieldUpdateOperationsInput | string
@@ -51289,8 +48173,6 @@ export namespace Prisma {
     maxNewsAgeHours?: IntFieldUpdateOperationsInput | number
     googleTrendsEnabled?: BoolFieldUpdateOperationsInput | boolean
     googleTrendsGeo?: StringFieldUpdateOperationsInput | string
-    trendAutoPublishThreshold?: IntFieldUpdateOperationsInput | number
-    trendSearchGenerateEnabled?: BoolFieldUpdateOperationsInput | boolean
     storyMinScore?: IntFieldUpdateOperationsInput | number
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -51305,7 +48187,6 @@ export namespace Prisma {
     trafficScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    items?: GoogleTrendItemCreateNestedManyWithoutTrendInput
   }
 
   export type GoogleTrendUncheckedCreateInput = {
@@ -51318,7 +48199,6 @@ export namespace Prisma {
     trafficScore?: number
     createdAt?: Date | string
     updatedAt?: Date | string
-    items?: GoogleTrendItemUncheckedCreateNestedManyWithoutTrendInput
   }
 
   export type GoogleTrendUpdateInput = {
@@ -51331,7 +48211,6 @@ export namespace Prisma {
     trafficScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    items?: GoogleTrendItemUpdateManyWithoutTrendNestedInput
   }
 
   export type GoogleTrendUncheckedUpdateInput = {
@@ -51344,7 +48223,6 @@ export namespace Prisma {
     trafficScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    items?: GoogleTrendItemUncheckedUpdateManyWithoutTrendNestedInput
   }
 
   export type GoogleTrendCreateManyInput = {
@@ -51381,67 +48259,6 @@ export namespace Prisma {
     trafficScore?: IntFieldUpdateOperationsInput | number
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type GoogleTrendItemCreateInput = {
-    id?: string
-    matchScore: number
-    actionTaken?: $Enums.TrendAction
-    createdAt?: Date | string
-    trend: GoogleTrendCreateNestedOneWithoutItemsInput
-    rssItem?: RssFeedItemCreateNestedOneWithoutGoogleTrendItemsInput
-  }
-
-  export type GoogleTrendItemUncheckedCreateInput = {
-    id?: string
-    trendId: string
-    rssItemId?: string | null
-    matchScore: number
-    actionTaken?: $Enums.TrendAction
-    createdAt?: Date | string
-  }
-
-  export type GoogleTrendItemUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trend?: GoogleTrendUpdateOneRequiredWithoutItemsNestedInput
-    rssItem?: RssFeedItemUpdateOneWithoutGoogleTrendItemsNestedInput
-  }
-
-  export type GoogleTrendItemUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    trendId?: StringFieldUpdateOperationsInput | string
-    rssItemId?: NullableStringFieldUpdateOperationsInput | string | null
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type GoogleTrendItemCreateManyInput = {
-    id?: string
-    trendId: string
-    rssItemId?: string | null
-    matchScore: number
-    actionTaken?: $Enums.TrendAction
-    createdAt?: Date | string
-  }
-
-  export type GoogleTrendItemUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type GoogleTrendItemUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    trendId?: StringFieldUpdateOperationsInput | string
-    rssItemId?: NullableStringFieldUpdateOperationsInput | string | null
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AiPersonaCreateInput = {
@@ -51828,132 +48645,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type AiModelCreateInput = {
-    id: string
-    name: string
-    description?: string | null
-    type?: $Enums.AiModelType
-    isFree?: boolean
-    isActive?: boolean
-    inputModalities?: NullableJsonNullValueInput | InputJsonValue
-    outputModalities?: NullableJsonNullValueInput | InputJsonValue
-    supportsSearch?: boolean
-    supportsVision?: boolean
-    supportsT2I?: boolean
-    supportsI2I?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type AiModelUncheckedCreateInput = {
-    id: string
-    name: string
-    description?: string | null
-    type?: $Enums.AiModelType
-    isFree?: boolean
-    isActive?: boolean
-    inputModalities?: NullableJsonNullValueInput | InputJsonValue
-    outputModalities?: NullableJsonNullValueInput | InputJsonValue
-    supportsSearch?: boolean
-    supportsVision?: boolean
-    supportsT2I?: boolean
-    supportsI2I?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type AiModelUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumAiModelTypeFieldUpdateOperationsInput | $Enums.AiModelType
-    isFree?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    inputModalities?: NullableJsonNullValueInput | InputJsonValue
-    outputModalities?: NullableJsonNullValueInput | InputJsonValue
-    supportsSearch?: BoolFieldUpdateOperationsInput | boolean
-    supportsVision?: BoolFieldUpdateOperationsInput | boolean
-    supportsT2I?: BoolFieldUpdateOperationsInput | boolean
-    supportsI2I?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AiModelUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumAiModelTypeFieldUpdateOperationsInput | $Enums.AiModelType
-    isFree?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    inputModalities?: NullableJsonNullValueInput | InputJsonValue
-    outputModalities?: NullableJsonNullValueInput | InputJsonValue
-    supportsSearch?: BoolFieldUpdateOperationsInput | boolean
-    supportsVision?: BoolFieldUpdateOperationsInput | boolean
-    supportsT2I?: BoolFieldUpdateOperationsInput | boolean
-    supportsI2I?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AiModelCreateManyInput = {
-    id: string
-    name: string
-    description?: string | null
-    type?: $Enums.AiModelType
-    isFree?: boolean
-    isActive?: boolean
-    inputModalities?: NullableJsonNullValueInput | InputJsonValue
-    outputModalities?: NullableJsonNullValueInput | InputJsonValue
-    supportsSearch?: boolean
-    supportsVision?: boolean
-    supportsT2I?: boolean
-    supportsI2I?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type AiModelUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumAiModelTypeFieldUpdateOperationsInput | $Enums.AiModelType
-    isFree?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    inputModalities?: NullableJsonNullValueInput | InputJsonValue
-    outputModalities?: NullableJsonNullValueInput | InputJsonValue
-    supportsSearch?: BoolFieldUpdateOperationsInput | boolean
-    supportsVision?: BoolFieldUpdateOperationsInput | boolean
-    supportsT2I?: BoolFieldUpdateOperationsInput | boolean
-    supportsI2I?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type AiModelUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: EnumAiModelTypeFieldUpdateOperationsInput | $Enums.AiModelType
-    isFree?: BoolFieldUpdateOperationsInput | boolean
-    isActive?: BoolFieldUpdateOperationsInput | boolean
-    inputModalities?: NullableJsonNullValueInput | InputJsonValue
-    outputModalities?: NullableJsonNullValueInput | InputJsonValue
-    supportsSearch?: BoolFieldUpdateOperationsInput | boolean
-    supportsVision?: BoolFieldUpdateOperationsInput | boolean
-    supportsT2I?: BoolFieldUpdateOperationsInput | boolean
-    supportsI2I?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type SliderCreateInput = {
     id?: string
     name: string
     autoPlay?: boolean
     interval?: number
     height?: string | null
-    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -51966,7 +48663,6 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: number
     height?: string | null
-    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -51979,7 +48675,6 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -51992,7 +48687,6 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52005,7 +48699,6 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: number
     height?: string | null
-    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -52017,7 +48710,6 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -52029,7 +48721,6 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -53766,19 +50457,9 @@ export namespace Prisma {
     isNot?: RssFeedSourceWhereInput
   }
 
-  export type GoogleTrendItemListRelationFilter = {
-    every?: GoogleTrendItemWhereInput
-    some?: GoogleTrendItemWhereInput
-    none?: GoogleTrendItemWhereInput
-  }
-
   export type ArticleNullableScalarRelationFilter = {
     is?: ArticleWhereInput | null
     isNot?: ArticleWhereInput | null
-  }
-
-  export type GoogleTrendItemOrderByRelationAggregateInput = {
-    _count?: SortOrder
   }
 
   export type RssFeedItemCountOrderByAggregateInput = {
@@ -53791,19 +50472,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     publishedAt?: SortOrder
     status?: SortOrder
-    aiScore?: SortOrder
-    aiAnalysis?: SortOrder
-    dismissed?: SortOrder
     usedForArticle?: SortOrder
-    processingAt?: SortOrder
-    processingToken?: SortOrder
     storyId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type RssFeedItemAvgOrderByAggregateInput = {
-    aiScore?: SortOrder
   }
 
   export type RssFeedItemMaxOrderByAggregateInput = {
@@ -53816,11 +50488,7 @@ export namespace Prisma {
     imageUrl?: SortOrder
     publishedAt?: SortOrder
     status?: SortOrder
-    aiScore?: SortOrder
-    dismissed?: SortOrder
     usedForArticle?: SortOrder
-    processingAt?: SortOrder
-    processingToken?: SortOrder
     storyId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -53836,18 +50504,10 @@ export namespace Prisma {
     imageUrl?: SortOrder
     publishedAt?: SortOrder
     status?: SortOrder
-    aiScore?: SortOrder
-    dismissed?: SortOrder
     usedForArticle?: SortOrder
-    processingAt?: SortOrder
-    processingToken?: SortOrder
     storyId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
-  }
-
-  export type RssFeedItemSumOrderByAggregateInput = {
-    aiScore?: SortOrder
   }
 
   export type EnumRssItemStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -54027,7 +50687,6 @@ export namespace Prisma {
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
-    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiAnalyzerPrompt?: SortOrder
     aiTtsModel?: SortOrder
@@ -54044,8 +50703,6 @@ export namespace Prisma {
     maxNewsAgeHours?: SortOrder
     googleTrendsEnabled?: SortOrder
     googleTrendsGeo?: SortOrder
-    trendAutoPublishThreshold?: SortOrder
-    trendSearchGenerateEnabled?: SortOrder
     storyMinScore?: SortOrder
     updatedAt?: SortOrder
   }
@@ -54054,7 +50711,6 @@ export namespace Prisma {
     rssRetentionDays?: SortOrder
     aiWriterAutoCount?: SortOrder
     maxNewsAgeHours?: SortOrder
-    trendAutoPublishThreshold?: SortOrder
     storyMinScore?: SortOrder
   }
 
@@ -54066,7 +50722,6 @@ export namespace Prisma {
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
-    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiAnalyzerPrompt?: SortOrder
     aiTtsModel?: SortOrder
@@ -54083,8 +50738,6 @@ export namespace Prisma {
     maxNewsAgeHours?: SortOrder
     googleTrendsEnabled?: SortOrder
     googleTrendsGeo?: SortOrder
-    trendAutoPublishThreshold?: SortOrder
-    trendSearchGenerateEnabled?: SortOrder
     storyMinScore?: SortOrder
     updatedAt?: SortOrder
   }
@@ -54097,7 +50750,6 @@ export namespace Prisma {
     qStashScanId?: SortOrder
     qStashAnalyzeId?: SortOrder
     qStashNewsletterId?: SortOrder
-    aiProvider?: SortOrder
     aiAnalyzerModel?: SortOrder
     aiAnalyzerPrompt?: SortOrder
     aiTtsModel?: SortOrder
@@ -54114,8 +50766,6 @@ export namespace Prisma {
     maxNewsAgeHours?: SortOrder
     googleTrendsEnabled?: SortOrder
     googleTrendsGeo?: SortOrder
-    trendAutoPublishThreshold?: SortOrder
-    trendSearchGenerateEnabled?: SortOrder
     storyMinScore?: SortOrder
     updatedAt?: SortOrder
   }
@@ -54124,7 +50774,6 @@ export namespace Prisma {
     rssRetentionDays?: SortOrder
     aiWriterAutoCount?: SortOrder
     maxNewsAgeHours?: SortOrder
-    trendAutoPublishThreshold?: SortOrder
     storyMinScore?: SortOrder
   }
 
@@ -54170,63 +50819,6 @@ export namespace Prisma {
 
   export type GoogleTrendSumOrderByAggregateInput = {
     trafficScore?: SortOrder
-  }
-
-  export type EnumTrendActionFilter<$PrismaModel = never> = {
-    equals?: $Enums.TrendAction | EnumTrendActionFieldRefInput<$PrismaModel>
-    in?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
-    not?: NestedEnumTrendActionFilter<$PrismaModel> | $Enums.TrendAction
-  }
-
-  export type GoogleTrendScalarRelationFilter = {
-    is?: GoogleTrendWhereInput
-    isNot?: GoogleTrendWhereInput
-  }
-
-  export type GoogleTrendItemCountOrderByAggregateInput = {
-    id?: SortOrder
-    trendId?: SortOrder
-    rssItemId?: SortOrder
-    matchScore?: SortOrder
-    actionTaken?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type GoogleTrendItemAvgOrderByAggregateInput = {
-    matchScore?: SortOrder
-  }
-
-  export type GoogleTrendItemMaxOrderByAggregateInput = {
-    id?: SortOrder
-    trendId?: SortOrder
-    rssItemId?: SortOrder
-    matchScore?: SortOrder
-    actionTaken?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type GoogleTrendItemMinOrderByAggregateInput = {
-    id?: SortOrder
-    trendId?: SortOrder
-    rssItemId?: SortOrder
-    matchScore?: SortOrder
-    actionTaken?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type GoogleTrendItemSumOrderByAggregateInput = {
-    matchScore?: SortOrder
-  }
-
-  export type EnumTrendActionWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TrendAction | EnumTrendActionFieldRefInput<$PrismaModel>
-    in?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
-    not?: NestedEnumTrendActionWithAggregatesFilter<$PrismaModel> | $Enums.TrendAction
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumTrendActionFilter<$PrismaModel>
-    _max?: NestedEnumTrendActionFilter<$PrismaModel>
   }
 
   export type AiPersonaCountOrderByAggregateInput = {
@@ -54406,70 +50998,6 @@ export namespace Prisma {
     createdAt?: SortOrder
   }
 
-  export type EnumAiModelTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.AiModelType | EnumAiModelTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.AiModelType[] | ListEnumAiModelTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AiModelType[] | ListEnumAiModelTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumAiModelTypeFilter<$PrismaModel> | $Enums.AiModelType
-  }
-
-  export type AiModelCountOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    type?: SortOrder
-    isFree?: SortOrder
-    isActive?: SortOrder
-    inputModalities?: SortOrder
-    outputModalities?: SortOrder
-    supportsSearch?: SortOrder
-    supportsVision?: SortOrder
-    supportsT2I?: SortOrder
-    supportsI2I?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type AiModelMaxOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    type?: SortOrder
-    isFree?: SortOrder
-    isActive?: SortOrder
-    supportsSearch?: SortOrder
-    supportsVision?: SortOrder
-    supportsT2I?: SortOrder
-    supportsI2I?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type AiModelMinOrderByAggregateInput = {
-    id?: SortOrder
-    name?: SortOrder
-    description?: SortOrder
-    type?: SortOrder
-    isFree?: SortOrder
-    isActive?: SortOrder
-    supportsSearch?: SortOrder
-    supportsVision?: SortOrder
-    supportsT2I?: SortOrder
-    supportsI2I?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type EnumAiModelTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.AiModelType | EnumAiModelTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.AiModelType[] | ListEnumAiModelTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AiModelType[] | ListEnumAiModelTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumAiModelTypeWithAggregatesFilter<$PrismaModel> | $Enums.AiModelType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumAiModelTypeFilter<$PrismaModel>
-    _max?: NestedEnumAiModelTypeFilter<$PrismaModel>
-  }
-
   export type SlideListRelationFilter = {
     every?: SlideWhereInput
     some?: SlideWhereInput
@@ -54486,7 +51014,6 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrder
-    mobileHeight?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -54502,7 +51029,6 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrder
-    mobileHeight?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -54514,7 +51040,6 @@ export namespace Prisma {
     autoPlay?: SortOrder
     interval?: SortOrder
     height?: SortOrder
-    mobileHeight?: SortOrder
     isActive?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -56081,24 +52606,10 @@ export namespace Prisma {
     connect?: RssFeedSourceWhereUniqueInput
   }
 
-  export type GoogleTrendItemCreateNestedManyWithoutRssItemInput = {
-    create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
-    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
-    createMany?: GoogleTrendItemCreateManyRssItemInputEnvelope
-    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-  }
-
   export type ArticleCreateNestedOneWithoutSourceRssItemInput = {
     create?: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
     connectOrCreate?: ArticleCreateOrConnectWithoutSourceRssItemInput
     connect?: ArticleWhereUniqueInput
-  }
-
-  export type GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput = {
-    create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
-    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
-    createMany?: GoogleTrendItemCreateManyRssItemInputEnvelope
-    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
   }
 
   export type ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput = {
@@ -56129,20 +52640,6 @@ export namespace Prisma {
     update?: XOR<XOR<RssFeedSourceUpdateToOneWithWhereWithoutItemsInput, RssFeedSourceUpdateWithoutItemsInput>, RssFeedSourceUncheckedUpdateWithoutItemsInput>
   }
 
-  export type GoogleTrendItemUpdateManyWithoutRssItemNestedInput = {
-    create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
-    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
-    upsert?: GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput | GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput[]
-    createMany?: GoogleTrendItemCreateManyRssItemInputEnvelope
-    set?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    disconnect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    delete?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    update?: GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput | GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput[]
-    updateMany?: GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput | GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput[]
-    deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
-  }
-
   export type ArticleUpdateOneWithoutSourceRssItemNestedInput = {
     create?: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
     connectOrCreate?: ArticleCreateOrConnectWithoutSourceRssItemInput
@@ -56151,20 +52648,6 @@ export namespace Prisma {
     delete?: ArticleWhereInput | boolean
     connect?: ArticleWhereUniqueInput
     update?: XOR<XOR<ArticleUpdateToOneWithWhereWithoutSourceRssItemInput, ArticleUpdateWithoutSourceRssItemInput>, ArticleUncheckedUpdateWithoutSourceRssItemInput>
-  }
-
-  export type GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput = {
-    create?: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput> | GoogleTrendItemCreateWithoutRssItemInput[] | GoogleTrendItemUncheckedCreateWithoutRssItemInput[]
-    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutRssItemInput | GoogleTrendItemCreateOrConnectWithoutRssItemInput[]
-    upsert?: GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput | GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput[]
-    createMany?: GoogleTrendItemCreateManyRssItemInputEnvelope
-    set?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    disconnect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    delete?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    update?: GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput | GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput[]
-    updateMany?: GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput | GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput[]
-    deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
   }
 
   export type ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput = {
@@ -56259,82 +52742,6 @@ export namespace Prisma {
     update?: RssFeedItemUpdateWithWhereUniqueWithoutStoryInput | RssFeedItemUpdateWithWhereUniqueWithoutStoryInput[]
     updateMany?: RssFeedItemUpdateManyWithWhereWithoutStoryInput | RssFeedItemUpdateManyWithWhereWithoutStoryInput[]
     deleteMany?: RssFeedItemScalarWhereInput | RssFeedItemScalarWhereInput[]
-  }
-
-  export type GoogleTrendItemCreateNestedManyWithoutTrendInput = {
-    create?: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput> | GoogleTrendItemCreateWithoutTrendInput[] | GoogleTrendItemUncheckedCreateWithoutTrendInput[]
-    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutTrendInput | GoogleTrendItemCreateOrConnectWithoutTrendInput[]
-    createMany?: GoogleTrendItemCreateManyTrendInputEnvelope
-    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-  }
-
-  export type GoogleTrendItemUncheckedCreateNestedManyWithoutTrendInput = {
-    create?: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput> | GoogleTrendItemCreateWithoutTrendInput[] | GoogleTrendItemUncheckedCreateWithoutTrendInput[]
-    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutTrendInput | GoogleTrendItemCreateOrConnectWithoutTrendInput[]
-    createMany?: GoogleTrendItemCreateManyTrendInputEnvelope
-    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-  }
-
-  export type GoogleTrendItemUpdateManyWithoutTrendNestedInput = {
-    create?: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput> | GoogleTrendItemCreateWithoutTrendInput[] | GoogleTrendItemUncheckedCreateWithoutTrendInput[]
-    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutTrendInput | GoogleTrendItemCreateOrConnectWithoutTrendInput[]
-    upsert?: GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput | GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput[]
-    createMany?: GoogleTrendItemCreateManyTrendInputEnvelope
-    set?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    disconnect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    delete?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    update?: GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput | GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput[]
-    updateMany?: GoogleTrendItemUpdateManyWithWhereWithoutTrendInput | GoogleTrendItemUpdateManyWithWhereWithoutTrendInput[]
-    deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
-  }
-
-  export type GoogleTrendItemUncheckedUpdateManyWithoutTrendNestedInput = {
-    create?: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput> | GoogleTrendItemCreateWithoutTrendInput[] | GoogleTrendItemUncheckedCreateWithoutTrendInput[]
-    connectOrCreate?: GoogleTrendItemCreateOrConnectWithoutTrendInput | GoogleTrendItemCreateOrConnectWithoutTrendInput[]
-    upsert?: GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput | GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput[]
-    createMany?: GoogleTrendItemCreateManyTrendInputEnvelope
-    set?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    disconnect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    delete?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    connect?: GoogleTrendItemWhereUniqueInput | GoogleTrendItemWhereUniqueInput[]
-    update?: GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput | GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput[]
-    updateMany?: GoogleTrendItemUpdateManyWithWhereWithoutTrendInput | GoogleTrendItemUpdateManyWithWhereWithoutTrendInput[]
-    deleteMany?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
-  }
-
-  export type GoogleTrendCreateNestedOneWithoutItemsInput = {
-    create?: XOR<GoogleTrendCreateWithoutItemsInput, GoogleTrendUncheckedCreateWithoutItemsInput>
-    connectOrCreate?: GoogleTrendCreateOrConnectWithoutItemsInput
-    connect?: GoogleTrendWhereUniqueInput
-  }
-
-  export type RssFeedItemCreateNestedOneWithoutGoogleTrendItemsInput = {
-    create?: XOR<RssFeedItemCreateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput>
-    connectOrCreate?: RssFeedItemCreateOrConnectWithoutGoogleTrendItemsInput
-    connect?: RssFeedItemWhereUniqueInput
-  }
-
-  export type EnumTrendActionFieldUpdateOperationsInput = {
-    set?: $Enums.TrendAction
-  }
-
-  export type GoogleTrendUpdateOneRequiredWithoutItemsNestedInput = {
-    create?: XOR<GoogleTrendCreateWithoutItemsInput, GoogleTrendUncheckedCreateWithoutItemsInput>
-    connectOrCreate?: GoogleTrendCreateOrConnectWithoutItemsInput
-    upsert?: GoogleTrendUpsertWithoutItemsInput
-    connect?: GoogleTrendWhereUniqueInput
-    update?: XOR<XOR<GoogleTrendUpdateToOneWithWhereWithoutItemsInput, GoogleTrendUpdateWithoutItemsInput>, GoogleTrendUncheckedUpdateWithoutItemsInput>
-  }
-
-  export type RssFeedItemUpdateOneWithoutGoogleTrendItemsNestedInput = {
-    create?: XOR<RssFeedItemCreateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput>
-    connectOrCreate?: RssFeedItemCreateOrConnectWithoutGoogleTrendItemsInput
-    upsert?: RssFeedItemUpsertWithoutGoogleTrendItemsInput
-    disconnect?: RssFeedItemWhereInput | boolean
-    delete?: RssFeedItemWhereInput | boolean
-    connect?: RssFeedItemWhereUniqueInput
-    update?: XOR<XOR<RssFeedItemUpdateToOneWithWhereWithoutGoogleTrendItemsInput, RssFeedItemUpdateWithoutGoogleTrendItemsInput>, RssFeedItemUncheckedUpdateWithoutGoogleTrendItemsInput>
   }
 
   export type AiPersonaOnCategoryCreateNestedManyWithoutPersonaInput = {
@@ -56447,10 +52854,6 @@ export namespace Prisma {
     upsert?: CategoryUpsertWithoutPersonasInput
     connect?: CategoryWhereUniqueInput
     update?: XOR<XOR<CategoryUpdateToOneWithWhereWithoutPersonasInput, CategoryUpdateWithoutPersonasInput>, CategoryUncheckedUpdateWithoutPersonasInput>
-  }
-
-  export type EnumAiModelTypeFieldUpdateOperationsInput = {
-    set?: $Enums.AiModelType
   }
 
   export type SlideCreateNestedManyWithoutSliderInput = {
@@ -56824,40 +53227,6 @@ export namespace Prisma {
     _count?: NestedIntFilter<$PrismaModel>
     _min?: NestedEnumStoryUrgencyFilter<$PrismaModel>
     _max?: NestedEnumStoryUrgencyFilter<$PrismaModel>
-  }
-
-  export type NestedEnumTrendActionFilter<$PrismaModel = never> = {
-    equals?: $Enums.TrendAction | EnumTrendActionFieldRefInput<$PrismaModel>
-    in?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
-    not?: NestedEnumTrendActionFilter<$PrismaModel> | $Enums.TrendAction
-  }
-
-  export type NestedEnumTrendActionWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.TrendAction | EnumTrendActionFieldRefInput<$PrismaModel>
-    in?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
-    notIn?: $Enums.TrendAction[] | ListEnumTrendActionFieldRefInput<$PrismaModel>
-    not?: NestedEnumTrendActionWithAggregatesFilter<$PrismaModel> | $Enums.TrendAction
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumTrendActionFilter<$PrismaModel>
-    _max?: NestedEnumTrendActionFilter<$PrismaModel>
-  }
-
-  export type NestedEnumAiModelTypeFilter<$PrismaModel = never> = {
-    equals?: $Enums.AiModelType | EnumAiModelTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.AiModelType[] | ListEnumAiModelTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AiModelType[] | ListEnumAiModelTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumAiModelTypeFilter<$PrismaModel> | $Enums.AiModelType
-  }
-
-  export type NestedEnumAiModelTypeWithAggregatesFilter<$PrismaModel = never> = {
-    equals?: $Enums.AiModelType | EnumAiModelTypeFieldRefInput<$PrismaModel>
-    in?: $Enums.AiModelType[] | ListEnumAiModelTypeFieldRefInput<$PrismaModel>
-    notIn?: $Enums.AiModelType[] | ListEnumAiModelTypeFieldRefInput<$PrismaModel>
-    not?: NestedEnumAiModelTypeWithAggregatesFilter<$PrismaModel> | $Enums.AiModelType
-    _count?: NestedIntFilter<$PrismaModel>
-    _min?: NestedEnumAiModelTypeFilter<$PrismaModel>
-    _max?: NestedEnumAiModelTypeFilter<$PrismaModel>
   }
   export type NestedJsonFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -57814,17 +54183,11 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     story?: NewsStoryCreateNestedOneWithoutItemsInput
     source: RssFeedSourceCreateNestedOneWithoutItemsInput
-    googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
   }
 
   export type RssFeedItemUncheckedCreateWithoutArticleInput = {
@@ -57837,16 +54200,10 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
   }
 
   export type RssFeedItemCreateOrConnectWithoutArticleInput = {
@@ -58208,17 +54565,11 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     story?: NewsStoryUpdateOneWithoutItemsNestedInput
     source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
-    googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
   }
 
   export type RssFeedItemUncheckedUpdateWithoutArticleInput = {
@@ -58231,16 +54582,10 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
   }
 
   export type NewsStoryUpsertWithoutArticleInput = {
@@ -60031,16 +56376,10 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     story?: NewsStoryCreateNestedOneWithoutItemsInput
-    googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
     article?: ArticleCreateNestedOneWithoutSourceRssItemInput
   }
 
@@ -60053,16 +56392,10 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
     article?: ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput
   }
 
@@ -60105,12 +56438,7 @@ export namespace Prisma {
     imageUrl?: StringNullableFilter<"RssFeedItem"> | string | null
     publishedAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
     status?: EnumRssItemStatusFilter<"RssFeedItem"> | $Enums.RssItemStatus
-    aiScore?: IntNullableFilter<"RssFeedItem"> | number | null
-    aiAnalysis?: JsonNullableFilter<"RssFeedItem">
-    dismissed?: BoolFilter<"RssFeedItem"> | boolean
     usedForArticle?: BoolFilter<"RssFeedItem"> | boolean
-    processingAt?: DateTimeNullableFilter<"RssFeedItem"> | Date | string | null
-    processingToken?: StringNullableFilter<"RssFeedItem"> | string | null
     storyId?: StringNullableFilter<"RssFeedItem"> | string | null
     createdAt?: DateTimeFilter<"RssFeedItem"> | Date | string
     updatedAt?: DateTimeFilter<"RssFeedItem"> | Date | string
@@ -60220,32 +56548,6 @@ export namespace Prisma {
   export type RssFeedSourceCreateOrConnectWithoutItemsInput = {
     where: RssFeedSourceWhereUniqueInput
     create: XOR<RssFeedSourceCreateWithoutItemsInput, RssFeedSourceUncheckedCreateWithoutItemsInput>
-  }
-
-  export type GoogleTrendItemCreateWithoutRssItemInput = {
-    id?: string
-    matchScore: number
-    actionTaken?: $Enums.TrendAction
-    createdAt?: Date | string
-    trend: GoogleTrendCreateNestedOneWithoutItemsInput
-  }
-
-  export type GoogleTrendItemUncheckedCreateWithoutRssItemInput = {
-    id?: string
-    trendId: string
-    matchScore: number
-    actionTaken?: $Enums.TrendAction
-    createdAt?: Date | string
-  }
-
-  export type GoogleTrendItemCreateOrConnectWithoutRssItemInput = {
-    where: GoogleTrendItemWhereUniqueInput
-    create: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput>
-  }
-
-  export type GoogleTrendItemCreateManyRssItemInputEnvelope = {
-    data: GoogleTrendItemCreateManyRssItemInput | GoogleTrendItemCreateManyRssItemInput[]
-    skipDuplicates?: boolean
   }
 
   export type ArticleCreateWithoutSourceRssItemInput = {
@@ -60429,34 +56731,6 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type GoogleTrendItemUpsertWithWhereUniqueWithoutRssItemInput = {
-    where: GoogleTrendItemWhereUniqueInput
-    update: XOR<GoogleTrendItemUpdateWithoutRssItemInput, GoogleTrendItemUncheckedUpdateWithoutRssItemInput>
-    create: XOR<GoogleTrendItemCreateWithoutRssItemInput, GoogleTrendItemUncheckedCreateWithoutRssItemInput>
-  }
-
-  export type GoogleTrendItemUpdateWithWhereUniqueWithoutRssItemInput = {
-    where: GoogleTrendItemWhereUniqueInput
-    data: XOR<GoogleTrendItemUpdateWithoutRssItemInput, GoogleTrendItemUncheckedUpdateWithoutRssItemInput>
-  }
-
-  export type GoogleTrendItemUpdateManyWithWhereWithoutRssItemInput = {
-    where: GoogleTrendItemScalarWhereInput
-    data: XOR<GoogleTrendItemUpdateManyMutationInput, GoogleTrendItemUncheckedUpdateManyWithoutRssItemInput>
-  }
-
-  export type GoogleTrendItemScalarWhereInput = {
-    AND?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
-    OR?: GoogleTrendItemScalarWhereInput[]
-    NOT?: GoogleTrendItemScalarWhereInput | GoogleTrendItemScalarWhereInput[]
-    id?: StringFilter<"GoogleTrendItem"> | string
-    trendId?: StringFilter<"GoogleTrendItem"> | string
-    rssItemId?: StringNullableFilter<"GoogleTrendItem"> | string | null
-    matchScore?: IntFilter<"GoogleTrendItem"> | number
-    actionTaken?: EnumTrendActionFilter<"GoogleTrendItem"> | $Enums.TrendAction
-    createdAt?: DateTimeFilter<"GoogleTrendItem"> | Date | string
-  }
-
   export type ArticleUpsertWithoutSourceRssItemInput = {
     update: XOR<ArticleUpdateWithoutSourceRssItemInput, ArticleUncheckedUpdateWithoutSourceRssItemInput>
     create: XOR<ArticleCreateWithoutSourceRssItemInput, ArticleUncheckedCreateWithoutSourceRssItemInput>
@@ -60598,16 +56872,10 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     source: RssFeedSourceCreateNestedOneWithoutItemsInput
-    googleTrendItems?: GoogleTrendItemCreateNestedManyWithoutRssItemInput
     article?: ArticleCreateNestedOneWithoutSourceRssItemInput
   }
 
@@ -60621,15 +56889,9 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    googleTrendItems?: GoogleTrendItemUncheckedCreateNestedManyWithoutRssItemInput
     article?: ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput
   }
 
@@ -60726,216 +56988,6 @@ export namespace Prisma {
   export type RssFeedItemUpdateManyWithWhereWithoutStoryInput = {
     where: RssFeedItemScalarWhereInput
     data: XOR<RssFeedItemUpdateManyMutationInput, RssFeedItemUncheckedUpdateManyWithoutStoryInput>
-  }
-
-  export type GoogleTrendItemCreateWithoutTrendInput = {
-    id?: string
-    matchScore: number
-    actionTaken?: $Enums.TrendAction
-    createdAt?: Date | string
-    rssItem?: RssFeedItemCreateNestedOneWithoutGoogleTrendItemsInput
-  }
-
-  export type GoogleTrendItemUncheckedCreateWithoutTrendInput = {
-    id?: string
-    rssItemId?: string | null
-    matchScore: number
-    actionTaken?: $Enums.TrendAction
-    createdAt?: Date | string
-  }
-
-  export type GoogleTrendItemCreateOrConnectWithoutTrendInput = {
-    where: GoogleTrendItemWhereUniqueInput
-    create: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput>
-  }
-
-  export type GoogleTrendItemCreateManyTrendInputEnvelope = {
-    data: GoogleTrendItemCreateManyTrendInput | GoogleTrendItemCreateManyTrendInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type GoogleTrendItemUpsertWithWhereUniqueWithoutTrendInput = {
-    where: GoogleTrendItemWhereUniqueInput
-    update: XOR<GoogleTrendItemUpdateWithoutTrendInput, GoogleTrendItemUncheckedUpdateWithoutTrendInput>
-    create: XOR<GoogleTrendItemCreateWithoutTrendInput, GoogleTrendItemUncheckedCreateWithoutTrendInput>
-  }
-
-  export type GoogleTrendItemUpdateWithWhereUniqueWithoutTrendInput = {
-    where: GoogleTrendItemWhereUniqueInput
-    data: XOR<GoogleTrendItemUpdateWithoutTrendInput, GoogleTrendItemUncheckedUpdateWithoutTrendInput>
-  }
-
-  export type GoogleTrendItemUpdateManyWithWhereWithoutTrendInput = {
-    where: GoogleTrendItemScalarWhereInput
-    data: XOR<GoogleTrendItemUpdateManyMutationInput, GoogleTrendItemUncheckedUpdateManyWithoutTrendInput>
-  }
-
-  export type GoogleTrendCreateWithoutItemsInput = {
-    id?: string
-    keyword: string
-    searchVolume?: string | null
-    exploreUrl?: string | null
-    category?: string | null
-    country?: string
-    trafficScore?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type GoogleTrendUncheckedCreateWithoutItemsInput = {
-    id?: string
-    keyword: string
-    searchVolume?: string | null
-    exploreUrl?: string | null
-    category?: string | null
-    country?: string
-    trafficScore?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type GoogleTrendCreateOrConnectWithoutItemsInput = {
-    where: GoogleTrendWhereUniqueInput
-    create: XOR<GoogleTrendCreateWithoutItemsInput, GoogleTrendUncheckedCreateWithoutItemsInput>
-  }
-
-  export type RssFeedItemCreateWithoutGoogleTrendItemsInput = {
-    id?: string
-    title: string
-    url: string
-    urlHash: string
-    excerpt?: string | null
-    imageUrl?: string | null
-    publishedAt?: Date | string | null
-    status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
-    usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    story?: NewsStoryCreateNestedOneWithoutItemsInput
-    source: RssFeedSourceCreateNestedOneWithoutItemsInput
-    article?: ArticleCreateNestedOneWithoutSourceRssItemInput
-  }
-
-  export type RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput = {
-    id?: string
-    sourceId: string
-    title: string
-    url: string
-    urlHash: string
-    excerpt?: string | null
-    imageUrl?: string | null
-    publishedAt?: Date | string | null
-    status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
-    usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
-    storyId?: string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    article?: ArticleUncheckedCreateNestedOneWithoutSourceRssItemInput
-  }
-
-  export type RssFeedItemCreateOrConnectWithoutGoogleTrendItemsInput = {
-    where: RssFeedItemWhereUniqueInput
-    create: XOR<RssFeedItemCreateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput>
-  }
-
-  export type GoogleTrendUpsertWithoutItemsInput = {
-    update: XOR<GoogleTrendUpdateWithoutItemsInput, GoogleTrendUncheckedUpdateWithoutItemsInput>
-    create: XOR<GoogleTrendCreateWithoutItemsInput, GoogleTrendUncheckedCreateWithoutItemsInput>
-    where?: GoogleTrendWhereInput
-  }
-
-  export type GoogleTrendUpdateToOneWithWhereWithoutItemsInput = {
-    where?: GoogleTrendWhereInput
-    data: XOR<GoogleTrendUpdateWithoutItemsInput, GoogleTrendUncheckedUpdateWithoutItemsInput>
-  }
-
-  export type GoogleTrendUpdateWithoutItemsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    keyword?: StringFieldUpdateOperationsInput | string
-    searchVolume?: NullableStringFieldUpdateOperationsInput | string | null
-    exploreUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: StringFieldUpdateOperationsInput | string
-    trafficScore?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type GoogleTrendUncheckedUpdateWithoutItemsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    keyword?: StringFieldUpdateOperationsInput | string
-    searchVolume?: NullableStringFieldUpdateOperationsInput | string | null
-    exploreUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    category?: NullableStringFieldUpdateOperationsInput | string | null
-    country?: StringFieldUpdateOperationsInput | string
-    trafficScore?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type RssFeedItemUpsertWithoutGoogleTrendItemsInput = {
-    update: XOR<RssFeedItemUpdateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedUpdateWithoutGoogleTrendItemsInput>
-    create: XOR<RssFeedItemCreateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedCreateWithoutGoogleTrendItemsInput>
-    where?: RssFeedItemWhereInput
-  }
-
-  export type RssFeedItemUpdateToOneWithWhereWithoutGoogleTrendItemsInput = {
-    where?: RssFeedItemWhereInput
-    data: XOR<RssFeedItemUpdateWithoutGoogleTrendItemsInput, RssFeedItemUncheckedUpdateWithoutGoogleTrendItemsInput>
-  }
-
-  export type RssFeedItemUpdateWithoutGoogleTrendItemsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
-    urlHash?: StringFieldUpdateOperationsInput | string
-    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
-    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    story?: NewsStoryUpdateOneWithoutItemsNestedInput
-    source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
-    article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
-  }
-
-  export type RssFeedItemUncheckedUpdateWithoutGoogleTrendItemsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sourceId?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    url?: StringFieldUpdateOperationsInput | string
-    urlHash?: StringFieldUpdateOperationsInput | string
-    excerpt?: NullableStringFieldUpdateOperationsInput | string | null
-    imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
-    publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
-    usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
-    storyId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    article?: ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput
   }
 
   export type AiPersonaOnCategoryCreateWithoutPersonaInput = {
@@ -61280,7 +57332,6 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: number
     height?: string | null
-    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -61292,7 +57343,6 @@ export namespace Prisma {
     autoPlay?: boolean
     interval?: number
     height?: string | null
-    mobileHeight?: string | null
     isActive?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -61320,7 +57370,6 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -61332,7 +57381,6 @@ export namespace Prisma {
     autoPlay?: BoolFieldUpdateOperationsInput | boolean
     interval?: IntFieldUpdateOperationsInput | number
     height?: NullableStringFieldUpdateOperationsInput | string | null
-    mobileHeight?: NullableStringFieldUpdateOperationsInput | string | null
     isActive?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -62249,12 +58297,7 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     storyId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -62269,16 +58312,10 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     story?: NewsStoryUpdateOneWithoutItemsNestedInput
-    googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
     article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
   }
 
@@ -62291,16 +58328,10 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
     article?: ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput
   }
 
@@ -62313,47 +58344,10 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     storyId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type GoogleTrendItemCreateManyRssItemInput = {
-    id?: string
-    trendId: string
-    matchScore: number
-    actionTaken?: $Enums.TrendAction
-    createdAt?: Date | string
-  }
-
-  export type GoogleTrendItemUpdateWithoutRssItemInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    trend?: GoogleTrendUpdateOneRequiredWithoutItemsNestedInput
-  }
-
-  export type GoogleTrendItemUncheckedUpdateWithoutRssItemInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    trendId?: StringFieldUpdateOperationsInput | string
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type GoogleTrendItemUncheckedUpdateManyWithoutRssItemInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    trendId?: StringFieldUpdateOperationsInput | string
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RssFeedItemCreateManyStoryInput = {
@@ -62366,12 +58360,7 @@ export namespace Prisma {
     imageUrl?: string | null
     publishedAt?: Date | string | null
     status?: $Enums.RssItemStatus
-    aiScore?: number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: boolean
     usedForArticle?: boolean
-    processingAt?: Date | string | null
-    processingToken?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -62385,16 +58374,10 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     source?: RssFeedSourceUpdateOneRequiredWithoutItemsNestedInput
-    googleTrendItems?: GoogleTrendItemUpdateManyWithoutRssItemNestedInput
     article?: ArticleUpdateOneWithoutSourceRssItemNestedInput
   }
 
@@ -62408,15 +58391,9 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    googleTrendItems?: GoogleTrendItemUncheckedUpdateManyWithoutRssItemNestedInput
     article?: ArticleUncheckedUpdateOneWithoutSourceRssItemNestedInput
   }
 
@@ -62430,46 +58407,9 @@ export namespace Prisma {
     imageUrl?: NullableStringFieldUpdateOperationsInput | string | null
     publishedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     status?: EnumRssItemStatusFieldUpdateOperationsInput | $Enums.RssItemStatus
-    aiScore?: NullableIntFieldUpdateOperationsInput | number | null
-    aiAnalysis?: NullableJsonNullValueInput | InputJsonValue
-    dismissed?: BoolFieldUpdateOperationsInput | boolean
     usedForArticle?: BoolFieldUpdateOperationsInput | boolean
-    processingAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    processingToken?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type GoogleTrendItemCreateManyTrendInput = {
-    id?: string
-    rssItemId?: string | null
-    matchScore: number
-    actionTaken?: $Enums.TrendAction
-    createdAt?: Date | string
-  }
-
-  export type GoogleTrendItemUpdateWithoutTrendInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    rssItem?: RssFeedItemUpdateOneWithoutGoogleTrendItemsNestedInput
-  }
-
-  export type GoogleTrendItemUncheckedUpdateWithoutTrendInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    rssItemId?: NullableStringFieldUpdateOperationsInput | string | null
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type GoogleTrendItemUncheckedUpdateManyWithoutTrendInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    rssItemId?: NullableStringFieldUpdateOperationsInput | string | null
-    matchScore?: IntFieldUpdateOperationsInput | number
-    actionTaken?: EnumTrendActionFieldUpdateOperationsInput | $Enums.TrendAction
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type AiPersonaOnCategoryCreateManyPersonaInput = {

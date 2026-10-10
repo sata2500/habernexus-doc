@@ -338,12 +338,7 @@ exports.Prisma.RssFeedItemScalarFieldEnum = {
   imageUrl: 'imageUrl',
   publishedAt: 'publishedAt',
   status: 'status',
-  aiScore: 'aiScore',
-  aiAnalysis: 'aiAnalysis',
-  dismissed: 'dismissed',
   usedForArticle: 'usedForArticle',
-  processingAt: 'processingAt',
-  processingToken: 'processingToken',
   storyId: 'storyId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -392,7 +387,6 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   qStashScanId: 'qStashScanId',
   qStashAnalyzeId: 'qStashAnalyzeId',
   qStashNewsletterId: 'qStashNewsletterId',
-  aiProvider: 'aiProvider',
   aiAnalyzerModel: 'aiAnalyzerModel',
   aiAnalyzerPrompt: 'aiAnalyzerPrompt',
   aiTtsModel: 'aiTtsModel',
@@ -409,8 +403,6 @@ exports.Prisma.SystemSettingsScalarFieldEnum = {
   maxNewsAgeHours: 'maxNewsAgeHours',
   googleTrendsEnabled: 'googleTrendsEnabled',
   googleTrendsGeo: 'googleTrendsGeo',
-  trendAutoPublishThreshold: 'trendAutoPublishThreshold',
-  trendSearchGenerateEnabled: 'trendSearchGenerateEnabled',
   storyMinScore: 'storyMinScore',
   updatedAt: 'updatedAt'
 };
@@ -425,15 +417,6 @@ exports.Prisma.GoogleTrendScalarFieldEnum = {
   trafficScore: 'trafficScore',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
-};
-
-exports.Prisma.GoogleTrendItemScalarFieldEnum = {
-  id: 'id',
-  trendId: 'trendId',
-  rssItemId: 'rssItemId',
-  matchScore: 'matchScore',
-  actionTaken: 'actionTaken',
-  createdAt: 'createdAt'
 };
 
 exports.Prisma.AiPersonaScalarFieldEnum = {
@@ -490,30 +473,12 @@ exports.Prisma.SiteSettingsScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
-exports.Prisma.AiModelScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  type: 'type',
-  isFree: 'isFree',
-  isActive: 'isActive',
-  inputModalities: 'inputModalities',
-  outputModalities: 'outputModalities',
-  supportsSearch: 'supportsSearch',
-  supportsVision: 'supportsVision',
-  supportsT2I: 'supportsT2I',
-  supportsI2I: 'supportsI2I',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.SliderScalarFieldEnum = {
   id: 'id',
   name: 'name',
   autoPlay: 'autoPlay',
   interval: 'interval',
   height: 'height',
-  mobileHeight: 'mobileHeight',
   isActive: 'isActive',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
@@ -669,20 +634,6 @@ exports.StoryUrgency = exports.$Enums.StoryUrgency = {
   EVERGREEN: 'EVERGREEN'
 };
 
-exports.TrendAction = exports.$Enums.TrendAction = {
-  PENDING: 'PENDING',
-  AUTO_PUBLISHED: 'AUTO_PUBLISHED',
-  SEARCH_GENERATED: 'SEARCH_GENERATED',
-  SCHEDULED_DRAFT: 'SCHEDULED_DRAFT',
-  DISMISSED: 'DISMISSED'
-};
-
-exports.AiModelType = exports.$Enums.AiModelType = {
-  TEXT: 'TEXT',
-  IMAGE: 'IMAGE',
-  MULTIMODAL: 'MULTIMODAL'
-};
-
 exports.Prisma.ModelName = {
   User: 'User',
   Session: 'Session',
@@ -706,11 +657,9 @@ exports.Prisma.ModelName = {
   NewsStory: 'NewsStory',
   SystemSettings: 'SystemSettings',
   GoogleTrend: 'GoogleTrend',
-  GoogleTrendItem: 'GoogleTrendItem',
   AiPersona: 'AiPersona',
   AiPersonaOnCategory: 'AiPersonaOnCategory',
   SiteSettings: 'SiteSettings',
-  AiModel: 'AiModel',
   Slider: 'Slider',
   Slide: 'Slide',
   MonetizationSettings: 'MonetizationSettings',

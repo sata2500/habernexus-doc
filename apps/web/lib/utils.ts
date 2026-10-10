@@ -82,14 +82,6 @@ export function slugify(text: string): string {
 }
 
 /**
- * Truncate text to a specified length
- */
-export function truncate(text: string, maxLength: number): string {
-  if (text.length <= maxLength) return text;
-  return text.slice(0, maxLength).trimEnd() + "…";
-}
-
-/**
  * Format view count (e.g., 1500 → "1.5K")
  */
 export function formatViewCount(count: number): string {
