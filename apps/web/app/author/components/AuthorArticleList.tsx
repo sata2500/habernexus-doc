@@ -72,7 +72,7 @@ export function AuthorArticleList({ articles, filtered }: { articles: AuthorArti
                     {published ? "Yayında" : "Taslak"}
                   </span>
                   {a.aiPersonaId && <span className="inline-flex items-center gap-0.5 font-semibold text-primary-500"><Sparkles className="h-3 w-3" /> AI</span>}
-                  {a.category && <span className="font-semibold" style={{ color: a.category.color || undefined }}>{a.category.name}</span>}
+                  {a.category && <span className="cat-text font-semibold" style={a.category.color ? ({ "--cat-color": a.category.color } as React.CSSProperties) : undefined}>{a.category.name}</span>}
                   <span>{published && a.publishedAt ? formatRelativeTime(a.publishedAt, { compact: true }) : `düzenlendi ${formatRelativeTime(a.updatedAt, { compact: true })}`}</span>
                   {published && <span className="inline-flex items-center gap-0.5"><Eye className="h-3 w-3" /> {formatViewCount(a.viewCount)}</span>}
                   {a._count.comments > 0 && <span className="inline-flex items-center gap-0.5"><MessageSquare className="h-3 w-3" /> {a._count.comments}</span>}

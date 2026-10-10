@@ -11,7 +11,7 @@ import {
   type PlacementMap,
   type PlacementMode,
 } from "@/lib/monetization";
-import * as Sentry from "@sentry/nextjs";
+import { loadSentry } from "@/lib/sentry-client";
 import { sendSentryTestError, updateMonetizationSettings, type MonetizationSettingsInput } from "../monetization-actions";
 import { Field, SectionTitle, TextArea, TextInput } from "./SettingsFields";
 
@@ -196,7 +196,8 @@ function SentryTest() {
     setResult(r.success ? { ok: true, text: `Sunucu deneme hatası gönderildi (kimlik: ${r.data.eventId.slice(0, 8)}…). Sentry → Issues'a bakın.` } : { ok: false, text: r.error });
   });
   const browser = async () => {
-    if (!Sentry.getClient()) {
+    const Sentry = await loadSentry();
+    if (!Sentry?.getClient()) {
       setResult({ ok: false, text: "Sentry tarayıcıda etkin değil. DSN eklendikten sonra site yeniden yayına alınmalı; reklam engelleyici de engelliyor olabilir." });
       return;
     }

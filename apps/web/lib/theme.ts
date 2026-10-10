@@ -315,7 +315,7 @@ function modeVars(m: Mode, dark: boolean) {
   }
   if (m.fg) {
     add("--fg", m.fg);
-    add("--muted-fg", `color-mix(in srgb, ${m.fg} 60%, ${m.bg || (dark ? "#0b0f1a" : "#fafbfc")})`);
+    add("--muted-fg", `color-mix(in srgb, ${m.fg} ${dark ? 60 : 68}%, ${m.bg || (dark ? "#0b0f1a" : "#fafbfc")})`); // açık temada okunabilirlik için biraz daha koyu
     add("--glass-border", `color-mix(in srgb, ${m.fg} ${dark ? 6 : 8}%, transparent)`);
   }
   if (m.card) { add("--card", m.card); add("--surface", m.card); }

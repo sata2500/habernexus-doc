@@ -92,7 +92,7 @@ export default async function ReadingHistoryPage({ searchParams }: { searchParam
                   <span className="min-w-0 flex-1">
                     <span className="block text-sm font-semibold leading-snug line-clamp-2 group-hover:text-primary-600">{r.article.title}</span>
                     <span className="mt-1 flex flex-wrap items-center gap-x-2 text-[11px] text-muted-foreground">
-                      {r.article.category && <span className="font-semibold" style={{ color: r.article.category.color ?? undefined }}>{r.article.category.name}</span>}
+                      {r.article.category && <span className="cat-text font-semibold" style={r.article.category.color ? ({ "--cat-color": r.article.category.color } as React.CSSProperties) : undefined}>{r.article.category.name}</span>}
                       {r.completedAt && <span>{formatRelativeTime(r.completedAt)} okundu</span>}
                     </span>
                   </span>

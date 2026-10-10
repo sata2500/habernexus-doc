@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
+import { reportError } from "@/lib/sentry-client";
 import Link from "next/link";
 import { AlertTriangle, Home, RotateCcw } from "lucide-react";
 
@@ -23,7 +23,7 @@ export function ErrorState({
   useEffect(() => {
     console.error(error);
     // Hata ekranı React hata sınırında yakalanır; Sentry'ye ayrıca bildirilir (DSN yoksa işlem yapmaz)
-    Sentry.captureException(error);
+    reportError(error);
   }, [error]);
 
   return (

@@ -168,10 +168,8 @@ export default async function ArticlePage({ params }: { params: Params }) {
           {article.category && (
             <Badge
               variant="outline"
-              style={{
-                color: article.category.color || "currentColor",
-                borderColor: article.category.color || "currentColor",
-              }}
+              className="cat-text"
+              style={article.category.color ? ({ "--cat-color": article.category.color, borderColor: article.category.color } as React.CSSProperties) : undefined}
             >
               {article.category.name}
             </Badge>

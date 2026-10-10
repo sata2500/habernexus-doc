@@ -64,7 +64,7 @@ export function FeedArticleCard({ article, priority, badge, layout = "responsive
         <div className={cn("flex flex-col flex-1 min-w-0", v ? "p-4 sm:p-5" : "sm:p-5")}>
           <div className="flex items-center gap-2 text-[11px] sm:text-xs font-semibold mb-1 sm:mb-2 min-w-0">
             {article.category && (
-              <span className="truncate" style={{ color }}>
+              <span className="cat-text truncate" style={{ "--cat-color": color } as React.CSSProperties}>
                 {article.category.name}
               </span>
             )}

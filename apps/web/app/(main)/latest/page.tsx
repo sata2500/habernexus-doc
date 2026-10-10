@@ -75,6 +75,8 @@ export default async function LatestArticlesPage({ searchParams }: { searchParam
         </ul>
       </nav>
 
+      {/* Başlık sırası: haber kartları h3; ekran okuyucular için liste başlığı */}
+      <h2 className="sr-only">Haber listesi</h2>
       <ArticleFeed
         key={activeCategory ?? "all"}
         initialItems={firstPage.items}

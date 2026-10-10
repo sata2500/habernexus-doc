@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
+import { reportError } from "@/lib/sentry-client";
 
 /**
  * Kök yerleşimde oluşan hatalar için son çare ekranı. Kendi <html>/<body> etiketlerini
@@ -9,7 +9,7 @@ import * as Sentry from "@sentry/nextjs";
  */
 export default function GlobalError({ error, retry }: { error: Error & { digest?: string }; retry: () => void }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    reportError(error);
   }, [error]);
 
   return (

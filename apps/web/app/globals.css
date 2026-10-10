@@ -86,7 +86,7 @@
   --bg: #fafbfc;
   --fg: #0f172a;
   --muted: #f1f5f9;
-  --muted-fg: #64748b;
+  --muted-fg: #5b6779; /* beyaz ve açık gri zeminlerde en az 5:1 kontrast */
   --card: #ffffff;
   --card-fg: #0f172a;
   --border-color: #e2e8f0;
@@ -558,4 +558,13 @@ body {
 @keyframes slider-progress {
   from { width: 0; }
   to { width: 100%; }
+}
+
+/* Kategori rengindeki küçük yazılar: açık temada bir tık koyu, koyu temada bir tık açık tonda
+   (sarı/mor gibi açık kategori renkleri beyaz zeminde okunabilirlik eşiğinin altında kalıyordu) */
+.cat-text {
+  color: color-mix(in oklab, var(--cat-color, var(--color-primary-500)) 72%, black);
+}
+[data-theme="dark"] .cat-text {
+  color: color-mix(in oklab, var(--cat-color, var(--color-primary-500)) 72%, white);
 }

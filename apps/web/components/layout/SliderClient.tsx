@@ -177,7 +177,7 @@ export function SliderClient({ slides, interval = 5000, autoPlay = true }: Slide
                   onClick={() => goTo(idx)}
                   aria-label={`${idx + 1}. slayta git`}
                   aria-current={active ? "true" : undefined}
-                  className="relative p-1.5 cursor-pointer group/dot after:absolute after:-inset-2 after:content-['']"
+                  className="inline-flex items-center justify-center min-h-6 min-w-6 px-1 cursor-pointer group/dot"
                 >
                   <span
                     className={cn(

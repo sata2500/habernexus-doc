@@ -206,21 +206,21 @@ export default async function HomePage() {
                         className="p-3.5 rounded-xl border border-border/40 bg-card/30 hover:bg-card hover:border-[var(--art-color)] hover:shadow-[0_0_20px_var(--art-glow)] transition-all duration-300 ease-out flex gap-3.5 items-center hover:-translate-y-0.5"
                         style={getCardGlowStyles(article.category?.color)}
                       >
-                        <span className="text-xl font-bold font-display text-muted-foreground/30 group-hover:text-[var(--art-color)] transition-colors duration-300 min-w-6 text-center">
+                        <span aria-hidden="true" className="text-xl font-bold font-display text-muted-foreground group-hover:text-[var(--art-color)] transition-colors duration-300 min-w-6 text-center">
                           {String(index + 1).padStart(2, "0")}
                         </span>
                         <div className="flex-1 min-w-0 space-y-1.5">
                           <div className="flex items-center justify-between gap-2">
                             {article.category && (
                               <span
-                                className="text-[10px] font-bold tracking-wider uppercase"
-                                style={{ color: article.category.color || "var(--color-primary-500)" }}
+                                className="cat-text text-[11px] font-bold tracking-wider uppercase"
+                                style={article.category.color ? ({ "--cat-color": article.category.color } as React.CSSProperties) : undefined}
                               >
                                 {article.category.name}
                               </span>
                             )}
                             {article.publishedAt && (
-                              <span className="text-[10px] text-muted-foreground/80">
+                              <span className="text-[11px] text-muted-foreground">
                                 {formatRelativeTime(article.publishedAt, { compact: true })}
                               </span>
                             )}
@@ -308,7 +308,7 @@ export default async function HomePage() {
                   <span className="text-sm font-bold tracking-tight text-card-foreground group-hover:text-[var(--cat-color)] transition-colors duration-300">
                     {cat.name}
                   </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-muted text-muted-foreground group-hover:bg-[var(--cat-glow)] group-hover:text-[var(--cat-color)] transition-all duration-300">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-muted text-foreground/80 group-hover:bg-[var(--cat-glow)] group-hover:text-[var(--cat-color)] transition-all duration-300">
                     {cat._count.articles} haber
                   </span>
                 </div>

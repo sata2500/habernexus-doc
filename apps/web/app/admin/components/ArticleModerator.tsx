@@ -114,7 +114,7 @@ export function ArticleModerator({ articles }: { articles: AdminArticleRow[] }) 
                     <span className="inline-flex items-center gap-1 font-semibold text-primary-500"><Sparkles className="h-3 w-3" />{a.aiPersona.name}</span>
                   )}
                   {!a.aiPersona && <span>{a.author.name ?? "İsimsiz"}</span>}
-                  {a.category && <span style={{ color: a.category.color || undefined }} className="font-semibold">{a.category.name}</span>}
+                  {a.category && <span className="cat-text font-semibold" style={a.category.color ? ({ "--cat-color": a.category.color } as React.CSSProperties) : undefined}>{a.category.name}</span>}
                   <span>{formatRelativeTime(a.publishedAt ?? a.createdAt, { compact: true })}</span>
                   <span>{formatViewCount(a.viewCount)} okunma</span>
                   {(() => {
