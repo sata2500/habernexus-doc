@@ -36,7 +36,8 @@ const IMAGE_ATTRIBUTES = new Set(["alt", "height", "src", "title", "width"]);
 function isSafeUrl(value: string, allowMailto = false) {
   const normalized = value.trim().replace(/[\u0000-\u001f\u007f]/g, "");
 
-  if (normalized.startsWith("/") && !normalized.startsWith("//")) return true;
+  // "//x" ve "/\x" tarayıcıda başka siteye giden adres sayılır (protokolden bağımsız bağlantı)
+  if (normalized.startsWith("/") && !/^\/[\/\\]/.test(normalized)) return true;
   if (normalized.startsWith("#")) return true;
 
   try {

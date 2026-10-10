@@ -5,6 +5,7 @@ import { prisma } from "./prisma";
 import { sendEmail } from "./mail";
 import { AuthEmailTemplate } from "@/components/mail/AuthEmailTemplate";
 import { checkRateLimitAsync } from "./server/rate-limit";
+import { getAppUrl } from "./utils";
 
 const googleConfigured = !!process.env.GOOGLE_CLIENT_ID && !!process.env.GOOGLE_CLIENT_SECRET;
 
@@ -18,7 +19,23 @@ function isAllowedAvatar(url: string) {
   }
 }
 
+/**
+ * Sitenin adresi ve güvenilen kökenler sabitlenir: adres istekten (Host başlığı) türetilirse sahte
+ * başlıkla şifre sıfırlama bağlantısı başka siteye yönlendirilebilir; yönlendirme (callbackURL) ve
+ * istek kökeni denetimleri de bu listeye göre yapılır. Vercel önizleme adresleri de güvenilir sayılır.
+ */
+const isProduction = process.env.NODE_ENV === "production";
+const authBaseURL = process.env.BETTER_AUTH_URL || (isProduction ? getAppUrl() : undefined);
+const trustedOrigins = [
+  authBaseURL,
+  isProduction ? getAppUrl() : undefined,
+  process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined,
+  process.env.VERCEL_BRANCH_URL ? `https://${process.env.VERCEL_BRANCH_URL}` : undefined,
+].filter((o): o is string => !!o).map((o) => o.replace(/\/$/, ""));
+
 export const auth = betterAuth({
+  baseURL: authBaseURL,
+  trustedOrigins: trustedOrigins.length ? [...new Set(trustedOrigins)] : undefined,
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
