@@ -8,6 +8,21 @@
    Tailwind CSS v4 / CSS-First Configuration
    ============================================ */
 
+/*
+ * Inter'in Türkçe harfleri (ğ, ş, İ) ve Latin Genişletilmiş-A. next/font yalnızca "latin" alt kümesini
+ * yükler; Google'ın latin-ext dosyası 85 KB olduğu ve her Türkçe sayfada indiği için yerine bu 15 KB'lık
+ * alt küme kullanılır (aynı Inter dosyasından pyftsubset ile U+0100-017F,U+0218-021B). Aynı aile adı
+ * "Inter" altında tanımlandığı için tarayıcı bu harfleri otomatik olarak buradan alır.
+ */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url("/fonts/inter-latin-ext-a.v1.woff2") format("woff2");
+  unicode-range: U+0100-017F, U+0218-021B;
+}
+
 /* --- Theme Tokens --- */
 @theme {
   /* Fonts */

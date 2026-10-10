@@ -87,9 +87,10 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    // CSS sayfaya gömülür: ayrı stil dosyası indirilmeden çizim başlar (mobilde ~0,6 sn kazanç).
-    // Tailwind CSS'i küçük olduğundan HTML büyümesi azdır; ziyaretçilerin çoğu aramadan ilk kez gelir.
-    inlineCss: true,
+    // CSS sayfaya gömülmez: gömülünce 160 KB'lık stil HTML'e ve RSC verisine iki kez daha yazılıyor,
+    // her sayfa ~85 KB (sıkıştırılmış) iniyordu. Ayrı dosya olarak bir kez iner ve önbellekten gelir;
+    // ölçümde ilk boyama (FCP) da 1,5 sn'den 1,2 sn'ye düştü.
+    inlineCss: false,
     serverActions: {
       bodySizeLimit: "4.5mb",
     },
@@ -99,6 +100,11 @@ const nextConfig: NextConfig = {
       {
         source: "/(.*)",
         headers: securityHeaders,
+      },
+      {
+        // Dosya adı sürüm içerir (…v1.woff2); içerik değişirse ad da değişir
+        source: "/fonts/:path*",
+        headers: [{ key: "Cache-Control", value: "public, max-age=31536000, immutable" }],
       },
     ];
   },

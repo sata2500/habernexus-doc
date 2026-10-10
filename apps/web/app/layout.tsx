@@ -6,6 +6,7 @@ import { DynamicThemeColors } from "@/components/layout/DynamicThemeColors";
 import { WebSiteJsonLd, OrganizationJsonLd } from "@/components/seo/JsonLd";
 import { getSiteSettings } from "@/lib/site-settings";
 import Script from "next/script";
+import { preload } from "react-dom";
 import { getPublicMonetization } from "@/lib/server/monetization";
 import { CONSENT_INIT_SCRIPT } from "@/lib/google-consent";
 import { FeedbackHost } from "@/components/ui/feedback";
@@ -13,7 +14,8 @@ import "./globals.css";
 
 const inter = Inter({
   variable: "--font-inter",
-  subsets: ["latin", "latin-ext"],
+  // Türkçe harfler globals.css'teki küçük alt kümeden gelir (latin-ext dosyası 85 KB)
+  subsets: ["latin"],
   display: "swap",
 });
 
@@ -99,6 +101,8 @@ export default async function RootLayout({
 }>) {
   const [settings, monetization] = await Promise.all([getSiteSettings(), getPublicMonetization()]);
   const usesGoogle = !!(monetization.gaMeasurementId || monetization.adsensePublisherId);
+  // Türkçe harfler neredeyse her sayfada var: alt küme CSS'i beklemeden indirilir
+  preload("/fonts/inter-latin-ext-a.v1.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
 
   return (
     <html
