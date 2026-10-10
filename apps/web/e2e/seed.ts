@@ -63,6 +63,30 @@ async function main() {
     },
   });
 
+  // Yapay zekâ haberi: canlıdaki gibi yönetici hesabına kayıtlı ve bir yapay zekâ yazar profiliyle
+  const persona = await prisma.aiPersona.upsert({
+    where: { name: "E2E Yapay Zekâ Yazar" },
+    update: {},
+    create: { name: "E2E Yapay Zekâ Yazar", prompt: "Tarafsız yaz.", imagePrompt: "Sade görsel." },
+  });
+  await prisma.article.upsert({
+    where: { slug: "e2e-yapay-zeka-haberi" },
+    update: { status: "PUBLISHED", viewCount: 0 },
+    create: {
+      title: "E2E yapay zekâ haberi: görüntülenme denemesi",
+      slug: "e2e-yapay-zeka-haberi",
+      excerpt: "Yönetici hesabına kayıtlı yapay zekâ haberi.",
+      content: "<p>Bu haber yapay zekâ yazar profiliyle yazılmış gibi kaydedildi. Yöneticinin görüntülemesi de sayılmalıdır.</p>",
+      status: "PUBLISHED",
+      publishedAt: new Date(Date.now() - 7200_000),
+      authorId: users.admin.id,
+      aiPersonaId: persona.id,
+      categoryId: category.id,
+    },
+  });
+  // Görüntülenme tekilleştirme kayıtları (yalnızca test veritabanı): her koşu temiz başlar
+  await prisma.articleViewMark.deleteMany({});
+
   // Reklam sistemi: haber metninin sonunda yalnızca sponsor reklamı (Google betikleri kapalı)
   await prisma.monetizationSettings.upsert({
     where: { id: "global" },

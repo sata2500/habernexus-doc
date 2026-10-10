@@ -106,3 +106,15 @@ test.describe("yönetici", () => {
     await expect(page.getByText("Instagram adresi geçersiz.", { exact: false })).toBeVisible();
   });
 });
+
+test.describe("görüntülenme", () => {
+  test.use({ storageState: session("admin") });
+
+  test("yöneticinin yapay zekâ haberini görüntülemesi sayılır", async ({ page, isMobile }) => {
+    // Aynı kişi aynı haberi günde bir kez sayılır: yalnızca bir projede sınanır (seed kayıtları sıfırlar)
+    test.skip(isMobile, "Masaüstünde sınanır");
+    await page.goto("/article/e2e-yapay-zeka-haberi");
+    // Sayfa önbellekten 0 ile gelir; görüntülenme kaydedilince güncel sayı sayfada görünür
+    await expect(page.getByText("1 görüntülenme")).toBeVisible({ timeout: 15_000 });
+  });
+});

@@ -2,13 +2,14 @@ import { notFound } from "next/navigation";
 import { AdSlot } from "@/components/ads/AdSlot";
 import Image from "next/image";
 import { getArticleBySlug } from "@/lib/data";
-import { formatDateTime, formatViewCount, getAppUrl, readingMinutes } from "@/lib/utils";
+import { formatDateTime, getAppUrl, readingMinutes } from "@/lib/utils";
 import { plainText } from "@/lib/analysis/metrics";
 import { Avatar } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Clock, Eye, Calendar, Sparkles } from "lucide-react";
 import { NewsArticleJsonLd, BreadcrumbJsonLd } from "@/components/seo/JsonLd";
 import { BookmarkButton } from "../components/BookmarkButton";
+import { ViewCount } from "../components/ViewCount";
 import { ViewTracker } from "../components/ViewTracker";
 import { ShareButtons } from "../components/ShareButtons";
 import { CommentSection } from "../components/comments/CommentSection";
@@ -191,7 +192,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
           </span>
           <span className="text-sm text-muted-foreground flex items-center gap-1">
             <Eye className="h-4 w-4" aria-hidden="true" />
-            {formatViewCount(article.viewCount)} görüntülenme
+            <ViewCount articleId={article.id} initial={article.viewCount} /> görüntülenme
           </span>
         </div>
 

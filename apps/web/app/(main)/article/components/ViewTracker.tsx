@@ -3,6 +3,8 @@
 import { useEffect } from "react";
 import { recordArticleView } from "../view-actions";
 import { hasPersonalizationConsent, READ_HISTORY_COOKIE, READ_HISTORY_MAX } from "@/lib/consent";
+import { getSessionSnapshot, subscribeSession } from "@/lib/article-session";
+import { VIEW_COUNT_EVENT } from "./ViewCount";
 
 interface Props {
   articleId: string;
@@ -29,7 +31,8 @@ function rememberRead(articleId: string) {
 
 /**
  * Görüntülenme: sayfa arka planda açılıp bırakılınca ya da önceden yüklenince (prerender) sayılmaz;
- * sekme görünürken toplam 5 saniye geçince bir kez bildirilir. Aynı kişinin aynı gün içindeki
+ * sekme görünürken toplam 5 saniye geçince ya da haber dinlenmeye başlanınca (ekran kapalı dinlense
+ * bile) bir kez bildirilir. Aynı kişinin aynı gün içindeki
  * tekrar ziyaretleri sunucuda ayıklanır (lib/server/views.ts).
  */
 export function ViewTracker({ articleId }: Props) {
@@ -38,26 +41,40 @@ export function ViewTracker({ articleId }: Props) {
     let since = document.visibilityState === "visible" ? performance.now() : null;
     let done = false;
 
+    const record = () => {
+      if (done) return;
+      done = true;
+      clearInterval(timer);
+      unsubscribe();
+      rememberRead(articleId);
+      void recordArticleView(articleId)
+        .then((r) => {
+          if (typeof r.viewCount === "number") window.dispatchEvent(new CustomEvent(VIEW_COUNT_EVENT, { detail: { articleId, viewCount: r.viewCount } }));
+        })
+        .catch(() => {});
+    };
     const tick = () => {
       if (done) return;
       const now = performance.now();
       if (since !== null) { visibleMs += now - since; since = now; }
-      if (visibleMs >= VISIBLE_MS) {
-        done = true;
-        clearInterval(timer);
-        rememberRead(articleId);
-        void recordArticleView(articleId).catch(() => {});
-      }
+      if (visibleMs >= VISIBLE_MS) record();
+    };
+    // Dinlemeye başlamak açık bir ilgi göstergesi: beklemeden sayılır
+    const onSession = () => {
+      const s = getSessionSnapshot();
+      if (s.listening && s.articleId === articleId) record();
     };
     const onVisibility = () => {
       if (document.visibilityState === "visible") since = performance.now();
       else { tick(); since = null; }
     };
 
+    const unsubscribe = subscribeSession(onSession);
     const timer = setInterval(tick, 1000);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
       clearInterval(timer);
+      unsubscribe();
       document.removeEventListener("visibilitychange", onVisibility);
     };
   }, [articleId]);
