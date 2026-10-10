@@ -118,7 +118,10 @@ model Article {
   @@index([categoryId])
   @@index([status])
   @@index([publishedAt])
-  @@index([slug])
+  /// Yayındaki haberler, en yeniden eskiye (ana sayfa, son haberler, site haritası)
+  @@index([status, publishedAt(sort: Desc)])
+  /// Kategori sayfaları ve ilgili haberler
+  @@index([categoryId, status, publishedAt(sort: Desc)])
   @@index([lang])
   @@index([aiPersonaId])
   @@index([searchVector], type: Gin)
@@ -265,7 +268,6 @@ model StaticPage {
   updatedAt   DateTime @updatedAt
   createdAt   DateTime @default(now())
 
-  @@index([slug])
 }
 
 model SupportTicket {

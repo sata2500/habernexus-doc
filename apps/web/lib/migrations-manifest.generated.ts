@@ -82,5 +82,10 @@ export const MIGRATIONS: MigrationManifestEntry[] = [
     "name": "20261016090000_drop_unused",
     "checksum": "f890111189b8d6c1b9408335819228ae68eeaf016b084402b8e1bc0ea470dfe2",
     "sql": "-- Kullanılmayan tablo ve sütunlar kaldırılır (kod hiçbirini okumuyor ya da yazmıyor).\n-- Tüm ifadeler idempotenttir: tekrar çalıştırmak ya da nesnenin zaten olmaması sorun değildir.\n\n-- Eski trend eşleştirme tablosu (haber hattı artık NewsStory üzerinden çalışıyor)\nDROP TABLE IF EXISTS \"GoogleTrendItem\";\nDROP TYPE IF EXISTS \"TrendAction\";\n\n-- Eski model listesi (modeller artık sağlayıcı API'lerinden canlı okunuyor)\nDROP TABLE IF EXISTS \"AiModel\";\nDROP TYPE IF EXISTS \"AiModelType\";\n\n-- RSS kaydı başına eski analiz alanları (analiz artık konu, yani NewsStory düzeyinde)\nALTER TABLE \"RssFeedItem\"\n  DROP COLUMN IF EXISTS \"aiScore\",\n  DROP COLUMN IF EXISTS \"aiAnalysis\",\n  DROP COLUMN IF EXISTS \"dismissed\",\n  DROP COLUMN IF EXISTS \"processingAt\",\n  DROP COLUMN IF EXISTS \"processingToken\";\n\n-- Kullanılmayan ayarlar\nALTER TABLE \"SystemSettings\"\n  DROP COLUMN IF EXISTS \"aiProvider\",\n  DROP COLUMN IF EXISTS \"trendAutoPublishThreshold\",\n  DROP COLUMN IF EXISTS \"trendSearchGenerateEnabled\";\n\nALTER TABLE \"Slider\" DROP COLUMN IF EXISTS \"mobileHeight\";\n"
+  },
+  {
+    "name": "20261017090000_article_indexes",
+    "checksum": "e6f80fd1edaa0d69e7638162369098445c79c97af4b3aa57dd35b914d057ff41",
+    "sql": "-- Haber listeleri için birleşik indeksler: yayındaki haberler yayın tarihine göre (ana sayfa, son haberler,\n-- site haritası) ve kategori sayfaları. Tablo büyüdükçe bu sorgular tüm tabloyu taramaz.\nCREATE INDEX IF NOT EXISTS \"Article_status_publishedAt_idx\" ON \"Article\"(\"status\", \"publishedAt\" DESC);\nCREATE INDEX IF NOT EXISTS \"Article_categoryId_status_publishedAt_idx\" ON \"Article\"(\"categoryId\", \"status\", \"publishedAt\" DESC);\n\n-- Gereksiz indeksler: slug sütunlarında zaten benzersiz (unique) indeks var; ikincisi yalnızca yazmayı yavaşlatır.\n-- Veri silinmez.\nDROP INDEX IF EXISTS \"Article_slug_idx\";\nDROP INDEX IF EXISTS \"StaticPage_slug_idx\";\n"
   }
 ];
