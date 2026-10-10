@@ -37,19 +37,19 @@ const SERVICES = [
 ] as const;
 
 const TABS = [
-  { id: "genel", label: "Genel", icon: SlidersHorizontal, description: "Site adı, logo, SEO, sosyal medya ve tema renkleri." },
-  { id: "yapay-zeka", label: "Yapay Zekâ", icon: Sparkles, description: "Modeller, sağlayıcılar ve yapay zekâ talimatları." },
-  { id: "otomasyon", label: "Otomasyon", icon: Timer, description: "Zamanlanmış işler (tarama, analiz, AI Yazar, bülten) ve içerik kuralları." },
-  { id: "reklam", label: "Reklam ve Analitik", icon: Megaphone, description: "Google Analytics, AdSense, sponsor reklamları ve reklam alanları." },
-  { id: "bildirimler", label: "Bildirimler", icon: BellRing, description: "Tarayıcı bildirimleri: ayarlar, haber bildirimi ve gönderim geçmişi." },
-  { id: "sistem", label: "Sistem", icon: ServerCog, description: "Veritabanı güncellemeleri ve servis yapılandırması." },
+  { id: "general", label: "Genel", icon: SlidersHorizontal, description: "Site adı, logo, SEO, sosyal medya ve tema renkleri." },
+  { id: "ai", label: "Yapay Zekâ", icon: Sparkles, description: "Modeller, sağlayıcılar ve yapay zekâ talimatları." },
+  { id: "automation", label: "Otomasyon", icon: Timer, description: "Zamanlanmış işler (tarama, analiz, AI Yazar, bülten) ve içerik kuralları." },
+  { id: "ads", label: "Reklam ve Analitik", icon: Megaphone, description: "Google Analytics, AdSense, sponsor reklamları ve reklam alanları." },
+  { id: "notifications", label: "Bildirimler", icon: BellRing, description: "Tarayıcı bildirimleri: ayarlar, haber bildirimi ve gönderim geçmişi." },
+  { id: "system", label: "Sistem", icon: ServerCog, description: "Veritabanı güncellemeleri ve servis yapılandırması." },
 ] as const;
 
 type TabId = (typeof TABS)[number]["id"];
 
 export default async function AdminSettingsPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const { tab: rawTab } = await searchParams;
-  const tab: TabId = TABS.some((t) => t.id === rawTab) ? (rawTab as TabId) : "genel";
+  const tab: TabId = TABS.some((t) => t.id === rawTab) ? (rawTab as TabId) : "general";
   const active = TABS.find((t) => t.id === tab)!;
 
   return (
@@ -81,12 +81,12 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
         ))}
       </nav>
 
-      {tab === "genel" && <GeneralTab />}
-      {tab === "yapay-zeka" && <AiTab />}
-      {tab === "otomasyon" && <AutomationTab />}
-      {tab === "reklam" && <MonetizationTab />}
-      {tab === "bildirimler" && <NotificationTab />}
-      {tab === "sistem" && <SystemTab />}
+      {tab === "general" && <GeneralTab />}
+      {tab === "ai" && <AiTab />}
+      {tab === "automation" && <AutomationTab />}
+      {tab === "ads" && <MonetizationTab />}
+      {tab === "notifications" && <NotificationTab />}
+      {tab === "system" && <SystemTab />}
     </div>
   );
 }

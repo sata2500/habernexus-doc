@@ -15,7 +15,7 @@ import { Pagination } from "../components/ListControls";
 export const dynamic = "force-dynamic";
 export const maxDuration = 300;
 
-const BASE = "/admin/karar-merkezi";
+const BASE = "/admin/decision-center";
 
 const FLOW = [
   { icon: Rss, title: "Topla", text: "Kaynaklar taranır" },
@@ -30,26 +30,26 @@ const requestTime = () => Date.now();
 export default async function DecisionCenterPage({ searchParams }: { searchParams: Promise<RawParams> }) {
   await requireRole("ADMIN");
   const params = await searchParams;
-  const tab = (TABS as readonly string[]).includes(param(params, "sekme")) ? (param(params, "sekme") as DecisionTab) : "sira";
+  const tab = (TABS as readonly string[]).includes(param(params, "tab")) ? (param(params, "tab") as DecisionTab) : "queue";
   const q = param(params, "q");
   const pageNo = pageParam(params);
-  const storyTab = tab !== "trendler" && tab !== "kaynaklar";
+  const storyTab = tab !== "trends" && tab !== "sources";
 
   const [overview, list, trends, sources] = await Promise.all([
     getDecisionOverview(),
     storyTab ? listStories(tab, q, pageNo) : Promise.resolve(null),
-    tab === "trendler" ? listTrends() : Promise.resolve(null),
-    tab === "kaynaklar" ? getRssSources() : Promise.resolve(null),
+    tab === "trends" ? listTrends() : Promise.resolve(null),
+    tab === "sources" ? getRssSources() : Promise.resolve(null),
   ]);
   const c = overview.counts;
 
   const tabs: { id: DecisionTab; label: string; count?: number }[] = [
-    { id: "sira", label: "Yazım sırası", count: c.queue },
-    { id: "degerlendirme", label: "Değerlendirilen", count: c.evaluating },
-    { id: "yayinlanan", label: "Yayınlanan" },
-    { id: "elenen", label: "Elenen", count: c.eliminated },
-    { id: "trendler", label: "Trendler", count: c.trends },
-    { id: "kaynaklar", label: "Kaynaklar", count: c.sources },
+    { id: "queue", label: "Yazım sırası", count: c.queue },
+    { id: "review", label: "Değerlendirilen", count: c.evaluating },
+    { id: "published", label: "Yayınlanan" },
+    { id: "rejected", label: "Elenen", count: c.eliminated },
+    { id: "trends", label: "Trendler", count: c.trends },
+    { id: "sources", label: "Kaynaklar", count: c.sources },
   ];
 
   return (
@@ -90,7 +90,7 @@ export default async function DecisionCenterPage({ searchParams }: { searchParam
           <span>
             AI Yazar otomasyonu: <strong className={overview.autoWriter.enabled ? "text-success" : "text-foreground"}>{overview.autoWriter.enabled ? `açık (her çalışmada ${overview.autoWriter.count})` : "kapalı"}</strong>
           </span>
-          <Link href="/admin/settings?tab=otomasyon" className="inline-flex items-center gap-1 font-semibold text-primary-500">
+          <Link href="/admin/settings?tab=automation" className="inline-flex items-center gap-1 font-semibold text-primary-500">
             <Timer className="h-3.5 w-3.5" /> Otomasyon ayarları <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
@@ -102,7 +102,7 @@ export default async function DecisionCenterPage({ searchParams }: { searchParam
           {tabs.map((t) => (
             <li key={t.id}>
               <Link
-                href={t.id === "sira" ? BASE : `${BASE}?sekme=${t.id}`}
+                href={t.id === "queue" ? BASE : `${BASE}?tab=${t.id}`}
                 aria-current={tab === t.id ? "page" : undefined}
                 className={cn(
                   "inline-flex items-center gap-1.5 h-9 px-3.5 rounded-full border text-sm font-semibold whitespace-nowrap transition-colors",
@@ -120,12 +120,12 @@ export default async function DecisionCenterPage({ searchParams }: { searchParam
       {storyTab && list && (
         <>
           <ListSearch placeholder="Konu ara" />
-          {tab === "sira" && (
+          {tab === "queue" && (
             <p className="text-xs text-muted-foreground">
               Puanı {overview.minScore} ve üzeri olan ya da öne alınan konular. AI Yazar en üstten başlar; yazmadan hemen önce yayındaki haberlerle son kez karşılaştırır.
             </p>
           )}
-          {tab === "degerlendirme" && (
+          {tab === "review" && (
             <p className="text-xs text-muted-foreground">Puanı eşiğin altında kalan ya da değerlendirme bekleyen konular. Kaynak sayısı arttıkça ya da trend olunca puanları yükselir.</p>
           )}
           <StoryList stories={list.stories} tab={tab} minScore={list.minScore} offset={(pageNo - 1) * STORY_PAGE_SIZE} now={requestTime()} />
@@ -133,8 +133,8 @@ export default async function DecisionCenterPage({ searchParams }: { searchParam
         </>
       )}
 
-      {tab === "trendler" && trends && <TrendList trends={trends} enabled={overview.trendsEnabled} />}
-      {tab === "kaynaklar" && sources && <FeedSourceManager sources={sources} />}
+      {tab === "trends" && trends && <TrendList trends={trends} enabled={overview.trendsEnabled} />}
+      {tab === "sources" && sources && <FeedSourceManager sources={sources} />}
     </div>
   );
 }

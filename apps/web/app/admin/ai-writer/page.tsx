@@ -51,7 +51,7 @@ export default async function AdminAiWriterPage() {
           <p className="text-muted-foreground text-sm">Önerilen haberleri otomatik olarak yazıp yayınlayan sistem.</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link href="/admin/settings?tab=yapay-zeka" className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold">
+          <Link href="/admin/settings?tab=ai" className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-primary-500 hover:bg-primary-600 text-white text-sm font-semibold">
             <SlidersHorizontal className="h-4 w-4" /> Model ve talimatlar
           </Link>
           <Link href="/admin/ai-writer/personas" className="inline-flex items-center gap-2 h-10 px-4 rounded-xl bg-muted border border-border text-sm font-semibold hover:bg-muted/70">
@@ -84,7 +84,7 @@ export default async function AdminAiWriterPage() {
               {job.nextRunAt && <>Sonraki {new Date(job.nextRunAt).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Istanbul" })}</>}
             </p>
           )}
-          <Link href="/admin/settings?tab=otomasyon" className="inline-flex items-center gap-1 text-xs font-semibold text-primary-500">
+          <Link href="/admin/settings?tab=automation" className="inline-flex items-center gap-1 text-xs font-semibold text-primary-500">
             Sıklık ve adet ayarları <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
@@ -109,7 +109,7 @@ export default async function AdminAiWriterPage() {
           ))}
         </ol>
         <p className="mt-4 text-xs text-muted-foreground">
-          Sıradaki konuları görmek, öne almak ya da tek tek yazdırmak için <Link href="/admin/karar-merkezi" className="text-primary-500 font-semibold">Karar Merkezi</Link>&apos;ni kullanın.
+          Sıradaki konuları görmek, öne almak ya da tek tek yazdırmak için <Link href="/admin/decision-center" className="text-primary-500 font-semibold">Karar Merkezi</Link>&apos;ni kullanın.
         </p>
       </section>
     </div>

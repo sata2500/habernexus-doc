@@ -17,7 +17,7 @@ const TONE: Record<TaskTone, { icon: typeof Info; box: string; iconClass: string
 
 const QUICK_ACTIONS = [
   { label: "Yeni haber yaz", href: "/author/articles/new", icon: PenSquare },
-  { label: "Karar Merkezi", href: "/admin/karar-merkezi", icon: Brain },
+  { label: "Karar Merkezi", href: "/admin/decision-center", icon: Brain },
   { label: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
   { label: "Ayarlar", href: "/admin/settings", icon: Settings2 },
 ];
@@ -157,7 +157,7 @@ export default async function AdminDashboardPage() {
               </span>
             </p>
             <p className="flex justify-between gap-3"><span className="text-muted-foreground">Son yayın</span><span className="font-medium">{system.lastPublishedAt ? formatRelativeTime(system.lastPublishedAt) : "—"}</span></p>
-            <Link href="/admin/settings?tab=sistem" className="inline-flex items-center gap-1 pt-1 text-xs font-semibold text-primary-500">
+            <Link href="/admin/settings?tab=system" className="inline-flex items-center gap-1 pt-1 text-xs font-semibold text-primary-500">
               Sistem ayrıntıları <ArrowRight className="h-3 w-3" />
             </Link>
           </section>

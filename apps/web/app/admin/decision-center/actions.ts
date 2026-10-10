@@ -11,7 +11,7 @@ import { describeDispatch, dispatchStories } from "@/lib/news/dispatch";
 import { writeTrendArticle } from "@/lib/news/trend-writer";
 import { RssSourceIdSchema, RssSourceSchema, RssSourceUpdateSchema } from "@/lib/validation/schemas";
 
-const BASE = "/admin/karar-merkezi";
+const BASE = "/admin/decision-center";
 const IdSchema = z.string().trim().min(1).max(100);
 type Result = { success: true; message: string } | { success: false; error: string };
 

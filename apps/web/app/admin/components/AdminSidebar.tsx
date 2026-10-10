@@ -19,7 +19,7 @@ const navGroups = [
   {
     title: "Haber Akışı ve Yapay Zekâ",
     items: [
-      { name: "Karar Merkezi", href: "/admin/karar-merkezi", icon: Brain },
+      { name: "Karar Merkezi", href: "/admin/decision-center", icon: Brain },
       { name: "AI Yazar", href: "/admin/ai-writer", icon: Wand2 },
     ],
   },

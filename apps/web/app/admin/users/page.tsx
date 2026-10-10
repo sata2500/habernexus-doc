@@ -14,7 +14,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
   const session = await requireRole("ADMIN");
   const params = await searchParams;
   const pageNo = pageParam(params);
-  const { items, total, counts } = await listUsers({ q: param(params, "q"), role: param(params, "rol"), pageNo });
+  const { items, total, counts } = await listUsers({ q: param(params, "q"), role: param(params, "role"), pageNo });
   const all = (counts.USER ?? 0) + (counts.AUTHOR ?? 0) + (counts.ADMIN ?? 0);
 
   return (
@@ -27,7 +27,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
       </div>
 
       <ListSearch placeholder="Ad veya e-posta ara" />
-      <FilterChips base={BASE} params={params} name="rol" options={[
+      <FilterChips base={BASE} params={params} name="role" options={[
         { value: "", label: "Tümü", count: all },
         { value: "USER", label: "Okur", count: counts.USER ?? 0 },
         { value: "AUTHOR", label: "Yazar", count: counts.AUTHOR ?? 0 },

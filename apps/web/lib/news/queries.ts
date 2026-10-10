@@ -7,7 +7,7 @@ import { keyTokens } from "./text";
 const HOUR = 3_600_000;
 export const STORY_PAGE_SIZE = 30;
 
-export const TABS = ["sira", "degerlendirme", "yayinlanan", "elenen", "trendler", "kaynaklar"] as const;
+export const TABS = ["queue", "review", "published", "rejected", "trends", "sources"] as const;
 export type DecisionTab = (typeof TABS)[number];
 
 const ELIMINATED: StoryStatus[] = ["DUPLICATE", "LOW_SCORE", "EXPIRED", "DISMISSED", "FAILED"];
@@ -51,18 +51,18 @@ function tabWhere(tab: DecisionTab, min: number, q: string): Prisma.NewsStoryWhe
   const withSearch = (where: Prisma.NewsStoryWhereInput): Prisma.NewsStoryWhereInput =>
     q ? { AND: [where, { OR: [{ title: { contains: q, mode: "insensitive" } }, { headline: { contains: q, mode: "insensitive" } }] }] } : where;
   switch (tab) {
-    case "sira":
+    case "queue":
       return withSearch({
         OR: [
           { status: "WRITING" },
           { status: "READY", OR: [{ score: { gte: min } }, { pinned: true }], AND: [{ OR: [{ expiresAt: null }, { expiresAt: { gt: now } }] }] },
         ],
       });
-    case "degerlendirme":
+    case "review":
       return withSearch({ OR: [{ status: "NEW" }, { status: "READY", score: { lt: min }, pinned: false }] });
-    case "yayinlanan":
+    case "published":
       return withSearch({ status: "PUBLISHED" });
-    case "elenen":
+    case "rejected":
       return withSearch({ status: { in: ELIMINATED }, updatedAt: { gte: new Date(now.getTime() - 3 * 24 * HOUR) } });
     default:
       return { id: "__none__" };
@@ -70,8 +70,8 @@ function tabWhere(tab: DecisionTab, min: number, q: string): Prisma.NewsStoryWhe
 }
 
 function tabOrder(tab: DecisionTab): Prisma.NewsStoryOrderByWithRelationInput[] {
-  if (tab === "sira") return [{ status: "desc" }, { pinned: "desc" }, { score: "desc" }];
-  if (tab === "degerlendirme") return [{ score: "desc" }, { lastSeenAt: "desc" }];
+  if (tab === "queue") return [{ status: "desc" }, { pinned: "desc" }, { score: "desc" }];
+  if (tab === "review") return [{ score: "desc" }, { lastSeenAt: "desc" }];
   return [{ updatedAt: "desc" }];
 }
 
@@ -79,11 +79,11 @@ export async function getDecisionOverview() {
   const min = await minScore();
   const now = new Date();
   const [queue, evaluating, writing, published24h, eliminated, newCount, lastScan, lastAnalysis, sources, trends, settings] = await Promise.all([
-    prisma.newsStory.count({ where: tabWhere("sira", min, "") }),
-    prisma.newsStory.count({ where: tabWhere("degerlendirme", min, "") }),
+    prisma.newsStory.count({ where: tabWhere("queue", min, "") }),
+    prisma.newsStory.count({ where: tabWhere("review", min, "") }),
     prisma.newsStory.count({ where: { status: "WRITING" } }),
     prisma.newsStory.count({ where: { status: "PUBLISHED", updatedAt: { gte: new Date(now.getTime() - 24 * HOUR) } } }),
-    prisma.newsStory.count({ where: tabWhere("elenen", min, "") }),
+    prisma.newsStory.count({ where: tabWhere("rejected", min, "") }),
     prisma.newsStory.count({ where: { status: "NEW" } }),
     prisma.rssFeedSource.aggregate({ _max: { lastFetchedAt: true } }),
     prisma.newsStory.aggregate({ _max: { analyzedAt: true } }),
@@ -209,5 +209,5 @@ export async function listTrends(): Promise<TrendView[]> {
 /** Yazım sırasındaki konu sayısı (genel bakış ve AI Yazar sayfaları için) */
 export async function countQueue() {
   const min = await minScore();
-  return prisma.newsStory.count({ where: tabWhere("sira", min, "") });
+  return prisma.newsStory.count({ where: tabWhere("queue", min, "") });
 }

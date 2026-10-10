@@ -170,7 +170,7 @@ export function ArticleEditor({ article, categories, suggestion, initialNotice }
       try { localStorage.removeItem(LOCAL_KEY(suggestion?.id)); } catch { /* yok say */ }
       if (isNew) {
         // Sonraki kayıtlar yeni haber açmasın diye düzenleme sayfasına geç
-        router.replace(`/author/articles/${r.id}/edit?kaydedildi=${r.status === "PUBLISHED" ? "yayin" : "taslak"}`);
+        router.replace(`/author/articles/${r.id}/edit?saved=${r.status === "PUBLISHED" ? "published" : "draft"}`);
         return;
       }
       setNotice(r.status === "PUBLISHED" ? (article.status === "PUBLISHED" ? "Değişiklikler yayında." : "Haber yayınlandı.") : "Taslak kaydedildi.");

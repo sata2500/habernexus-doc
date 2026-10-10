@@ -15,7 +15,7 @@ export default async function AdminMediaPage({ searchParams }: { searchParams: P
   await requireRole("ADMIN");
   const params = await searchParams;
   const pageNo = pageParam(params);
-  const { items, total, counts, totalSize } = await listMedia({ q: param(params, "q"), status: param(params, "durum"), pageNo });
+  const { items, total, counts, totalSize } = await listMedia({ q: param(params, "q"), status: param(params, "status"), pageNo });
   const all = Object.values(counts).reduce((a, b) => a + b, 0);
 
   return (
@@ -30,7 +30,7 @@ export default async function AdminMediaPage({ searchParams }: { searchParams: P
       </div>
 
       <ListSearch placeholder="Dosya adıyla ara" />
-      <FilterChips base={BASE} params={params} name="durum" options={[
+      <FilterChips base={BASE} params={params} name="status" options={[
         { value: "", label: "Tümü", count: all },
         { value: "RAW", label: "Optimize edilmemiş", count: counts.RAW ?? 0 },
         { value: "OPTIMIZED", label: "Optimize", count: counts.OPTIMIZED ?? 0 },

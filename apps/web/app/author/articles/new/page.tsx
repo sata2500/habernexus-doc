@@ -5,12 +5,12 @@ import { ArticleEditor } from "../../components/ArticleEditor";
 
 export const dynamic = "force-dynamic";
 
-export default async function NewArticlePage({ searchParams }: { searchParams: Promise<{ oneri?: string }> }) {
+export default async function NewArticlePage({ searchParams }: { searchParams: Promise<{ suggestion?: string }> }) {
   await requireAuthor();
-  const { oneri } = await searchParams;
+  const { suggestion: suggestionId } = await searchParams;
   const [categories, suggestion] = await Promise.all([
     getCategoryOptions(),
-    oneri ? getSuggestionForEditor(oneri) : Promise.resolve(null),
+    suggestionId ? getSuggestionForEditor(suggestionId) : Promise.resolve(null),
   ]);
 
   return (

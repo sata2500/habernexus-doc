@@ -8,13 +8,13 @@ export const dynamic = "force-dynamic";
 
 export default async function EditArticlePage({ params, searchParams }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ kaydedildi?: string }>;
+  searchParams: Promise<{ saved?: string }>;
 }) {
-  const [{ id }, { kaydedildi }] = await Promise.all([params, searchParams]);
+  const [{ id }, { saved }] = await Promise.all([params, searchParams]);
   const [article, categories] = await Promise.all([getArticleForEdit(id), getCategoryOptions()]);
   if (!article) notFound();
 
-  const notice = kaydedildi === "yayin" ? "Haber yayınlandı." : kaydedildi === "taslak" ? "Taslak kaydedildi." : null;
+  const notice = saved === "published" ? "Haber yayınlandı." : saved === "draft" ? "Taslak kaydedildi." : null;
 
   return (
     <div className="space-y-4">

@@ -70,7 +70,7 @@ export default async function CategoryPage({ params }: { params: Params }) {
 
       {category._count.articles > category.articles.length && (
         <div className="text-center">
-          <Link href={`/latest?kategori=${category.slug}`} className="inline-flex items-center gap-2 h-11 px-5 rounded-xl border border-border bg-card font-semibold hover:bg-muted focus-ring">
+          <Link href={`/latest?category=${category.slug}`} className="inline-flex items-center gap-2 h-11 px-5 rounded-xl border border-border bg-card font-semibold hover:bg-muted focus-ring">
             Tüm {category.name} haberleri ({category._count.articles})
           </Link>
         </div>

@@ -45,11 +45,11 @@ export function Pagination({ base, params, page, total, pageSize = PAGE_SIZE }: 
       <p className="text-xs text-muted-foreground tabular-nums">{from}–{to} / {total.toLocaleString("tr-TR")}</p>
       <div className="flex items-center gap-2">
         {page > 1
-          ? <Link href={listHref(base, params, { sayfa: page - 1 })} className={cn(btn, "hover:bg-muted")}><ChevronLeft className="h-4 w-4" /> Önceki</Link>
+          ? <Link href={listHref(base, params, { page: page - 1 })} className={cn(btn, "hover:bg-muted")}><ChevronLeft className="h-4 w-4" /> Önceki</Link>
           : <span className={cn(btn, "opacity-40")} aria-disabled="true"><ChevronLeft className="h-4 w-4" /> Önceki</span>}
         <span className="text-xs text-muted-foreground tabular-nums">{page}/{pages}</span>
         {page < pages
-          ? <Link href={listHref(base, params, { sayfa: page + 1 })} className={cn(btn, "hover:bg-muted")}>Sonraki <ChevronRight className="h-4 w-4" /></Link>
+          ? <Link href={listHref(base, params, { page: page + 1 })} className={cn(btn, "hover:bg-muted")}>Sonraki <ChevronRight className="h-4 w-4" /></Link>
           : <span className={cn(btn, "opacity-40")} aria-disabled="true">Sonraki <ChevronRight className="h-4 w-4" /></span>}
       </div>
     </nav>

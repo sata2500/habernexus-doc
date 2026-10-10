@@ -86,7 +86,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     tagPages = tags
       .filter((t) => t._count.articles >= 2)
       .map((t) => ({
-        url: `${BASE_URL}/etiket/${t.slug}`,
+        url: `${BASE_URL}/tag/${t.slug}`,
         lastModified: t.articles[0]?.article.publishedAt ?? undefined,
         changeFrequency: "daily" as const,
         priority: 0.5,

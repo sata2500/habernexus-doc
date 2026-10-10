@@ -14,7 +14,7 @@ export default async function AuthorArticlesPage({ searchParams }: { searchParam
   const params = await searchParams;
   const pageNo = pageParam(params);
   const q = param(params, "q");
-  const { items, total, counts } = await listAuthorArticles({ q, status: param(params, "durum"), pageNo });
+  const { items, total, counts } = await listAuthorArticles({ q, status: param(params, "status"), pageNo });
 
   return (
     <div className="space-y-4">
@@ -33,7 +33,7 @@ export default async function AuthorArticlesPage({ searchParams }: { searchParam
       {counts.all > 0 && (
         <>
           <ListSearch placeholder="Başlıkta ara" />
-          <FilterChips base={BASE} params={params} name="durum" options={[
+          <FilterChips base={BASE} params={params} name="status" options={[
             { value: "", label: "Tümü", count: counts.all },
             { value: "PUBLISHED", label: "Yayında", count: counts.published },
             { value: "DRAFT", label: "Taslak", count: counts.drafts },
@@ -41,7 +41,7 @@ export default async function AuthorArticlesPage({ searchParams }: { searchParam
         </>
       )}
 
-      <AuthorArticleList articles={items} filtered={!!q || !!param(params, "durum")} />
+      <AuthorArticleList articles={items} filtered={!!q || !!param(params, "status")} />
       <Pagination base={BASE} params={params} page={pageNo} total={total} pageSize={AUTHOR_PAGE_SIZE} />
     </div>
   );

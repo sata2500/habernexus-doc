@@ -142,7 +142,7 @@ function StoryCard({ s, rank, tab, now, minScore, busy, writing, onWrite, onActi
             {s.pinned && <Chip icon={ArrowUpToLine} tone="info">Öne alındı</Chip>}
             {s.urgency === "BREAKING" && <Chip icon={Zap} tone="hot">Son dakika</Chip>}
             {s.categoryName && <Chip>{s.categoryName}</Chip>}
-            {tab === "sira" && s.status === "READY" && s.score < minScore && s.pinned && <Chip>eşik altı</Chip>}
+            {tab === "queue" && s.status === "READY" && s.score < minScore && s.pinned && <Chip>eşik altı</Chip>}
           </div>
 
           <h3 className="font-semibold leading-snug">{s.headline || s.title}</h3>
@@ -232,10 +232,10 @@ function StoryCard({ s, rank, tab, now, minScore, busy, writing, onWrite, onActi
 }
 
 const EMPTY: Record<string, { title: string; text: string }> = {
-  sira: { title: "Yazım sırası boş", text: "Puanı eşiği geçen konu yok. Yeni haberler için kaynakları tarayın ya da 'Değerlendirilen' sekmesinden bir konuyu öne alın." },
-  degerlendirme: { title: "Değerlendirilen konu yok", text: "Kaynaklar tarandığında yeni konular burada görünür." },
-  yayinlanan: { title: "Henüz yayınlanan konu yok", text: "AI Yazar'ın yazdığı haberler burada listelenir." },
-  elenen: { title: "Son 3 günde elenen konu yok", text: "Tekrar, düşük değerli ya da süresi geçen konular burada görünür." },
+  queue: { title: "Yazım sırası boş", text: "Puanı eşiği geçen konu yok. Yeni haberler için kaynakları tarayın ya da 'Değerlendirilen' sekmesinden bir konuyu öne alın." },
+  review: { title: "Değerlendirilen konu yok", text: "Kaynaklar tarandığında yeni konular burada görünür." },
+  published: { title: "Henüz yayınlanan konu yok", text: "AI Yazar'ın yazdığı haberler burada listelenir." },
+  rejected: { title: "Son 3 günde elenen konu yok", text: "Tekrar, düşük değerli ya da süresi geçen konular burada görünür." },
 };
 
 export function StoryList({ stories, tab, minScore, offset, now }: { stories: StoryView[]; tab: DecisionTab; minScore: number; offset: number; now: number }) {
@@ -283,7 +283,7 @@ export function StoryList({ stories, tab, minScore, offset, now }: { stories: St
       )}
       <ul className="space-y-3">
         {stories.map((s) => (
-          <StoryCard key={s.id} s={s} rank={tab === "sira" && s.status === "READY" ? offset + ++rank : null} tab={tab} now={now} minScore={minScore} busy={busy} writing={writingId === s.id} onWrite={() => onWrite(s.id)} onAction={onAction} />
+          <StoryCard key={s.id} s={s} rank={tab === "queue" && s.status === "READY" ? offset + ++rank : null} tab={tab} now={now} minScore={minScore} busy={busy} writing={writingId === s.id} onWrite={() => onWrite(s.id)} onAction={onAction} />
         ))}
       </ul>
     </div>

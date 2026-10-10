@@ -17,7 +17,7 @@ export function WriteSuggestionButton({ id }: { id: string }) {
         disabled={pending}
         onClick={() => start(async () => {
           const r = await markSuggestionAsUsed(id);
-          if (r.success) router.push(`/author/articles/new?oneri=${id}`);
+          if (r.success) router.push(`/author/articles/new?suggestion=${id}`);
           else { setError(r.error); router.refresh(); }
         })}
         className="h-8 px-3 inline-flex items-center gap-1 rounded-lg bg-primary-500/10 text-primary-500 text-xs font-semibold hover:bg-primary-500/20 disabled:opacity-60 cursor-pointer"

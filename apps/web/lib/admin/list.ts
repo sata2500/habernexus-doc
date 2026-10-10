@@ -10,7 +10,7 @@ export function param(params: RawParams, key: string) {
 }
 
 export function pageParam(params: RawParams) {
-  const n = Number(param(params, "sayfa"));
+  const n = Number(param(params, "page"));
   return Number.isInteger(n) && n > 1 ? n : 1;
 }
 
@@ -21,9 +21,9 @@ export function listHref(base: string, params: RawParams, changes: Record<string
     const value = Array.isArray(v) ? v[0] : v;
     if (value) sp.set(k, value);
   }
-  if (!("sayfa" in changes)) sp.delete("sayfa");
+  if (!("page" in changes)) sp.delete("page");
   for (const [k, v] of Object.entries(changes)) {
-    if (v === null || v === "" || (k === "sayfa" && Number(v) <= 1)) sp.delete(k);
+    if (v === null || v === "" || (k === "page" && Number(v) <= 1)) sp.delete(k);
     else sp.set(k, String(v));
   }
   const qs = sp.toString();

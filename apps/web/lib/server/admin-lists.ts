@@ -20,7 +20,7 @@ export async function listArticles({ q, status, category, source, pageNo }: {
     }),
     ...(category && { categoryId: category }),
     ...(source === "ai" && { aiPersonaId: { not: null } }),
-    ...(source === "insan" && { aiPersonaId: null }),
+    ...(source === "human" && { aiPersonaId: null }),
   };
   const where: Prisma.ArticleWhereInput = {
     ...base,

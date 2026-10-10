@@ -20,7 +20,7 @@ export function LoginForm({ googleEnabled }: { googleEnabled: boolean }) {
   const [error, setError] = useState<string | null>(() => authErrorMessage(searchParams.get("error")));
   const [unverified, setUnverified] = useState(false);
   const [resent, setResent] = useState<"idle" | "sending" | "sent" | "error">("idle");
-  const verifiedNotice = searchParams.get("dogrulandi") === "1";
+  const verifiedNotice = searchParams.get("verified") === "1";
 
   const resend = async () => {
     setResent("sending");

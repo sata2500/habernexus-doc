@@ -46,7 +46,7 @@ export async function getAuthorSuggestions() {
 function revalidate() {
   revalidatePath("/author/suggestions");
   revalidatePath("/author");
-  revalidatePath("/admin/karar-merkezi");
+  revalidatePath("/admin/decision-center");
 }
 
 const validId = (id: unknown): id is string => typeof id === "string" && !!id && id.length <= 100;

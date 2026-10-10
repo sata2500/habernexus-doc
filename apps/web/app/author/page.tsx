@@ -14,8 +14,8 @@ export default async function AuthorDashboardPage() {
   ]);
 
   const kpis = [
-    { label: "Yayındaki haber", value: counts.published.toLocaleString("tr-TR"), icon: FileText, href: "/author/articles?durum=PUBLISHED" },
-    { label: "Taslak", value: counts.drafts.toLocaleString("tr-TR"), icon: FileClock, href: "/author/articles?durum=DRAFT" },
+    { label: "Yayındaki haber", value: counts.published.toLocaleString("tr-TR"), icon: FileText, href: "/author/articles?status=PUBLISHED" },
+    { label: "Taslak", value: counts.drafts.toLocaleString("tr-TR"), icon: FileClock, href: "/author/articles?status=DRAFT" },
     { label: "Toplam okunma", value: formatViewCount(counts.views), icon: Eye, href: "/author/stats" },
     { label: "Yorum (30 gün)", value: counts.comments30.toLocaleString("tr-TR"), icon: MessageSquare, href: "/author/comments" },
   ];

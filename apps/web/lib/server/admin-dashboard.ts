@@ -71,16 +71,16 @@ export async function getAdminDashboard() {
   // ── Yapılacaklar: yöneticinin şu an ilgilenmesi gerekenler (önem sırasına göre)
   const tasks: DashboardTask[] = [];
   if (migrations > 0) {
-    tasks.push({ tone: "error", title: `${migrations} veritabanı güncellemesi bekliyor`, detail: "Yeni özellikler bu güncellemeler uygulanana kadar çalışmaz.", href: "/admin/settings?tab=sistem", action: "Uygula" });
+    tasks.push({ tone: "error", title: `${migrations} veritabanı güncellemesi bekliyor`, detail: "Yeni özellikler bu güncellemeler uygulanana kadar çalışmaz.", href: "/admin/settings?tab=system", action: "Uygula" });
   }
   if (!providers.google && !providers.openrouter) {
-    tasks.push({ tone: "error", title: "Yapay zekâ anahtarı tanımlı değil", detail: "AI yazar, analiz ve özetler çalışmıyor.", href: "/admin/settings?tab=yapay-zeka", action: "İncele" });
+    tasks.push({ tone: "error", title: "Yapay zekâ anahtarı tanımlı değil", detail: "AI yazar, analiz ve özetler çalışmıyor.", href: "/admin/settings?tab=ai", action: "İncele" });
   }
   if (daysSincePublish !== null && daysSincePublish >= 2) {
-    tasks.push({ tone: "warning", title: `Son ${daysSincePublish} gündür yeni haber yayınlanmadı`, detail: settings?.aiWriterAutoEnabled ? "Otomasyon açık ama haber üretilmiyor; yapay zekâ modellerini test edin." : "AI Yazar otomasyonu kapalı.", href: settings?.aiWriterAutoEnabled ? "/admin/settings?tab=yapay-zeka" : "/admin/ai-writer", action: "Kontrol et" });
+    tasks.push({ tone: "warning", title: `Son ${daysSincePublish} gündür yeni haber yayınlanmadı`, detail: settings?.aiWriterAutoEnabled ? "Otomasyon açık ama haber üretilmiyor; yapay zekâ modellerini test edin." : "AI Yazar otomasyonu kapalı.", href: settings?.aiWriterAutoEnabled ? "/admin/settings?tab=ai" : "/admin/ai-writer", action: "Kontrol et" });
   }
   if (pendingSuggestions > 0) {
-    tasks.push({ tone: "info", title: `${pendingSuggestions} konu yazım sırasında`, detail: "Puanı eşiği geçen konular Karar Merkezi'nde sırayla yazılmayı bekliyor.", href: "/admin/karar-merkezi", action: "Göz at" });
+    tasks.push({ tone: "info", title: `${pendingSuggestions} konu yazım sırasında`, detail: "Puanı eşiği geçen konular Karar Merkezi'nde sırayla yazılmayı bekliyor.", href: "/admin/decision-center", action: "Göz at" });
   }
   if (openTickets > 0) {
     tasks.push({ tone: "info", title: `${openTickets} açık destek talebi`, detail: "Okurlardan gelen mesajlar yanıt bekliyor.", href: "/admin/support", action: "Yanıtla" });

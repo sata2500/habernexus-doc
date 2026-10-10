@@ -13,12 +13,12 @@ export const metadata = {
   },
 };
 
-type SearchParams = Promise<{ kategori?: string }>;
+type SearchParams = Promise<{ category?: string }>;
 
 export default async function LatestArticlesPage({ searchParams }: { searchParams: SearchParams }) {
-  const { kategori } = await searchParams;
+  const { category: categoryParam } = await searchParams;
   const categories = await getCategoriesWithCount();
-  const activeCategory = categories.find((c) => c.slug === kategori)?.slug;
+  const activeCategory = categories.find((c) => c.slug === categoryParam)?.slug;
   // Kategori filtresi sayfanın ayrı bir kopyası sayılmasın (kanonik adres /latest)
   const firstPage = await getFeedPage({ limit: 12, categorySlug: activeCategory });
 
@@ -57,7 +57,7 @@ export default async function LatestArticlesPage({ searchParams }: { searchParam
           {categories.map((c) => (
             <li key={c.id}>
               <Link
-                href={`/latest?kategori=${c.slug}`}
+                href={`/latest?category=${c.slug}`}
                 scroll={false}
                 aria-current={activeCategory === c.slug ? "page" : undefined}
                 className={cn(

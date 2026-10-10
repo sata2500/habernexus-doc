@@ -42,7 +42,7 @@ function SuggestionRow({ item, onRemove }: { item: SuggestionItem; onRemove: (id
         router.refresh();
         return;
       }
-      router.push(`/author/articles/new?oneri=${item.id}`);
+      router.push(`/author/articles/new?suggestion=${item.id}`);
     });
   };
   const dismiss = () => {

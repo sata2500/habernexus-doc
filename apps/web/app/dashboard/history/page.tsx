@@ -17,10 +17,10 @@ function Thumb({ src }: { src: string | null }) {
   );
 }
 
-export default async function ReadingHistoryPage({ searchParams }: { searchParams: Promise<{ sayfa?: string }> }) {
+export default async function ReadingHistoryPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session) return null;
-  const pageNo = Math.max(1, Number.parseInt((await searchParams).sayfa ?? "1", 10) || 1);
+  const pageNo = Math.max(1, Number.parseInt((await searchParams).page ?? "1", 10) || 1);
 
   const [unfinished, completed] = await Promise.all([
     pageNo === 1 ? getUnfinishedReads(session.user.id) : Promise.resolve([]),
@@ -103,9 +103,9 @@ export default async function ReadingHistoryPage({ searchParams }: { searchParam
           </ul>
           {pages > 1 && (
             <nav aria-label="Sayfalar" className="flex items-center justify-center gap-2 text-sm">
-              {pageNo > 1 ? <Link href={`?sayfa=${pageNo - 1}`} className="inline-flex items-center gap-1 h-9 px-3 rounded-xl border border-border hover:bg-muted"><ChevronLeft className="h-4 w-4" /> Önceki</Link> : null}
+              {pageNo > 1 ? <Link href={`?page=${pageNo - 1}`} className="inline-flex items-center gap-1 h-9 px-3 rounded-xl border border-border hover:bg-muted"><ChevronLeft className="h-4 w-4" /> Önceki</Link> : null}
               <span className="text-muted-foreground tabular-nums">{pageNo} / {pages}</span>
-              {pageNo < pages ? <Link href={`?sayfa=${pageNo + 1}`} className="inline-flex items-center gap-1 h-9 px-3 rounded-xl border border-border hover:bg-muted">Sonraki <ChevronRight className="h-4 w-4" /></Link> : null}
+              {pageNo < pages ? <Link href={`?page=${pageNo + 1}`} className="inline-flex items-center gap-1 h-9 px-3 rounded-xl border border-border hover:bg-muted">Sonraki <ChevronRight className="h-4 w-4" /></Link> : null}
             </nav>
           )}
         </section>

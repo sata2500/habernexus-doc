@@ -294,7 +294,7 @@ export default async function ArticlePage({ params }: { params: Params }) {
         <nav className="flex flex-wrap items-center gap-2 border-t border-border pt-6 mt-8 mb-8" aria-label="Etiketler">
           <span className="font-semibold font-display">Etiketler:</span>
           {article.tags.map((tagRel) => (
-            <Link key={tagRel.tag.id} href={`/etiket/${tagRel.tag.slug}`}>
+            <Link key={tagRel.tag.id} href={`/tag/${tagRel.tag.slug}`}>
               <Badge variant="default" className="hover:bg-primary-500 hover:text-white transition-colors">#{tagRel.tag.name}</Badge>
             </Link>
           ))}

@@ -73,7 +73,7 @@ test.describe("yazar", () => {
     await page.locator("#article-tags").fill("E2E Etiketi");
     await page.keyboard.press("Enter");
     await page.keyboard.press("ControlOrMeta+s");
-    await expect(page).toHaveURL(/\/edit\?kaydedildi=taslak/);
+    await expect(page).toHaveURL(/\/edit\?saved=draft/);
     await expect(page.getByRole("list", { name: "Eklenen etiketler" })).toContainText("E2E Etiketi");
 
     await page.getByRole("button", { name: "Yayınla" }).click();
@@ -91,7 +91,7 @@ test.describe("yönetici", () => {
   test.use({ storageState: session("admin") });
   test("yönetim sayfaları açılır", async ({ page }) => {
     const errors = trackPageErrors(page);
-    for (const path of ["/admin", "/admin/articles", "/admin/users", "/admin/categories", "/admin/karar-merkezi", "/admin/settings", "/admin/settings?tab=sistem", "/admin/settings?tab=reklam", "/admin/settings?tab=bildirimler"]) {
+    for (const path of ["/admin", "/admin/articles", "/admin/users", "/admin/categories", "/admin/decision-center", "/admin/settings", "/admin/settings?tab=system", "/admin/settings?tab=ads", "/admin/settings?tab=notifications"]) {
       const res = await page.goto(path);
       expect(res?.status(), path).toBe(200);
       await expect(page.locator("h1").first()).toBeVisible();
@@ -100,14 +100,14 @@ test.describe("yönetici", () => {
   });
 
   test("bildirim anahtarı üretilir ve gösterilir (kaydedilmez)", async ({ page }) => {
-    await page.goto("/admin/settings?tab=bildirimler");
+    await page.goto("/admin/settings?tab=notifications");
     await page.getByRole("button", { name: "Anahtar çifti üret" }).click();
     await expect(page.getByText("Anahtarlar kaydedilmedi; sayfadan çıkınca kaybolur.")).toBeVisible();
     await expect(page.locator("code").filter({ hasText: /^[A-Za-z0-9_-]{80,}$/ }).first()).toBeVisible();
   });
 
   test("reklam ayarlarında kimliksiz Google Analytics açılamaz", async ({ page }) => {
-    await page.goto("/admin/settings?tab=reklam");
+    await page.goto("/admin/settings?tab=ads");
     await page.getByLabel("Google Analytics").check();
     await page.getByRole("button", { name: "Ayarları kaydet" }).click();
     await expect(page.getByRole("status")).toContainText("ölçüm kimliğini girin");

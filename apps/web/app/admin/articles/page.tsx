@@ -17,9 +17,9 @@ export default async function AdminArticlesPage({ searchParams }: { searchParams
   const pageNo = pageParam(params);
   const { items, total, counts, categories } = await listArticles({
     q: param(params, "q"),
-    status: param(params, "durum"),
-    category: param(params, "kategori"),
-    source: param(params, "kaynak"),
+    status: param(params, "status"),
+    category: param(params, "category"),
+    source: param(params, "source"),
     pageNo,
   });
 
@@ -39,18 +39,18 @@ export default async function AdminArticlesPage({ searchParams }: { searchParams
 
       <ListSearch placeholder="Başlık veya yazar ara" />
 
-      <FilterChips base={BASE} params={params} name="durum" options={[
+      <FilterChips base={BASE} params={params} name="status" options={[
         { value: "", label: "Tümü", count: counts.all },
         { value: "PUBLISHED", label: "Yayında", count: counts.published },
         { value: "DRAFT", label: "Taslak", count: counts.drafts },
       ]} />
-      <FilterChips base={BASE} params={params} name="kaynak" options={[
+      <FilterChips base={BASE} params={params} name="source" options={[
         { value: "", label: "Tüm kaynaklar" },
         { value: "ai", label: "AI Yazar" },
-        { value: "insan", label: "Editörler" },
+        { value: "human", label: "Editörler" },
       ]} />
       {categories.length > 0 && (
-        <FilterChips base={BASE} params={params} name="kategori" options={[
+        <FilterChips base={BASE} params={params} name="category" options={[
           { value: "", label: "Tüm kategoriler" },
           ...categories.map((c) => ({ value: c.id, label: c.name })),
         ]} />

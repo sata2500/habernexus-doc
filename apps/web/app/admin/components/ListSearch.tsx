@@ -18,7 +18,7 @@ export function ListSearch({ placeholder }: { placeholder: string }) {
   const push = (q: string) => {
     const sp = new URLSearchParams(searchParams.toString());
     if (q.trim()) sp.set("q", q.trim()); else sp.delete("q");
-    sp.delete("sayfa");
+    sp.delete("page");
     const qs = sp.toString();
     router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   };
