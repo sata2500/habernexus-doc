@@ -115,7 +115,7 @@ export function Navbar({ categories = [], settings }: { categories?: Category[];
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            <Link href="/" className="flex items-center gap-2 group rounded-xl focus-ring" id="navbar-logo" aria-label={`${siteName} ana sayfa`}>
+            <Link href="/" className="flex items-center gap-2 group rounded-xl focus-ring" id="navbar-logo">
               {settings?.logoUrl ? (
                 <div className="h-9 w-9 relative rounded-xl overflow-hidden group-hover:scale-105 transition-transform shrink-0 border border-border/50">
                   <Image src={settings.logoUrl} alt="" fill className="object-cover" sizes="36px" unoptimized />
@@ -128,6 +128,8 @@ export function Navbar({ categories = [], settings }: { categories?: Category[];
               <span className="text-xl font-bold font-(family-name:--font-outfit) tracking-tight">
                 <span className="text-gradient">{firstWord}</span>
                 {restWords && <span className="text-foreground"> {restWords}</span>}
+                {/* Erişilebilir ad görünen yazıyla başlasın (ekran okuyucu ve sesli komut kullanıcıları için) */}
+                <span className="sr-only"> ana sayfa</span>
               </span>
             </Link>
 

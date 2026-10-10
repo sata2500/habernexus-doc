@@ -87,6 +87,9 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
+    // CSS sayfaya gömülür: ayrı stil dosyası indirilmeden çizim başlar (mobilde ~0,6 sn kazanç).
+    // Tailwind CSS'i küçük olduğundan HTML büyümesi azdır; ziyaretçilerin çoğu aramadan ilk kez gelir.
+    inlineCss: true,
     serverActions: {
       bodySizeLimit: "4.5mb",
     },
