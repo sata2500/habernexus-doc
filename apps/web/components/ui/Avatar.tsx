@@ -1,6 +1,9 @@
+"use client";
+
 import { cn } from "@/lib/utils";
 import { User } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
 interface AvatarProps {
   src?: string | null;
@@ -27,6 +30,8 @@ const imageSizeMap = {
 };
 
 function Avatar({ src, alt = "Avatar", size = "md", fallback, className }: AvatarProps) {
+  // Görsel silinmiş ya da erişilemiyorsa kırık resim yerine baş harfler gösterilir
+  const [failed, setFailed] = useState(false);
   const initials = fallback
     ? fallback
         .split(" ")
@@ -47,13 +52,14 @@ function Avatar({ src, alt = "Avatar", size = "md", fallback, className }: Avata
         className
       )}
     >
-      {src ? (
+      {src && !failed ? (
         <Image
           src={src}
           alt={alt}
           width={imageSizeMap[size]}
           height={imageSizeMap[size]}
           className="object-cover w-full h-full"
+          onError={() => setFailed(true)}
         />
       ) : initials ? (
         <span className="font-semibold font-(family-name:--font-outfit) select-none">

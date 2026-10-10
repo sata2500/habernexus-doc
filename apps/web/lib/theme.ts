@@ -278,6 +278,28 @@ export function sanitizeCssColor(value: string | null | undefined) {
   return undefined;
 }
 
+
+/** WCAG göreli parlaklık (yalnızca #rrggbb) */
+function luminance(hex: string) {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+    .map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+/**
+ * Açık temada ana renk hem beyaz zeminde yazı (bağlantılar) hem de beyaz yazılı düğme zemini olarak
+ * kullanılır. Seçilen renk 4,5:1 kontrastı tutturamıyorsa, tutturana kadar azar azar koyulaştırılır
+ * (ör. #6366f1 → #5f62e8); göze neredeyse aynı görünür. Hex olmayan değerler olduğu gibi kalır.
+ */
+export function ensureContrastOnWhite(color: string, min = 4.5) {
+  if (!/^#[0-9a-f]{6}$/i.test(color)) return color;
+  let hex = color.toLowerCase();
+  for (let i = 0; i < 40 && 1.05 / (luminance(hex) + 0.05) < min; i++) {
+    hex = "#" + [1, 3, 5].map((j) => Math.max(0, Math.round(parseInt(hex.slice(j, j + 2), 16) * 0.97)).toString(16).padStart(2, "0")).join("");
+  }
+  return hex;
+}
+
 interface Mode {
   primary?: string; accent?: string; bg?: string; fg?: string; card?: string; cardFg?: string; sidebarBg?: string; sidebarFg?: string;
 }
@@ -288,9 +310,11 @@ function modeVars(m: Mode, dark: boolean) {
   const add = (k: string, v: string) => out.push(`${k}: ${v} !important;`);
   const tint = dark ? [10, 20, 40, 60, 80] : [5, 10, 25, 45, 70];
   if (m.primary) {
+    // Yazı ve düğme zemini olarak kullanılan tonlar okunabilir olsun (açık tema); süslemeler özgün rengi kullanır
+    const solid = dark ? m.primary : ensureContrastOnWhite(m.primary);
     [50, 100, 200, 300, 400].forEach((step, i) => add(`--color-primary-${step}`, `color-mix(in srgb, ${m.primary} ${tint[i]}%, #ffffff)`));
-    add("--color-primary-500", m.primary);
-    [[600, 85], [700, 70], [800, 55], [900, 40]].forEach(([step, pct]) => add(`--color-primary-${step}`, `color-mix(in srgb, ${m.primary} ${pct}%, #000000)`));
+    add("--color-primary-500", solid);
+    [[600, 85], [700, 70], [800, 55], [900, 40]].forEach(([step, pct]) => add(`--color-primary-${step}`, `color-mix(in srgb, ${solid} ${pct}%, #000000)`));
     add("--ring", m.primary);
     add("--shadow-glow", `0 0 20px color-mix(in srgb, ${m.primary} 15%, transparent)`);
   }
