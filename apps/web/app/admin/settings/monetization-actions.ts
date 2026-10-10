@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import * as Sentry from "@sentry/nextjs";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { adminOnly, requireRole } from "@/lib/server/authz";
@@ -153,4 +154,14 @@ export async function deleteSponsorAd(id: string): Promise<ActionResult> {
   await prisma.sponsorAd.deleteMany({ where: { id } });
   await invalidateMonetization();
   return { success: true };
+}
+
+/** Sentry bağlantısını sınamak için sunucudan bir deneme hatası gönderir (yalnızca yönetici) */
+export async function sendSentryTestError(): Promise<ActionResult<{ eventId: string }>> {
+  const denied = await adminOnly();
+  if (denied) return denied;
+  if (!Sentry.getClient()) return { success: false, error: "Sentry sunucuda etkin değil (DSN tanımlı mı ve site yeniden yayına alındı mı?)." };
+  const eventId = Sentry.captureException(new Error("HaberNexus Sentry deneme hatası (sunucu)"), { tags: { test: "admin-panel" } });
+  await Sentry.flush(5_000);
+  return { success: true, data: { eventId } };
 }

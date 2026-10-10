@@ -11,7 +11,8 @@ import {
   type PlacementMap,
   type PlacementMode,
 } from "@/lib/monetization";
-import { updateMonetizationSettings, type MonetizationSettingsInput } from "../monetization-actions";
+import * as Sentry from "@sentry/nextjs";
+import { sendSentryTestError, updateMonetizationSettings, type MonetizationSettingsInput } from "../monetization-actions";
 import { Field, SectionTitle, TextArea, TextInput } from "./SettingsFields";
 
 type Settings = Omit<MonetizationSettingsInput, "placements"> & { placements: PlacementMap };
@@ -91,6 +92,7 @@ export function MonetizationPanel({ initial, sentryConfigured, onVercel }: { ini
               <div className="space-y-1">
                 <p className="font-semibold flex items-center gap-2">Sentry hata takibi <StatusPill on={sentryConfigured} onText="Bağlı" offText="Bağlı değil" /></p>
                 <p className="text-muted-foreground">Vercel ortam değişkenlerine <code>NEXT_PUBLIC_SENTRY_DSN</code> eklenince kendiliğinden çalışır; buradan açılıp kapanmaz.</p>
+                {sentryConfigured && <SentryTest />}
               </div>
             </div>
           </div>
@@ -180,6 +182,40 @@ export function MonetizationPanel({ initial, sentryConfigured, onVercel }: { ini
           Ayarları kaydet
         </button>
       </div>
+    </div>
+  );
+}
+
+/** Sentry'ye sunucudan ve tarayıcıdan birer deneme hatası gönderir; Sentry → Issues'da görünmeleri gerekir */
+function SentryTest() {
+  const [pending, start] = useTransition();
+  const [result, setResult] = useState<{ ok: boolean; text: string } | null>(null);
+
+  const server = () => start(async () => {
+    const r = await sendSentryTestError();
+    setResult(r.success ? { ok: true, text: `Sunucu deneme hatası gönderildi (kimlik: ${r.data.eventId.slice(0, 8)}…). Sentry → Issues'a bakın.` } : { ok: false, text: r.error });
+  });
+  const browser = async () => {
+    if (!Sentry.getClient()) {
+      setResult({ ok: false, text: "Sentry tarayıcıda etkin değil. DSN eklendikten sonra site yeniden yayına alınmalı; reklam engelleyici de engelliyor olabilir." });
+      return;
+    }
+    const id = Sentry.captureException(new Error("HaberNexus Sentry deneme hatası (tarayıcı)"), { tags: { test: "admin-panel" } });
+    await Sentry.flush(5_000);
+    setResult({ ok: true, text: `Tarayıcı deneme hatası gönderildi (kimlik: ${id.slice(0, 8)}…). Sentry → Issues'a bakın.` });
+  };
+
+  return (
+    <div className="pt-2 space-y-2">
+      <div className="flex flex-wrap gap-2">
+        <button type="button" onClick={server} disabled={pending} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-xs font-semibold hover:bg-muted disabled:opacity-50">
+          {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Bug className="h-3.5 w-3.5" />} Sunucudan deneme hatası
+        </button>
+        <button type="button" onClick={browser} className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg border border-border text-xs font-semibold hover:bg-muted">
+          <Bug className="h-3.5 w-3.5" /> Tarayıcıdan deneme hatası
+        </button>
+      </div>
+      {result && <p role="status" className={cn("text-xs", result.ok ? "text-success" : "text-error")}>{result.text}</p>}
     </div>
   );
 }
