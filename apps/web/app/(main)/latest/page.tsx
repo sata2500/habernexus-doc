@@ -67,8 +67,10 @@ export default async function LatestArticlesPage({ searchParams }: { searchParam
                     : "bg-card border-border text-muted-foreground hover:text-foreground"
                 )}
               >
-                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: c.color || "#888" }} />
+                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: c.color || "#888" }} aria-hidden="true" />
                 {c.name}
+                {/* Alt bilgideki kategori bağlantısıyla (/category/…) aynı adı taşımasın: bu bağlantı listeyi süzer */}
+                <span className="sr-only"> haberlerini listele</span>
               </Link>
             </li>
           ))}
