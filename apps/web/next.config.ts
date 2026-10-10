@@ -95,16 +95,6 @@ const nextConfig: NextConfig = {
       bodySizeLimit: "4.5mb",
     },
   },
-  // Adresler İngilizceye çevrildi; eski (Türkçe) adresler kalıcı olarak yenilerine yönlenir
-  async redirects() {
-    return [
-      { source: "/etiket/:slug", has: [{ type: "query", key: "sayfa", value: "(?<page>\\d+)" }], destination: "/tag/:slug?page=:page", permanent: true },
-      { source: "/etiket/:slug", destination: "/tag/:slug", permanent: true },
-      // "missing": yönlenen adreste eski parametre de taşınır; category varken kural tekrar işlemez
-      { source: "/latest", has: [{ type: "query", key: "kategori", value: "(?<cat>[a-z0-9-]+)" }], missing: [{ type: "query", key: "category" }], destination: "/latest?category=:cat", permanent: true },
-      { source: "/admin/karar-merkezi", destination: "/admin/decision-center", permanent: true },
-    ];
-  },
   async headers() {
     return [
       {
